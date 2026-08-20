@@ -1,0 +1,70 @@
+@*
+    Primary site navigation.
+
+    Rendered as an interactive island so the mobile menu is real Blazor state rather than a
+    CSS checkbox hack: the toggle is a proper <button> with aria-expanded/aria-controls, and
+    selecting a link closes the panel.
+*@
+
+@rendermode InteractiveServer
+@inject IMarketingContentService Content
+
+<header class="site-header">
+    <div class="hts-container header-inner">
+        <a class="header-brand" href="#top" aria-label="@BrandLabel">
+            <BrandMark Name="@SiteName" Tagline="Hosting" />
+        </a>
+
+        <button type="button"
+                class="header-toggle"
+                aria-expanded="@_isOpen.ToString().ToLowerInvariant()"
+                aria-controls="primary-navigation"
+                aria-label="@(_isOpen ? "Close menu" : "Open menu")"
+                @onclick="Toggle">
+            <Icon Name="@(_isOpen ? IconName.Close : IconName.Menu)" />
+        </button>
+
+        <div id="primary-navigation" class="header-panel @(_isOpen ? "is-open" : null)">
+            <nav class="header-nav" aria-label="Primary">
+                <ul>
+                    @foreach (var link in Content.PrimaryNavigation)
+                    {
+                        <li>
+                            <a href="@link.Href" @onclick="Close">@link.Label</a>
+                        </li>
+                    }
+                </ul>
+            </nav>
+
+            <div class="header-actions">
+                <ThemeToggle />
+                <CtaButton Href="#plans"
+                           Variant="CtaVariant.Primary"
+                           Size="CtaSize.Small"
+                           TrailingIcon="IconName.ArrowRight"
+                           OnClick="Close">
+                    See plans
+                </CtaButton>
+            </div>
+        </div>
+    </div>
+</header>
+
+@code {
+    private bool _isOpen;
+
+    /// <summary>Brand name shown in the header lockup.</summary>
+    [Parameter]
+    public string SiteName { get; set; } = "HowToSoftware";
+
+    private string BrandLabel => $"{SiteName} home";
+
+    private void Toggle() => _isOpen = !_isOpen;
+
+    private void Close() => _isOpen = false;
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

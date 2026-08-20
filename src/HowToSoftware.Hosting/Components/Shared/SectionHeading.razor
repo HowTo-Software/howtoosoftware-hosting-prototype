@@ -1,0 +1,78 @@
+@*
+    Shared section header: eyebrow, heading and lede.
+
+    Always renders an <h2> so the page keeps a single <h1> (the hero) and a flat,
+    predictable heading hierarchy underneath it.
+*@
+
+<header class="section-heading @(Centered ? "is-centered" : null) @CssClass" data-reveal>
+    @if (!string.IsNullOrEmpty(Eyebrow))
+    {
+        <p class="eyebrow">
+            <span class="eyebrow-dot" aria-hidden="true"></span>
+            @Eyebrow
+        </p>
+    }
+
+    @*
+        The separator between title and highlight is carried inside TitleText rather than
+        written as markup: Razor strips whitespace-only literals between an expression and a
+        conditional block, which silently glued the two halves together.
+    *@
+    <h2 id="@HeadingId">@TitleText@if (!string.IsNullOrEmpty(Highlight))
+        {
+            <span class="hts-gradient-text">@Highlight</span>
+        }</h2>
+
+    @if (!string.IsNullOrEmpty(Lede))
+    {
+        <p class="hts-lede section-lede">@Lede</p>
+    }
+
+    @ChildContent
+</header>
+
+@code {
+    /// <summary>Small label rendered above the heading.</summary>
+    [Parameter]
+    public string? Eyebrow { get; set; }
+
+    /// <summary>The heading text.</summary>
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = string.Empty;
+
+    /// <summary>Optional trailing words rendered in the brand gradient.</summary>
+    [Parameter]
+    public string? Highlight { get; set; }
+
+    /// <summary>Supporting paragraph below the heading.</summary>
+    [Parameter]
+    public string? Lede { get; set; }
+
+    /// <summary>Identifier applied to the heading, for aria-labelledby relationships.</summary>
+    [Parameter]
+    public string? HeadingId { get; set; }
+
+    /// <summary>Centres the block instead of aligning it to the start.</summary>
+    [Parameter]
+    public bool Centered { get; set; }
+
+    /// <summary>Optional additional CSS classes.</summary>
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    /// <summary>Optional extra content, e.g. a call-to-action row.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// The title with a trailing space when a highlight follows it, so the two halves read as
+    /// one sentence and can still wrap between them.
+    /// </summary>
+    private string TitleText => string.IsNullOrEmpty(Highlight) ? Title : Title + " ";
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

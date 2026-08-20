@@ -1,0 +1,74 @@
+@*
+    Site footer: branding, navigation, legal placeholders and contact.
+
+    Legal documents do not exist yet, so they are rendered as clearly-marked placeholders
+    rather than links that would 404. No address or phone number is invented here.
+*@
+
+@inject IMarketingContentService Content
+@inject IOptions<SiteOptions> Site
+
+<footer class="site-footer">
+    <div class="hts-container footer-inner">
+        <div class="footer-brand">
+            <BrandMark Name="@Options.Name" Tagline="Hosting" CssClass="is-lg is-plain" />
+            <p class="footer-blurb">
+                Software-driven hosting for Project Zomboid communities. Built and run by the
+                team behind @Options.Name.
+            </p>
+            <a class="footer-mail" href="mailto:@Options.ContactEmail">
+                <Icon Name="IconName.Mail" CssClass="is-sm" />
+                <span>@Options.ContactEmail</span>
+            </a>
+        </div>
+
+        <nav class="footer-column" aria-labelledby="footer-product">
+            <h2 class="footer-title" id="footer-product">Product</h2>
+            <ul>
+                @foreach (var link in Content.ProductLinks)
+                {
+                    <li><a href="@link.Href">@link.Label</a></li>
+                }
+            </ul>
+        </nav>
+
+        <nav class="footer-column" aria-labelledby="footer-company">
+            <h2 class="footer-title" id="footer-company">Company</h2>
+            <ul>
+                @foreach (var link in Content.CompanyLinks)
+                {
+                    <li><a href="@link.Href">@link.Label</a></li>
+                }
+            </ul>
+        </nav>
+
+        <section class="footer-column" aria-labelledby="footer-legal">
+            <h2 class="footer-title" id="footer-legal">Legal</h2>
+            <ul>
+                @foreach (var placeholder in Content.LegalPlaceholders)
+                {
+                    <li class="footer-placeholder">
+                        <span>@placeholder</span>
+                        <span class="footer-chip">Soon</span>
+                    </li>
+                }
+            </ul>
+        </section>
+    </div>
+
+    <div class="hts-container footer-base">
+        <p>&copy; @Year @Options.Name. All rights reserved.</p>
+        <p class="footer-note">Project Zomboid is a trademark of its respective owner. This site is not affiliated with The Indie Stone.</p>
+    </div>
+</footer>
+
+@code {
+    private SiteOptions Options => Site.Value;
+
+    private static int Year => DateTime.UtcNow.Year;
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

@@ -1,0 +1,175 @@
+.site-header {
+    position: sticky;
+    top: 0;
+    z-index: var(--hts-z-header);
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition:
+        background-color var(--hts-duration-base) var(--hts-ease),
+        border-color var(--hts-duration-base) var(--hts-ease),
+        backdrop-filter var(--hts-duration-base) var(--hts-ease);
+}
+
+/* `hts-scrolled` is toggled on <html> by wwwroot/js/site.js. The header only
+   frosts once the page has moved, so the hero reads edge to edge on load. */
+html.hts-scrolled .site-header {
+    border-bottom-color: var(--hts-border);
+    background: var(--hts-surface-frost);
+    backdrop-filter: saturate(160%) blur(16px);
+    -webkit-backdrop-filter: saturate(160%) blur(16px);
+}
+
+.header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--hts-space-6);
+    min-height: var(--hts-header-height);
+}
+
+.header-brand {
+    text-decoration: none;
+    border-radius: var(--hts-radius-md);
+}
+
+.header-panel {
+    display: flex;
+    align-items: center;
+    gap: var(--hts-space-6);
+}
+
+.header-nav ul {
+    display: flex;
+    align-items: center;
+    gap: var(--hts-space-1);
+}
+
+.header-nav a {
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--hts-radius-sm);
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-base);
+    font-weight: 520;
+    text-decoration: none;
+    transition: color var(--hts-duration-fast) var(--hts-ease);
+}
+
+/* Gradient underline that wipes in from the left on hover. */
+.header-nav a::after {
+    content: "";
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.24rem;
+    left: 0.75rem;
+    height: 2px;
+    border-radius: 2px;
+    background-image: var(--hts-gradient-brand);
+    box-shadow: 0 0 10px rgba(176, 105, 255, 0.6);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform var(--hts-duration-base) var(--hts-ease-out);
+}
+
+.header-nav a:hover {
+    color: var(--hts-ink);
+}
+
+.header-nav a:hover::after {
+    transform: scaleX(1);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--hts-space-3);
+}
+
+.header-toggle {
+    display: none;
+    place-items: center;
+    width: 2.6rem;
+    height: 2.6rem;
+    border: 1px solid var(--hts-border-strong);
+    border-radius: var(--hts-radius-md);
+    background: var(--hts-surface-raised);
+    box-shadow: var(--hts-rim);
+    color: var(--hts-ink);
+    transition:
+        border-color var(--hts-duration-fast) var(--hts-ease),
+        color var(--hts-duration-fast) var(--hts-ease);
+}
+
+.header-toggle:hover {
+    border-color: var(--hts-border-brand);
+    color: var(--hts-purple-300);
+}
+
+/* ── Tablet and below: collapse into a drop-down panel ─────────────────── */
+
+@media (max-width: 960px) {
+    .header-toggle {
+        display: grid;
+    }
+
+    .header-panel {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        left: 0;
+        display: grid;
+        gap: var(--hts-space-5);
+        padding: var(--hts-space-5) var(--hts-gutter) var(--hts-space-8);
+        border-top: 1px solid var(--hts-border);
+        border-bottom: 1px solid var(--hts-border);
+        background: var(--hts-surface-frost);
+        backdrop-filter: saturate(160%) blur(20px);
+        -webkit-backdrop-filter: saturate(160%) blur(20px);
+        box-shadow: var(--hts-shadow-lg);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition:
+            opacity var(--hts-duration-base) var(--hts-ease-out),
+            transform var(--hts-duration-base) var(--hts-ease-out),
+            visibility var(--hts-duration-base) linear;
+    }
+
+    .header-panel.is-open {
+        opacity: 1;
+        visibility: visible;
+        transform: none;
+    }
+
+    .header-nav ul {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 2px;
+    }
+
+    .header-nav a {
+        padding: 0.85rem 1rem;
+        border-radius: var(--hts-radius-md);
+        color: var(--hts-ink);
+        font-size: var(--hts-text-lg);
+        font-weight: 560;
+    }
+
+    .header-nav a:hover {
+        background: var(--hts-surface-raised);
+    }
+
+    .header-nav a::after {
+        display: none;
+    }
+
+    .header-actions {
+        padding-top: var(--hts-space-4);
+        border-top: 1px solid var(--hts-border);
+    }
+
+    .header-actions ::deep .cta {
+        width: 100%;
+    }
+}

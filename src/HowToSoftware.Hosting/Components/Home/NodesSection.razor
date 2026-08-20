@@ -1,0 +1,94 @@
+@*
+    Hardware presented as abstract node panels wired into the provisioning bus, rather than
+    stock server-rack photography. Load bars are the only decoration.
+*@
+
+@inject IMarketingContentService Content
+
+<section class="nodes" id="nodes" aria-labelledby="nodes-heading">
+    <div class="hts-container hts-container--wide">
+        <header class="nodes-head" data-reveal="rise">
+            <p class="nodes-kicker">
+                <span class="kicker-index">05</span>
+                HARDWARE
+            </p>
+            <h2 id="nodes-heading" class="nodes-title">
+                Worlds land on <span class="nodes-accent">real metal.</span>
+            </h2>
+            <p class="nodes-lede">
+                Instances are placed on nodes with headroom to spare, and your allocation is
+                reserved before a single file is written.
+            </p>
+        </header>
+
+        <div class="bus" aria-hidden="true">
+            <span class="bus-line"></span>
+            <span class="bus-label">PROVISIONING BUS</span>
+            <span class="bus-line"></span>
+        </div>
+
+        <ul class="node-grid">
+            @foreach (var (node, index) in Content.Nodes.Select((n, i) => (n, i)))
+            {
+                <li class="node-panel @HealthClass(node.Health)" data-reveal
+                    style="--hts-reveal-delay: @(index * 90)ms">
+                    <span class="node-drop" aria-hidden="true"></span>
+
+                    <header class="node-top">
+                        <span class="node-id">@node.Id</span>
+                        <span class="node-health">
+                            <span class="health-dot"></span>
+                            @HealthLabel(node.Health)
+                        </span>
+                    </header>
+
+                    <p class="node-region">@node.Region</p>
+
+                    <dl class="node-specs">
+                        @foreach (var spec in node.Specs)
+                        {
+                            <div>
+                                <dt>@spec.Label</dt>
+                                <dd>@spec.Value</dd>
+                            </div>
+                        }
+                    </dl>
+
+                    <div class="node-load">
+                        <div class="load-head">
+                            <span>ALLOCATION</span>
+                            <span class="load-value">@node.LoadPercent%</span>
+                        </div>
+                        <div class="load-track">
+                            <span class="load-fill" style="--target: @(node.LoadPercent)%"></span>
+                        </div>
+                        <p class="load-note">
+                            @(node.Worlds > 0 ? $"{node.Worlds} worlds placed" : "Awaiting first placement")
+                        </p>
+                    </div>
+                </li>
+            }
+        </ul>
+
+        <p class="nodes-note">
+            Node specifications describe the intended platform. Exact hardware is confirmed as
+            capacity is commissioned.
+        </p>
+    </div>
+</section>
+
+@code {
+    private static string HealthClass(NodeHealth health) => health switch
+    {
+        NodeHealth.Healthy => "is-healthy",
+        NodeHealth.Provisioning => "is-provisioning",
+        _ => "is-reserved"
+    };
+
+    private static string HealthLabel(NodeHealth health) => health switch
+    {
+        NodeHealth.Healthy => "HEALTHY",
+        NodeHealth.Provisioning => "PROVISIONING",
+        _ => "RESERVED"
+    };
+}

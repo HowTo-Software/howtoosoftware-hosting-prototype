@@ -1,0 +1,42 @@
+@*
+    Feature content without feature cards.
+
+    Numbered editorial blocks that alternate side, each pairing an oversized statement with a
+    terse technical readout. No icons, no repeated rectangles.
+*@
+
+@inject IMarketingContentService Content
+
+<section class="caps" id="capabilities" aria-labelledby="caps-heading">
+    <div class="hts-container hts-container--wide">
+        <h2 id="caps-heading" class="visually-hidden">What the platform does</h2>
+
+        <ul class="cap-list">
+            @foreach (var (item, index) in Content.Capabilities.Select((c, i) => (c, i)))
+            {
+                <li class="cap @(index % 2 == 1 ? "is-flipped" : null)" data-reveal>
+                    <div class="cap-index" aria-hidden="true">
+                        <span class="cap-number">@item.Index</span>
+                        <span class="cap-rule"></span>
+                        <span class="cap-kicker">@item.Kicker</span>
+                    </div>
+
+                    <div class="cap-body">
+                        <h3 class="cap-headline">@item.Headline</h3>
+                        <p class="cap-copy">@item.Body</p>
+                    </div>
+
+                    <dl class="cap-readout">
+                        @foreach (var line in item.Readout)
+                        {
+                            <div>
+                                <dt>@line.Label</dt>
+                                <dd>@line.Value</dd>
+                            </div>
+                        }
+                    </dl>
+                </li>
+            }
+        </ul>
+    </div>
+</section>

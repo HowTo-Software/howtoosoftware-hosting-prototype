@@ -1,0 +1,20 @@
+.hts-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    flex: none;
+}
+
+.hts-icon.is-sm {
+    width: 1rem;
+    height: 1rem;
+}
+
+.hts-icon.is-lg {
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+.hts-icon.is-xl {
+    width: 1.75rem;
+    height: 1.75rem;
+}

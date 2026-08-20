@@ -1,0 +1,122 @@
+.strip {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+    border-block: 1px solid var(--hts-border);
+    background: var(--hts-navy-900);
+    overflow: hidden;
+}
+
+/* Solid purple cap anchors the rail and puts brand colour on a hard edge. */
+.strip-cap {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: none;
+    padding-inline: clamp(1rem, 3vw, 2rem);
+    background: var(--hts-purple-600);
+    color: var(--hts-white);
+    font-family: var(--hts-font-mono);
+    font-size: 0.625rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
+    z-index: var(--hts-z-content);
+}
+
+.cap-dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: var(--hts-white);
+    animation: cap-blink 1.8s var(--hts-ease) infinite;
+}
+
+@keyframes cap-blink {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
+}
+
+.strip-viewport {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    mask-image: linear-gradient(90deg, transparent, #000 4rem, #000 calc(100% - 4rem), transparent);
+}
+
+.strip-rail {
+    display: flex;
+    width: max-content;
+    animation: strip-scroll 46s linear infinite;
+}
+
+.strip:hover .strip-rail {
+    animation-play-state: paused;
+}
+
+@keyframes strip-scroll {
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+.strip-set {
+    display: flex;
+    align-items: center;
+    flex: none;
+}
+
+.signal {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    padding: 0.95rem clamp(1.25rem, 3vw, 2.25rem);
+    border-right: 1px solid var(--hts-border);
+    font-family: var(--hts-font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.16em;
+    white-space: nowrap;
+}
+
+.signal-label {
+    color: var(--hts-ink-muted);
+}
+
+.signal-value {
+    color: var(--hts-ink);
+    font-weight: 600;
+}
+
+.tone-data .signal-value {
+    color: var(--hts-blue-300);
+}
+
+.tone-routing .signal-value {
+    color: var(--hts-purple-300);
+}
+
+.signal-pulse {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: var(--hts-blue-300);
+    box-shadow: 0 0 8px 1px rgba(131, 168, 243, 0.85);
+    animation: cap-blink 2.4s var(--hts-ease) infinite;
+}
+
+@media (max-width: 720px) {
+    .strip-cap {
+        font-size: 0.5625rem;
+        letter-spacing: 0.14em;
+    }
+
+    .signal {
+        font-size: 0.5625rem;
+        padding-block: 0.8rem;
+    }
+}

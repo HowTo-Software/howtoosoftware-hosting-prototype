@@ -1,0 +1,200 @@
+@*
+    Project Zomboid plan catalogue.
+
+    All figures are placeholder test data - see StaticPlanCatalogService. The billing switch
+    and the promotional-code field are real Blazor state so the mechanic can be reviewed; the
+    coupon check runs locally and grants nothing.
+*@
+
+@rendermode InteractiveServer
+@inject IPlanCatalogService Catalog
+
+<section class="plans" id="plans" aria-labelledby="plans-heading">
+    <div class="hts-container hts-container--wide">
+        <header class="plans-head" data-reveal>
+            <div class="plans-intro">
+                <p class="plans-kicker">
+                    <span class="kicker-index">06</span>
+                    PLANS
+                </p>
+                <h2 id="plans-heading" class="plans-title">
+                    Pick a world size,<br />
+                    <span class="plans-accent">not a support tier.</span>
+                </h2>
+                <p class="plans-lede">
+                    Every plan gets the same platform: Workshop sync, backups, full console and
+                    automated deployment. The only thing that changes is how much world you are
+                    running.
+                </p>
+            </div>
+
+            <aside class="plans-flag" role="note">
+                <span class="flag-tag">TEST DATA</span>
+                <p>
+                    This catalogue exists to review the interface. Prices, discounts and
+                    promotional codes are placeholders, nothing here is a commercial offer, and
+                    no checkout is connected.
+                </p>
+            </aside>
+        </header>
+
+        <div class="plans-controls" data-reveal>
+            <div class="switch" role="group" aria-label="Billing period">
+                @foreach (var option in Catalog.BillingOptions)
+                {
+                    <button type="button"
+                            class="switch-item @(option.Period == _period ? "is-active" : null)"
+                            aria-pressed="@((option.Period == _period).ToString().ToLowerInvariant())"
+                            @onclick="() => _period = option.Period">
+                        @option.Label
+                        @if (option.DiscountPercent > 0)
+                        {
+                            <span class="switch-save">-@option.DiscountPercent%</span>
+                        }
+                    </button>
+                }
+            </div>
+
+            <div class="coupon">
+                <label class="coupon-label" for="coupon-code">PROMOTIONAL CODE</label>
+                <div class="coupon-row">
+                    <input id="coupon-code"
+                           class="coupon-input @(_coupon.Status == CouponStatus.Rejected ? "is-bad" : null) @(_coupon.IsApplied ? "is-good" : null)"
+                           type="text"
+                           autocomplete="off"
+                           spellcheck="false"
+                           placeholder="TRY SURVIVOR10"
+                           aria-describedby="coupon-result"
+                           value="@_code"
+                           @oninput="OnCodeInput"
+                           @onkeydown="OnCodeKeyDown" />
+
+                    @if (_coupon.IsApplied)
+                    {
+                        <button type="button" class="coupon-btn coupon-btn--clear" @onclick="Clear">Remove</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="coupon-btn" @onclick="Apply">Apply</button>
+                    }
+                </div>
+
+                <p id="coupon-result"
+                   class="coupon-result @(_coupon.Status == CouponStatus.Rejected ? "is-bad" : null) @(_coupon.IsApplied ? "is-good" : null)"
+                   aria-live="polite">
+                    @(_coupon.Message.Length > 0 ? _coupon.Message : "Demo codes only. Nothing is charged.")
+                </p>
+            </div>
+        </div>
+
+        <ul class="plan-grid">
+            @foreach (var (plan, index) in Catalog.Plans.Select((p, i) => (p, i)))
+            {
+                var monthly = Catalog.GetMonthlyRate(plan, _period, _coupon);
+                var cycle = Catalog.GetCycleTotal(plan, _period, _coupon);
+                var option = Catalog.GetOption(_period);
+                var discounted = monthly < plan.MonthlyPrice;
+
+                <li class="plan @(plan.IsRecommended ? "is-featured" : null)" data-reveal
+                    style="--hts-reveal-delay: @(index * 80)ms">
+
+                    @if (plan.IsRecommended)
+                    {
+                        <span class="plan-flag">MOST CHOSEN</span>
+                    }
+
+                    <header class="plan-top">
+                        <h3 class="plan-name">@plan.Name</h3>
+                        <p class="plan-tagline">@plan.Tagline</p>
+                    </header>
+
+                    <div class="plan-price">
+                        @if (discounted)
+                        {
+                            <span class="price-was">@Catalog.CurrencySymbol@plan.MonthlyPrice.ToString("0.00", Culture)</span>
+                        }
+                        <span class="price-now">
+                            <span class="price-symbol">@Catalog.CurrencySymbol</span>@monthly.ToString("0.00", Culture)
+                        </span>
+                        <span class="price-unit">/ MONTH</span>
+                    </div>
+
+                    <p class="plan-cycle">
+                        @if (option.Months > 1)
+                        {
+                            @($"{Catalog.CurrencySymbol}{cycle.ToString("0.00", Culture)} billed every {option.Months} months")
+                        }
+                        else
+                        {
+                            @("Billed monthly")
+                        }
+                    </p>
+
+                    <div class="plan-slots">
+                        <span class="slots-value">@plan.PlayerSlots</span>
+                        <span class="slots-key">PLAYER SLOTS</span>
+                    </div>
+
+                    <dl class="plan-specs">
+                        @foreach (var spec in plan.Specs)
+                        {
+                            <div>
+                                <dt>@spec.Label</dt>
+                                <dd>@spec.Value</dd>
+                            </div>
+                        }
+                    </dl>
+
+                    <ul class="plan-includes">
+                        @foreach (var include in plan.Includes)
+                        {
+                            <li><span class="include-mark"></span>@include</li>
+                        }
+                    </ul>
+
+                    <CtaButton Href="#contact"
+                               Variant="@(plan.IsRecommended ? CtaVariant.Primary : CtaVariant.Secondary)"
+                               CssClass="plan-cta">
+                        Deploy @plan.Name
+                    </CtaButton>
+                </li>
+            }
+        </ul>
+    </div>
+</section>
+
+@code {
+    private static readonly System.Globalization.CultureInfo Culture =
+        System.Globalization.CultureInfo.InvariantCulture;
+
+    private BillingPeriod _period = BillingPeriod.Monthly;
+    private string _code = string.Empty;
+    private CouponResult _coupon = CouponResult.None;
+
+    private void OnCodeInput(ChangeEventArgs args)
+    {
+        _code = args.Value?.ToString() ?? string.Empty;
+
+        // Editing after a decision clears it, so the panel never shows a stale verdict.
+        if (_coupon.Status is not CouponStatus.None)
+        {
+            _coupon = CouponResult.None;
+        }
+    }
+
+    private void OnCodeKeyDown(KeyboardEventArgs args)
+    {
+        if (args.Key is "Enter")
+        {
+            Apply();
+        }
+    }
+
+    private void Apply() => _coupon = Catalog.CheckCoupon(_code);
+
+    private void Clear()
+    {
+        _code = string.Empty;
+        _coupon = CouponResult.None;
+    }
+}

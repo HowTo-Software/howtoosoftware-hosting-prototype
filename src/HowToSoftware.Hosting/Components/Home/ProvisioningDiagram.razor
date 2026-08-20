@@ -1,0 +1,61 @@
+@*
+    Deployment topology that evolves as the visitor scrolls the provisioning stages.
+
+    Node and link states are computed in C# from the active stage index - the SVG is a pure
+    projection of Blazor state, so the diagram and the text can never disagree.
+
+    Boxes are data rather than repeated markup, which also keeps the SVG <text> elements in a
+    plain markup context: inside a Razor code block, `<text>` is Razor's own construct and
+    cannot carry attributes.
+*@
+
+<svg class="topology" viewBox="0 0 420 540" fill="none" role="img"
+     aria-label="@Description" xmlns="http://www.w3.org/2000/svg">
+    <g class="links">
+        <path class="@LinkClass(0)" d="M210 62 V108" />
+        <path class="@LinkClass(1)" d="M210 152 V198" />
+        <path class="@LinkClass(2)" d="M210 242 V272 H106 V298" />
+        <path class="@LinkClass(2)" d="M210 242 V272 H314 V298" />
+        <path class="@LinkClass(3)" d="M314 342 V388" />
+        <path class="@LinkClass(4)" d="M314 432 V468" />
+    </g>
+
+    @foreach (var box in Boxes)
+    {
+        <g class="node @StateFor(box.Stage)">
+            <rect x="@box.X" y="@box.Y" width="@box.W" height="@box.H" rx="6" />
+            <text class="node-title" x="@(box.X + 14)" y="@(box.Y + 20)">@box.Title</text>
+            <text class="node-caption" x="@(box.X + 14)" y="@(box.Y + 34)">@box.Caption</text>
+        </g>
+    }
+</svg>
+
+@code {
+    private sealed record TopologyBox(int Stage, int X, int Y, int W, int H, string Title, string Caption);
+
+    private static readonly TopologyBox[] Boxes =
+    [
+        new(0, 110, 20, 200, 42, "CUSTOMER", "order placed"),
+        new(1, 110, 110, 200, 42, "HTS SOFTWARE", "validates + routes"),
+        new(2, 110, 200, 200, 42, "PROVISIONER", "reserves capacity"),
+        new(2, 26, 300, 160, 42, "NODE 01", "62% allocated"),
+        new(2, 234, 300, 160, 42, "NODE 02", "41% allocated"),
+        new(3, 234, 390, 160, 42, "GAME PANEL", "builds instance"),
+        new(4, 234, 468, 160, 46, "ZOMBOID WORLD", "online")
+    ];
+
+    /// <summary>Index of the stage currently in view, zero-based.</summary>
+    [Parameter]
+    public int ActiveIndex { get; set; }
+
+    private static string Description =>
+        "Deployment topology from customer order through the provisioner and a node to the running Project Zomboid world.";
+
+    /// <summary>State of an element that belongs to <paramref name="stageIndex"/>.</summary>
+    private string StateFor(int stageIndex) =>
+        ActiveIndex > stageIndex ? "is-done"
+        : ActiveIndex == stageIndex ? "is-live"
+        : "is-idle";
+
+    private string LinkClass(int stageIndex) => $"link {StateFor(stageIndex)}";
+}

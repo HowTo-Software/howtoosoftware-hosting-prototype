@@ -1,0 +1,71 @@
+@*
+    Dark / light switch.
+
+    The choice lives in localStorage and is applied to <html data-theme> by a tiny inline
+    script in App.razor before first paint - a Blazor component cannot run early enough to
+    prevent a flash of the wrong theme. This component owns the button, its state and its
+    accessible name; JavaScript only reads and writes the attribute.
+*@
+
+@rendermode InteractiveServer
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+
+<button type="button"
+        class="theme-toggle"
+        role="switch"
+        aria-checked="@(_isLight ? "true" : "false")"
+        aria-label="@Label"
+        title="@Label"
+        @onclick="ToggleAsync">
+    <span class="toggle-track" aria-hidden="true">
+        <span class="toggle-knob"></span>
+    </span>
+    <span class="toggle-label" aria-hidden="true">@(_isLight ? "LIGHT" : "DARK")</span>
+</button>
+
+@code {
+    private bool _isLight;
+
+    private string Label => _isLight ? "Switch to dark theme" : "Switch to light theme";
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        try
+        {
+            // Sync with whatever the pre-paint script already applied.
+            var current = await JS.InvokeAsync<bool>("htsTheme.isLight");
+
+            if (current != _isLight)
+            {
+                _isLight = current;
+                StateHasChanged();
+            }
+        }
+        catch (JSException)
+        {
+            // Script unavailable; the button stays on the dark default.
+        }
+    }
+
+    private async Task ToggleAsync()
+    {
+        _isLight = !_isLight;
+
+        try
+        {
+            await JS.InvokeVoidAsync("htsTheme.set", _isLight ? "light" : "dark");
+        }
+        catch (JSException)
+        {
+            _isLight = !_isLight;
+        }
+    }
+
+    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+}

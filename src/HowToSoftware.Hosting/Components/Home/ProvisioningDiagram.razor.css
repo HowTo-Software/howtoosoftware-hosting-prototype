@@ -1,0 +1,86 @@
+.topology {
+    width: 100%;
+    max-width: 26rem;
+    height: auto;
+}
+
+/* ── Links ─────────────────────────────────────────────────────────────── */
+
+.link {
+    stroke-width: 1.5;
+    fill: none;
+    transition: stroke var(--hts-duration-slow) var(--hts-ease);
+}
+
+.link.is-idle {
+    stroke: var(--hts-rule);
+}
+
+/* Completed routes stay lit in light blue: data has already flowed through. */
+.link.is-done {
+    stroke: rgba(131, 168, 243, 0.55);
+}
+
+/* The live route is purple and carries a travelling packet. */
+.link.is-live {
+    stroke: var(--hts-purple-400);
+    stroke-dasharray: 18 220;
+    stroke-dashoffset: 238;
+    animation: link-travel 1.9s linear infinite;
+}
+
+@keyframes link-travel {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* ── Nodes ─────────────────────────────────────────────────────────────── */
+
+.node rect {
+    fill: var(--hts-navy-800);
+    stroke: var(--hts-rule);
+    stroke-width: 1;
+    transition:
+        fill var(--hts-duration-slow) var(--hts-ease),
+        stroke var(--hts-duration-slow) var(--hts-ease);
+}
+
+.node-title {
+    fill: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    transition: fill var(--hts-duration-slow) var(--hts-ease);
+}
+
+.node-caption {
+    fill: rgba(136, 145, 181, 0.7);
+    font-family: var(--hts-font-mono);
+    font-size: 9px;
+    letter-spacing: 0.1em;
+}
+
+.node.is-done rect {
+    fill: rgba(131, 168, 243, 0.10);
+    stroke: rgba(131, 168, 243, 0.45);
+}
+
+.node.is-done .node-title {
+    fill: var(--hts-blue-300);
+}
+
+/* The stage being read: solid purple block, white type. */
+.node.is-live rect {
+    fill: var(--hts-purple-600);
+    stroke: var(--hts-purple-400);
+}
+
+.node.is-live .node-title {
+    fill: var(--hts-white);
+}
+
+.node.is-live .node-caption {
+    fill: rgba(255, 255, 255, 0.75);
+}

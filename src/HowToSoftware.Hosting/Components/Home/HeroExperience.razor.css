@@ -1,0 +1,229 @@
+.hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 88vh;
+    padding-block: calc(var(--hts-header-height) + 2rem) 0;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.hero-inner {
+    position: relative;
+    z-index: var(--hts-z-content);
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    align-items: center;
+    gap: clamp(2.5rem, 6vw, 5.5rem);
+    flex: 1;
+    align-content: center;
+    padding-block: clamp(2rem, 5vw, 4rem);
+}
+
+/* ── Typography layer ──────────────────────────────────────────────────── */
+
+.hero-kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: var(--hts-space-6);
+    color: var(--hts-blue-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+}
+
+.kicker-rule {
+    width: 2.5rem;
+    height: 1px;
+    background: linear-gradient(90deg, var(--hts-purple-400), var(--hts-blue-400));
+}
+
+.hero-title {
+    font-size: clamp(2.9rem, 1.4rem + 5.6vw, 5.6rem);
+    font-weight: 680;
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+    text-wrap: nowrap;
+}
+
+.title-line {
+    display: block;
+}
+
+/* Second line is the brand beat: solid purple, offset into the field. */
+.title-line--accent {
+    margin-left: clamp(0rem, 4vw, 3.5rem);
+    color: var(--hts-purple-400);
+}
+
+.hero-copy {
+    max-width: 33rem;
+    margin-top: var(--hts-space-6);
+    color: var(--hts-ink-soft);
+    font-size: clamp(1rem, 0.95rem + 0.3vw, 1.125rem);
+    line-height: var(--hts-leading-relaxed);
+}
+
+.hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--hts-space-4);
+    margin-top: var(--hts-space-8);
+}
+
+/* ── Product layer ─────────────────────────────────────────────────────── */
+
+.hero-product {
+    position: relative;
+    min-width: 0;
+}
+
+/* ── Foot rail ─────────────────────────────────────────────────────────── */
+
+.hero-foot {
+    position: relative;
+    z-index: var(--hts-z-content);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--hts-space-4);
+    padding-block: var(--hts-space-5);
+    border-top: 1px solid var(--hts-border);
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.18em;
+}
+
+.foot-scroll {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: var(--hts-blue-400);
+}
+
+.foot-scroll-track {
+    position: relative;
+    width: 1px;
+    height: 1.6rem;
+    background: rgba(131, 168, 243, 0.28);
+    overflow: hidden;
+}
+
+.foot-scroll-dot {
+    position: absolute;
+    top: -50%;
+    left: -1px;
+    width: 3px;
+    height: 50%;
+    background: var(--hts-blue-300);
+    box-shadow: 0 0 8px 1px rgba(131, 168, 243, 0.9);
+    animation: foot-scroll 2.4s var(--hts-ease) infinite;
+}
+
+@keyframes foot-scroll {
+    to {
+        top: 110%;
+    }
+}
+
+/* ── Page-load stagger ─────────────────────────────────────────────────── */
+
+/* Each element rises into place on load. Ordered: kicker, headline lines, copy,
+   actions, product cluster. The global reduced-motion rule collapses all of it. */
+.hero-kicker,
+.title-line,
+.hero-copy,
+.hero-actions,
+.hero-product,
+.hero-foot {
+    animation: hero-rise 760ms var(--hts-ease-out) both;
+}
+
+.hero-kicker {
+    animation-delay: 60ms;
+}
+
+.title-line:nth-child(1) {
+    animation-delay: 160ms;
+}
+
+.title-line:nth-child(2) {
+    animation-delay: 240ms;
+}
+
+.title-line:nth-child(3) {
+    animation-delay: 320ms;
+}
+
+.hero-copy {
+    animation-delay: 440ms;
+}
+
+.hero-actions {
+    animation-delay: 540ms;
+}
+
+.hero-product {
+    animation-delay: 620ms;
+}
+
+.hero-foot {
+    animation-delay: 760ms;
+}
+
+@keyframes hero-rise {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 22px, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+
+@media (max-width: 1080px) {
+    .hero {
+        min-height: auto;
+        padding-bottom: var(--hts-space-8);
+    }
+
+    .hero-inner {
+        grid-template-columns: minmax(0, 1fr);
+        gap: clamp(2.5rem, 8vw, 4rem);
+    }
+
+    .hero-title {
+        text-wrap: balance;
+    }
+
+    .title-line--accent {
+        margin-left: 0;
+    }
+}
+
+@media (max-width: 720px) {
+    .hero-foot {
+        font-size: 0.5625rem;
+        letter-spacing: 0.12em;
+    }
+
+    /* Allocation readout is the least useful thing on a phone. */
+    .foot-alloc {
+        display: none;
+    }
+}
+
+@media (max-width: 560px) {
+    .hero-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

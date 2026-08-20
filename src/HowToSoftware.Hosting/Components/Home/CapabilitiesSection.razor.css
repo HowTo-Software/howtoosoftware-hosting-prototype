@@ -1,0 +1,179 @@
+.caps {
+    position: relative;
+    padding-block: clamp(4rem, 8vw, 8rem);
+    background: var(--hts-navy-900);
+    border-block: 1px solid var(--hts-border);
+}
+
+.cap-list {
+    display: grid;
+}
+
+.cap {
+    display: grid;
+    grid-template-columns: 9rem minmax(0, 1fr) 12rem;
+    align-items: start;
+    gap: clamp(1.5rem, 4vw, 4rem);
+    padding-block: clamp(2.5rem, 5vw, 4.5rem);
+    border-bottom: 1px solid var(--hts-border);
+}
+
+.cap:last-child {
+    border-bottom: none;
+}
+
+/* Alternating composition so the rhythm never settles into a template. */
+.cap.is-flipped {
+    grid-template-columns: 12rem minmax(0, 1fr) 9rem;
+}
+
+.cap.is-flipped .cap-index {
+    order: 3;
+    align-items: flex-end;
+    text-align: right;
+}
+
+.cap.is-flipped .cap-readout {
+    order: 1;
+}
+
+.cap.is-flipped .cap-body {
+    order: 2;
+}
+
+/* ── Index column ──────────────────────────────────────────────────────── */
+
+.cap-index {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--hts-space-3);
+}
+
+.cap-number {
+    color: var(--hts-purple-400);
+    font-family: var(--hts-font-mono);
+    font-size: clamp(2rem, 1.4rem + 1.8vw, 3rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.04em;
+}
+
+.cap-rule {
+    width: 2.5rem;
+    height: 1px;
+    background: linear-gradient(90deg, var(--hts-purple-400), transparent);
+}
+
+.cap.is-flipped .cap-rule {
+    background: linear-gradient(270deg, var(--hts-blue-400), transparent);
+}
+
+.cap.is-flipped .cap-number {
+    color: var(--hts-blue-400);
+}
+
+.cap-kicker {
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.22em;
+}
+
+/* ── Body ──────────────────────────────────────────────────────────────── */
+
+.cap-headline {
+    font-size: clamp(1.9rem, 1.2rem + 2.4vw, 3rem);
+    font-weight: 660;
+    line-height: 1.04;
+    letter-spacing: -0.032em;
+    text-wrap: balance;
+}
+
+.cap-copy {
+    max-width: 38rem;
+    margin-top: var(--hts-space-4);
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-lg);
+    line-height: var(--hts-leading-relaxed);
+}
+
+/* ── Readout ───────────────────────────────────────────────────────────── */
+
+.cap-readout {
+    display: grid;
+    gap: var(--hts-space-4);
+    padding-left: var(--hts-space-5);
+    border-left: 1px solid var(--hts-border);
+}
+
+.cap.is-flipped .cap-readout {
+    padding-left: 0;
+    padding-right: var(--hts-space-5);
+    border-left: none;
+    border-right: 1px solid var(--hts-border);
+    text-align: right;
+}
+
+.cap-readout dt {
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.2em;
+}
+
+.cap-readout dd {
+    margin-top: 0.3rem;
+    color: var(--hts-blue-300);
+    font-family: var(--hts-font-mono);
+    font-size: var(--hts-text-sm);
+    letter-spacing: 0.06em;
+}
+
+.cap.is-flipped .cap-readout dd {
+    color: var(--hts-purple-300);
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+
+@media (max-width: 1000px) {
+    .cap,
+    .cap.is-flipped {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--hts-space-5);
+    }
+
+    .cap.is-flipped .cap-index {
+        order: 0;
+        align-items: flex-start;
+        text-align: left;
+    }
+
+    .cap.is-flipped .cap-body {
+        order: 0;
+    }
+
+    .cap.is-flipped .cap-readout {
+        order: 0;
+        padding-right: 0;
+        padding-left: var(--hts-space-5);
+        border-right: none;
+        border-left: 1px solid var(--hts-border);
+        text-align: left;
+    }
+
+    .cap-index {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .cap-number {
+        font-size: 1.75rem;
+    }
+
+    .cap-readout {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--hts-space-6);
+    }
+}

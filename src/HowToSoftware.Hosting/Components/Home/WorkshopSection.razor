@@ -1,0 +1,95 @@
+@*
+    Mod section, presented as a synchronisation interface rather than an icon and a paragraph.
+
+    Progress bars fill from zero when the panel scrolls into view: the reveal observer adds
+    `is-revealed`, and the fill animation is scoped to that class so it plays once, at the
+    moment the panel is actually on screen.
+*@
+
+@inject IMarketingContentService Content
+
+<section class="workshop" id="workshop" aria-labelledby="workshop-heading">
+    <div class="hts-container hts-container--wide workshop-inner">
+        <div class="workshop-copy" data-reveal="left">
+            <p class="workshop-kicker">
+                <span class="kicker-index">02</span>
+                WORKSHOP
+            </p>
+
+            <h2 id="workshop-heading" class="workshop-title">
+                82 mods?<br />
+                <span class="workshop-accent">Good.</span>
+            </h2>
+
+            <p class="workshop-body">
+                A large Workshop collection should not turn server setup into a second job.
+                Paste a collection, and the platform resolves every item, writes the mod and
+                Workshop identifier lists in the right order, and keeps them in step whenever
+                you add, remove or reorder something.
+            </p>
+
+            <ul class="workshop-points">
+                <li><span class="point-mark"></span>Collections resolved to item lists automatically</li>
+                <li><span class="point-mark"></span>Load order editable without touching config files</li>
+                <li><span class="point-mark"></span>Updates staged, then applied on your next restart</li>
+            </ul>
+        </div>
+
+        <div class="workshop-panel" data-reveal="right">
+            <header class="panel-bar">
+                <div class="panel-bar-id">
+                    <span class="bar-key">WORKSHOP COLLECTION</span>
+                    <span class="bar-value">3021845517</span>
+                </div>
+                <span class="panel-bar-count">
+                    <span class="count-value">82 / 82</span>
+                    <span class="bar-key">MODS READY</span>
+                </span>
+            </header>
+
+            <ul class="mod-list">
+                @foreach (var (item, index) in Content.WorkshopItems.Select((m, i) => (m, i)))
+                {
+                    <li class="mod @StateClass(item.State)" style="--i: @index">
+                        <div class="mod-head">
+                            <span class="mod-name">@item.Name</span>
+                            <span class="mod-state">@StateLabel(item.State)</span>
+                        </div>
+
+                        <div class="mod-track">
+                            <span class="mod-fill" style="--target: @(item.Progress)%"></span>
+                        </div>
+
+                        <div class="mod-meta">
+                            <span>@item.WorkshopId</span>
+                            <span>@item.SizeLabel</span>
+                        </div>
+                    </li>
+                }
+            </ul>
+
+            <footer class="panel-foot">
+                <span class="foot-dot"></span>
+                <span>MOD LOAD ORDER VERIFIED</span>
+                <span class="foot-spacer"></span>
+                <span class="foot-time">LAST SYNC 42 MIN AGO</span>
+            </footer>
+        </div>
+    </div>
+</section>
+
+@code {
+    private static string StateClass(ModSyncState state) => state switch
+    {
+        ModSyncState.Synced => "is-synced",
+        ModSyncState.Syncing => "is-syncing",
+        _ => "is-queued"
+    };
+
+    private static string StateLabel(ModSyncState state) => state switch
+    {
+        ModSyncState.Synced => "SYNCED",
+        ModSyncState.Syncing => "SYNCING",
+        _ => "QUEUED"
+    };
+}

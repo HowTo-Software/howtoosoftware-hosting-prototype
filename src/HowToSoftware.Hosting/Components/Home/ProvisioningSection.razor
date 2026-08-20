@@ -1,0 +1,135 @@
+@*
+    Provisioning story told as a sticky-scroll sequence.
+
+    The stage that is currently in view is Blazor state. JavaScript only reports which stage
+    crossed the middle of the viewport - an IntersectionObserver callback into
+    [JSInvokable] SetActiveStage - and every visual consequence is rendered from C#.
+*@
+
+@rendermode InteractiveServer
+@implements IAsyncDisposable
+@inject IMarketingContentService Content
+@inject IJSRuntime JS
+
+<section class="provision" id="provisioning" aria-labelledby="provisioning-heading">
+    <div class="hts-container hts-container--wide">
+        <header class="provision-head" data-reveal>
+            <p class="provision-kicker">
+                <span class="kicker-index">03</span>
+                PROVISIONING
+            </p>
+            <h2 id="provisioning-heading" class="provision-title">
+                From order to<br />
+                <span class="provision-accent">world online.</span>
+            </h2>
+            <p class="provision-lede">
+                Five stages, no hand-offs. Follow them down the page and watch the deployment
+                path build itself.
+            </p>
+        </header>
+
+        <div class="provision-body" @ref="_scope">
+            <ol class="stage-list">
+                @foreach (var (stage, index) in Content.ProvisioningStages.Select((s, i) => (s, i)))
+                {
+                    <li class="stage @(index == _activeIndex ? "is-live" : null) @(index < _activeIndex ? "is-done" : null)"
+                        data-stage-index="@index">
+                        <div class="stage-mark">
+                            <span class="stage-code">@stage.Code</span>
+                            <span class="stage-rail"></span>
+                        </div>
+                        <div class="stage-text">
+                            <h3>@stage.Title</h3>
+                            <p>@stage.Detail</p>
+                        </div>
+                    </li>
+                }
+            </ol>
+
+            <aside class="provision-figure">
+                <div class="figure-sticky">
+                    <div class="figure-head">
+                        <span class="figure-key">DEPLOYMENT PATH</span>
+                        <span class="figure-step">
+                            STAGE @Content.ProvisioningStages[_activeIndex].Code / 05
+                        </span>
+                    </div>
+
+                    <ProvisioningDiagram ActiveIndex="_activeIndex" />
+
+                    <p class="figure-note">
+                        Illustrative flow. Provisioning is not yet wired to live infrastructure.
+                    </p>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+@code {
+    private ElementReference _scope;
+    private DotNetObjectReference<ProvisioningSection>? _self;
+    private bool _observing;
+
+    private int _activeIndex;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender)
+        {
+            return;
+        }
+
+        _self = DotNetObjectReference.Create(this);
+
+        try
+        {
+            await JS.InvokeVoidAsync("htsProvisioning.observe", _scope, _self);
+            _observing = true;
+        }
+        catch (JSException)
+        {
+            // Progressive enhancement: without the observer every stage simply stays readable
+            // and the diagram rests on stage one.
+        }
+    }
+
+    /// <summary>
+    /// Called from the browser when a stage crosses the middle of the viewport.
+    /// </summary>
+    /// <param name="index">Zero-based index of the stage now in view.</param>
+    [JSInvokable]
+    public void SetActiveStage(int index)
+    {
+        var clamped = Math.Clamp(index, 0, Content.ProvisioningStages.Count - 1);
+
+        if (clamped == _activeIndex)
+        {
+            return;
+        }
+
+        _activeIndex = clamped;
+        StateHasChanged();
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_observing)
+        {
+            try
+            {
+                await JS.InvokeVoidAsync("htsProvisioning.dispose", _scope);
+            }
+            catch (JSException)
+            {
+                // The circuit or the element is already gone; nothing to clean up.
+            }
+            catch (InvalidOperationException)
+            {
+                // Disposal happened during prerendering, where JS interop is unavailable.
+            }
+        }
+
+        _self?.Dispose();
+    }
+}

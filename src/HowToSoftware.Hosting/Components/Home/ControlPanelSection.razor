@@ -1,0 +1,241 @@
+@*
+    Product reveal: the control panel at close to full page width.
+
+    Everything interactive here is Blazor state - the sidebar view, the power controls and the
+    transition the instance goes through. The staged reveal (frame, sidebar, metrics, console)
+    is CSS keyed off the `is-revealed` class the scroll observer adds, so the content is
+    immediately usable and never waits on an animation to finish.
+*@
+
+@rendermode InteractiveServer
+@implements IDisposable
+@inject IServerPreviewService Preview
+@inject IMarketingContentService Content
+
+<section class="cp" id="control-panel" aria-labelledby="control-panel-heading">
+    <div class="hts-container hts-container--wide cp-head" data-reveal>
+        <p class="cp-kicker">
+            <span class="kicker-index">04</span>
+            CONTROL PANEL
+        </p>
+        <h2 id="control-panel-heading" class="cp-title">
+            The whole server,<br />
+            <span class="cp-accent">one screen.</span>
+        </h2>
+        <p class="cp-lede">
+            Power, resources, console, mods and files in a single interface. Try it - the
+            controls below drive real component state on illustrative data.
+        </p>
+    </div>
+
+    <div class="cp-stage" data-reveal="scale">
+        <div class="app">
+            <div class="app-chrome">
+                <span class="chrome-dots"><i></i><i></i><i></i></span>
+                <span class="chrome-url">
+                    <span class="url-lock"></span>
+                    panel.howtoosoftware.com / knox-county-01
+                </span>
+                <span class="chrome-env">PREVIEW</span>
+            </div>
+
+            <div class="app-body">
+                <nav class="app-side" aria-label="Server sections">
+                    <p class="side-key">SERVER</p>
+                    <ul>
+                        @foreach (var view in Views)
+                        {
+                            <li>
+                                <button type="button"
+                                        class="side-item @(view == _view ? "is-active" : null)"
+                                        aria-current="@(view == _view ? "page" : null)"
+                                        @onclick="() => _view = view">
+                                    <span class="side-bar"></span>
+                                    @Label(view)
+                                </button>
+                            </li>
+                        }
+                    </ul>
+
+                    <div class="side-foot">
+                        <p class="side-key">NODE</p>
+                        <p class="side-node">EU WEST / 01</p>
+                    </div>
+                </nav>
+
+                <div class="app-main">
+                    @if (_snapshot is { } server)
+                    {
+                        <header class="main-bar">
+                            <div class="main-id">
+                                <h3>@server.Name</h3>
+                                <p>@server.Address</p>
+                            </div>
+
+                            <p class="main-state @StateClass(server.State)" aria-live="polite">
+                                <span class="state-dot"></span>
+                                @server.State.ToString().ToUpperInvariant()
+                            </p>
+
+                            <div class="main-actions" role="group" aria-label="Server power controls">
+                                <button type="button" class="act"
+                                        disabled="@(_busy || server.State is not ServerState.Offline)"
+                                        @onclick="() => SendAsync(ServerCommand.Start)">Start</button>
+                                <button type="button" class="act"
+                                        disabled="@(_busy || server.State is not ServerState.Online)"
+                                        @onclick="() => SendAsync(ServerCommand.Restart)">Restart</button>
+                                <button type="button" class="act"
+                                        disabled="@(_busy || server.State is not ServerState.Online)"
+                                        @onclick="() => SendAsync(ServerCommand.Stop)">Stop</button>
+                                <button type="button" class="act act--ghost" disabled>Backup</button>
+                            </div>
+                        </header>
+
+                        @switch (_view)
+                        {
+                            case PanelView.Overview:
+                                <div class="metrics">
+                                    @foreach (var (metric, index) in server.Metrics.Select((m, i) => (m, i)))
+                                    {
+                                        <article class="metric" style="--i: @index">
+                                            <p class="metric-key">@metric.Label</p>
+                                            <p class="metric-value">@metric.Display</p>
+                                            <div class="metric-track" role="meter"
+                                                 aria-label="@($"{metric.Label} usage")"
+                                                 aria-valuenow="@metric.Percent" aria-valuemin="0" aria-valuemax="100">
+                                                <span class="metric-fill" style="--target: @(metric.Percent)%"></span>
+                                            </div>
+                                            <p class="metric-note">@metric.Detail</p>
+                                        </article>
+                                    }
+                                </div>
+                                <ServerConsole Entries="server.Console" Compact="true" />
+                                break;
+
+                            case PanelView.Console:
+                                <ServerConsole Entries="server.Console" Compact="false" />
+                                break;
+
+                            case PanelView.Mods:
+                                <div class="mods">
+                                    <div class="mods-head">
+                                        <span>WORKSHOP COLLECTION 3021845517</span>
+                                        <span class="mods-count">82 / 82 READY</span>
+                                    </div>
+                                    <ul>
+                                        @foreach (var item in Content.WorkshopItems)
+                                        {
+                                            <li>
+                                                <span class="mods-name">@item.Name</span>
+                                                <span class="mods-id">@item.WorkshopId</span>
+                                                <span class="mods-size">@item.SizeLabel</span>
+                                                <span class="mods-state s-@item.State.ToString().ToLowerInvariant()">
+                                                    @item.State.ToString().ToUpperInvariant()
+                                                </span>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                                break;
+
+                            default:
+                                <div class="placeholder">
+                                    <p class="placeholder-key">@Label(_view).ToUpperInvariant()</p>
+                                    <p class="placeholder-copy">
+                                        This area is part of the planned panel and is not built in
+                                        the prototype yet.
+                                    </p>
+                                </div>
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        <p class="loading">Loading server state…</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <p class="cp-note">
+            Interface preview on mock data. No server is created, started or stopped.
+        </p>
+    </div>
+</section>
+
+@code {
+    private enum PanelView
+    {
+        Overview,
+        Console,
+        Mods,
+        Files,
+        Backups,
+        Network,
+        Settings
+    }
+
+    private const int MaxSettlePolls = 30;
+
+    private static readonly PanelView[] Views = Enum.GetValues<PanelView>();
+
+    private readonly CancellationTokenSource _cts = new();
+
+    private ServerSnapshot? _snapshot;
+    private PanelView _view = PanelView.Overview;
+    private bool _busy;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _snapshot = await Preview.GetSnapshotAsync(_cts.Token);
+    }
+
+    /// <summary>
+    /// Issues a power action, then polls until the instance settles - the same shape a real
+    /// panel client would use, because power actions are asynchronous on the server side.
+    /// </summary>
+    private async Task SendAsync(ServerCommand command)
+    {
+        if (_busy)
+        {
+            return;
+        }
+
+        _busy = true;
+
+        try
+        {
+            _snapshot = await Preview.SendCommandAsync(command, _cts.Token);
+
+            for (var poll = 0; poll < MaxSettlePolls && _snapshot.IsTransitioning; poll++)
+            {
+                StateHasChanged();
+                await Task.Delay(350, _cts.Token);
+                _snapshot = await Preview.GetSnapshotAsync(_cts.Token);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // The circuit went away while we were polling; nothing to report.
+        }
+        finally
+        {
+            _busy = false;
+        }
+    }
+
+    private static string Label(PanelView view) => view.ToString();
+
+    private static string StateClass(ServerState state) => state switch
+    {
+        ServerState.Online => "is-online",
+        ServerState.Offline => "is-offline",
+        _ => "is-busy"
+    };
+
+    public void Dispose()
+    {
+        _cts.Cancel();
+        _cts.Dispose();
+    }
+}

@@ -1,0 +1,69 @@
+@*
+    Accessible FAQ, composed as an asymmetric split rather than a centred stack.
+
+    Standard disclosure pattern: each question is a real <button> carrying aria-expanded and
+    aria-controls, and each answer is a labelled region. The collapsed panel stays in the DOM
+    so the open/close can animate, but `visibility: hidden` keeps it out of the accessibility
+    tree and the tab order while closed.
+*@
+
+@rendermode InteractiveServer
+@inject IMarketingContentService Content
+
+<section class="faq-section" id="faq" aria-labelledby="faq-heading">
+    <div class="hts-container hts-container--wide faq-inner">
+        <header class="faq-aside" data-reveal="left">
+            <p class="faq-kicker">
+                <span class="kicker-index">07</span>
+                FAQ
+            </p>
+            <h2 id="faq-heading" class="faq-title">
+                Before you<br />
+                <span class="faq-accent">commit a world.</span>
+            </h2>
+            <p class="faq-note">
+                Still deciding whether the platform fits your community? Start here, then talk
+                to us about anything this does not cover.
+            </p>
+            <CtaButton Href="#contact" Variant="CtaVariant.Secondary" TrailingIcon="IconName.ArrowRight">
+                Ask us directly
+            </CtaButton>
+        </header>
+
+        <div class="faq" data-reveal="right">
+            @foreach (var item in Content.Faqs)
+            {
+                var isOpen = _openId == item.Id;
+
+                <div class="faq-item @(isOpen ? "is-open" : null)">
+                    <h3 class="faq-heading">
+                        <button type="button"
+                                class="faq-question"
+                                id="@($"faq-q-{item.Id}")"
+                                aria-expanded="@isOpen.ToString().ToLowerInvariant()"
+                                aria-controls="@($"faq-a-{item.Id}")"
+                                @onclick="() => Toggle(item.Id)">
+                            <span class="faq-text">@item.Question</span>
+                            <span class="faq-sign" aria-hidden="true"></span>
+                        </button>
+                    </h3>
+
+                    <div class="faq-answer"
+                         id="@($"faq-a-{item.Id}")"
+                         role="region"
+                         aria-labelledby="@($"faq-q-{item.Id}")">
+                        <div class="faq-answer-inner">
+                            <p>@item.Answer</p>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private string? _openId;
+
+    private void Toggle(string id) => _openId = _openId == id ? null : id;
+}

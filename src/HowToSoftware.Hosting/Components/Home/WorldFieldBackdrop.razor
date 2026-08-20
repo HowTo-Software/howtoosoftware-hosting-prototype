@@ -1,0 +1,67 @@
+@*
+    Hero background layer: an abstract infrastructure field.
+
+    A coordinate grid with routed connections between the world, its node, the Workshop and
+    connected survivors. Each connection carries a travelling light pulse, drawn by animating
+    `stroke-dashoffset` on an overlaid path - so the motion is pure CSS and stops dead under
+    prefers-reduced-motion. Decorative only, hidden from assistive technology.
+*@
+
+<div class="field" aria-hidden="true">
+    <div class="field-grid"></div>
+
+    <svg class="field-svg" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice"
+         fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+            <linearGradient id="link-blue" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#83a8f3" stop-opacity="0" />
+                <stop offset="50%" stop-color="#83a8f3" stop-opacity="0.55" />
+                <stop offset="100%" stop-color="#83a8f3" stop-opacity="0" />
+            </linearGradient>
+            <linearGradient id="link-purple" x1="0" y1="0" x2="1" y2="0">
+                <stop offset="0%" stop-color="#b069ff" stop-opacity="0" />
+                <stop offset="50%" stop-color="#b069ff" stop-opacity="0.5" />
+                <stop offset="100%" stop-color="#b069ff" stop-opacity="0" />
+            </linearGradient>
+        </defs>
+
+        @* ── Routes: a faint base line plus a travelling pulse on top ────────── *@
+        <g class="routes">
+            <path class="route" d="M232 286 C 420 286, 520 430, 742 430" />
+            <path class="pulse pulse--a" d="M232 286 C 420 286, 520 430, 742 430" />
+
+            <path class="route" d="M742 430 C 940 430, 1000 214, 1156 214" />
+            <path class="pulse pulse--b" d="M742 430 C 940 430, 1000 214, 1156 214" />
+
+            <path class="route" d="M742 430 C 980 430, 1080 742, 1318 742" />
+            <path class="pulse pulse--c" d="M742 430 C 980 430, 1080 742, 1318 742" />
+
+            <path class="route route--purple" d="M540 742 C 660 742, 690 500, 742 430" />
+            <path class="pulse pulse--d" d="M540 742 C 660 742, 690 500, 742 430" />
+        </g>
+
+        @* ── Anchors ──────────────────────────────────────────────────────────── *@
+        <g class="anchors">
+            <circle class="anchor anchor--blue" cx="232" cy="286" r="4" />
+            <circle class="anchor anchor--purple anchor--hub" cx="742" cy="430" r="6" />
+            <circle class="anchor anchor--blue" cx="1156" cy="214" r="4" />
+            <circle class="anchor anchor--blue" cx="1318" cy="742" r="4" />
+            <circle class="anchor anchor--purple" cx="540" cy="742" r="4" />
+        </g>
+
+        @* ── Telemetry labels ─────────────────────────────────────────────────── *@
+        <g class="labels">
+            <text class="label label--blue" x="232" y="266">NODE 01</text>
+            <text class="label label--muted" x="232" y="308">EU WEST</text>
+
+            <text class="label label--white" x="768" y="424">WORLD</text>
+            <text class="label label--muted" x="768" y="446">CELL 38x27</text>
+
+            <text class="label label--blue" x="1156" y="194">SURVIVOR</text>
+            <text class="label label--blue" x="1244" y="722">SURVIVOR</text>
+            <text class="label label--purple" x="452" y="762">WORKSHOP</text>
+        </g>
+    </svg>
+
+    <div class="field-fade"></div>
+</div>

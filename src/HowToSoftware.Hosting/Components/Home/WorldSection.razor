@@ -1,0 +1,55 @@
+@*
+    Editorial world section.
+
+    Asymmetric split: oversized statement type on the left, a stylised Knox County coordinate
+    grid on the right. No cards, no icons - the grid itself carries the meaning.
+*@
+
+@inject IMarketingContentService Content
+
+<section class="world" id="world" aria-labelledby="world-heading">
+    <div class="hts-container hts-container--wide world-inner">
+        <div class="world-copy" data-reveal="left">
+            <p class="world-kicker">
+                <span class="kicker-index">01</span>
+                PERSISTENT WORLDS
+            </p>
+
+            <h2 id="world-heading" class="world-title">
+                Knox County<br />
+                keeps <span class="world-accent">running</span><br />
+                without you.
+            </h2>
+
+            <p class="world-body">
+                A Project Zomboid world is a long-lived simulation, not a match. Map state,
+                safehouses, vehicles and loot are written to storage that outlives restarts,
+                build changes and rebuilds of the instance underneath it.
+            </p>
+
+            <p class="world-body">
+                When you roll a mod back, your community does not roll back with it. Restore
+                points are taken on a schedule, and the world you return to is the world you left.
+            </p>
+
+            <dl class="world-readout">
+                <div>
+                    <dt>WORLD DATA</dt>
+                    <dd>Durable volume</dd>
+                </div>
+                <div>
+                    <dt>RESTORE POINTS</dt>
+                    <dd>Scheduled</dd>
+                </div>
+                <div>
+                    <dt>CELL SIZE</dt>
+                    <dd>300 x 300</dd>
+                </div>
+            </dl>
+        </div>
+
+        <div class="world-figure" data-reveal="right">
+            <WorldGrid Cells="Content.WorldCells" Columns="7" Rows="5" />
+        </div>
+    </div>
+</section>

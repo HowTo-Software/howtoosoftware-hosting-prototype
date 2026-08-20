@@ -1,0 +1,78 @@
+.brand {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--hts-space-3);
+    text-decoration: none;
+}
+
+.brand-mark {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex: none;
+    border: 1px solid var(--hts-border-strong);
+    border-radius: var(--hts-radius-md);
+    background:
+        radial-gradient(120% 120% at 30% 0%, rgba(131, 168, 243, 0.16) 0%, transparent 62%),
+        var(--hts-surface-raised);
+    box-shadow: var(--hts-rim), 0 8px 22px -14px rgba(139, 50, 224, 0.9);
+}
+
+.brand-mark svg {
+    width: 1.75rem;
+    height: 1.75rem;
+    filter: drop-shadow(0 0 6px rgba(176, 105, 255, 0.55));
+    transition: filter var(--hts-duration-base) var(--hts-ease);
+}
+
+.brand:hover .brand-mark svg {
+    filter: drop-shadow(0 0 11px rgba(176, 105, 255, 0.85));
+}
+
+.brand-word {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+}
+
+.brand-name {
+    color: var(--hts-ink);
+    font-size: 1.0625rem;
+    font-weight: 620;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+}
+
+.brand-tagline {
+    color: var(--hts-blue-400);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: var(--hts-tracking-wide);
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+/* ── Size variants ─────────────────────────────────────────────────────── */
+
+.brand.is-lg .brand-mark {
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: var(--hts-radius-lg);
+}
+
+.brand.is-lg .brand-mark svg {
+    width: 2.35rem;
+    height: 2.35rem;
+}
+
+.brand.is-lg .brand-name {
+    font-size: 1.3rem;
+}
+
+/* Sits on an already-raised surface, so the plate drops back a level. */
+.brand.is-plain .brand-mark {
+    background: var(--hts-surface);
+}

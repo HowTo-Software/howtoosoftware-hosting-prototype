@@ -1,0 +1,245 @@
+.provision {
+    position: relative;
+    padding-block: clamp(5rem, 9vw, 9rem);
+}
+
+.provision-head {
+    max-width: 44rem;
+    margin-bottom: clamp(3rem, 6vw, 5rem);
+}
+
+.provision-kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: var(--hts-space-6);
+    color: var(--hts-blue-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+}
+
+.kicker-index {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--hts-radius-xs);
+    background: var(--hts-purple-600);
+    color: var(--hts-white);
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+}
+
+.provision-title {
+    font-size: clamp(2.4rem, 1.3rem + 3.6vw, 4rem);
+    font-weight: 660;
+    line-height: 1.02;
+    letter-spacing: -0.032em;
+}
+
+.provision-accent {
+    color: var(--hts-purple-400);
+}
+
+.provision-lede {
+    max-width: 32rem;
+    margin-top: var(--hts-space-5);
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-lg);
+    line-height: var(--hts-leading-relaxed);
+}
+
+/* ── Body: stages scroll, figure sticks ────────────────────────────────── */
+
+.provision-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.82fr);
+    align-items: start;
+    gap: clamp(2.5rem, 6vw, 5rem);
+}
+
+.stage-list {
+    display: grid;
+}
+
+.stage {
+    display: grid;
+    grid-template-columns: 3.25rem minmax(0, 1fr);
+    gap: var(--hts-space-5);
+    padding-block: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.stage:first-child {
+    padding-top: 0;
+}
+
+.stage-mark {
+    display: grid;
+    justify-items: center;
+    gap: 0.75rem;
+    height: 100%;
+}
+
+.stage-code {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 3rem;
+    border: 1px solid var(--hts-border-strong);
+    border-radius: var(--hts-radius-sm);
+    background: var(--hts-surface);
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: var(--hts-text-md);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    transition:
+        background-color var(--hts-duration-slow) var(--hts-ease),
+        border-color var(--hts-duration-slow) var(--hts-ease),
+        color var(--hts-duration-slow) var(--hts-ease),
+        box-shadow var(--hts-duration-slow) var(--hts-ease);
+}
+
+.stage-rail {
+    width: 1px;
+    height: 100%;
+    background: var(--hts-rule);
+    transition: background-color var(--hts-duration-slow) var(--hts-ease);
+}
+
+.stage:last-child .stage-rail {
+    display: none;
+}
+
+.stage-text h3 {
+    font-family: var(--hts-font-mono);
+    font-size: var(--hts-text-md);
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    color: var(--hts-ink-muted);
+    transition: color var(--hts-duration-slow) var(--hts-ease);
+}
+
+.stage-text p {
+    max-width: 34rem;
+    margin-top: var(--hts-space-4);
+    color: var(--hts-ink-muted);
+    font-size: var(--hts-text-lg);
+    line-height: var(--hts-leading-relaxed);
+    transition: color var(--hts-duration-slow) var(--hts-ease);
+}
+
+/* Completed stages settle into light blue. */
+.stage.is-done .stage-code {
+    border-color: var(--hts-border-blue);
+    background: rgba(131, 168, 243, 0.12);
+    color: var(--hts-blue-300);
+}
+
+.stage.is-done .stage-rail {
+    background: rgba(131, 168, 243, 0.45);
+}
+
+/* The stage being read takes a solid purple block and full-contrast copy. */
+.stage.is-live .stage-code {
+    border-color: var(--hts-purple-400);
+    background: var(--hts-purple-600);
+    color: var(--hts-white);
+    box-shadow: 0 0 34px -8px rgba(176, 105, 255, 0.95);
+}
+
+.stage.is-live .stage-text h3 {
+    color: var(--hts-ink);
+}
+
+.stage.is-live .stage-text p {
+    color: var(--hts-ink-soft);
+}
+
+/* ── Sticky figure ─────────────────────────────────────────────────────── */
+
+.provision-figure {
+    height: 100%;
+}
+
+.figure-sticky {
+    position: sticky;
+    top: calc(var(--hts-header-height) + var(--hts-space-8));
+    display: grid;
+    justify-items: center;
+    gap: var(--hts-space-5);
+    padding: var(--hts-space-6);
+    border: 1px solid var(--hts-border-strong);
+    border-radius: var(--hts-radius-lg);
+    background: var(--hts-navy-900);
+    box-shadow: var(--hts-rim), var(--hts-shadow-lg);
+}
+
+.figure-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: var(--hts-space-3);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.18em;
+}
+
+.figure-key {
+    color: var(--hts-ink-muted);
+}
+
+.figure-step {
+    color: var(--hts-purple-300);
+}
+
+.figure-note {
+    color: var(--hts-ink-muted);
+    font-size: var(--hts-text-xs);
+    text-align: center;
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+
+@media (max-width: 1024px) {
+    .provision-body {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* Figure leads on narrow screens, then the stages read as a list. */
+    .provision-figure {
+        order: -1;
+    }
+
+    .figure-sticky {
+        position: static;
+    }
+
+    .stage {
+        padding-block: var(--hts-space-8);
+    }
+
+    .stage:first-child {
+        padding-top: var(--hts-space-6);
+    }
+}
+
+@media (max-width: 560px) {
+    .stage {
+        grid-template-columns: 2.75rem minmax(0, 1fr);
+        gap: var(--hts-space-4);
+    }
+
+    .stage-code {
+        width: 2.5rem;
+        height: 2.5rem;
+        font-size: var(--hts-text-base);
+    }
+
+    .stage-text p {
+        font-size: var(--hts-text-md);
+    }
+}

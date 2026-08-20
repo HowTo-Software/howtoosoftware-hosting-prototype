@@ -1,0 +1,61 @@
+@*
+    HTS brand lockup.
+
+    The monogram is a vector reconstruction of the existing HTS logo: a light-blue "H",
+    a purple "T" and a light-blue "S" stacked on a shared vertical axis, wrapped in the
+    soft violet glow the brand is known for. Drawing it as SVG keeps it crisp at every
+    size and lets the glow react to hover without shipping a bitmap.
+*@
+
+<span class="brand @CssClass">
+    <span class="brand-mark">
+        <svg viewBox="0 0 48 48" width="48" height="48" fill="none" stroke-linecap="round"
+             stroke-linejoin="round" role="img" aria-label="@AccessibleLabel">
+            <g class="brand-h" stroke="var(--hts-blue-400)" stroke-width="3">
+                <path d="M18 6v9.5M30 6v9.5M18 10.75h12" />
+            </g>
+            <g class="brand-t" stroke="var(--hts-purple-400)" stroke-width="4.2">
+                <path d="M14 20h20M24 20v11" />
+            </g>
+            <g class="brand-s" stroke="var(--hts-blue-400)" stroke-width="3">
+                <path d="M27.6 36.4a3.5 3.5 0 0 0-3-1.4h-1.4a2.25 2.25 0 0 0 0 4.5h1.4a2.25 2.25 0 0 1 0 4.5h-1.4a3.5 3.5 0 0 1-3-1.4" />
+            </g>
+        </svg>
+    </span>
+
+    @if (ShowWordmark)
+    {
+        <span class="brand-word">
+            <span class="brand-name">@Name</span>
+            @if (!string.IsNullOrEmpty(Tagline))
+            {
+                <span class="brand-tagline">@Tagline</span>
+            }
+        </span>
+    }
+</span>
+
+@code {
+    /// <summary>Brand name rendered beside the monogram.</summary>
+    [Parameter]
+    public string Name { get; set; } = "HowToSoftware";
+
+    /// <summary>Optional small line under the brand name, e.g. the product area.</summary>
+    [Parameter]
+    public string? Tagline { get; set; }
+
+    /// <summary>Whether the wordmark is shown next to the monogram.</summary>
+    [Parameter]
+    public bool ShowWordmark { get; set; } = true;
+
+    /// <summary>Optional additional CSS classes, used for size variants.</summary>
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    private string AccessibleLabel => $"{Name} logo";
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

@@ -1,0 +1,54 @@
+@*
+    Immersive hero.
+
+    Three stacked layers - the infrastructure field, the typography, and the connected UI
+    cluster - rather than a text/card split. Entry motion is a CSS stagger driven by
+    animation-delay, so nothing depends on JavaScript to become visible.
+*@
+
+<section class="hero" id="top">
+    <WorldFieldBackdrop />
+
+    <div class="hts-container hts-container--wide hero-inner">
+        <div class="hero-type">
+            <p class="hero-kicker">
+                <span class="kicker-rule"></span>
+                PROJECT ZOMBOID / SERVER INFRASTRUCTURE
+            </p>
+
+            <h1 class="hero-title">
+                <span class="title-line">Built for worlds</span>
+                <span class="title-line title-line--accent">that refuse</span>
+                <span class="title-line">to die.</span>
+            </h1>
+
+            <p class="hero-copy">
+                Persistent Knox County worlds on dedicated allocation. Workshop collections
+                resolved for you, provisioning handled by software, and a control panel that
+                treats your server like the running system it is.
+            </p>
+
+            <div class="hero-actions">
+                <CtaButton Href="#plans" Size="CtaSize.Large" TrailingIcon="IconName.ArrowRight">
+                    Deploy your server
+                </CtaButton>
+                <CtaButton Href="#control-panel" Variant="CtaVariant.Secondary" Size="CtaSize.Large">
+                    See the panel
+                </CtaButton>
+            </div>
+        </div>
+
+        <div class="hero-product">
+            <HeroNodeCluster />
+        </div>
+    </div>
+
+    <div class="hts-container hts-container--wide hero-foot">
+        <span class="foot-coord">CELL 38x27 / KNOX COUNTY</span>
+        <span class="foot-scroll">
+            <span class="foot-scroll-track"><span class="foot-scroll-dot"></span></span>
+            SCROLL
+        </span>
+        <span class="foot-alloc">ALLOCATION 203.0.113.24:16261</span>
+    </div>
+</section>

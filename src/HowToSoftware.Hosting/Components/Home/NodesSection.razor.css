@@ -1,0 +1,284 @@
+.nodes {
+    position: relative;
+    padding-block: clamp(5rem, 9vw, 9rem);
+}
+
+.nodes-head {
+    max-width: 46rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.nodes-kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: var(--hts-space-6);
+    color: var(--hts-purple-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+}
+
+.kicker-index {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--hts-radius-xs);
+    background: var(--hts-blue-700);
+    color: var(--hts-white);
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+}
+
+.nodes-title {
+    font-size: clamp(2.2rem, 1.3rem + 3.2vw, 3.6rem);
+    font-weight: 660;
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+}
+
+.nodes-accent {
+    color: var(--hts-blue-400);
+}
+
+.nodes-lede {
+    max-width: 34rem;
+    margin-top: var(--hts-space-5);
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-lg);
+    line-height: var(--hts-leading-relaxed);
+}
+
+/* ── Bus the panels hang from ──────────────────────────────────────────── */
+
+.bus {
+    display: flex;
+    align-items: center;
+    gap: var(--hts-space-4);
+    margin-bottom: 0;
+}
+
+.bus-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(176, 105, 255, 0.5), transparent);
+}
+
+.bus-label {
+    color: var(--hts-purple-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.22em;
+    white-space: nowrap;
+}
+
+/* ── Node panels ───────────────────────────────────────────────────────── */
+
+.node-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--hts-space-5);
+}
+
+.node-panel {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: var(--hts-space-4);
+    margin-top: 2.5rem;
+    padding: var(--hts-space-6);
+    border: 1px solid var(--hts-border-strong);
+    border-radius: var(--hts-radius-md);
+    background: var(--hts-surface);
+    box-shadow: var(--hts-rim);
+}
+
+/* Drop line joining each panel back up to the bus. */
+.node-drop {
+    position: absolute;
+    top: -2.5rem;
+    left: 2rem;
+    width: 1px;
+    height: 2.5rem;
+    background: linear-gradient(180deg, rgba(176, 105, 255, 0.5), rgba(131, 168, 243, 0.35));
+}
+
+.node-drop::after {
+    content: "";
+    position: absolute;
+    bottom: -3px;
+    left: -2px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--hts-blue-400);
+    box-shadow: 0 0 10px 1px rgba(131, 168, 243, 0.85);
+}
+
+.node-panel.is-reserved .node-drop {
+    background: var(--hts-rule);
+}
+
+.node-panel.is-reserved .node-drop::after {
+    background: var(--hts-muted-mark);
+    box-shadow: none;
+}
+
+.node-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--hts-space-3);
+}
+
+.node-id {
+    color: var(--hts-ink);
+    font-family: var(--hts-font-mono);
+    font-size: var(--hts-text-md);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+}
+
+.node-health {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--hts-font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.18em;
+}
+
+.health-dot {
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.is-healthy .node-health {
+    color: var(--hts-blue-300);
+}
+
+.is-healthy .health-dot {
+    box-shadow: 0 0 8px 1px rgba(131, 168, 243, 0.85);
+}
+
+.is-provisioning .node-health {
+    color: var(--hts-purple-300);
+}
+
+.is-reserved .node-health {
+    color: var(--hts-ink-muted);
+}
+
+.node-region {
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.2em;
+}
+
+.node-specs {
+    display: grid;
+    gap: var(--hts-space-3);
+    padding-block: var(--hts-space-4);
+    border-block: 1px solid var(--hts-border);
+}
+
+.node-specs > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--hts-space-3);
+}
+
+.node-specs dt {
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.16em;
+}
+
+.node-specs dd {
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-base);
+    text-align: right;
+}
+
+.load-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.18em;
+}
+
+.load-value {
+    color: var(--hts-ink);
+    font-size: var(--hts-text-sm);
+}
+
+.load-track {
+    height: 4px;
+    margin-top: 0.5rem;
+    border-radius: 1px;
+    background: var(--hts-track);
+    overflow: hidden;
+}
+
+.load-fill {
+    display: block;
+    width: var(--target, 0%);
+    height: 100%;
+    background: var(--hts-blue-500);
+    transform-origin: left center;
+}
+
+.node-panel.is-revealed .load-fill {
+    animation: load-fill 900ms var(--hts-ease-out) 200ms forwards;
+}
+
+.node-panel.is-reserved .load-fill {
+    background: var(--hts-muted-mark);
+}
+
+/* Zeroed start state only when the reveal observer is actually running, so the
+   bar still shows its real width if JavaScript never loads. */
+html.hts-js .load-fill {
+    transform: scaleX(0);
+}
+
+@keyframes load-fill {
+    to {
+        transform: scaleX(1);
+    }
+}
+
+.load-note {
+    margin-top: 0.5rem;
+    color: var(--hts-ink-muted);
+    font-size: var(--hts-text-xs);
+}
+
+.nodes-note {
+    max-width: 42rem;
+    margin-top: var(--hts-space-8);
+    color: var(--hts-ink-muted);
+    font-size: var(--hts-text-sm);
+}
+
+@media (max-width: 900px) {
+    .node-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 620px) {
+    .node-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

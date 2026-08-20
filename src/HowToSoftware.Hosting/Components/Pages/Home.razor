@@ -1,0 +1,53 @@
+@page "/"
+@inject IOptions<SiteOptions> Site
+
+<PageTitle>Project Zomboid Server Hosting | @Site.Value.Name</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="Project Zomboid server hosting from HowToSoftware. Persistent Knox County worlds, Workshop mod sync, automated provisioning and a control panel built by a software team." />
+    <link rel="canonical" href="@Site.Value.BaseUrl" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Project Zomboid Server Infrastructure" />
+    <meta property="og:description" content="Persistent worlds, Workshop mod sync and automated provisioning for Project Zomboid communities." />
+    <meta property="og:url" content="@Site.Value.BaseUrl" />
+    <meta property="og:site_name" content="@Site.Value.Name" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Project Zomboid Server Infrastructure" />
+    <meta name="twitter:description" content="Persistent worlds, Workshop mod sync and automated provisioning for Project Zomboid communities." />
+
+    <script type="application/ld+json">
+        {
+            "@@context": "https://schema.org",
+            "@@type": "Service",
+            "name": "Project Zomboid Server Hosting",
+            "serviceType": "Game server hosting",
+            "url": "@Site.Value.BaseUrl",
+            "provider": {
+                "@@type": "Organization",
+                "name": "@Site.Value.Name",
+                "url": "@Site.Value.BaseUrl"
+            },
+            "description": "Managed Project Zomboid server hosting with persistent worlds, Steam Workshop mod synchronisation, automated provisioning and a web control panel."
+        }
+    </script>
+</HeadContent>
+
+@* Composition order is deliberate: immersive hero, telemetry transition, then an
+   alternating rhythm of editorial, interface and diagram sections. *@
+<HeroExperience />
+<TelemetryStrip />
+<WorldSection />
+<WorkshopSection />
+<ProvisioningSection />
+<ControlPanelSection />
+<NodesSection />
+<CapabilitiesSection />
+<PlansSection />
+<FaqSection />
+<ClosingSection />
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

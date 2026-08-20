@@ -1,0 +1,649 @@
+.cp {
+    position: relative;
+    padding-block: clamp(5rem, 9vw, 9rem);
+    background: var(--hts-navy-900);
+    border-block: 1px solid var(--hts-border);
+}
+
+.cp-head {
+    max-width: 44rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.cp-kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: var(--hts-space-6);
+    color: var(--hts-blue-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+}
+
+.kicker-index {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--hts-radius-xs);
+    background: var(--hts-purple-600);
+    color: var(--hts-white);
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+}
+
+.cp-title {
+    font-size: clamp(2.4rem, 1.3rem + 3.6vw, 4rem);
+    font-weight: 660;
+    line-height: 1.02;
+    letter-spacing: -0.032em;
+}
+
+.cp-accent {
+    color: var(--hts-blue-400);
+}
+
+.cp-lede {
+    max-width: 32rem;
+    margin-top: var(--hts-space-5);
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-lg);
+    line-height: var(--hts-leading-relaxed);
+}
+
+/* ── Application frame ─────────────────────────────────────────────────── */
+
+.cp-stage {
+    width: min(92%, 96rem);
+    margin-inline: auto;
+}
+
+.app {
+    border: 1px solid var(--hts-border-strong);
+    border-radius: var(--hts-radius-lg);
+    background: var(--hts-navy-950);
+    box-shadow: var(--hts-rim), var(--hts-shadow-lg), 0 0 90px -50px rgba(176, 105, 255, 0.9);
+    overflow: hidden;
+}
+
+.app-chrome {
+    display: flex;
+    align-items: center;
+    gap: var(--hts-space-4);
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--hts-border);
+    background: var(--hts-navy-800);
+}
+
+.chrome-dots {
+    display: inline-flex;
+    gap: 5px;
+}
+
+.chrome-dots i {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--hts-muted-mark);
+}
+
+.chrome-dots i:first-child {
+    background: var(--hts-purple-400);
+}
+
+.chrome-dots i:nth-child(2) {
+    background: var(--hts-blue-400);
+}
+
+.chrome-url {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+    justify-content: center;
+    padding: 0.3rem 0.9rem;
+    max-width: 34rem;
+    margin-inline: auto;
+    border: 1px solid var(--hts-border);
+    border-radius: var(--hts-radius-pill);
+    background: var(--hts-navy-950);
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.08em;
+}
+
+.url-lock {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 1px;
+    background: var(--hts-blue-400);
+}
+
+.chrome-env {
+    flex: none;
+    padding: 0.15rem 0.5rem;
+    border: 1px solid var(--hts-border-brand);
+    border-radius: var(--hts-radius-pill);
+    color: var(--hts-purple-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.18em;
+}
+
+.app-body {
+    display: grid;
+    grid-template-columns: 13rem minmax(0, 1fr);
+    min-height: 32rem;
+}
+
+/* ── Sidebar ───────────────────────────────────────────────────────────── */
+
+.app-side {
+    display: flex;
+    flex-direction: column;
+    gap: var(--hts-space-3);
+    padding: var(--hts-space-5) var(--hts-space-4);
+    border-right: 1px solid var(--hts-border);
+    background: var(--hts-navy-900);
+}
+
+.side-key {
+    padding-inline: 0.55rem;
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.22em;
+}
+
+.app-side ul {
+    display: grid;
+    gap: 2px;
+}
+
+.side-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    padding: 0.55rem 0.6rem;
+    border-radius: var(--hts-radius-xs);
+    color: var(--hts-ink-muted);
+    font-size: var(--hts-text-base);
+    font-weight: 520;
+    text-align: left;
+    transition:
+        background-color var(--hts-duration-fast) var(--hts-ease),
+        color var(--hts-duration-fast) var(--hts-ease);
+}
+
+.side-bar {
+    width: 2px;
+    height: 0.9rem;
+    border-radius: 1px;
+    background: transparent;
+    transition: background-color var(--hts-duration-fast) var(--hts-ease);
+}
+
+.side-item:hover {
+    background: var(--hts-tint-hover);
+    color: var(--hts-ink-soft);
+}
+
+.side-item.is-active {
+    background: rgba(176, 105, 255, 0.12);
+    color: var(--hts-ink);
+}
+
+.side-item.is-active .side-bar {
+    background: var(--hts-purple-400);
+    box-shadow: 0 0 10px 1px rgba(176, 105, 255, 0.8);
+}
+
+.side-foot {
+    margin-top: auto;
+    padding-top: var(--hts-space-4);
+    border-top: 1px solid var(--hts-border);
+}
+
+.side-node {
+    padding-inline: 0.55rem;
+    margin-top: 0.3rem;
+    color: var(--hts-blue-300);
+    font-family: var(--hts-font-mono);
+    font-size: var(--hts-text-xs);
+    letter-spacing: 0.1em;
+}
+
+/* ── Main area ─────────────────────────────────────────────────────────── */
+
+.app-main {
+    display: grid;
+    align-content: start;
+    gap: var(--hts-space-5);
+    padding: var(--hts-space-6);
+    min-width: 0;
+}
+
+.main-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--hts-space-4);
+    padding-bottom: var(--hts-space-5);
+    border-bottom: 1px solid var(--hts-border);
+}
+
+.main-id {
+    margin-right: auto;
+}
+
+.main-id h3 {
+    color: var(--hts-ink);
+    font-family: var(--hts-font-mono);
+    font-size: var(--hts-text-lg);
+    font-weight: 600;
+}
+
+.main-id p {
+    margin-top: 0.2rem;
+    color: var(--hts-blue-300);
+    font-family: var(--hts-font-mono);
+    font-size: var(--hts-text-xs);
+}
+
+.main-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid transparent;
+    border-radius: var(--hts-radius-pill);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+}
+
+.main-state.is-online {
+    border-color: var(--hts-border-blue);
+    background: var(--hts-state-online-bg);
+    color: var(--hts-state-online);
+}
+
+.main-state.is-offline {
+    border-color: var(--hts-border-strong);
+    background: var(--hts-state-idle-bg);
+    color: var(--hts-state-idle);
+}
+
+.main-state.is-busy {
+    border-color: var(--hts-border-brand);
+    background: var(--hts-state-busy-bg);
+    color: var(--hts-state-busy);
+}
+
+.state-dot {
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 8px 1px currentColor;
+}
+
+.main-state.is-busy .state-dot {
+    animation: cp-blink 0.9s steps(2, end) infinite;
+}
+
+/* Zeroed start state only when the reveal observer is actually running, so the
+   bar still shows its real width if JavaScript never loads. */
+html.hts-js .metric-fill {
+    transform: scaleX(0);
+}
+
+@keyframes cp-blink {
+    50% {
+        opacity: 0.2;
+    }
+}
+
+.main-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.act {
+    padding: 0.45rem 0.9rem;
+    border: 1px solid var(--hts-border-strong);
+    border-radius: var(--hts-radius-xs);
+    background: var(--hts-navy-800);
+    color: var(--hts-ink);
+    font-family: var(--hts-font-mono);
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition:
+        border-color var(--hts-duration-fast) var(--hts-ease),
+        background-color var(--hts-duration-fast) var(--hts-ease),
+        color var(--hts-duration-fast) var(--hts-ease);
+}
+
+.act:hover:not(:disabled) {
+    border-color: var(--hts-purple-400);
+    background: rgba(176, 105, 255, 0.14);
+    color: var(--hts-ink);
+}
+
+.act:disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+}
+
+/* ── Metrics ───────────────────────────────────────────────────────────── */
+
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--hts-space-4);
+}
+
+.metric {
+    padding: var(--hts-space-4);
+    border: 1px solid var(--hts-border);
+    border-radius: var(--hts-radius-sm);
+    background: var(--hts-navy-800);
+}
+
+.metric-key {
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.2em;
+}
+
+.metric-value {
+    margin-top: 0.35rem;
+    color: var(--hts-ink);
+    font-family: var(--hts-font-mono);
+    font-size: clamp(1.3rem, 1.1rem + 0.6vw, 1.75rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+}
+
+.metric-track {
+    margin-top: var(--hts-space-3);
+    height: 4px;
+    border-radius: 1px;
+    background: var(--hts-track);
+    overflow: hidden;
+}
+
+.metric-fill {
+    display: block;
+    width: var(--target, 0%);
+    height: 100%;
+    background: var(--hts-blue-500);
+    transform-origin: left center;
+    transition: width var(--hts-duration-slow) var(--hts-ease-out);
+}
+
+.metric-note {
+    margin-top: 0.5rem;
+    color: var(--hts-ink-muted);
+    font-size: var(--hts-text-xs);
+}
+
+/* ── Mods view ─────────────────────────────────────────────────────────── */
+
+.mods {
+    border: 1px solid var(--hts-border);
+    border-radius: var(--hts-radius-sm);
+    overflow: hidden;
+}
+
+.mods-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--hts-space-3);
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--hts-border);
+    background: var(--hts-navy-800);
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.18em;
+}
+
+.mods-count {
+    color: var(--hts-blue-300);
+}
+
+.mods ul {
+    display: grid;
+}
+
+.mods li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto 5.5rem;
+    align-items: center;
+    gap: var(--hts-space-4);
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--hts-border);
+}
+
+.mods li:last-child {
+    border-bottom: none;
+}
+
+.mods-name {
+    color: var(--hts-ink);
+    font-size: var(--hts-text-base);
+}
+
+.mods-id,
+.mods-size {
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: var(--hts-text-xs);
+}
+
+.mods-state {
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.16em;
+    text-align: right;
+}
+
+.mods-state.s-synced {
+    color: var(--hts-blue-300);
+}
+
+.mods-state.s-syncing {
+    color: var(--hts-purple-300);
+}
+
+.mods-state.s-queued {
+    color: var(--hts-ink-muted);
+}
+
+/* ── Placeholder view ──────────────────────────────────────────────────── */
+
+.placeholder {
+    display: grid;
+    place-items: center;
+    gap: var(--hts-space-3);
+    min-height: 16rem;
+    padding: var(--hts-space-8);
+    border: 1px dashed var(--hts-border-strong);
+    border-radius: var(--hts-radius-sm);
+    text-align: center;
+}
+
+.placeholder-key {
+    color: var(--hts-purple-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.22em;
+}
+
+.placeholder-copy {
+    max-width: 24rem;
+    color: var(--hts-ink-muted);
+    font-size: var(--hts-text-base);
+}
+
+.loading {
+    padding: var(--hts-space-10);
+    color: var(--hts-ink-muted);
+    text-align: center;
+}
+
+.cp-note {
+    margin-top: var(--hts-space-5);
+    color: var(--hts-ink-muted);
+    font-size: var(--hts-text-sm);
+    text-align: center;
+}
+
+/* ── Staged reveal ─────────────────────────────────────────────────────── */
+
+/* Frame first, then sidebar items, then metrics, then console lines. Everything
+   is readable from the first frame - this only orders the entrance. */
+.cp-stage.is-revealed .side-item {
+    animation: cp-in 380ms var(--hts-ease-out) both;
+}
+
+.cp-stage.is-revealed .app-side li:nth-child(1) .side-item { animation-delay: 140ms; }
+.cp-stage.is-revealed .app-side li:nth-child(2) .side-item { animation-delay: 180ms; }
+.cp-stage.is-revealed .app-side li:nth-child(3) .side-item { animation-delay: 220ms; }
+.cp-stage.is-revealed .app-side li:nth-child(4) .side-item { animation-delay: 260ms; }
+.cp-stage.is-revealed .app-side li:nth-child(5) .side-item { animation-delay: 300ms; }
+.cp-stage.is-revealed .app-side li:nth-child(6) .side-item { animation-delay: 340ms; }
+.cp-stage.is-revealed .app-side li:nth-child(7) .side-item { animation-delay: 380ms; }
+
+.cp-stage.is-revealed .metric {
+    animation: cp-in 420ms var(--hts-ease-out) both;
+    animation-delay: calc(var(--i, 0) * 90ms + 300ms);
+}
+
+.cp-stage.is-revealed .metric-fill {
+    animation: cp-fill 900ms var(--hts-ease-out) forwards;
+    animation-delay: calc(var(--i, 0) * 90ms + 460ms);
+}
+
+/* Console lives in a child component, so the parent reaches in with ::deep. */
+.cp-stage.is-revealed ::deep .console-line {
+    animation: cp-line 320ms var(--hts-ease-out) both;
+    animation-delay: calc(var(--i, 0) * 52ms + 520ms);
+}
+
+@keyframes cp-in {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 10px, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+@keyframes cp-fill {
+    to {
+        transform: scaleX(1);
+    }
+}
+
+@keyframes cp-line {
+    from {
+        opacity: 0;
+        transform: translate3d(-6px, 0, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+
+@media (max-width: 1100px) {
+    .metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 860px) {
+    .cp-stage {
+        width: 100%;
+    }
+
+    .app-body {
+        grid-template-columns: minmax(0, 1fr);
+        min-height: 0;
+    }
+
+    /* Sidebar becomes a horizontal tab rail above the content. */
+    .app-side {
+        flex-direction: row;
+        align-items: center;
+        gap: var(--hts-space-2);
+        border-right: none;
+        border-bottom: 1px solid var(--hts-border);
+        overflow-x: auto;
+        scrollbar-width: none;
+    }
+
+    .app-side .side-key,
+    .side-foot {
+        display: none;
+    }
+
+    .app-side ul {
+        display: flex;
+        gap: 2px;
+    }
+
+    .side-item {
+        white-space: nowrap;
+    }
+
+    .side-bar {
+        display: none;
+    }
+
+    .mods li {
+        grid-template-columns: minmax(0, 1fr) auto;
+        row-gap: 0.2rem;
+    }
+
+    .mods-id {
+        display: none;
+    }
+}
+
+@media (max-width: 560px) {
+    .app-main {
+        padding: var(--hts-space-4);
+    }
+
+    .metrics {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .main-actions {
+        width: 100%;
+    }
+
+    .act {
+        flex: 1;
+    }
+}

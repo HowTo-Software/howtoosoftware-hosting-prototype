@@ -1,0 +1,314 @@
+.cluster {
+    display: grid;
+    justify-items: center;
+    width: 100%;
+    max-width: 30rem;
+    margin-inline: auto;
+}
+
+/* ── Fragments ─────────────────────────────────────────────────────────── */
+
+.frag {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--hts-space-4);
+    padding: 0.7rem 1rem;
+    border: 1px solid var(--hts-border-strong);
+    border-radius: var(--hts-radius-sm);
+    background: var(--hts-surface);
+    box-shadow: var(--hts-rim), var(--hts-shadow-md);
+}
+
+.frag-key {
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    white-space: nowrap;
+}
+
+.frag-value {
+    color: var(--hts-ink);
+    font-family: var(--hts-font-mono);
+    font-size: var(--hts-text-sm);
+    white-space: nowrap;
+}
+
+/* Status bar */
+.frag--status {
+    width: 100%;
+    border-color: var(--hts-border-blue);
+}
+
+.frag-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--hts-blue-300);
+    font-family: var(--hts-font-mono);
+    font-size: var(--hts-text-sm);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+}
+
+.frag-dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    border-radius: 50%;
+    background: var(--hts-blue-300);
+    box-shadow: 0 0 10px 1px rgba(131, 168, 243, 0.9);
+    animation: frag-pulse 2.6s var(--hts-ease) infinite;
+}
+
+@keyframes frag-pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.45;
+        transform: scale(0.82);
+    }
+}
+
+/* ── Rows ──────────────────────────────────────────────────────────────── */
+
+.cluster-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.frag--side {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+    flex: 1;
+    min-width: 0;
+}
+
+.frag--side .frag-value {
+    font-size: var(--hts-text-xs);
+}
+
+/* Routing hub joining the world and node fragments. */
+.cluster-hub {
+    display: flex;
+    align-items: center;
+    flex: none;
+}
+
+.hub-line {
+    width: 1.4rem;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(176, 105, 255, 0.15), rgba(176, 105, 255, 0.65));
+}
+
+.cluster-hub .hub-line:last-child {
+    background: linear-gradient(90deg, rgba(176, 105, 255, 0.65), rgba(176, 105, 255, 0.15));
+}
+
+.hub-dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background: var(--hts-purple-400);
+    box-shadow: 0 0 0 4px rgba(176, 105, 255, 0.16), 0 0 14px 2px rgba(176, 105, 255, 0.7);
+}
+
+/* ── Connectors ────────────────────────────────────────────────────────── */
+
+.link--down {
+    position: relative;
+    width: 1px;
+    height: 1.5rem;
+    background: linear-gradient(180deg, rgba(131, 168, 243, 0.5), rgba(176, 105, 255, 0.5));
+    overflow: hidden;
+}
+
+/* Light packet travelling down the connector. */
+.link--down::after {
+    content: "";
+    position: absolute;
+    top: -60%;
+    left: -1px;
+    width: 3px;
+    height: 60%;
+    border-radius: 2px;
+    background: var(--hts-blue-300);
+    box-shadow: 0 0 10px 2px rgba(131, 168, 243, 0.9);
+    animation: packet-down 2.8s linear infinite;
+}
+
+.cluster > .link--down:nth-of-type(2)::after {
+    animation-delay: -1.4s;
+}
+
+@keyframes packet-down {
+    to {
+        top: 110%;
+    }
+}
+
+.link--split {
+    position: relative;
+    display: grid;
+    width: 100%;
+    height: 2.1rem;
+}
+
+.split-stem {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 1px;
+    height: 0.9rem;
+    background: rgba(176, 105, 255, 0.55);
+}
+
+.split-bar {
+    position: absolute;
+    top: 0.9rem;
+    right: 22%;
+    left: 22%;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(131, 168, 243, 0.45), rgba(176, 105, 255, 0.55), rgba(131, 168, 243, 0.45));
+}
+
+.split-leg {
+    position: absolute;
+    top: 0.9rem;
+    width: 1px;
+    height: 1.2rem;
+    background: rgba(131, 168, 243, 0.45);
+}
+
+.split-leg--left {
+    left: 22%;
+}
+
+.split-leg--right {
+    right: 22%;
+}
+
+/* ── Main world fragment ───────────────────────────────────────────────── */
+
+.frag--main {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.7rem;
+    width: 100%;
+    padding: 1rem;
+    border-color: var(--hts-border-brand);
+    box-shadow: var(--hts-rim), var(--hts-shadow-lg), 0 0 48px -22px rgba(176, 105, 255, 0.85);
+}
+
+.main-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--hts-space-3);
+}
+
+.main-build {
+    padding: 0.1rem 0.5rem;
+    border: 1px solid var(--hts-border-brand);
+    border-radius: var(--hts-radius-pill);
+    color: var(--hts-purple-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.16em;
+}
+
+.main-bar {
+    height: 8px;
+    border-radius: 2px;
+    background: var(--hts-track);
+    overflow: hidden;
+}
+
+.main-fill {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: repeating-linear-gradient(
+        90deg,
+        var(--hts-blue-400) 0 10px,
+        transparent 10px 13px
+    );
+    transform-origin: left center;
+    animation: main-load 1.6s var(--hts-ease-out) 600ms both;
+}
+
+@keyframes main-load {
+    from {
+        transform: scaleX(0);
+    }
+
+    to {
+        transform: scaleX(1);
+    }
+}
+
+.main-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.14em;
+}
+
+.main-count {
+    color: var(--hts-blue-300);
+}
+
+/* ── Readouts ──────────────────────────────────────────────────────────── */
+
+.cluster-row--readouts {
+    gap: var(--hts-space-3);
+}
+
+.frag--readout {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.15rem;
+    flex: 1;
+    min-width: 0;
+    padding: 0.6rem 0.75rem;
+}
+
+.frag--readout .frag-value {
+    font-size: var(--hts-text-sm);
+}
+
+.frag--readout.tone-data {
+    border-color: var(--hts-border-blue);
+}
+
+.frag--readout.tone-data .frag-value {
+    color: var(--hts-blue-300);
+}
+
+.frag--readout.tone-routing {
+    border-color: var(--hts-border-brand);
+}
+
+.frag--readout.tone-routing .frag-value {
+    color: var(--hts-purple-300);
+}
+
+@media (max-width: 460px) {
+    .cluster-row--readouts {
+        flex-wrap: wrap;
+    }
+
+    .frag--readout {
+        flex-basis: calc(50% - var(--hts-space-3));
+    }
+}

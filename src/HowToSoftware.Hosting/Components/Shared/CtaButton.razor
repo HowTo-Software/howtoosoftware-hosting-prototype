@@ -1,0 +1,104 @@
+@*
+    The single call-to-action primitive for the site.
+
+    Renders an anchor when `Href` is supplied and a real `<button>` otherwise, so keyboard
+    and assistive-technology semantics are always correct. Every variant shares the same
+    radius, transition and focus treatment from the design tokens.
+*@
+
+@if (Href is not null)
+{
+    <a href="@Href" class="@ClassName" rel="@Rel" target="@Target" @onclick="OnClick"
+       @attributes="AdditionalAttributes">
+        @ChildContent
+        @if (TrailingIcon is { } trailing)
+        {
+            <Icon Name="trailing" CssClass="cta-icon" />
+        }
+    </a>
+}
+else
+{
+    <button type="button" class="@ClassName" disabled="@Disabled" @onclick="OnClick"
+            @attributes="AdditionalAttributes">
+        @ChildContent
+        @if (TrailingIcon is { } trailing)
+        {
+            <Icon Name="trailing" CssClass="cta-icon" />
+        }
+    </button>
+}
+
+@code {
+    /// <summary>Destination URL. When omitted the component renders a button instead.</summary>
+    [Parameter]
+    public string? Href { get; set; }
+
+    /// <summary>Visual weight of the action.</summary>
+    [Parameter]
+    public CtaVariant Variant { get; set; } = CtaVariant.Primary;
+
+    /// <summary>Physical size of the action.</summary>
+    [Parameter]
+    public CtaSize Size { get; set; } = CtaSize.Medium;
+
+    /// <summary>Optional glyph rendered after the label.</summary>
+    [Parameter]
+    public IconName? TrailingIcon { get; set; }
+
+    /// <summary>Disables the button. Ignored when <see cref="Href"/> is set.</summary>
+    [Parameter]
+    public bool Disabled { get; set; }
+
+    /// <summary>Anchor <c>rel</c> attribute.</summary>
+    [Parameter]
+    public string? Rel { get; set; }
+
+    /// <summary>Anchor <c>target</c> attribute.</summary>
+    [Parameter]
+    public string? Target { get; set; }
+
+    /// <summary>Optional additional CSS classes.</summary>
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    /// <summary>
+    /// Invoked when the action is activated. Wired for both the anchor and button forms so a
+    /// link can still close a menu; it does not suppress navigation.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnClick { get; set; }
+
+    /// <summary>The button label.</summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>Any remaining attributes, e.g. <c>aria-label</c>.</summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public IReadOnlyDictionary<string, object>? AdditionalAttributes { get; set; }
+
+    private string ClassName => string.Join(' ', new[]
+    {
+        "cta",
+        Variant switch
+        {
+            CtaVariant.Primary => "cta--primary",
+            CtaVariant.Secondary => "cta--secondary",
+            CtaVariant.Inverse => "cta--inverse",
+            CtaVariant.OutlineInverse => "cta--outline-inverse",
+            _ => "cta--ghost"
+        },
+        Size switch
+        {
+            CtaSize.Small => "cta--sm",
+            CtaSize.Large => "cta--lg",
+            _ => "cta--md"
+        },
+        CssClass ?? string.Empty
+    }.Where(part => part.Length > 0));
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

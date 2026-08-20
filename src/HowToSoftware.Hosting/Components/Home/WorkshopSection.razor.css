@@ -1,0 +1,308 @@
+.workshop {
+    position: relative;
+    padding-block: clamp(5rem, 9vw, 9rem);
+    background: var(--hts-navy-900);
+    border-block: 1px solid var(--hts-border);
+}
+
+.workshop-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+    align-items: center;
+    gap: clamp(2.5rem, 6vw, 5.5rem);
+}
+
+/* ── Copy ──────────────────────────────────────────────────────────────── */
+
+.workshop-kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: var(--hts-space-6);
+    color: var(--hts-purple-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+}
+
+.kicker-index {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    border-radius: var(--hts-radius-xs);
+    background: var(--hts-blue-700);
+    color: var(--hts-white);
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+}
+
+.workshop-title {
+    font-size: clamp(2.6rem, 1.4rem + 4.2vw, 4.6rem);
+    font-weight: 680;
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+}
+
+.workshop-accent {
+    color: var(--hts-blue-400);
+}
+
+.workshop-body {
+    max-width: 30rem;
+    margin-top: var(--hts-space-5);
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-lg);
+    line-height: var(--hts-leading-relaxed);
+}
+
+.workshop-points {
+    display: grid;
+    gap: var(--hts-space-3);
+    margin-top: var(--hts-space-7, 1.75rem);
+    padding-top: var(--hts-space-6);
+    border-top: 1px solid var(--hts-border);
+}
+
+.workshop-points li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-base);
+}
+
+/* A small solid square instead of a checkmark icon. */
+.point-mark {
+    width: 0.4rem;
+    height: 0.4rem;
+    flex: none;
+    background: var(--hts-purple-400);
+    transform: translateY(-1px);
+}
+
+/* ── Sync panel ────────────────────────────────────────────────────────── */
+
+.workshop-panel {
+    border: 1px solid var(--hts-border-strong);
+    border-radius: var(--hts-radius-lg);
+    background: var(--hts-navy-950);
+    box-shadow: var(--hts-rim), var(--hts-shadow-lg);
+    overflow: hidden;
+}
+
+.panel-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--hts-space-4);
+    padding: var(--hts-space-5) var(--hts-space-6);
+    border-bottom: 1px solid var(--hts-border);
+    background: var(--hts-navy-900);
+}
+
+.panel-bar-id,
+.panel-bar-count {
+    display: grid;
+    gap: 0.2rem;
+}
+
+.panel-bar-count {
+    text-align: right;
+}
+
+.bar-key {
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.18em;
+}
+
+.bar-value {
+    color: var(--hts-blue-300);
+    font-family: var(--hts-font-mono);
+    font-size: var(--hts-text-sm);
+}
+
+.count-value {
+    color: var(--hts-ink);
+    font-family: var(--hts-font-mono);
+    font-size: var(--hts-text-xl);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+}
+
+.mod-list {
+    display: grid;
+}
+
+.mod {
+    display: grid;
+    gap: 0.5rem;
+    padding: var(--hts-space-4) var(--hts-space-6);
+    border-bottom: 1px solid var(--hts-border);
+}
+
+.mod:last-child {
+    border-bottom: none;
+}
+
+.mod-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--hts-space-3);
+}
+
+.mod-name {
+    color: var(--hts-ink);
+    font-size: var(--hts-text-base);
+    font-weight: 560;
+}
+
+.mod-state {
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.18em;
+}
+
+.is-synced .mod-state {
+    color: var(--hts-blue-300);
+}
+
+.is-syncing .mod-state {
+    color: var(--hts-purple-300);
+}
+
+.is-queued .mod-state {
+    color: var(--hts-ink-muted);
+}
+
+.mod-track {
+    height: 6px;
+    border-radius: 1px;
+    background: var(--hts-track);
+    overflow: hidden;
+}
+
+.mod-fill {
+    display: block;
+    width: var(--target, 0%);
+    height: 100%;
+    transform-origin: left center;
+}
+
+/* Solid blue for completed items, solid purple for in-flight ones. */
+.is-synced .mod-fill {
+    background: var(--hts-blue-500);
+}
+
+.is-syncing .mod-fill {
+    background: var(--hts-purple-500);
+}
+
+.is-queued .mod-fill {
+    background: var(--hts-muted-mark);
+}
+
+/* Fill only runs once the panel has actually scrolled into view. */
+.workshop-panel.is-revealed .mod-fill {
+    animation: mod-fill 900ms var(--hts-ease-out) forwards;
+    animation-delay: calc(var(--i, 0) * 110ms + 160ms);
+}
+
+/* Zeroed start state only when the reveal observer is actually running, so the
+   bar still shows its real width if JavaScript never loads. */
+html.hts-js .mod-fill {
+    transform: scaleX(0);
+}
+
+@keyframes mod-fill {
+    to {
+        transform: scaleX(1);
+    }
+}
+
+/* Active downloads keep a subtle shimmer. */
+.workshop-panel.is-revealed .is-syncing .mod-track::after {
+    content: "";
+    display: block;
+    height: 100%;
+    margin-top: -6px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+    animation: mod-shimmer 2.2s linear infinite;
+}
+
+@keyframes mod-shimmer {
+    from {
+        transform: translateX(-100%);
+    }
+
+    to {
+        transform: translateX(100%);
+    }
+}
+
+.mod-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--hts-space-3);
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.12em;
+}
+
+.panel-foot {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: var(--hts-space-4) var(--hts-space-6);
+    border-top: 1px solid var(--hts-border);
+    background: var(--hts-navy-900);
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.16em;
+}
+
+.foot-dot {
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 50%;
+    background: var(--hts-blue-300);
+    box-shadow: 0 0 8px 1px rgba(131, 168, 243, 0.85);
+}
+
+.foot-spacer {
+    flex: 1;
+}
+
+.foot-time {
+    color: var(--hts-blue-300);
+}
+
+@media (max-width: 1024px) {
+    .workshop-inner {
+        grid-template-columns: minmax(0, 1fr);
+        gap: clamp(2.5rem, 8vw, 4rem);
+    }
+
+    .workshop-copy {
+        max-width: 40rem;
+    }
+}
+
+@media (max-width: 560px) {
+    .panel-bar,
+    .mod,
+    .panel-foot {
+        padding-inline: var(--hts-space-4);
+    }
+
+    .panel-foot {
+        flex-wrap: wrap;
+    }
+}

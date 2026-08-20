@@ -1,0 +1,95 @@
+.console {
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr);
+    border: 1px solid var(--hts-console-rule);
+    border-radius: var(--hts-radius-sm);
+    background: var(--hts-console);
+    overflow: hidden;
+}
+
+.console-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--hts-space-3);
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--hts-console-rule);
+    background: rgba(255, 255, 255, 0.02);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.18em;
+}
+
+.console-key {
+    color: var(--hts-console-accent);
+}
+
+.console-meta {
+    color: var(--hts-console-muted);
+}
+
+.console-body {
+    display: grid;
+    align-content: start;
+    gap: 0.35rem;
+    padding: var(--hts-space-4) var(--hts-space-5);
+    overflow-y: auto;
+    font-family: var(--hts-font-mono);
+    font-size: var(--hts-text-xs);
+    line-height: 1.6;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(131, 168, 243, 0.35) transparent;
+}
+
+.console.is-compact .console-body {
+    max-height: 13rem;
+}
+
+.console:not(.is-compact) .console-body {
+    min-height: 22rem;
+    max-height: 30rem;
+}
+
+.console-line {
+    display: flex;
+    gap: 0.7rem;
+    color: var(--hts-console-text);
+    white-space: nowrap;
+}
+
+.console-time {
+    flex: none;
+    color: var(--hts-console-muted);
+}
+
+.console-source {
+    flex: none;
+    color: var(--hts-console-brand);
+}
+
+.console-text {
+    white-space: normal;
+}
+
+.console-line.is-ok .console-text {
+    color: var(--hts-console-accent);
+}
+
+.console-line.is-warn .console-text {
+    color: var(--hts-console-brand);
+}
+
+/* Blinking prompt caret at the tail of the log. */
+.caret {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.85rem;
+    background: var(--hts-console-accent);
+    animation: caret-blink 1.1s steps(2, end) infinite;
+}
+
+@keyframes caret-blink {
+    50% {
+        opacity: 0;
+    }
+}

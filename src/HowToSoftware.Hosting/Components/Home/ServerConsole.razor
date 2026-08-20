@@ -1,0 +1,43 @@
+@*
+    Server console output.
+
+    Extracted so the overview and the dedicated console view share one implementation. Lines
+    fade in sequentially the first time the panel is revealed, then stay put - the brief asks
+    for a staged reveal, not a perpetual animation.
+*@
+
+<div class="console @(Compact ? "is-compact" : null)">
+    <header class="console-bar">
+        <span class="console-key">CONSOLE</span>
+        <span class="console-meta">@Entries.Count LINES / LIVE TAIL</span>
+    </header>
+
+    <div class="console-body" role="log" aria-label="Server console output">
+        @foreach (var (entry, index) in Entries.Select((e, i) => (e, i)))
+        {
+            <p class="console-line @SeverityClass(entry.Severity)" style="--i: @index">
+                <span class="console-time">@entry.Timestamp</span>
+                <span class="console-source">[@entry.Source]</span>
+                <span class="console-text">@entry.Message</span>
+            </p>
+        }
+        <p class="console-line console-line--caret"><span class="caret"></span></p>
+    </div>
+</div>
+
+@code {
+    /// <summary>Console lines to render, oldest first.</summary>
+    [Parameter, EditorRequired]
+    public IReadOnlyList<ConsoleEntry> Entries { get; set; } = [];
+
+    /// <summary>Renders the shorter variant used inside the overview.</summary>
+    [Parameter]
+    public bool Compact { get; set; }
+
+    private static string SeverityClass(ConsoleSeverity severity) => severity switch
+    {
+        ConsoleSeverity.Success => "is-ok",
+        ConsoleSeverity.Warning => "is-warn",
+        _ => "is-info"
+    };
+}

@@ -1,0 +1,47 @@
+@*
+    Full-bleed telemetry rail that carries the eye out of the hero.
+
+    The readings are duplicated once so the marquee can loop seamlessly; the copy is marked
+    aria-hidden so screen readers hear each reading exactly once.
+*@
+
+@inject IMarketingContentService Content
+
+<section class="strip" aria-label="Platform telemetry">
+    <div class="strip-cap strip-cap--left">
+        <span class="cap-dot"></span>
+        LIVE
+    </div>
+
+    <div class="strip-viewport">
+        <div class="strip-rail">
+            <ul class="strip-set">
+                @foreach (var signal in Content.TelemetryStrip)
+                {
+                    <li class="signal tone-@signal.Tone.ToString().ToLowerInvariant()">
+                        @if (signal.ShowPulse)
+                        {
+                            <span class="signal-pulse"></span>
+                        }
+                        <span class="signal-label">@signal.Label</span>
+                        <span class="signal-value">@signal.Value</span>
+                    </li>
+                }
+            </ul>
+
+            <ul class="strip-set" aria-hidden="true">
+                @foreach (var signal in Content.TelemetryStrip)
+                {
+                    <li class="signal tone-@signal.Tone.ToString().ToLowerInvariant()">
+                        @if (signal.ShowPulse)
+                        {
+                            <span class="signal-pulse"></span>
+                        }
+                        <span class="signal-label">@signal.Label</span>
+                        <span class="signal-value">@signal.Value</span>
+                    </li>
+                }
+            </ul>
+        </div>
+    </div>
+</section>
