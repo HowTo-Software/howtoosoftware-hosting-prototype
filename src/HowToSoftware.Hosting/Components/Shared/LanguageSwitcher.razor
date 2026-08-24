@@ -1,0 +1,69 @@
+@*
+    Language selector.
+
+    Two plain links rather than a scripted control. Each one points at the culture endpoint,
+    which writes the choice to a cookie and sends the visitor back to the page they were on, so
+    the whole response - including everything rendered statically on the server - comes back in
+    the new language and stays there on the next visit.
+
+    `data-enhance-nav="false"` matters: enhanced navigation would swap the DOM without
+    rebuilding the circuit, leaving interactive islands rendering in the previous language.
+    A real navigation is the correct behaviour for a language change.
+
+    Labels are language names, never flags. A language is not a country.
+*@
+
+@inject IStringLocalizer<CommonText> Text
+@inject NavigationManager Navigation
+
+<div class="lang" role="group" aria-label="@Text["Language.Label"]" data-enhance-nav="false">
+    @foreach (var option in Options)
+    {
+        var isActive = option.Culture == ActiveCulture;
+
+        <a class="lang-option @(isActive ? "is-active" : null)"
+           href="@BuildHref(option.Culture)"
+           hreflang="@option.Culture"
+           lang="@option.Culture"
+           aria-current="@(isActive ? "true" : null)"
+           aria-label="@(isActive ? option.Name : Text["Language.SwitchTo", option.Name].Value)"
+           title="@option.Name">@option.Short</a>
+    }
+</div>
+
+@code {
+    /// <summary>One selectable language.</summary>
+    /// <param name="Culture">Culture name written to the cookie.</param>
+    /// <param name="Short">Compact label shown in the control.</param>
+    /// <param name="Name">Full language name, used for the accessible name and tooltip.</param>
+    private sealed record LanguageOption(string Culture, string Short, string Name);
+
+    private IReadOnlyList<LanguageOption> Options =>
+    [
+        new(SupportedCultures.Default, Text["Language.EnShort"], Text["Language.EnName"]),
+        new(SupportedCultures.Portuguese, Text["Language.PtShort"], Text["Language.PtName"])
+    ];
+
+    private static string ActiveCulture =>
+        SupportedCultures.ResolveOrDefault(System.Globalization.CultureInfo.CurrentUICulture.Name);
+
+    /// <summary>The path to come back to, so switching language keeps the visitor in place.</summary>
+    private string ReturnPath
+    {
+        get
+        {
+            var relative = Navigation.ToBaseRelativePath(Navigation.Uri);
+            return relative.Length == 0 ? "/" : "/" + relative;
+        }
+    }
+
+    private string BuildHref(string culture) =>
+        $"{CultureEndpoints.Pattern}" +
+        $"?{CultureEndpoints.CultureKey}={Uri.EscapeDataString(culture)}" +
+        $"&{CultureEndpoints.RedirectKey}={Uri.EscapeDataString(ReturnPath)}";
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

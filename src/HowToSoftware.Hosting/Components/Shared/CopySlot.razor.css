@@ -1,0 +1,99 @@
+/* Pending copy. Reads as a deliberate blank in a technical document: mono, dimmed, and
+   underscored with a dashed rule the way a form leaves a line to be filled in. */
+.copy-slot {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    text-wrap: nowrap;
+}
+
+.copy-slot::after {
+    content: "";
+    align-self: flex-end;
+    flex: 1;
+    min-width: 1.25rem;
+    height: 0;
+    margin-bottom: 0.28em;
+    border-bottom: 1px dashed var(--hts-rule);
+}
+
+/* Small square tick, borrowed from the node drop-line dots, so the marker belongs to the
+   same drawing language as the diagrams around it. */
+.copy-slot-tick {
+    width: 0.3rem;
+    height: 0.3rem;
+    flex: none;
+    background: var(--hts-blue-400);
+    opacity: 0.55;
+    transform: rotate(45deg);
+}
+
+.copy-slot.is-micro {
+    font-size: 0.5625rem;
+    letter-spacing: 0.2em;
+}
+
+/* A micro slot sits inside tight readouts, where a leader stretching the full width reads as
+   a stray rule. It gets a short tail instead. */
+.copy-slot.is-micro::after {
+    flex: 0 0 auto;
+    width: 1.1rem;
+    min-width: 0;
+}
+
+/* Centred contexts have no left-aligned column to lead into. */
+.copy-slot.is-display::after {
+    display: none;
+}
+
+.copy-slot.is-micro .copy-slot-tick {
+    width: 0.22rem;
+    height: 0.22rem;
+}
+
+.copy-slot.is-value {
+    font-size: var(--hts-text-sm);
+}
+
+.copy-slot.is-lede {
+    display: flex;
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-base);
+    letter-spacing: 0.14em;
+}
+
+.copy-slot.is-display {
+    display: flex;
+    color: var(--hts-ink-soft);
+    font-size: clamp(1.1rem, 0.85rem + 1.1vw, 1.75rem);
+    font-weight: 500;
+    letter-spacing: 0.1em;
+}
+
+.copy-slot.is-display .copy-slot-tick {
+    width: 0.45rem;
+    height: 0.45rem;
+    opacity: 0.75;
+}
+
+/* Once real copy lands the slot stops shouting and just renders the text. */
+.copy-slot.is-resolved {
+    color: var(--hts-ink-soft);
+    font-family: var(--hts-font-sans);
+    letter-spacing: normal;
+    text-transform: none;
+}
+
+.copy-slot.is-resolved::after {
+    display: none;
+}
+
+.copy-slot.is-resolved.is-value {
+    color: var(--hts-ink);
+    font-size: var(--hts-text-base);
+}

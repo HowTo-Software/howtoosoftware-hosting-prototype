@@ -6,11 +6,12 @@
 *@
 
 @inject IMarketingContentService Content
+@inject IStringLocalizer<HomeText> Text
 
-<section class="strip" aria-label="Platform telemetry">
+<section class="strip" aria-label="@Text["Strip.Label"]">
     <div class="strip-cap strip-cap--left">
         <span class="cap-dot"></span>
-        LIVE
+        @Text["Strip.Live"]
     </div>
 
     <div class="strip-viewport">

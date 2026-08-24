@@ -10,6 +10,7 @@
 @rendermode InteractiveServer
 @implements IAsyncDisposable
 @inject IJSRuntime JS
+@inject IStringLocalizer<CommonText> Text
 
 <button type="button"
         class="theme-toggle"
@@ -21,13 +22,13 @@
     <span class="toggle-track" aria-hidden="true">
         <span class="toggle-knob"></span>
     </span>
-    <span class="toggle-label" aria-hidden="true">@(_isLight ? "LIGHT" : "DARK")</span>
+    <span class="toggle-label" aria-hidden="true">@(_isLight ? Text["Theme.Light"] : Text["Theme.Dark"])</span>
 </button>
 
 @code {
     private bool _isLight;
 
-    private string Label => _isLight ? "Switch to dark theme" : "Switch to light theme";
+    private string Label => _isLight ? Text["Theme.SwitchToDark"] : Text["Theme.SwitchToLight"];
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

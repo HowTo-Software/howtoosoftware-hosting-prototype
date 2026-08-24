@@ -6,13 +6,15 @@
     for a staged reveal, not a perpetual animation.
 *@
 
+@inject IStringLocalizer<HomeText> Text
+
 <div class="console @(Compact ? "is-compact" : null)">
     <header class="console-bar">
-        <span class="console-key">CONSOLE</span>
-        <span class="console-meta">@Entries.Count LINES / LIVE TAIL</span>
+        <span class="console-key">@Text["Console.Key"]</span>
+        <span class="console-meta">@Text["Console.Meta", Entries.Count]</span>
     </header>
 
-    <div class="console-body" role="log" aria-label="Server console output">
+    <div class="console-body" role="log" aria-label="@Text["Console.Label"]">
         @foreach (var (entry, index) in Entries.Select((e, i) => (e, i)))
         {
             <p class="console-line @SeverityClass(entry.Severity)" style="--i: @index">

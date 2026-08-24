@@ -6,6 +6,8 @@
     animation-delay, so nothing depends on JavaScript to become visible.
 *@
 
+@inject IStringLocalizer<HomeText> Text
+
 <section class="hero" id="top">
     <WorldFieldBackdrop />
 
@@ -13,27 +15,23 @@
         <div class="hero-type">
             <p class="hero-kicker">
                 <span class="kicker-rule"></span>
-                PROJECT ZOMBOID / SERVER INFRASTRUCTURE
+                @Text["Hero.Kicker"]
             </p>
 
             <h1 class="hero-title">
-                <span class="title-line">Built for worlds</span>
-                <span class="title-line title-line--accent">that refuse</span>
-                <span class="title-line">to die.</span>
+                <span class="title-line">@Text["Hero.Line1"]</span>
+                <span class="title-line title-line--accent">@Text["Hero.Line2"]</span>
+                <span class="title-line">@Text["Hero.Line3"]</span>
             </h1>
 
-            <p class="hero-copy">
-                Persistent Knox County worlds on dedicated allocation. Workshop collections
-                resolved for you, provisioning handled by software, and a control panel that
-                treats your server like the running system it is.
-            </p>
+            <p class="hero-copy">@Text["Hero.Copy"]</p>
 
             <div class="hero-actions">
                 <CtaButton Href="#plans" Size="CtaSize.Large" TrailingIcon="IconName.ArrowRight">
-                    Deploy your server
+                    @Text["Hero.CtaPrimary"]
                 </CtaButton>
                 <CtaButton Href="#control-panel" Variant="CtaVariant.Secondary" Size="CtaSize.Large">
-                    See the panel
+                    @Text["Hero.CtaSecondary"]
                 </CtaButton>
             </div>
         </div>
@@ -44,11 +42,11 @@
     </div>
 
     <div class="hts-container hts-container--wide hero-foot">
-        <span class="foot-coord">CELL 38x27 / KNOX COUNTY</span>
+        <span class="foot-coord">@Text["Hero.FootCell"]</span>
         <span class="foot-scroll">
             <span class="foot-scroll-track"><span class="foot-scroll-dot"></span></span>
-            SCROLL
+            @Text["Hero.FootScroll"]
         </span>
-        <span class="foot-alloc">ALLOCATION 203.0.113.24:16261</span>
+        <span class="foot-alloc">@Text["Hero.FootAllocation"]</span>
     </div>
 </section>

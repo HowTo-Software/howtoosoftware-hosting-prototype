@@ -147,6 +147,96 @@
         }
     };
 
+    // ── 5. Pointer spotlight ────────────────────────────────────────────────
+    // Where the pointer is, in element-local coordinates. CSS cannot ask that
+    // question and neither can C#, so the only job here is to publish the answer
+    // as two custom properties and let the stylesheet decide what to do with it.
+    //
+    // One delegated listener for the whole document rather than one per panel,
+    // and only for a pointer that can actually hover - a touch "hover" would
+    // light a panel up and leave it lit.
+    var spotlit = null;
+    var spotQueued = null;
+
+    function paintSpotlight() {
+        var pending = spotQueued;
+        spotQueued = null;
+
+        if (!pending) {
+            return;
+        }
+
+        var rect = pending.target.getBoundingClientRect();
+        pending.target.style.setProperty("--spot-x", ((pending.x - rect.left) / rect.width * 100).toFixed(2) + "%");
+        pending.target.style.setProperty("--spot-y", ((pending.y - rect.top) / rect.height * 100).toFixed(2) + "%");
+    }
+
+    function onPointerMove(event) {
+        if (event.pointerType === "touch") {
+            return;
+        }
+
+        var target = event.target.closest ? event.target.closest("[data-spotlight]") : null;
+
+        if (target !== spotlit) {
+            if (spotlit) {
+                spotlit.classList.remove("is-spotlit");
+            }
+
+            spotlit = target;
+
+            if (spotlit) {
+                spotlit.classList.add("is-spotlit");
+            }
+        }
+
+        if (!target) {
+            return;
+        }
+
+        var alreadyQueued = spotQueued !== null;
+        spotQueued = { target: target, x: event.clientX, y: event.clientY };
+
+        if (!alreadyQueued) {
+            window.requestAnimationFrame(paintSpotlight);
+        }
+    }
+
+    function clearSpotlight() {
+        if (spotlit) {
+            spotlit.classList.remove("is-spotlit");
+            spotlit = null;
+        }
+
+        spotQueued = null;
+    }
+
+    // ── 6. Route entrance ───────────────────────────────────────────────────
+    // Blazor's enhanced navigation patches the existing DOM instead of replacing
+    // it, and a patched element never replays its CSS animation. Removing and
+    // re-adding the attribute restarts it, which is the whole of the page
+    // transition: the CSS owns what it looks like.
+    function replayPageEnter() {
+        var main = document.querySelector("[data-page-enter]");
+
+        if (!main) {
+            return;
+        }
+
+        main.removeAttribute("data-page-enter");
+        // Reading a layout property between the two flushes the style change, so
+        // the browser sees a genuine removal rather than a no-op.
+        void main.offsetWidth;
+        main.setAttribute("data-page-enter", "");
+    }
+
+    function onEnhancedLoad() {
+        clearSpotlight();
+        scan(document.body);
+        applyScrollState();
+        replayPageEnter();
+    }
+
     // ── Wiring ──────────────────────────────────────────────────────────────
     function start() {
         scan(document.body);
@@ -155,10 +245,20 @@
 
     window.addEventListener("scroll", onScroll, { passive: true });
 
+    if (root.classList.contains("hts-js")) {
+        document.addEventListener("pointermove", onPointerMove, { passive: true });
+        document.addEventListener("pointerleave", clearSpotlight, { passive: true });
+    }
+
     if (document.readyState === "loading") {
         document.addEventListener("DOMContentLoaded", start, { once: true });
     } else {
         start();
+    }
+
+    // Enhanced navigation fires this after each same-document page swap.
+    if (window.Blazor && typeof window.Blazor.addEventListener === "function") {
+        window.Blazor.addEventListener("enhancedload", onEnhancedLoad);
     }
 
     // Blazor renders interactive islands after the initial paint, so pick up any

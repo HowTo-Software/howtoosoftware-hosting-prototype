@@ -36,7 +36,12 @@ public enum IconName
     Map,
     Layers,
     Mail,
-    Sparkle
+    Sparkle,
+    Eye,
+    EyeOff,
+    Lock,
+    Rack,
+    Snapshot
 }
 
 // =============================================================

@@ -1,0 +1,15 @@
+.login-page {
+    position: relative;
+    display: flex;
+    align-items: center;
+    /* Fills what is left of the viewport under the header without pinning the footer off
+       screen on a short window - the content decides when it needs more room. */
+    min-height: calc(100dvh - var(--hts-header-height));
+    padding-block: clamp(2rem, 4vw, 3.5rem);
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.login-inner {
+    width: 100%;
+}

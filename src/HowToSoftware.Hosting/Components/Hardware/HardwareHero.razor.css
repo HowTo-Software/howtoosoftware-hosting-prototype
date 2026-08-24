@@ -1,0 +1,115 @@
+.hw-hero {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    min-height: 72vh;
+    padding-block: calc(var(--hts-header-height) + 2rem) 0;
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.hw-hero-inner {
+    position: relative;
+    z-index: var(--hts-z-content);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-block: clamp(2.5rem, 6vw, 5rem);
+}
+
+.hw-kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: var(--hts-space-6);
+    color: var(--hts-blue-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+}
+
+.kicker-rule {
+    width: 2.5rem;
+    height: 1px;
+    flex: none;
+    background: linear-gradient(90deg, var(--hts-purple-400), var(--hts-blue-400));
+}
+
+/* Three lines, tightly leaded, with the middle one carrying the brand purple - the homepage
+   headline's construction, one line longer. */
+.hw-title {
+    max-width: 15ch;
+    font-size: clamp(2.6rem, 1.2rem + 5vw, 5rem);
+    font-weight: 680;
+    line-height: 0.96;
+    letter-spacing: -0.035em;
+    text-wrap: nowrap;
+}
+
+.title-line {
+    display: block;
+}
+
+.title-line--accent {
+    margin-left: clamp(0rem, 3vw, 2.75rem);
+    color: var(--hts-purple-400);
+}
+
+.hw-lede {
+    max-width: 34rem;
+    margin-top: var(--hts-space-6);
+}
+
+/* ── Foot rail ─────────────────────────────────────────────────────────── */
+
+.hw-hero-foot {
+    position: relative;
+    z-index: var(--hts-z-content);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: clamp(1.5rem, 5vw, 4rem);
+    padding-block: var(--hts-space-5);
+    border-top: 1px solid var(--hts-border);
+}
+
+.foot-item {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    font-family: var(--hts-font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.18em;
+}
+
+.foot-label {
+    color: var(--hts-ink-muted);
+}
+
+.foot-value {
+    color: var(--hts-blue-300);
+    font-weight: 600;
+}
+
+@media (max-width: 900px) {
+    .hw-hero {
+        min-height: auto;
+        padding-bottom: var(--hts-space-6);
+    }
+
+    .hw-title {
+        max-width: none;
+        text-wrap: balance;
+    }
+
+    .title-line--accent {
+        margin-left: 0;
+    }
+
+    .hw-hero-foot {
+        gap: var(--hts-space-4) var(--hts-space-8);
+    }
+}

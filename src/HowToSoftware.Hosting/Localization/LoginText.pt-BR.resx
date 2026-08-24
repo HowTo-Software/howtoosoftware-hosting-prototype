@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Meta.Title" xml:space="preserve">
+    <value>Entrar | {0}</value>
+  </data>
+  <data name="Meta.Description" xml:space="preserve">
+    <value>Entre no painel de controle da HowToSoftware para gerenciar seu servidor de Project Zomboid.</value>
+  </data>
+  <data name="Eyebrow" xml:space="preserve">
+    <value>INFRAESTRUTURA DE PROJECT ZOMBOID</value>
+  </data>
+  <data name="Heading" xml:space="preserve">
+    <value>Acesse seu</value>
+  </data>
+  <data name="HeadingAccent" xml:space="preserve">
+    <value>painel de controle.</value>
+  </data>
+  <data name="Lede" xml:space="preserve">
+    <value>Ações de energia, console ao vivo, coleções do Workshop e configuração do mundo — tudo atrás de uma única porta.</value>
+  </data>
+  <data name="Form.Label" xml:space="preserve">
+    <value>Entrar no seu painel de controle</value>
+  </data>
+  <data name="Field.Email" xml:space="preserve">
+    <value>E-mail</value>
+  </data>
+  <data name="Field.EmailPlaceholder" xml:space="preserve">
+    <value>voce@exemplo.com</value>
+  </data>
+  <data name="Field.Password" xml:space="preserve">
+    <value>Senha</value>
+  </data>
+  <data name="Field.PasswordPlaceholder" xml:space="preserve">
+    <value>Sua senha</value>
+  </data>
+  <data name="Action.ShowPassword" xml:space="preserve">
+    <value>Mostrar senha</value>
+  </data>
+  <data name="Action.HidePassword" xml:space="preserve">
+    <value>Ocultar senha</value>
+  </data>
+  <data name="Action.PasswordShown" xml:space="preserve">
+    <value>A senha está visível</value>
+  </data>
+  <data name="Action.PasswordHidden" xml:space="preserve">
+    <value>A senha está oculta</value>
+  </data>
+  <data name="Field.RememberMe" xml:space="preserve">
+    <value>Lembrar de mim</value>
+  </data>
+  <data name="Field.RememberHint" xml:space="preserve">
+    <value>Mantém este navegador conectado.</value>
+  </data>
+  <data name="Action.ForgotPassword" xml:space="preserve">
+    <value>Esqueceu sua senha?</value>
+  </data>
+  <data name="Action.SignIn" xml:space="preserve">
+    <value>Entrar</value>
+  </data>
+  <data name="Action.SigningIn" xml:space="preserve">
+    <value>Entrando</value>
+  </data>
+  <data name="Action.BackToWebsite" xml:space="preserve">
+    <value>Voltar ao site</value>
+  </data>
+  <data name="Prompt.NoAccount" xml:space="preserve">
+    <value>Precisa de uma conta?</value>
+  </data>
+  <data name="Action.CreateAccount" xml:space="preserve">
+    <value>Criar agora</value>
+  </data>
+  <data name="Validation.EmailRequired" xml:space="preserve">
+    <value>Informe seu e-mail.</value>
+  </data>
+  <data name="Validation.EmailInvalid" xml:space="preserve">
+    <value>Isso não parece um endereço de e-mail.</value>
+  </data>
+  <data name="Validation.PasswordRequired" xml:space="preserve">
+    <value>Informe sua senha.</value>
+  </data>
+  <data name="Validation.Summary" xml:space="preserve">
+    <value>Revise os campos destacados e tente de novo.</value>
+  </data>
+  <data name="Notice.Unavailable" xml:space="preserve">
+    <value>A autenticação ainda não está conectada. Esta tela é uma prévia da interface — nada é verificado, armazenado ou enviado a lugar nenhum.</value>
+  </data>
+  <data name="Notice.RecoveryUnavailable" xml:space="preserve">
+    <value>A recuperação de senha ainda não está conectada. Ficará disponível quando as contas entrarem no ar.</value>
+  </data>
+  <data name="Notice.SignUpUnavailable" xml:space="preserve">
+    <value>A criação de conta ainda não está conectada. Ficará disponível quando as contas entrarem no ar.</value>
+  </data>
+  <data name="Notice.Dismiss" xml:space="preserve">
+    <value>Dispensar este aviso</value>
+  </data>
+  <data name="Notice.PrototypeBadge" xml:space="preserve">
+    <value>PROTÓTIPO</value>
+  </data>
+  <data name="Security.Note" xml:space="preserve">
+    <value>Nenhuma credencial é armazenada, transmitida ou verificada por este protótipo.</value>
+  </data>
+  <data name="Gateway.Title" xml:space="preserve">
+    <value>GATEWAY DE AUTENTICAÇÃO</value>
+  </data>
+  <data name="Gateway.SessionLabel" xml:space="preserve">
+    <value>SESSÃO</value>
+  </data>
+  <data name="Gateway.SessionValue" xml:space="preserve">
+    <value>NÃO ESTABELECIDA</value>
+  </data>
+  <data name="Gateway.Client" xml:space="preserve">
+    <value>CLIENTE</value>
+  </data>
+  <data name="Gateway.Edge" xml:space="preserve">
+    <value>EDGE</value>
+  </data>
+  <data name="Gateway.Identity" xml:space="preserve">
+    <value>IDENTIDADE</value>
+  </data>
+  <data name="Gateway.ControlPlane" xml:space="preserve">
+    <value>PLANO DE CONTROLE</value>
+  </data>
+  <data name="Gateway.NodeOnline" xml:space="preserve">
+    <value>NÓ ONLINE</value>
+  </data>
+  <data name="Gateway.Ready" xml:space="preserve">
+    <value>GATEWAY PRONTO</value>
+  </data>
+  <data name="Gateway.PlatformOperational" xml:space="preserve">
+    <value>PLATAFORMA OPERACIONAL</value>
+  </data>
+  <data name="Gateway.Handshake" xml:space="preserve">
+    <value>HANDSHAKE</value>
+  </data>
+  <data name="Gateway.Awaiting" xml:space="preserve">
+    <value>AGUARDANDO CREDENCIAIS</value>
+  </data>
+  <data name="Gateway.Verifying" xml:space="preserve">
+    <value>VERIFICANDO</value>
+  </data>
+  <data name="Gateway.Region" xml:space="preserve">
+    <value>REGIÃO</value>
+  </data>
+  <data name="Gateway.RegionValue" xml:space="preserve">
+    <value>EU WEST / 01</value>
+  </data>
+  <data name="Notice.InvalidCredentials" xml:space="preserve">
+    <value>Esse e-mail e senha não correspondem a uma conta.</value>
+  </data>
+  <data name="Notice.Locked" xml:space="preserve">
+    <value>Esta conta está temporariamente bloqueada. Tente novamente em instantes.</value>
+  </data>
+  <data name="Gateway.Halted" xml:space="preserve">
+    <value>INTERROMPIDO</value>
+  </data>
+  <data name="Gateway.NotConnected" xml:space="preserve">
+    <value>NÃO CONECTADO</value>
+  </data>
+  <data name="Form.PasswordVisibility" xml:space="preserve">
+    <value>Visibilidade da senha</value>
+  </data>
+</root>

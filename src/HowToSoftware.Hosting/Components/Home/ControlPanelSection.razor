@@ -11,21 +11,20 @@
 @implements IDisposable
 @inject IServerPreviewService Preview
 @inject IMarketingContentService Content
+@inject IStringLocalizer<HomeText> Text
+@inject IStringLocalizer<CommonText> Common
 
 <section class="cp" id="control-panel" aria-labelledby="control-panel-heading">
     <div class="hts-container hts-container--wide cp-head" data-reveal>
         <p class="cp-kicker">
             <span class="kicker-index">04</span>
-            CONTROL PANEL
+            @Text["Cp.Kicker"]
         </p>
         <h2 id="control-panel-heading" class="cp-title">
-            The whole server,<br />
-            <span class="cp-accent">one screen.</span>
+            @Text["Cp.Line1"]<br />
+            <span class="cp-accent">@Text["Cp.Accent"]</span>
         </h2>
-        <p class="cp-lede">
-            Power, resources, console, mods and files in a single interface. Try it - the
-            controls below drive real component state on illustrative data.
-        </p>
+        <p class="cp-lede">@Text["Cp.Lede"]</p>
     </div>
 
     <div class="cp-stage" data-reveal="scale">
@@ -36,12 +35,12 @@
                     <span class="url-lock"></span>
                     panel.howtoosoftware.com / knox-county-01
                 </span>
-                <span class="chrome-env">PREVIEW</span>
+                <span class="chrome-env">@Text["Cp.Env"]</span>
             </div>
 
             <div class="app-body">
-                <nav class="app-side" aria-label="Server sections">
-                    <p class="side-key">SERVER</p>
+                <nav class="app-side" aria-label="@Text["Cp.SectionsLabel"]">
+                    <p class="side-key">@Text["Cp.Server"]</p>
                     <ul>
                         @foreach (var view in Views)
                         {
@@ -58,8 +57,8 @@
                     </ul>
 
                     <div class="side-foot">
-                        <p class="side-key">NODE</p>
-                        <p class="side-node">EU WEST / 01</p>
+                        <p class="side-key">@Text["Cp.Node"]</p>
+                        <p class="side-node">@Text["Cp.NodeValue"]</p>
                     </div>
                 </nav>
 
@@ -74,20 +73,20 @@
 
                             <p class="main-state @StateClass(server.State)" aria-live="polite">
                                 <span class="state-dot"></span>
-                                @server.State.ToString().ToUpperInvariant()
+                                @StateLabel(server.State)
                             </p>
 
-                            <div class="main-actions" role="group" aria-label="Server power controls">
+                            <div class="main-actions" role="group" aria-label="@Text["Cp.PowerLabel"]">
                                 <button type="button" class="act"
                                         disabled="@(_busy || server.State is not ServerState.Offline)"
-                                        @onclick="() => SendAsync(ServerCommand.Start)">Start</button>
+                                        @onclick="() => SendAsync(ServerCommand.Start)">@Text["Cp.Start"]</button>
                                 <button type="button" class="act"
                                         disabled="@(_busy || server.State is not ServerState.Online)"
-                                        @onclick="() => SendAsync(ServerCommand.Restart)">Restart</button>
+                                        @onclick="() => SendAsync(ServerCommand.Restart)">@Text["Cp.Restart"]</button>
                                 <button type="button" class="act"
                                         disabled="@(_busy || server.State is not ServerState.Online)"
-                                        @onclick="() => SendAsync(ServerCommand.Stop)">Stop</button>
-                                <button type="button" class="act act--ghost" disabled>Backup</button>
+                                        @onclick="() => SendAsync(ServerCommand.Stop)">@Text["Cp.Stop"]</button>
+                                <button type="button" class="act act--ghost" disabled>@Text["Cp.Backup"]</button>
                             </div>
                         </header>
 
@@ -101,7 +100,7 @@
                                             <p class="metric-key">@metric.Label</p>
                                             <p class="metric-value">@metric.Display</p>
                                             <div class="metric-track" role="meter"
-                                                 aria-label="@($"{metric.Label} usage")"
+                                                 aria-label="@Text["Cp.MetricUsage", metric.Label]"
                                                  aria-valuenow="@metric.Percent" aria-valuemin="0" aria-valuemax="100">
                                                 <span class="metric-fill" style="--target: @(metric.Percent)%"></span>
                                             </div>
@@ -119,8 +118,8 @@
                             case PanelView.Mods:
                                 <div class="mods">
                                     <div class="mods-head">
-                                        <span>WORKSHOP COLLECTION 3021845517</span>
-                                        <span class="mods-count">82 / 82 READY</span>
+                                        <span>@Text["Cp.ModsHead"]</span>
+                                        <span class="mods-count">@Text["Cp.ModsCount"]</span>
                                     </div>
                                     <ul>
                                         @foreach (var item in Content.WorkshopItems)
@@ -130,7 +129,7 @@
                                                 <span class="mods-id">@item.WorkshopId</span>
                                                 <span class="mods-size">@item.SizeLabel</span>
                                                 <span class="mods-state s-@item.State.ToString().ToLowerInvariant()">
-                                                    @item.State.ToString().ToUpperInvariant()
+                                                    @SyncLabel(item.State)
                                                 </span>
                                             </li>
                                         }
@@ -141,25 +140,20 @@
                             default:
                                 <div class="placeholder">
                                     <p class="placeholder-key">@Label(_view).ToUpperInvariant()</p>
-                                    <p class="placeholder-copy">
-                                        This area is part of the planned panel and is not built in
-                                        the prototype yet.
-                                    </p>
+                                    <p class="placeholder-copy">@Text["Cp.PlaceholderCopy"]</p>
                                 </div>
                                 break;
                         }
                     }
                     else
                     {
-                        <p class="loading">Loading server state…</p>
+                        <p class="loading">@Text["Cp.Loading"]&#8230;</p>
                     }
                 </div>
             </div>
         </div>
 
-        <p class="cp-note">
-            Interface preview on mock data. No server is created, started or stopped.
-        </p>
+        <p class="cp-note">@Text["Cp.Note"]</p>
     </div>
 </section>
 
@@ -224,7 +218,23 @@
         }
     }
 
-    private static string Label(PanelView view) => view.ToString();
+    private string Label(PanelView view) => Text[$"Cp.View{view}"];
+
+    private string StateLabel(ServerState state) => state switch
+    {
+        ServerState.Online => Common["Status.Online"],
+        ServerState.Offline => Common["Status.Offline"],
+        ServerState.Starting => Common["Status.Starting"],
+        ServerState.Restarting => Common["Status.Restarting"],
+        _ => Common["Status.Stopping"]
+    };
+
+    private string SyncLabel(ModSyncState state) => state switch
+    {
+        ModSyncState.Synced => Common["Status.Synced"],
+        ModSyncState.Syncing => Common["Status.Syncing"],
+        _ => Common["Status.Queued"]
+    };
 
     private static string StateClass(ServerState state) => state switch
     {

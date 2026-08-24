@@ -1,0 +1,148 @@
+@*
+    Node topology.
+
+    The platform at the top, a distribution bus, the nodes hanging off it, and the game servers
+    they place worlds onto at the bottom - drawn as one continuous diagram rather than three
+    cards with lines painted between them.
+
+    The connectors are CSS rules and a single SVG spine, so the whole thing reflows: on a phone
+    the branch collapses into a single vertical run and the drawing still reads.
+
+    Every specification inside a node is pending. The allocation bar is deliberately
+    indeterminate rather than showing a number nobody has confirmed.
+*@
+
+@inject IStringLocalizer<HardwareText> Text
+@inject IStringLocalizer<CommonText> Common
+@inject IInfrastructureContentService Content
+
+<section class="topology" id="topology" aria-labelledby="topology-heading">
+    <div class="hts-container hts-container--wide">
+        <header class="topology-head" data-reveal="rise">
+            <p class="chapter-kicker">
+                <span class="kicker-index">@Text["Topology.Index"]</span>
+                @Text["Topology.Kicker"]
+            </p>
+            <h2 class="topology-title" id="topology-heading">@Text["Topology.Title"]</h2>
+            <p class="topology-lede">
+                <CopySlot Size="CopySlot.SlotSize.Lede" />
+            </p>
+        </header>
+
+        <div class="diagram" data-reveal="scale">
+            @* ── Crown: the platform every placement decision comes from ─────────── *@
+            <div class="crown">
+                <span class="crown-plate">
+                    <span class="crown-dot" aria-hidden="true"></span>
+                    @Text["Topology.Platform"]
+                </span>
+                <span class="crown-drop" aria-hidden="true"></span>
+            </div>
+
+            @* ── Bus ─────────────────────────────────────────────────────────────── *@
+            <div class="bus" aria-hidden="true">
+                <span class="bus-label">@Text["Topology.Bus"]</span>
+                <span class="bus-line"></span>
+                <span class="bus-junction"></span>
+                <span class="bus-line"></span>
+            </div>
+
+            @* ── Nodes ───────────────────────────────────────────────────────────── *@
+            <ul class="node-row">
+                @foreach (var (node, index) in Content.Nodes.Select((node, index) => (node, index)))
+                {
+                    <li class="node @HealthClass(node.Health)" data-reveal data-spotlight
+                        style="--hts-reveal-delay: @(index * 90)ms">
+                        <span class="node-drop" aria-hidden="true"></span>
+
+                        <header class="node-head">
+                            <span class="node-id">@Text["Topology.NodeLabel"] / @node.Ordinal</span>
+                            <span class="node-health">
+                                <span class="health-dot" aria-hidden="true"></span>
+                                @HealthLabel(node.Health)
+                            </span>
+                        </header>
+
+                        <dl class="node-specs">
+                            @foreach (var spec in node.Specs)
+                            {
+                                <div>
+                                    <dt>@SpecLabel(spec.Kind)</dt>
+                                    <dd><CopySlot Value="@spec.Value" Size="CopySlot.SlotSize.Micro" /></dd>
+                                </div>
+                            }
+                        </dl>
+
+                        <div class="node-load">
+                            <div class="load-head">
+                                <span>@Text["Topology.Allocation"]</span>
+                                <span class="load-value">
+                                    @(node.HasKnownLoad ? $"{node.LoadPercent}%" : "--")
+                                </span>
+                            </div>
+
+                            @if (node.HasKnownLoad)
+                            {
+                                <div class="load-track">
+                                    <span class="load-fill" style="width: @(node.LoadPercent)%"></span>
+                                </div>
+                            }
+                            else
+                            {
+                                @* No figure exists, so the bar shows motion instead of a level.
+                                   A bar sitting at some invented percentage would be a claim. *@
+                                <div class="load-track is-indeterminate">
+                                    <span class="load-sweep"></span>
+                                </div>
+                                <p class="load-note">@Text["Topology.AllocationPending"]</p>
+                            }
+                        </div>
+
+                        <span class="node-riser" aria-hidden="true"></span>
+                    </li>
+                }
+            </ul>
+
+            @* ── Collector: back down to the servers the worlds run on ────────────── *@
+            <div class="collector" aria-hidden="true">
+                <span class="bus-line"></span>
+                <span class="collector-dot"></span>
+                <span class="bus-line"></span>
+            </div>
+
+            <div class="outcome">
+                <span class="outcome-drop" aria-hidden="true"></span>
+                <span class="outcome-plate">@Text["Topology.Servers"]</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    private static string HealthClass(NodeHealth health) => health switch
+    {
+        NodeHealth.Healthy => "is-healthy",
+        NodeHealth.Provisioning => "is-provisioning",
+        _ => "is-reserved"
+    };
+
+    private string HealthLabel(NodeHealth health) => health switch
+    {
+        NodeHealth.Healthy => Common["Status.Healthy"],
+        NodeHealth.Provisioning => Common["Status.Provisioning"],
+        _ => Common["Status.Reserved"]
+    };
+
+    private string SpecLabel(HardwareSpecKind kind) => kind switch
+    {
+        HardwareSpecKind.Cpu => Text["Spec.Cpu"],
+        HardwareSpecKind.Memory => Text["Spec.Memory"],
+        HardwareSpecKind.Storage => Text["Spec.Storage"],
+        _ => Text["Spec.Network"]
+    };
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

@@ -1,11 +1,15 @@
+using HowToSoftware.Hosting.Localization;
 using HowToSoftware.Hosting.Models;
 using HowToSoftware.Hosting.Services;
 
 namespace HowToSoftware.Hosting.Tests;
 
-public class StaticPlanCatalogServiceTests
+public class StaticPlanCatalogServiceTests : IDisposable
 {
-    private readonly StaticPlanCatalogService _sut = new();
+    private readonly CultureScope _culture = new(SupportedCultures.Default);
+    private readonly StaticPlanCatalogService _sut = new(TestLocalizer.For<HomeText>());
+
+    public void Dispose() => _culture.Dispose();
 
     private HostingPlan FirstPlan => _sut.Plans[0];
 

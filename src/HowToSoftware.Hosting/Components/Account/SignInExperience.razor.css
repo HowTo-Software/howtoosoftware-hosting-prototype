@@ -1,0 +1,468 @@
+.signin {
+    position: relative;
+    z-index: var(--hts-z-content);
+    display: grid;
+    grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+    /* Stretch, not centre: the instrument beside the form should share its top and bottom
+       edge, so the two columns read as one panel rather than two floating boxes. */
+    align-items: stretch;
+    gap: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.signin-primary {
+    display: flex;
+    flex-direction: column;
+    max-width: 34rem;
+}
+
+.signin-aside {
+    display: grid;
+}
+
+/* ── Type ──────────────────────────────────────────────────────────────── */
+
+.signin-kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: var(--hts-space-5);
+    color: var(--hts-blue-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+}
+
+.kicker-rule {
+    width: 2.5rem;
+    height: 1px;
+    flex: none;
+    background: linear-gradient(90deg, var(--hts-purple-400), var(--hts-blue-400));
+}
+
+/* Same construction as the homepage hero: stacked lines, second one carrying the brand
+   purple, so arriving here reads as the same product rather than a different template. */
+.signin-title {
+    font-size: clamp(2rem, 1.25rem + 2.4vw, 2.95rem);
+    font-weight: 680;
+    line-height: 1.02;
+    letter-spacing: -0.032em;
+}
+
+.title-line {
+    display: block;
+}
+
+.title-line--accent {
+    color: var(--hts-purple-400);
+}
+
+.signin-lede {
+    max-width: 27rem;
+    margin-top: var(--hts-space-4);
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-base);
+    line-height: var(--hts-leading-relaxed);
+}
+
+/* ── Card ──────────────────────────────────────────────────────────────── */
+
+.signin-card {
+    position: relative;
+    margin-top: var(--hts-space-6);
+    padding: var(--hts-space-5);
+    border: 1px solid var(--hts-border-strong);
+    border-radius: var(--hts-radius-lg);
+    background: var(--hts-surface);
+    box-shadow: var(--hts-rim), var(--hts-shadow-md);
+    overflow: hidden;
+}
+
+/* A lit top edge instead of a frosted panel: the surface stays opaque and the light sits on
+   the rim, which is how every other panel in the system is built. */
+.card-rim {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 1px;
+    background: var(--hts-gradient-hairline);
+    pointer-events: none;
+}
+
+.card-flag {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--hts-space-3);
+    margin-bottom: var(--hts-space-5);
+    padding: 0.5rem 0.75rem;
+    border: 1px solid var(--hts-border-blue);
+    border-radius: var(--hts-radius-md);
+    background: var(--hts-state-online-bg);
+    color: var(--hts-ink-muted);
+    font-size: var(--hts-text-xs);
+    line-height: 1.5;
+}
+
+.flag-badge {
+    flex: none;
+    margin-top: 0.05rem;
+    padding: 0.12rem 0.45rem;
+    border: 1px solid var(--hts-border-blue);
+    border-radius: var(--hts-radius-pill);
+    color: var(--hts-blue-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+}
+
+.signin-form {
+    display: grid;
+    gap: var(--hts-space-4);
+}
+
+/* ── Fields ────────────────────────────────────────────────────────────── */
+
+.field {
+    display: grid;
+    gap: 0.5rem;
+}
+
+.field-label {
+    color: var(--hts-ink-soft);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+.field-shell {
+    position: relative;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--hts-border-strong);
+    border-radius: var(--hts-radius-md);
+    background: var(--hts-surface-inset);
+    box-shadow: var(--hts-rim);
+    transition:
+        border-color var(--hts-duration-fast) var(--hts-ease),
+        box-shadow var(--hts-duration-base) var(--hts-ease);
+}
+
+/* The lit border is on the shell, not the input, so the reveal button lights with it. */
+.field-shell:focus-within {
+    border-color: var(--hts-purple-400);
+    box-shadow: var(--hts-rim), 0 0 0 3px rgba(176, 105, 255, 0.22);
+}
+
+.field.has-error .field-shell {
+    border-color: var(--hts-purple-500);
+}
+
+.field.has-error .field-shell:focus-within {
+    box-shadow: var(--hts-rim), 0 0 0 3px rgba(155, 77, 251, 0.28);
+}
+
+.field-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0.72rem 0.9rem;
+    border: 0;
+    background: transparent;
+    color: var(--hts-ink);
+    font-size: var(--hts-text-md);
+    outline: none;
+}
+
+.field-input::placeholder {
+    color: var(--hts-ink-muted);
+    opacity: 0.75;
+}
+
+.field-input:disabled {
+    opacity: 0.55;
+}
+
+/* The focus ring lives on the shell; a second ring on the input inside it would double up. */
+.field-input:focus-visible {
+    outline: none;
+}
+
+.field-reveal {
+    display: grid;
+    place-items: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex: none;
+    margin-right: 0.2rem;
+    border-radius: var(--hts-radius-sm);
+    color: var(--hts-ink-muted);
+    transition:
+        color var(--hts-duration-fast) var(--hts-ease),
+        background-color var(--hts-duration-fast) var(--hts-ease);
+}
+
+.field-reveal:hover {
+    background: var(--hts-tint-hover);
+    color: var(--hts-ink);
+}
+
+.field-reveal:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.field-reveal.is-shown {
+    color: var(--hts-purple-300);
+}
+
+.field-message {
+    color: var(--hts-purple-300);
+    font-size: var(--hts-text-sm);
+}
+
+/* ── Row: remember me + recovery ───────────────────────────────────────── */
+
+.field-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--hts-space-3);
+}
+
+.checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    cursor: pointer;
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-base);
+}
+
+/* The real control is still there and still focusable - it is just sized to the box that is
+   drawn over it, so the focus ring lands in the right place. */
+.checkbox-input {
+    position: absolute;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.checkbox-box {
+    display: grid;
+    place-items: center;
+    width: 1.15rem;
+    height: 1.15rem;
+    flex: none;
+    /* A control has to look like one. The panel rim weight is too quiet for something a
+       visitor is meant to hit. */
+    border: 1px solid var(--hts-rule-strong);
+    border-radius: var(--hts-radius-xs);
+    background: var(--hts-surface-inset);
+    transition:
+        border-color var(--hts-duration-fast) var(--hts-ease),
+        background-color var(--hts-duration-fast) var(--hts-ease);
+}
+
+.checkbox-tick {
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 1px;
+    background-image: var(--hts-gradient-brand);
+    transform: scale(0);
+    transition: transform var(--hts-duration-base) var(--hts-ease-spring);
+}
+
+.checkbox-input:checked ~ .checkbox-box {
+    border-color: var(--hts-border-brand);
+}
+
+.checkbox-input:checked ~ .checkbox-box .checkbox-tick {
+    transform: scale(1);
+}
+
+.checkbox-input:focus-visible ~ .checkbox-box {
+    outline: 2px solid var(--hts-purple-300);
+    outline-offset: 3px;
+}
+
+.checkbox:hover .checkbox-box {
+    border-color: var(--hts-border-brand);
+}
+
+.checkbox-label {
+    user-select: none;
+}
+
+/* A button that reads as a link. It is a button because it does not navigate - account
+   recovery does not exist yet, and a link to nowhere is worse than an honest message. */
+.link-action {
+    padding: 0.2rem 0;
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-base);
+    text-decoration: underline;
+    text-decoration-color: var(--hts-muted-mark);
+    text-underline-offset: 0.25em;
+    transition:
+        color var(--hts-duration-fast) var(--hts-ease),
+        text-decoration-color var(--hts-duration-fast) var(--hts-ease);
+}
+
+.link-action:hover {
+    color: var(--hts-ink);
+    text-decoration-color: var(--hts-purple-400);
+}
+
+.link-action.is-strong {
+    color: var(--hts-purple-300);
+    font-weight: 560;
+    text-decoration-color: color-mix(in srgb, var(--hts-purple-400) 45%, transparent);
+}
+
+.signin-submit {
+    width: 100%;
+}
+
+/* ── Notices ───────────────────────────────────────────────────────────── */
+
+/* The slot keeps its place in the layout whether or not there is a message, so the card does
+   not jump when one appears. */
+.notice-slot {
+    min-height: 1px;
+}
+
+.notice {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--hts-space-3);
+    padding: var(--hts-space-4);
+    border: 1px solid var(--hts-border-blue);
+    border-radius: var(--hts-radius-md);
+    background: var(--hts-state-online-bg);
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-base);
+    line-height: var(--hts-leading-normal);
+    animation: notice-in var(--hts-duration-base) var(--hts-ease-out) both;
+}
+
+@keyframes notice-in {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+}
+
+.notice-mark {
+    width: 0.4rem;
+    height: 0.4rem;
+    flex: none;
+    margin-top: 0.5rem;
+    border-radius: 50%;
+    background: var(--hts-blue-300);
+    box-shadow: 0 0 8px 1px rgba(131, 168, 243, 0.7);
+}
+
+.notice--warning {
+    border-color: var(--hts-border-brand);
+    background: var(--hts-state-busy-bg);
+}
+
+.notice--warning .notice-mark {
+    background: var(--hts-purple-300);
+    box-shadow: 0 0 8px 1px rgba(176, 105, 255, 0.7);
+}
+
+/* ── Card foot and back link ───────────────────────────────────────────── */
+
+.card-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: var(--hts-space-5);
+    padding-top: var(--hts-space-4);
+    border-top: 1px solid var(--hts-border);
+    color: var(--hts-ink-muted);
+    font-size: var(--hts-text-base);
+}
+
+.signin-back {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: var(--hts-space-5);
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: color var(--hts-duration-fast) var(--hts-ease);
+}
+
+.signin-back:hover {
+    color: var(--hts-ink);
+}
+
+.back-arrow {
+    position: relative;
+    width: 1.5rem;
+    height: 1px;
+    flex: none;
+    background: currentColor;
+    transition: width var(--hts-duration-base) var(--hts-ease-out);
+}
+
+.back-arrow::before {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: 0;
+    width: 7px;
+    height: 7px;
+    border-bottom: 1px solid currentColor;
+    border-left: 1px solid currentColor;
+    transform: rotate(45deg);
+}
+
+.signin-back:hover .back-arrow {
+    width: 2.1rem;
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+
+@media (max-width: 1080px) {
+    .signin {
+        grid-template-columns: minmax(0, 1fr);
+        gap: clamp(2.5rem, 7vw, 3.5rem);
+    }
+
+    .signin-primary {
+        max-width: 38rem;
+        margin-inline: auto;
+    }
+
+    .signin-aside {
+        max-width: 38rem;
+        margin-inline: auto;
+        width: 100%;
+    }
+}
+
+@media (max-width: 560px) {
+    .signin-card {
+        padding: var(--hts-space-5) var(--hts-space-4);
+    }
+
+    .field-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--hts-space-4);
+    }
+}

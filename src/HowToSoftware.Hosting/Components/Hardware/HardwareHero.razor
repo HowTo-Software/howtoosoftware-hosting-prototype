@@ -1,0 +1,60 @@
+@*
+    Infrastructure page hero.
+
+    Deliberately the same construction as the homepage hero - kicker, stacked display lines
+    with the brand purple on one of them, a foot rail of technical readouts - so arriving here
+    reads as the next room of the same building.
+
+    Every line of descriptive copy is a placeholder until the real wording is supplied; see
+    Components/Shared/CopySlot.razor.
+*@
+
+@inject IStringLocalizer<HardwareText> Text
+@inject IInfrastructureContentService Content
+
+<section class="hw-hero" id="top">
+    <RackFieldBackdrop />
+
+    <div class="hts-container hts-container--wide hw-hero-inner">
+        <p class="hw-kicker">
+            <span class="kicker-rule" aria-hidden="true"></span>
+            @Text["Hero.Eyebrow"]
+        </p>
+
+        <h1 class="hw-title">
+            <span class="title-line">@Text["Hero.Line1"]</span>
+            <span class="title-line title-line--accent">@Text["Hero.Line2"]</span>
+            <span class="title-line">@Text["Hero.Line3"]</span>
+        </h1>
+
+        <p class="hw-lede">
+            <CopySlot Size="CopySlot.SlotSize.Lede" />
+        </p>
+    </div>
+
+    <div class="hts-container hts-container--wide hw-hero-foot">
+        <span class="foot-item">
+            <span class="foot-label">@Text["Hero.Rail.Platform"]</span>
+            <span class="foot-value">@SiteName</span>
+        </span>
+        <span class="foot-item">
+            <span class="foot-label">@Text["Hero.Rail.Nodes"]</span>
+            <span class="foot-value">@Content.Nodes.Count.ToString("00")</span>
+        </span>
+        <span class="foot-item">
+            <span class="foot-label">@Text["Hero.Rail.Region"]</span>
+            <span class="foot-value"><CopySlot Size="CopySlot.SlotSize.Micro" /></span>
+        </span>
+    </div>
+</section>
+
+@code {
+    /// <summary>Platform name shown on the hero foot rail.</summary>
+    [Parameter]
+    public string SiteName { get; set; } = "HowToSoftware";
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

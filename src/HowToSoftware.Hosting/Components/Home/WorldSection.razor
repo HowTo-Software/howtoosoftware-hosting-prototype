@@ -6,44 +6,38 @@
 *@
 
 @inject IMarketingContentService Content
+@inject IStringLocalizer<HomeText> Text
 
 <section class="world" id="world" aria-labelledby="world-heading">
     <div class="hts-container hts-container--wide world-inner">
         <div class="world-copy" data-reveal="left">
             <p class="world-kicker">
                 <span class="kicker-index">01</span>
-                PERSISTENT WORLDS
+                @Text["World.Kicker"]
             </p>
 
             <h2 id="world-heading" class="world-title">
-                Knox County<br />
-                keeps <span class="world-accent">running</span><br />
-                without you.
+                @Text["World.Line1"]<br />
+                @Text["World.Line2"] <span class="world-accent">@Text["World.Accent"]</span><br />
+                @Text["World.Line3"]
             </h2>
 
-            <p class="world-body">
-                A Project Zomboid world is a long-lived simulation, not a match. Map state,
-                safehouses, vehicles and loot are written to storage that outlives restarts,
-                build changes and rebuilds of the instance underneath it.
-            </p>
+            <p class="world-body">@Text["World.Body1"]</p>
 
-            <p class="world-body">
-                When you roll a mod back, your community does not roll back with it. Restore
-                points are taken on a schedule, and the world you return to is the world you left.
-            </p>
+            <p class="world-body">@Text["World.Body2"]</p>
 
             <dl class="world-readout">
                 <div>
-                    <dt>WORLD DATA</dt>
-                    <dd>Durable volume</dd>
+                    <dt>@Text["World.DataLabel"]</dt>
+                    <dd>@Text["World.DataValue"]</dd>
                 </div>
                 <div>
-                    <dt>RESTORE POINTS</dt>
-                    <dd>Scheduled</dd>
+                    <dt>@Text["World.RestoreLabel"]</dt>
+                    <dd>@Text["World.RestoreValue"]</dd>
                 </div>
                 <div>
-                    <dt>CELL SIZE</dt>
-                    <dd>300 x 300</dd>
+                    <dt>@Text["World.CellLabel"]</dt>
+                    <dd>@Text["World.CellValue"]</dd>
                 </div>
             </dl>
         </div>

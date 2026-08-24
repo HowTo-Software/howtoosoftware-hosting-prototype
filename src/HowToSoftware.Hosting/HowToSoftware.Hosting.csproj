@@ -7,4 +7,11 @@
     <RequiresAspNetWebAssets>true</RequiresAspNetWebAssets>
   </PropertyGroup>
 
+  <ItemGroup>
+    <!-- The culture matcher, the redirect guard and the gateway's simulated latency are
+         implementation details with no place on the public surface, but they carry rules worth
+         testing directly rather than through a rendered page. -->
+    <InternalsVisibleTo Include="HowToSoftware.Hosting.Tests" />
+  </ItemGroup>
+
 </Project>

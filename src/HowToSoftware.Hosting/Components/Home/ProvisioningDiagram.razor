@@ -9,6 +9,8 @@
     cannot carry attributes.
 *@
 
+@inject IStringLocalizer<HomeText> Text
+
 <svg class="topology" viewBox="0 0 420 540" fill="none" role="img"
      aria-label="@Description" xmlns="http://www.w3.org/2000/svg">
     <g class="links">
@@ -33,15 +35,19 @@
 @code {
     private sealed record TopologyBox(int Stage, int X, int Y, int W, int H, string Title, string Caption);
 
-    private static readonly TopologyBox[] Boxes =
+    /// <summary>
+    /// Geometry is fixed; the words on each box come from the resource set, so the diagram
+    /// speaks whatever language the rest of the page does.
+    /// </summary>
+    private TopologyBox[] Boxes =>
     [
-        new(0, 110, 20, 200, 42, "CUSTOMER", "order placed"),
-        new(1, 110, 110, 200, 42, "HTS SOFTWARE", "validates + routes"),
-        new(2, 110, 200, 200, 42, "PROVISIONER", "reserves capacity"),
-        new(2, 26, 300, 160, 42, "NODE 01", "62% allocated"),
-        new(2, 234, 300, 160, 42, "NODE 02", "41% allocated"),
-        new(3, 234, 390, 160, 42, "GAME PANEL", "builds instance"),
-        new(4, 234, 468, 160, 46, "ZOMBOID WORLD", "online")
+        new(0, 110, 20, 200, 42, Text["Diagram.Customer"], Text["Diagram.CustomerCaption"]),
+        new(1, 110, 110, 200, 42, Text["Diagram.Software"], Text["Diagram.SoftwareCaption"]),
+        new(2, 110, 200, 200, 42, Text["Diagram.Provisioner"], Text["Diagram.ProvisionerCaption"]),
+        new(2, 26, 300, 160, 42, Text["Diagram.Node01"], Text["Diagram.Node01Caption"]),
+        new(2, 234, 300, 160, 42, Text["Diagram.Node02"], Text["Diagram.Node02Caption"]),
+        new(3, 234, 390, 160, 42, Text["Diagram.Panel"], Text["Diagram.PanelCaption"]),
+        new(4, 234, 468, 160, 46, Text["Diagram.World"], Text["Diagram.WorldCaption"])
     ];
 
     /// <summary>Index of the stage currently in view, zero-based.</summary>

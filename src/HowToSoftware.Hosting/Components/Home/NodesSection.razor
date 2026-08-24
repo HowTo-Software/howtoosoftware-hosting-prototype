@@ -4,33 +4,32 @@
 *@
 
 @inject IMarketingContentService Content
+@inject IStringLocalizer<CommonText> Common
+@inject IStringLocalizer<HomeText> Text
 
 <section class="nodes" id="nodes" aria-labelledby="nodes-heading">
     <div class="hts-container hts-container--wide">
         <header class="nodes-head" data-reveal="rise">
             <p class="nodes-kicker">
                 <span class="kicker-index">05</span>
-                HARDWARE
+                @Text["Nodes.Kicker"]
             </p>
             <h2 id="nodes-heading" class="nodes-title">
-                Worlds land on <span class="nodes-accent">real metal.</span>
+                @Text["Nodes.Line1"] <span class="nodes-accent">@Text["Nodes.Accent"]</span>
             </h2>
-            <p class="nodes-lede">
-                Instances are placed on nodes with headroom to spare, and your allocation is
-                reserved before a single file is written.
-            </p>
+            <p class="nodes-lede">@Text["Nodes.Lede"]</p>
         </header>
 
         <div class="bus" aria-hidden="true">
             <span class="bus-line"></span>
-            <span class="bus-label">PROVISIONING BUS</span>
+            <span class="bus-label">@Text["Nodes.Bus"]</span>
             <span class="bus-line"></span>
         </div>
 
         <ul class="node-grid">
             @foreach (var (node, index) in Content.Nodes.Select((n, i) => (n, i)))
             {
-                <li class="node-panel @HealthClass(node.Health)" data-reveal
+                <li class="node-panel @HealthClass(node.Health)" data-reveal data-spotlight
                     style="--hts-reveal-delay: @(index * 90)ms">
                     <span class="node-drop" aria-hidden="true"></span>
 
@@ -56,24 +55,30 @@
 
                     <div class="node-load">
                         <div class="load-head">
-                            <span>ALLOCATION</span>
+                            <span>@Text["Nodes.Allocation"]</span>
                             <span class="load-value">@node.LoadPercent%</span>
                         </div>
                         <div class="load-track">
                             <span class="load-fill" style="--target: @(node.LoadPercent)%"></span>
                         </div>
                         <p class="load-note">
-                            @(node.Worlds > 0 ? $"{node.Worlds} worlds placed" : "Awaiting first placement")
+                            @(node.Worlds > 0 ? Text["Nodes.WorldsPlaced", node.Worlds].Value : Text["Nodes.Awaiting"].Value)
                         </p>
                     </div>
                 </li>
             }
         </ul>
 
-        <p class="nodes-note">
-            Node specifications describe the intended platform. Exact hardware is confirmed as
-            capacity is commissioned.
-        </p>
+        <div class="nodes-foot">
+            <p class="nodes-note">@Text["Nodes.Note"]</p>
+
+            @* The full picture lives on its own page now; this is the way in. *@
+            <CtaButton Href="/infrastructure"
+                       Variant="CtaVariant.Secondary"
+                       TrailingIcon="IconName.ArrowRight">
+                @Common["Cta.SeeTheInfrastructure"]
+            </CtaButton>
+        </div>
     </div>
 </section>
 
@@ -85,10 +90,10 @@
         _ => "is-reserved"
     };
 
-    private static string HealthLabel(NodeHealth health) => health switch
+    private string HealthLabel(NodeHealth health) => health switch
     {
-        NodeHealth.Healthy => "HEALTHY",
-        NodeHealth.Provisioning => "PROVISIONING",
-        _ => "RESERVED"
+        NodeHealth.Healthy => Common["Status.Healthy"],
+        NodeHealth.Provisioning => Common["Status.Provisioning"],
+        _ => Common["Status.Reserved"]
     };
 }

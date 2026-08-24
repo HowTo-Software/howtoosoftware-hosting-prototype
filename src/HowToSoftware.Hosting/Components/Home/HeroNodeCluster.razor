@@ -8,13 +8,15 @@
 *@
 
 @inject IMarketingContentService Content
+@inject IStringLocalizer<HomeText> Text
+@inject IStringLocalizer<CommonText> Common
 
 <div class="cluster" aria-hidden="true">
     <div class="frag frag--status">
-        <span class="frag-key">SERVER STATUS</span>
+        <span class="frag-key">@Text["Cluster.ServerStatus"]</span>
         <span class="frag-state">
             <span class="frag-dot"></span>
-            ONLINE
+            @Common["Status.Online"]
         </span>
     </div>
 
@@ -22,7 +24,7 @@
 
     <div class="cluster-row">
         <div class="frag frag--side">
-            <span class="frag-key">WORLD</span>
+            <span class="frag-key">@Text["Cluster.World"]</span>
             <span class="frag-value">knox-county-01</span>
         </div>
 
@@ -33,7 +35,7 @@
         </div>
 
         <div class="frag frag--side">
-            <span class="frag-key">NODE</span>
+            <span class="frag-key">@Text["Cluster.Node"]</span>
             <span class="frag-value">EU WEST / 01</span>
         </div>
     </div>
@@ -43,7 +45,7 @@
     <div class="frag frag--main">
         <div class="main-head">
             <span class="frag-key">PROJECT ZOMBOID</span>
-            <span class="main-build">BUILD 42</span>
+            <span class="main-build">@Text["Cluster.Build"]</span>
         </div>
 
         <div class="main-bar">
@@ -51,7 +53,7 @@
         </div>
 
         <div class="main-foot">
-            <span>WORKSHOP SYNC</span>
+            <span>@Text["Cluster.WorkshopSync"]</span>
             <span class="main-count">82 / 82</span>
         </div>
     </div>

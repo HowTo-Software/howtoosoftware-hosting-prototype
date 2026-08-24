@@ -147,3 +147,40 @@
         width: 100%;
     }
 }
+
+/* ── Busy state ────────────────────────────────────────────────────────── */
+
+.cta-spinner {
+    width: 0.95em;
+    height: 0.95em;
+    flex: none;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    opacity: 0.85;
+    animation: cta-spin 620ms linear infinite;
+}
+
+@keyframes cta-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* A spinner that cannot spin is just a ring; a pulse still reads as "working". */
+@media (prefers-reduced-motion: reduce) {
+    .cta-spinner {
+        animation: cta-pulse 1.4s steps(2, jump-none) infinite;
+    }
+}
+
+@keyframes cta-pulse {
+    50% {
+        opacity: 0.3;
+    }
+}
+
+.cta[aria-busy="true"] {
+    opacity: 0.9;
+    cursor: progress;
+}

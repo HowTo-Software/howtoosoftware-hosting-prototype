@@ -9,24 +9,22 @@
 
 @rendermode InteractiveServer
 @inject IMarketingContentService Content
+@inject IStringLocalizer<HomeText> Text
 
 <section class="faq-section" id="faq" aria-labelledby="faq-heading">
     <div class="hts-container hts-container--wide faq-inner">
         <header class="faq-aside" data-reveal="left">
             <p class="faq-kicker">
                 <span class="kicker-index">07</span>
-                FAQ
+                @Text["Faq.Kicker"]
             </p>
             <h2 id="faq-heading" class="faq-title">
-                Before you<br />
-                <span class="faq-accent">commit a world.</span>
+                @Text["Faq.Line1"]<br />
+                <span class="faq-accent">@Text["Faq.Accent"]</span>
             </h2>
-            <p class="faq-note">
-                Still deciding whether the platform fits your community? Start here, then talk
-                to us about anything this does not cover.
-            </p>
+            <p class="faq-note">@Text["Faq.Note"]</p>
             <CtaButton Href="#contact" Variant="CtaVariant.Secondary" TrailingIcon="IconName.ArrowRight">
-                Ask us directly
+                @Text["Faq.Cta"]
             </CtaButton>
         </header>
 
