@@ -264,9 +264,21 @@ html.hts-js .load-fill {
     font-size: var(--hts-text-xs);
 }
 
+/* The disclaimer and the way through to the full infrastructure page share a line, so the
+   section ends on an action rather than on a caveat. */
+.nodes-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--hts-space-5);
+    margin-top: var(--hts-space-8);
+    padding-top: var(--hts-space-6);
+    border-top: 1px solid var(--hts-border);
+}
+
 .nodes-note {
     max-width: 42rem;
-    margin-top: var(--hts-space-8);
     color: var(--hts-ink-muted);
     font-size: var(--hts-text-sm);
 }

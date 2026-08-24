@@ -1,0 +1,239 @@
+@*
+    One chapter of the infrastructure story.
+
+    The frame is shared - index, kicker, heading, pending lede - but the illustration is not.
+    Which composition a chapter gets is data (InfrastructureChapter.Layout), and no two
+    consecutive chapters use the same one, so the page keeps a rhythm instead of scrolling
+    past six identical cards.
+
+    Nothing here states a specification. The drawings are schematics: they show what the parts
+    are and how they relate, and every value in them is a placeholder until real figures are
+    supplied.
+*@
+
+@inject IStringLocalizer<HardwareText> Text
+
+<section class="chapter layout-@LayoutClass @(Chapter.Mirrored ? "is-mirrored" : null)"
+         id="@Chapter.Id"
+         aria-labelledby="@HeadingId">
+    <div class="hts-container hts-container--wide chapter-inner">
+        <div class="chapter-copy" data-reveal="@(Chapter.Mirrored ? "right" : "left")">
+            <p class="chapter-kicker">
+                <span class="kicker-index">@Chapter.Index</span>
+                @Text[$"{KeyPrefix}.Kicker"]
+            </p>
+
+            <h2 class="chapter-title" id="@HeadingId">@Text[$"{KeyPrefix}.Title"]</h2>
+
+            <p class="chapter-lede">
+                <CopySlot Size="CopySlot.SlotSize.Lede" />
+            </p>
+        </div>
+
+        <div class="chapter-visual" data-reveal="@(Chapter.Mirrored ? "left" : "right")">
+            @switch (Chapter.Layout)
+            {
+                case InfrastructureLayout.SpecFigure:
+                    @*
+                        A die plate: a grid of cores in a labelled frame. Which cells are lit is
+                        fixed, not random, so the drawing is the same on every render.
+                    *@
+                    <div class="die" data-spotlight>
+                        <div class="die-grid" aria-hidden="true">
+                            @for (var cell = 0; cell < DieCells; cell++)
+                            {
+                                <span class="die-cell @(LitCells.Contains(cell) ? "is-lit" : null)"></span>
+                            }
+                        </div>
+                        <span class="die-frame" aria-hidden="true"></span>
+                    </div>
+
+                    <dl class="readout readout--wide">
+                        <div>
+                            <dt>@Text["Compute.FigureLabel"]</dt>
+                            <dd><CopySlot /></dd>
+                        </div>
+                        <div>
+                            <dt>@Text["Spec.Cpu"]</dt>
+                            <dd><CopySlot /></dd>
+                        </div>
+                    </dl>
+                    break;
+
+                case InfrastructureLayout.LayerDiagram:
+                    @*
+                        Three equal bands, distinguished by treatment rather than by width -
+                        drawing them at different sizes would imply a split nobody has agreed.
+                    *@
+                    <ul class="bands">
+                        <li class="band band--allocated">
+                            <span class="band-fill" aria-hidden="true"></span>
+                            <span class="band-label">@Text["Memory.LayerAllocated"]</span>
+                            <CopySlot Size="CopySlot.SlotSize.Micro" />
+                        </li>
+                        <li class="band band--headroom">
+                            <span class="band-fill" aria-hidden="true"></span>
+                            <span class="band-label">@Text["Memory.LayerHeadroom"]</span>
+                            <CopySlot Size="CopySlot.SlotSize.Micro" />
+                        </li>
+                        <li class="band band--reserved">
+                            <span class="band-fill" aria-hidden="true"></span>
+                            <span class="band-label">@Text["Memory.LayerReserved"]</span>
+                            <CopySlot Size="CopySlot.SlotSize.Micro" />
+                        </li>
+                    </ul>
+
+                    <dl class="readout">
+                        <div>
+                            <dt>@Text["Spec.Memory"]</dt>
+                            <dd><CopySlot /></dd>
+                        </div>
+                    </dl>
+                    break;
+
+                case InfrastructureLayout.EditorialSplit:
+                    @* A volume stack: plates offset in depth, joined by one spine. *@
+                    <ol class="stack">
+                        <li class="plate">
+                            <span class="plate-mark" aria-hidden="true"></span>
+                            <span class="plate-label">@Text["Storage.LayerVolume"]</span>
+                            <CopySlot Size="CopySlot.SlotSize.Micro" />
+                        </li>
+                        <li class="plate">
+                            <span class="plate-mark" aria-hidden="true"></span>
+                            <span class="plate-label">@Text["Storage.LayerSnapshot"]</span>
+                            <CopySlot Size="CopySlot.SlotSize.Micro" />
+                        </li>
+                        <li class="plate">
+                            <span class="plate-mark" aria-hidden="true"></span>
+                            <span class="plate-label">@Text["Storage.LayerArchive"]</span>
+                            <CopySlot Size="CopySlot.SlotSize.Micro" />
+                        </li>
+                    </ol>
+
+                    <dl class="readout">
+                        <div>
+                            <dt>@Text["Spec.Storage"]</dt>
+                            <dd><CopySlot /></dd>
+                        </div>
+                    </dl>
+                    break;
+
+                case InfrastructureLayout.FlowDiagram:
+                    @* Four hops on one horizontal rail, with a light travelling it. *@
+                    <ol class="flow">
+                        @foreach (var hop in NetworkHops)
+                        {
+                            <li class="hop">
+                                <span class="hop-mark" aria-hidden="true"></span>
+                                <span class="hop-label">@hop</span>
+                                <CopySlot Size="CopySlot.SlotSize.Micro" />
+                            </li>
+                        }
+                        <li class="flow-beam" aria-hidden="true"></li>
+                    </ol>
+
+                    <dl class="readout">
+                        <div>
+                            <dt>@Text["Spec.Network"]</dt>
+                            <dd><CopySlot /></dd>
+                        </div>
+                    </dl>
+                    break;
+
+                case InfrastructureLayout.AllocationMap:
+                    @*
+                        A schematic of one node's capacity carved into instances. The tile
+                        arrangement is illustrative; no ratio is being claimed.
+                    *@
+                    <div class="map" data-spotlight>
+                        <p class="map-label">@Text["Allocation.NodeCapacity"]</p>
+                        <div class="map-grid" aria-hidden="true">
+                            @for (var tile = 0; tile < MapTiles; tile++)
+                            {
+                                <span class="map-tile @(AllocatedTiles.Contains(tile) ? "is-allocated" : null)"></span>
+                            }
+                        </div>
+                        <ul class="map-legend">
+                            <li class="legend-item is-allocated">
+                                <span class="legend-swatch" aria-hidden="true"></span>
+                                @Text["Allocation.Instance"]
+                            </li>
+                            <li class="legend-item">
+                                <span class="legend-swatch" aria-hidden="true"></span>
+                                @Text["Allocation.Free"]
+                            </li>
+                        </ul>
+                        <p class="map-note">@Text["Topology.AllocationPending"]</p>
+                    </div>
+                    break;
+
+                default:
+                    @* A vertical rail of operational signals, on a ticked timeline. *@
+                    <ol class="ops">
+                        @foreach (var signal in OperationsSignals)
+                        {
+                            <li class="op">
+                                <span class="op-tick" aria-hidden="true"></span>
+                                <span class="op-label">@signal</span>
+                                <CopySlot />
+                            </li>
+                        }
+                    </ol>
+                    break;
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private const int DieCells = 64;
+    private const int MapTiles = 24;
+
+    /// <summary>Cores drawn as active on the compute plate. Fixed, so renders are identical.</summary>
+    private static readonly HashSet<int> LitCells =
+    [
+        // A core block in the middle of the package...
+        18, 19, 20, 21,
+        26, 27, 28, 29,
+        34, 35, 36, 37,
+        42, 43, 44, 45,
+        // ...and the I/O cells on its edges.
+        8, 15, 48, 55
+    ];
+
+    /// <summary>Tiles drawn as carved into instances on the allocation schematic.</summary>
+    private static readonly HashSet<int> AllocatedTiles =
+        [0, 1, 2, 6, 7, 8, 12, 13, 18];
+
+    /// <summary>The chapter to render.</summary>
+    [Parameter, EditorRequired]
+    public InfrastructureChapter Chapter { get; set; } = default!;
+
+    private string KeyPrefix => Chapter.Topic.ToString();
+
+    private string HeadingId => $"{Chapter.Id}-heading";
+
+    private string LayoutClass => Chapter.Layout.ToString().ToLowerInvariant();
+
+    private IReadOnlyList<string> NetworkHops =>
+    [
+        Text["Network.HopEdge"],
+        Text["Network.HopUplink"],
+        Text["Network.HopNode"],
+        Text["Network.HopWorld"]
+    ];
+
+    private IReadOnlyList<string> OperationsSignals =>
+    [
+        Text["Reliability.Signal.Monitoring"],
+        Text["Reliability.Signal.Backups"],
+        Text["Reliability.Signal.Response"],
+        Text["Reliability.Signal.Maintenance"]
+    ];
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

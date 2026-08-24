@@ -10,22 +10,20 @@
 @implements IAsyncDisposable
 @inject IMarketingContentService Content
 @inject IJSRuntime JS
+@inject IStringLocalizer<HomeText> Text
 
 <section class="provision" id="provisioning" aria-labelledby="provisioning-heading">
     <div class="hts-container hts-container--wide">
         <header class="provision-head" data-reveal>
             <p class="provision-kicker">
                 <span class="kicker-index">03</span>
-                PROVISIONING
+                @Text["Provisioning.Kicker"]
             </p>
             <h2 id="provisioning-heading" class="provision-title">
-                From order to<br />
-                <span class="provision-accent">world online.</span>
+                @Text["Provisioning.Line1"]<br />
+                <span class="provision-accent">@Text["Provisioning.Accent"]</span>
             </h2>
-            <p class="provision-lede">
-                Five stages, no hand-offs. Follow them down the page and watch the deployment
-                path build itself.
-            </p>
+            <p class="provision-lede">@Text["Provisioning.Lede"]</p>
         </header>
 
         <div class="provision-body" @ref="_scope">
@@ -49,17 +47,15 @@
             <aside class="provision-figure">
                 <div class="figure-sticky">
                     <div class="figure-head">
-                        <span class="figure-key">DEPLOYMENT PATH</span>
+                        <span class="figure-key">@Text["Provisioning.PathLabel"]</span>
                         <span class="figure-step">
-                            STAGE @Content.ProvisioningStages[_activeIndex].Code / 05
+                            @Text["Provisioning.StageCounter", Content.ProvisioningStages[_activeIndex].Code]
                         </span>
                     </div>
 
                     <ProvisioningDiagram ActiveIndex="_activeIndex" />
 
-                    <p class="figure-note">
-                        Illustrative flow. Provisioning is not yet wired to live infrastructure.
-                    </p>
+                    <p class="figure-note">@Text["Provisioning.Note"]</p>
                 </div>
             </aside>
         </div>

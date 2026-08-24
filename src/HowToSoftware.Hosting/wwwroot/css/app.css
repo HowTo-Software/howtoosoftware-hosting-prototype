@@ -309,6 +309,64 @@ html.hts-js [data-reveal="rise"] {
     transform: translate3d(0, 40px, 0);
 }
 
+/* ── Pointer spotlight ─────────────────────────────────────────────────── */
+
+/* A panel marked `data-spotlight` lights from wherever the cursor is over it.
+   wwwroot/js/site.js publishes the position as --spot-x / --spot-y and nothing
+   else; everything visible is decided here.
+
+   The overlay is an ::after at z-index -1 inside an isolated stacking context, so
+   it sits above the panel's own background and below its content without any
+   element needing to be wrapped. */
+[data-spotlight] {
+    position: relative;
+    isolation: isolate;
+}
+
+html.hts-js [data-spotlight]::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background: radial-gradient(
+        16rem 16rem at var(--spot-x, 50%) var(--spot-y, 50%),
+        var(--hts-spotlight),
+        transparent 68%);
+    opacity: 0;
+    transition: opacity var(--hts-duration-slow) var(--hts-ease);
+    pointer-events: none;
+}
+
+html.hts-js [data-spotlight].is-spotlit::after {
+    opacity: 1;
+}
+
+/* ── Route entrance ────────────────────────────────────────────────────── */
+
+/* Moving between the homepage, the infrastructure page and sign-in should feel
+   like one surface changing rather than three separate loads. The whole main
+   region lifts in; site.js restarts it after Blazor's enhanced navigation, which
+   patches the DOM in place and would otherwise leave the animation spent.
+
+   Only opacity and a small translate, and the final frame is `transform: none`
+   so no containing block is left behind for the sticky sections further down. */
+html.hts-js main[data-page-enter] {
+    animation: page-enter 460ms var(--hts-ease-out) both;
+}
+
+@keyframes page-enter {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 12px, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: none;
+    }
+}
+
 /* ── Reduced motion ────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
@@ -328,6 +386,16 @@ html.hts-js [data-reveal="rise"] {
     html.hts-js [data-reveal] {
         opacity: 1;
         transform: none;
+    }
+
+    html.hts-js main[data-page-enter] {
+        animation: none;
+    }
+
+    /* The spotlight is a position readout, not motion, so it stays - but it stops
+       fading, which is the part that moves. */
+    html.hts-js [data-spotlight]::after {
+        transition: none;
     }
 }
 

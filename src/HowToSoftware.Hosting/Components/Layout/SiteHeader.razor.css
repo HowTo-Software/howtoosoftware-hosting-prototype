@@ -3,56 +3,74 @@
     top: 0;
     z-index: var(--hts-z-header);
     background: transparent;
-    border-bottom: 1px solid transparent;
     transition:
         background-color var(--hts-duration-base) var(--hts-ease),
-        border-color var(--hts-duration-base) var(--hts-ease),
         backdrop-filter var(--hts-duration-base) var(--hts-ease);
 }
 
 /* `hts-scrolled` is toggled on <html> by wwwroot/js/site.js. The header only
    frosts once the page has moved, so the hero reads edge to edge on load. */
 html.hts-scrolled .site-header {
-    border-bottom-color: var(--hts-border);
     background: var(--hts-surface-frost);
     backdrop-filter: saturate(160%) blur(16px);
     -webkit-backdrop-filter: saturate(160%) blur(16px);
+}
+
+/* The bottom edge is a brand hairline rather than a flat border, so the header
+   separates from the page with light instead of a line. */
+.site-header::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 1px;
+    background: var(--hts-gradient-hairline);
+    opacity: 0;
+    transition: opacity var(--hts-duration-base) var(--hts-ease);
+    pointer-events: none;
+}
+
+html.hts-scrolled .site-header::after {
+    opacity: 0.85;
 }
 
 .header-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--hts-space-6);
+    gap: var(--hts-space-5);
     min-height: var(--hts-header-height);
 }
 
 .header-brand {
     text-decoration: none;
     border-radius: var(--hts-radius-md);
+    flex: none;
 }
 
 .header-panel {
     display: flex;
     align-items: center;
-    gap: var(--hts-space-6);
+    gap: var(--hts-space-5);
 }
 
 .header-nav ul {
     display: flex;
     align-items: center;
-    gap: var(--hts-space-1);
+    gap: 2px;
 }
 
 .header-nav a {
     position: relative;
     display: block;
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 0.6rem;
     border-radius: var(--hts-radius-sm);
     color: var(--hts-ink-soft);
-    font-size: var(--hts-text-base);
+    font-size: var(--hts-text-sm);
     font-weight: 520;
     text-decoration: none;
+    white-space: nowrap;
     transition: color var(--hts-duration-fast) var(--hts-ease);
 }
 
@@ -60,9 +78,9 @@ html.hts-scrolled .site-header {
 .header-nav a::after {
     content: "";
     position: absolute;
-    right: 0.75rem;
+    right: 0.6rem;
     bottom: 0.24rem;
-    left: 0.75rem;
+    left: 0.6rem;
     height: 2px;
     border-radius: 2px;
     background-image: var(--hts-gradient-brand);
@@ -80,10 +98,65 @@ html.hts-scrolled .site-header {
     transform: scaleX(1);
 }
 
+/* The page you are on keeps the underline lit rather than gaining a different treatment. */
+.header-nav a.is-current {
+    color: var(--hts-ink);
+}
+
+.header-nav a.is-current::after {
+    transform: scaleX(1);
+}
+
 .header-actions {
     display: flex;
     align-items: center;
     gap: var(--hts-space-3);
+}
+
+/* Language and theme are settings, not navigation. Grouping them tightly and separating
+   them with a rule keeps the right-hand side from reading as four equal buttons. */
+.header-utility {
+    display: flex;
+    align-items: center;
+    gap: var(--hts-space-2);
+    padding-right: var(--hts-space-3);
+    border-right: 1px solid var(--hts-border);
+}
+
+.header-signin {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.7rem;
+    border-radius: var(--hts-radius-pill);
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-sm);
+    font-weight: 560;
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+        background-color var(--hts-duration-fast) var(--hts-ease),
+        color var(--hts-duration-fast) var(--hts-ease);
+}
+
+.header-signin ::deep .hts-icon {
+    color: var(--hts-blue-400);
+    transition: color var(--hts-duration-fast) var(--hts-ease);
+}
+
+.header-signin:hover {
+    background: var(--hts-tint-hover);
+    color: var(--hts-ink);
+}
+
+.header-signin:hover ::deep .hts-icon {
+    color: var(--hts-purple-300);
+}
+
+.header-signin.is-current {
+    background: var(--hts-state-busy-bg);
+    box-shadow: inset 0 0 0 1px var(--hts-border-brand);
+    color: var(--hts-ink);
 }
 
 .header-toggle {
@@ -106,9 +179,12 @@ html.hts-scrolled .site-header {
     color: var(--hts-purple-300);
 }
 
-/* ── Tablet and below: collapse into a drop-down panel ─────────────────── */
+/* ── Below the full-nav width: collapse into a drop-down panel ──────────────
+   The breakpoint sits where the seven section links, the two utility controls,
+   the sign-in link and the primary action stop fitting on one line - a 1280
+   laptop still gets the full bar. */
 
-@media (max-width: 960px) {
+@media (max-width: 1240px) {
     .header-toggle {
         display: grid;
     }
@@ -160,13 +236,36 @@ html.hts-scrolled .site-header {
         background: var(--hts-surface-raised);
     }
 
+    .header-nav a.is-current {
+        background: var(--hts-state-busy-bg);
+        box-shadow: inset 0 0 0 1px var(--hts-border-brand);
+    }
+
     .header-nav a::after {
         display: none;
     }
 
     .header-actions {
+        display: grid;
+        gap: var(--hts-space-3);
         padding-top: var(--hts-space-4);
         border-top: 1px solid var(--hts-border);
+    }
+
+    .header-utility {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--hts-space-3);
+        padding-right: 0;
+        border-right: 0;
+    }
+
+    .header-signin {
+        justify-content: center;
+        padding-block: 0.75rem;
+        border: 1px solid var(--hts-border-strong);
+        background: var(--hts-surface-raised);
+        font-size: var(--hts-text-md);
     }
 
     .header-actions ::deep .cta {

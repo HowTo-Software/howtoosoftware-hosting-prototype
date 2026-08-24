@@ -6,12 +6,14 @@
     reads as a live simulation without any of it being real.
 *@
 
+@inject IStringLocalizer<HomeText> Text
+
 <figure class="grid-figure">
     <figcaption class="grid-caption">
-        <span class="caption-key">KNOX COUNTY / CELL FIELD</span>
+        <span class="caption-key">@Text["Grid.Caption"]</span>
         <span class="caption-live">
             <span class="caption-dot"></span>
-            STREAMING
+            @Text["Grid.Streaming"]
         </span>
     </figcaption>
 

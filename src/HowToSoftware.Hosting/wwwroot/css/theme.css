@@ -194,6 +194,11 @@
     --hts-field-label: rgba(255, 255, 255, 0.82);
     --hts-grain-opacity: 0.028;
 
+    /* Pointer spotlight. On dark the panel is lit from where the cursor is; the
+       tint is the technical blue, kept low so it reads as light on a surface and
+       not as a coloured wash. */
+    --hts-spotlight: rgba(131, 168, 243, 0.11);
+
     /* ── Layers ────────────────────────────────────────────────────────── */
     --hts-z-decor: 0;
     --hts-z-content: 1;
@@ -303,4 +308,7 @@
     --hts-cell-border: rgba(11, 14, 32, 0.07);
     --hts-field-label: rgba(11, 14, 32, 0.72);
     --hts-grain-opacity: 0.016;
+
+    /* On paper the same effect has to darken rather than lighten, or it is invisible. */
+    --hts-spotlight: rgba(61, 92, 224, 0.07);
 }

@@ -1,0 +1,68 @@
+@*
+    A visible "copy not written yet" marker.
+
+    The infrastructure page is a layout waiting for its words. Rather than filling the gaps
+    with lorem ipsum - or worse, with invented specifications that read like commitments -
+    every unwritten slot renders this: TEXT ABOUT HERE in English, TEXTO SOBRE AQUI in
+    Brazilian Portuguese, in a treatment that is unmistakably a placeholder.
+
+    When a value does arrive it is passed in as `Value` and rendered normally, so the same
+    slot serves the finished page without a markup change.
+*@
+
+@inject IStringLocalizer<HardwareText> Text
+
+@if (!string.IsNullOrWhiteSpace(Value))
+{
+    <span class="copy-slot is-resolved @SizeClass @CssClass">@Value</span>
+}
+else
+{
+    <span class="copy-slot @SizeClass @CssClass" title="@Text["Placeholder.Label"]">
+        <span class="copy-slot-tick" aria-hidden="true"></span>
+        @Text["Placeholder"]
+    </span>
+}
+
+@code {
+    /// <summary>How prominent the slot is in the composition.</summary>
+    public enum SlotSize
+    {
+        /// <summary>Small caps, used inside readouts and diagram labels.</summary>
+        Micro,
+
+        /// <summary>Default size, used for values on a specification line.</summary>
+        Value,
+
+        /// <summary>Paragraph-sized, used where a lede would sit.</summary>
+        Lede,
+
+        /// <summary>Display-sized, used where a headline would sit.</summary>
+        Display
+    }
+
+    /// <summary>The confirmed text. When empty the placeholder is shown instead.</summary>
+    [Parameter]
+    public string? Value { get; set; }
+
+    /// <summary>How prominent the slot should be.</summary>
+    [Parameter]
+    public SlotSize Size { get; set; } = SlotSize.Value;
+
+    /// <summary>Optional additional CSS classes.</summary>
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    private string SizeClass => Size switch
+    {
+        SlotSize.Micro => "is-micro",
+        SlotSize.Lede => "is-lede",
+        SlotSize.Display => "is-display",
+        _ => "is-value"
+    };
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

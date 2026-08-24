@@ -6,10 +6,11 @@
 *@
 
 @inject IMarketingContentService Content
+@inject IStringLocalizer<HomeText> Text
 
 <section class="caps" id="capabilities" aria-labelledby="caps-heading">
     <div class="hts-container hts-container--wide">
-        <h2 id="caps-heading" class="visually-hidden">What the platform does</h2>
+        <h2 id="caps-heading" class="visually-hidden">@Text["Caps.Heading"]</h2>
 
         <ul class="cap-list">
             @foreach (var (item, index) in Content.Capabilities.Select((c, i) => (c, i)))

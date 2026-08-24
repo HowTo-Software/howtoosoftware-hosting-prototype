@@ -1,0 +1,40 @@
+@*
+    Closing band for the infrastructure page.
+
+    The headline slot is a placeholder like every other piece of copy on this page; the two
+    actions are real, because "see the plans" and "back to the homepage" are the only two
+    things a visitor can actually do from here today.
+*@
+
+@inject IStringLocalizer<HardwareText> Text
+
+<section class="hw-closing" id="get-started">
+    <div class="closing-glow" aria-hidden="true"></div>
+
+    <div class="hts-container hts-container--wide closing-inner" data-reveal="rise">
+        <p class="closing-kicker">
+            <span class="kicker-rule" aria-hidden="true"></span>
+            @Text["Hero.Eyebrow"]
+        </p>
+
+        <p class="closing-heading">
+            <CopySlot Size="CopySlot.SlotSize.Display" />
+        </p>
+
+        <div class="closing-actions">
+            <CtaButton Href="/#plans" Size="CtaSize.Large" TrailingIcon="IconName.ArrowRight">
+                @Text["Closing.Cta"]
+            </CtaButton>
+            <CtaButton Href="/" Variant="CtaVariant.Secondary" Size="CtaSize.Large">
+                @Text["Closing.Secondary"]
+            </CtaButton>
+        </div>
+
+        <p class="closing-note">@Text["Note.Pending"]</p>
+    </div>
+</section>
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

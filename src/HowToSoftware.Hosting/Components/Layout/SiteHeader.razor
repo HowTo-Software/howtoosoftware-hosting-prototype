@@ -4,46 +4,68 @@
     Rendered as an interactive island so the mobile menu is real Blazor state rather than a
     CSS checkbox hack: the toggle is a proper <button> with aria-expanded/aria-controls, and
     selecting a link closes the panel.
+
+    The site is no longer one page, so the header now also carries the route-level entries -
+    Infrastructure and the control-panel sign-in - and marks whichever one you are on. Section
+    anchors are absolute (`/#plans`) so they still work from those pages.
 *@
 
 @rendermode InteractiveServer
+@implements IDisposable
 @inject IMarketingContentService Content
+@inject IStringLocalizer<CommonText> Text
+@inject NavigationManager Navigation
 
 <header class="site-header">
-    <div class="hts-container header-inner">
-        <a class="header-brand" href="#top" aria-label="@BrandLabel">
-            <BrandMark Name="@SiteName" Tagline="Hosting" />
+    <div class="hts-container hts-container--wide header-inner">
+        <a class="header-brand" href="/" aria-label="@Text["Brand.HomeLabel", SiteName]" @onclick="Close">
+            <BrandMark Name="@SiteName" Tagline="@Text["Brand.Tagline"]" />
         </a>
 
         <button type="button"
                 class="header-toggle"
                 aria-expanded="@_isOpen.ToString().ToLowerInvariant()"
                 aria-controls="primary-navigation"
-                aria-label="@(_isOpen ? "Close menu" : "Open menu")"
+                aria-label="@(_isOpen ? Text["Nav.CloseMenu"] : Text["Nav.OpenMenu"])"
                 @onclick="Toggle">
             <Icon Name="@(_isOpen ? IconName.Close : IconName.Menu)" />
         </button>
 
         <div id="primary-navigation" class="header-panel @(_isOpen ? "is-open" : null)">
-            <nav class="header-nav" aria-label="Primary">
+            <nav class="header-nav" aria-label="@Text["Nav.Primary"]">
                 <ul>
                     @foreach (var link in Content.PrimaryNavigation)
                     {
                         <li>
-                            <a href="@link.Href" @onclick="Close">@link.Label</a>
+                            <a href="@link.Href"
+                               class="@(IsCurrentPage(link.Href) ? "is-current" : null)"
+                               aria-current="@(IsCurrentPage(link.Href) ? "page" : null)"
+                               @onclick="Close">@link.Label</a>
                         </li>
                     }
                 </ul>
             </nav>
 
             <div class="header-actions">
-                <ThemeToggle />
-                <CtaButton Href="#plans"
+                <div class="header-utility">
+                    <LanguageSwitcher />
+                    <ThemeToggle />
+                </div>
+
+                <a class="header-signin @(IsCurrentPage("/login") ? "is-current" : null)"
+                   href="/login"
+                   aria-current="@(IsCurrentPage("/login") ? "page" : null)"
+                   @onclick="Close">
+                    <Icon Name="IconName.Shield" CssClass="is-sm" />
+                    <span>@Text["Cta.SignIn"]</span>
+                </a>
+
+                <CtaButton Href="/#plans"
                            Variant="CtaVariant.Primary"
                            Size="CtaSize.Small"
                            TrailingIcon="IconName.ArrowRight"
                            OnClick="Close">
-                    See plans
+                    @Text["Cta.SeePlans"]
                 </CtaButton>
             </div>
         </div>
@@ -57,11 +79,43 @@
     [Parameter]
     public string SiteName { get; set; } = "HowToSoftware";
 
-    private string BrandLabel => $"{SiteName} home";
+    protected override void OnInitialized() => Navigation.LocationChanged += OnLocationChanged;
 
     private void Toggle() => _isOpen = !_isOpen;
 
     private void Close() => _isOpen = false;
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs args)
+    {
+        // A route change repaints the current-page marker and dismisses the mobile panel.
+        _isOpen = false;
+        StateHasChanged();
+    }
+
+    /// <summary>
+    /// Whether a link points at the page currently being viewed. Only route links can be
+    /// "current": an in-page anchor describes a position, not a destination.
+    /// </summary>
+    private bool IsCurrentPage(string href)
+    {
+        if (href.Contains('#', StringComparison.Ordinal))
+        {
+            return false;
+        }
+
+        var current = "/" + Navigation.ToBaseRelativePath(Navigation.Uri).Split('?', '#')[0].TrimEnd('/');
+        var target = "/" + href.Trim('/');
+
+        if (string.Equals(current, target, StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
+        // The infrastructure page answers to both of its routes; either one is "here".
+        return target is "/infrastructure" && string.Equals(current, "/hardware", StringComparison.OrdinalIgnoreCase);
+    }
+
+    public void Dispose() => Navigation.LocationChanged -= OnLocationChanged;
 }
 
 @*

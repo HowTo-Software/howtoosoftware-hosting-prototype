@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Placeholder" xml:space="preserve">
+    <value>TEXT ABOUT HERE</value>
+  </data>
+  <data name="Placeholder.Label" xml:space="preserve">
+    <value>Copy pending</value>
+  </data>
+  <data name="Meta.Title" xml:space="preserve">
+    <value>Infrastructure | {0}</value>
+  </data>
+  <data name="Meta.Description" xml:space="preserve">
+    <value>The hardware and physical infrastructure behind HowToSoftware Project Zomboid hosting.</value>
+  </data>
+  <data name="Hero.Eyebrow" xml:space="preserve">
+    <value>HARDWARE</value>
+  </data>
+  <data name="Hero.Line1" xml:space="preserve">
+    <value>Infrastructure</value>
+  </data>
+  <data name="Hero.Line2" xml:space="preserve">
+    <value>built for</value>
+  </data>
+  <data name="Hero.Line3" xml:space="preserve">
+    <value>persistent worlds.</value>
+  </data>
+  <data name="Hero.Rail.Platform" xml:space="preserve">
+    <value>PLATFORM</value>
+  </data>
+  <data name="Hero.Rail.Nodes" xml:space="preserve">
+    <value>NODES</value>
+  </data>
+  <data name="Hero.Rail.Region" xml:space="preserve">
+    <value>REGION</value>
+  </data>
+  <data name="Physical.Index" xml:space="preserve">
+    <value>01</value>
+  </data>
+  <data name="Physical.Kicker" xml:space="preserve">
+    <value>PHYSICAL INFRASTRUCTURE</value>
+  </data>
+  <data name="Physical.Title" xml:space="preserve">
+    <value>Physical infrastructure</value>
+  </data>
+  <data name="Physical.RackLabel" xml:space="preserve">
+    <value>RACK ELEVATION</value>
+  </data>
+  <data name="Physical.SheetLabel" xml:space="preserve">
+    <value>SPEC SHEET</value>
+  </data>
+  <data name="Spec.Cpu" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="Spec.Memory" xml:space="preserve">
+    <value>MEMORY</value>
+  </data>
+  <data name="Spec.Storage" xml:space="preserve">
+    <value>STORAGE</value>
+  </data>
+  <data name="Spec.Network" xml:space="preserve">
+    <value>NETWORK</value>
+  </data>
+  <data name="Topology.Index" xml:space="preserve">
+    <value>02</value>
+  </data>
+  <data name="Topology.Kicker" xml:space="preserve">
+    <value>NODE TOPOLOGY</value>
+  </data>
+  <data name="Topology.Title" xml:space="preserve">
+    <value>Node topology</value>
+  </data>
+  <data name="Topology.Platform" xml:space="preserve">
+    <value>HTS PLATFORM</value>
+  </data>
+  <data name="Topology.Bus" xml:space="preserve">
+    <value>PROVISIONING BUS</value>
+  </data>
+  <data name="Topology.Servers" xml:space="preserve">
+    <value>ZOMBOID SERVERS</value>
+  </data>
+  <data name="Topology.Allocation" xml:space="preserve">
+    <value>ALLOCATION</value>
+  </data>
+  <data name="Topology.AllocationPending" xml:space="preserve">
+    <value>AWAITING COMMISSIONING</value>
+  </data>
+  <data name="Topology.NodeLabel" xml:space="preserve">
+    <value>NODE</value>
+  </data>
+  <data name="Compute.Index" xml:space="preserve">
+    <value>03</value>
+  </data>
+  <data name="Compute.Kicker" xml:space="preserve">
+    <value>COMPUTE</value>
+  </data>
+  <data name="Compute.Title" xml:space="preserve">
+    <value>Compute</value>
+  </data>
+  <data name="Compute.FigureLabel" xml:space="preserve">
+    <value>PER INSTANCE</value>
+  </data>
+  <data name="Memory.Index" xml:space="preserve">
+    <value>04</value>
+  </data>
+  <data name="Memory.Kicker" xml:space="preserve">
+    <value>MEMORY</value>
+  </data>
+  <data name="Memory.Title" xml:space="preserve">
+    <value>Memory</value>
+  </data>
+  <data name="Memory.LayerAllocated" xml:space="preserve">
+    <value>ALLOCATED</value>
+  </data>
+  <data name="Memory.LayerHeadroom" xml:space="preserve">
+    <value>HEADROOM</value>
+  </data>
+  <data name="Memory.LayerReserved" xml:space="preserve">
+    <value>RESERVED</value>
+  </data>
+  <data name="Storage.Index" xml:space="preserve">
+    <value>05</value>
+  </data>
+  <data name="Storage.Kicker" xml:space="preserve">
+    <value>STORAGE</value>
+  </data>
+  <data name="Storage.Title" xml:space="preserve">
+    <value>Storage</value>
+  </data>
+  <data name="Storage.LayerVolume" xml:space="preserve">
+    <value>WORLD VOLUME</value>
+  </data>
+  <data name="Storage.LayerSnapshot" xml:space="preserve">
+    <value>SNAPSHOT CHAIN</value>
+  </data>
+  <data name="Storage.LayerArchive" xml:space="preserve">
+    <value>ARCHIVE</value>
+  </data>
+  <data name="Network.Index" xml:space="preserve">
+    <value>06</value>
+  </data>
+  <data name="Network.Kicker" xml:space="preserve">
+    <value>NETWORK</value>
+  </data>
+  <data name="Network.Title" xml:space="preserve">
+    <value>Network</value>
+  </data>
+  <data name="Network.HopEdge" xml:space="preserve">
+    <value>EDGE</value>
+  </data>
+  <data name="Network.HopUplink" xml:space="preserve">
+    <value>UPLINK</value>
+  </data>
+  <data name="Network.HopNode" xml:space="preserve">
+    <value>NODE</value>
+  </data>
+  <data name="Network.HopWorld" xml:space="preserve">
+    <value>WORLD</value>
+  </data>
+  <data name="Allocation.Index" xml:space="preserve">
+    <value>07</value>
+  </data>
+  <data name="Allocation.Kicker" xml:space="preserve">
+    <value>SERVER ALLOCATION</value>
+  </data>
+  <data name="Allocation.Title" xml:space="preserve">
+    <value>Server allocation</value>
+  </data>
+  <data name="Allocation.NodeCapacity" xml:space="preserve">
+    <value>NODE CAPACITY</value>
+  </data>
+  <data name="Allocation.Instance" xml:space="preserve">
+    <value>INSTANCE</value>
+  </data>
+  <data name="Allocation.Free" xml:space="preserve">
+    <value>UNALLOCATED</value>
+  </data>
+  <data name="Reliability.Index" xml:space="preserve">
+    <value>08</value>
+  </data>
+  <data name="Reliability.Kicker" xml:space="preserve">
+    <value>RELIABILITY / OPERATIONS</value>
+  </data>
+  <data name="Reliability.Title" xml:space="preserve">
+    <value>Reliability and operations</value>
+  </data>
+  <data name="Reliability.Signal.Monitoring" xml:space="preserve">
+    <value>MONITORING</value>
+  </data>
+  <data name="Reliability.Signal.Backups" xml:space="preserve">
+    <value>BACKUPS</value>
+  </data>
+  <data name="Reliability.Signal.Response" xml:space="preserve">
+    <value>RESPONSE</value>
+  </data>
+  <data name="Reliability.Signal.Maintenance" xml:space="preserve">
+    <value>MAINTENANCE</value>
+  </data>
+  <data name="Closing.Cta" xml:space="preserve">
+    <value>See plans</value>
+  </data>
+  <data name="Closing.Secondary" xml:space="preserve">
+    <value>Back to the homepage</value>
+  </data>
+  <data name="Note.Pending" xml:space="preserve">
+    <value>Node specifications describe the intended platform. Exact hardware is confirmed as capacity is commissioned.</value>
+  </data>
+</root>

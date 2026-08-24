@@ -1,4 +1,6 @@
+using HowToSoftware.Hosting.Localization;
 using HowToSoftware.Hosting.Models;
+using Microsoft.Extensions.Localization;
 
 namespace HowToSoftware.Hosting.Services;
 
@@ -25,80 +27,116 @@ public sealed class StaticPlanCatalogService : IPlanCatalogService
         ["HTS2026"] = 15
     };
 
+    private readonly IStringLocalizer<HomeText> _text;
+
+    /// <summary>Creates the catalogue.</summary>
+    /// <param name="text">
+    /// Plan copy - taglines, what each plan includes, the billing cadence labels - for the
+    /// culture chosen for this request. Prices, slot counts and coupon codes are not copy and
+    /// stay in this file.
+    /// </param>
+    public StaticPlanCatalogService(IStringLocalizer<HomeText> text) => _text = text;
+
     /// <inheritdoc />
     public string CurrencySymbol => "€";
 
     /// <inheritdoc />
-    public IReadOnlyList<BillingOption> BillingOptions { get; } =
+    public IReadOnlyList<BillingOption> BillingOptions =>
     [
-        new(BillingPeriod.Monthly, "Monthly", 1, 0),
-        new(BillingPeriod.Quarterly, "Quarterly", 3, 10),
-        new(BillingPeriod.Annual, "Annual", 12, 20)
+        new(BillingPeriod.Monthly, _text["Billing.Monthly"], 1, 0),
+        new(BillingPeriod.Quarterly, _text["Billing.Quarterly"], 3, 10),
+        new(BillingPeriod.Annual, _text["Billing.Annual"], 12, 20)
     ];
 
     /// <inheritdoc />
-    public IReadOnlyList<HostingPlan> Plans { get; } =
+    public IReadOnlyList<HostingPlan> Plans =>
     [
         new()
         {
             Id = "outpost",
             Name = "Outpost",
-            Tagline = "A small group riding out the first month.",
+            Tagline = _text["Plan.Outpost.Tagline"],
             PlayerSlots = 8,
             MonthlyPrice = 6.99m,
             Specs =
             [
-                new("MEMORY", "6 GB"),
-                new("VCPU", "2 cores"),
-                new("STORAGE", "30 GB NVMe")
+                new(_text["Spec.Memory"], "6 GB"),
+                new(_text["Spec.Vcpu"], _text["Plan.Cores", 2]),
+                new(_text["Spec.Storage"], "30 GB NVMe")
             ],
-            Includes = ["Workshop mod sync", "Daily backups", "Full console access"]
+            Includes =
+            [
+                _text["Include.WorkshopSync"],
+                _text["Include.DailyBackups"],
+                _text["Include.FullConsole"]
+            ]
         },
         new()
         {
             Id = "settlement",
             Name = "Settlement",
-            Tagline = "The size most modded communities actually land on.",
+            Tagline = _text["Plan.Settlement.Tagline"],
             PlayerSlots = 16,
             MonthlyPrice = 11.99m,
             IsRecommended = true,
             Specs =
             [
-                new("MEMORY", "10 GB"),
-                new("VCPU", "4 cores"),
-                new("STORAGE", "60 GB NVMe")
+                new(_text["Spec.Memory"], "10 GB"),
+                new(_text["Spec.Vcpu"], _text["Plan.Cores", 4]),
+                new(_text["Spec.Storage"], "60 GB NVMe")
             ],
-            Includes = ["Workshop mod sync", "Twice-daily backups", "Full console access", "Scheduled restarts"]
+            Includes =
+            [
+                _text["Include.WorkshopSync"],
+                _text["Include.TwiceDailyBackups"],
+                _text["Include.FullConsole"],
+                _text["Include.ScheduledRestarts"]
+            ]
         },
         new()
         {
             Id = "stronghold",
             Name = "Stronghold",
-            Tagline = "Heavy mod lists and a population that keeps growing.",
+            Tagline = _text["Plan.Stronghold.Tagline"],
             PlayerSlots = 32,
             MonthlyPrice = 19.99m,
             Specs =
             [
-                new("MEMORY", "16 GB"),
-                new("VCPU", "6 cores"),
-                new("STORAGE", "120 GB NVMe")
+                new(_text["Spec.Memory"], "16 GB"),
+                new(_text["Spec.Vcpu"], _text["Plan.Cores", 6]),
+                new(_text["Spec.Storage"], "120 GB NVMe")
             ],
-            Includes = ["Workshop mod sync", "Hourly backups", "Full console access", "Scheduled restarts", "Priority placement"]
+            Includes =
+            [
+                _text["Include.WorkshopSync"],
+                _text["Include.HourlyBackups"],
+                _text["Include.FullConsole"],
+                _text["Include.ScheduledRestarts"],
+                _text["Include.PriorityPlacement"]
+            ]
         },
         new()
         {
             Id = "knox-cell",
             Name = "Knox Cell",
-            Tagline = "A whole community, on dedicated allocation.",
+            Tagline = _text["Plan.KnoxCell.Tagline"],
             PlayerSlots = 64,
             MonthlyPrice = 34.99m,
             Specs =
             [
-                new("MEMORY", "24 GB"),
-                new("VCPU", "8 cores"),
-                new("STORAGE", "200 GB NVMe")
+                new(_text["Spec.Memory"], "24 GB"),
+                new(_text["Spec.Vcpu"], _text["Plan.Cores", 8]),
+                new(_text["Spec.Storage"], "200 GB NVMe")
             ],
-            Includes = ["Workshop mod sync", "Hourly backups", "Full console access", "Scheduled restarts", "Priority placement", "Dedicated allocation"]
+            Includes =
+            [
+                _text["Include.WorkshopSync"],
+                _text["Include.HourlyBackups"],
+                _text["Include.FullConsole"],
+                _text["Include.ScheduledRestarts"],
+                _text["Include.PriorityPlacement"],
+                _text["Include.DedicatedAllocation"]
+            ]
         }
     ];
 
@@ -133,7 +171,7 @@ public sealed class StaticPlanCatalogService : IPlanCatalogService
         var normalised = trimmed.ToUpperInvariant();
 
         return DemoCoupons.TryGetValue(normalised, out var percent)
-            ? new CouponResult(CouponStatus.Applied, normalised, percent, $"Demo code applied - {percent}% off the preview.")
-            : new CouponResult(CouponStatus.Rejected, normalised, 0, "Not a recognised demo code.");
+            ? new CouponResult(CouponStatus.Applied, normalised, percent, _text["Coupon.Applied", percent])
+            : new CouponResult(CouponStatus.Rejected, normalised, 0, _text["Coupon.Rejected"]);
     }
 }

@@ -1,0 +1,596 @@
+.chapter {
+    position: relative;
+    padding-block: clamp(4rem, 7vw, 7rem);
+    border-top: 1px solid var(--hts-border);
+}
+
+.chapter-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr);
+    align-items: center;
+    gap: clamp(2.5rem, 6vw, 5.5rem);
+}
+
+/* Mirrored chapters swap the columns rather than re-laying the page out, so the eye keeps
+   crossing back and forth down the page instead of running in one straight gutter. */
+.chapter.is-mirrored .chapter-copy {
+    order: 2;
+}
+
+.chapter.is-mirrored .chapter-visual {
+    order: 1;
+}
+
+/* ── Shared frame ──────────────────────────────────────────────────────── */
+
+.chapter-kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: var(--hts-space-5);
+    color: var(--hts-purple-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+}
+
+.kicker-index {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: none;
+    border-radius: var(--hts-radius-xs);
+    background: var(--hts-blue-700);
+    color: var(--hts-white);
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+}
+
+/* The topic word is the display type. It is the one thing on this page that is definitely
+   true, so it carries the size the finished headline will eventually take. */
+.chapter-title {
+    font-size: clamp(2.4rem, 1.2rem + 3.8vw, 4.4rem);
+    font-weight: 670;
+    line-height: 0.98;
+    letter-spacing: -0.035em;
+}
+
+.chapter-lede {
+    max-width: 26rem;
+    margin-top: var(--hts-space-5);
+}
+
+.chapter-visual {
+    position: relative;
+    min-width: 0;
+}
+
+/* ── Shared readout strip under a visual ───────────────────────────────── */
+
+.readout {
+    display: grid;
+    gap: var(--hts-space-5);
+    margin-top: var(--hts-space-6);
+    padding-top: var(--hts-space-5);
+    border-top: 1px solid var(--hts-border);
+}
+
+.readout--wide {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.readout dt {
+    margin-bottom: 0.4rem;
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.2em;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   COMPUTE - a die plate
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.die {
+    position: relative;
+    display: grid;
+    place-items: center;
+    padding: clamp(1.5rem, 3.4vw, 2.75rem);
+    border: 1px solid var(--hts-border-strong);
+    border-radius: var(--hts-radius-lg);
+    background:
+        radial-gradient(90% 80% at 50% 0%, rgba(176, 105, 255, 0.12) 0%, transparent 62%),
+        var(--hts-surface);
+    box-shadow: var(--hts-rim), var(--hts-shadow-md);
+    overflow: hidden;
+}
+
+/* Bond wires: four hairlines running out of the package to the board. */
+.die-frame {
+    position: absolute;
+    inset: clamp(1.1rem, 2.6vw, 1.9rem);
+    border: 1px dashed var(--hts-cell-border);
+    border-radius: var(--hts-radius-md);
+    pointer-events: none;
+}
+
+.die-grid {
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: clamp(3px, 0.6vw, 6px);
+    width: min(100%, 24rem);
+    aspect-ratio: 1;
+}
+
+.die-cell {
+    border: 1px solid var(--hts-cell-border);
+    border-radius: 2px;
+    background: var(--hts-cell-bg);
+}
+
+/* Active cores. The stagger comes from nth-child, so it is deterministic and free. */
+.die-cell.is-lit {
+    border-color: var(--hts-blue-500);
+    background: rgba(131, 168, 243, 0.42);
+    box-shadow: 0 0 12px -1px rgba(131, 168, 243, 0.8);
+    animation: die-pulse 4.4s var(--hts-ease) infinite;
+}
+
+.die-cell.is-lit:nth-child(3n) {
+    animation-delay: -1.4s;
+}
+
+.die-cell.is-lit:nth-child(4n) {
+    animation-delay: -2.7s;
+    background: rgba(176, 105, 255, 0.45);
+    border-color: var(--hts-purple-500);
+    box-shadow: 0 0 12px -1px rgba(176, 105, 255, 0.8);
+}
+
+@keyframes die-pulse {
+    0%, 100% {
+        opacity: 0.78;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   MEMORY - three equal bands
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.bands {
+    display: grid;
+    gap: var(--hts-space-3);
+}
+
+.band {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--hts-space-4);
+    padding: var(--hts-space-4) var(--hts-space-5);
+    border: 1px solid var(--hts-border);
+    border-radius: var(--hts-radius-sm);
+    background: var(--hts-surface);
+    overflow: hidden;
+}
+
+/* The band's role is carried by its fill treatment, not by its width. */
+.band-fill {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.band--allocated .band-fill {
+    background: linear-gradient(90deg, rgba(131, 168, 243, 0.22), rgba(131, 168, 243, 0.04));
+}
+
+.band--headroom .band-fill {
+    background-image: repeating-linear-gradient(
+        -45deg,
+        rgba(131, 168, 243, 0.14) 0 2px,
+        transparent 2px 8px);
+}
+
+.band--reserved .band-fill {
+    background: transparent;
+    border-left: 2px solid var(--hts-border-brand);
+}
+
+.band-label,
+.band ::deep .copy-slot {
+    position: relative;
+    z-index: 1;
+}
+
+.band-label {
+    color: var(--hts-ink);
+    font-family: var(--hts-font-mono);
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   STORAGE - a volume stack
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.stack {
+    position: relative;
+    display: grid;
+    gap: var(--hts-space-4);
+    padding-left: 2rem;
+}
+
+.stack::before {
+    content: "";
+    position: absolute;
+    top: 1.4rem;
+    bottom: 1.4rem;
+    left: 0.42rem;
+    width: 1px;
+    background: linear-gradient(180deg, rgba(131, 168, 243, 0.5), rgba(176, 105, 255, 0.3));
+}
+
+.plate {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--hts-space-4);
+    padding: var(--hts-space-4) var(--hts-space-5);
+    border: 1px solid var(--hts-border-strong);
+    border-radius: var(--hts-radius-sm);
+    background: var(--hts-surface);
+    box-shadow: var(--hts-rim), var(--hts-shadow-sm);
+}
+
+/* Each plate steps further in, which is what gives the stack its depth without a 3D
+   transform that would break at small widths. */
+.plate:nth-child(2) {
+    margin-left: clamp(0rem, 2.5vw, 1.75rem);
+}
+
+.plate:nth-child(3) {
+    margin-left: clamp(0rem, 5vw, 3.5rem);
+    opacity: 0.86;
+}
+
+.plate-mark {
+    position: absolute;
+    top: 50%;
+    left: -1.62rem;
+    width: 0.5rem;
+    height: 0.5rem;
+    border: 1px solid var(--hts-blue-400);
+    border-radius: 50%;
+    background: var(--hts-canvas);
+    transform: translateY(-50%);
+}
+
+.plate:first-child .plate-mark {
+    background: var(--hts-blue-400);
+    box-shadow: 0 0 9px 1px rgba(131, 168, 243, 0.7);
+}
+
+.plate-label {
+    color: var(--hts-ink);
+    font-family: var(--hts-font-mono);
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   NETWORK - a horizontal flow
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.flow {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--hts-space-4);
+    padding-top: 2.25rem;
+}
+
+/* The rail the hops sit on. */
+.flow::before {
+    content: "";
+    position: absolute;
+    top: 0.72rem;
+    right: 6%;
+    left: 6%;
+    height: 1px;
+    background: linear-gradient(90deg,
+        transparent,
+        rgba(131, 168, 243, 0.45) 12%,
+        rgba(131, 168, 243, 0.45) 88%,
+        transparent);
+}
+
+.hop {
+    position: relative;
+    display: grid;
+    gap: 0.45rem;
+    padding: var(--hts-space-4) var(--hts-space-3);
+    border: 1px solid var(--hts-border);
+    border-radius: var(--hts-radius-sm);
+    background: var(--hts-surface);
+    text-align: center;
+    justify-items: center;
+}
+
+.hop-mark {
+    position: absolute;
+    top: -2.02rem;
+    left: 50%;
+    width: 0.6rem;
+    height: 0.6rem;
+    border: 1px solid var(--hts-blue-400);
+    border-radius: 50%;
+    background: var(--hts-canvas);
+    transform: translateX(-50%);
+}
+
+.hop:first-child .hop-mark,
+.hop:last-child .hop-mark {
+    background: var(--hts-blue-400);
+    box-shadow: 0 0 9px 1px rgba(131, 168, 243, 0.7);
+}
+
+.hop-label {
+    color: var(--hts-ink);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+}
+
+/* A packet crossing the rail. */
+.flow-beam {
+    position: absolute;
+    top: 0.6rem;
+    left: 6%;
+    width: 2.5rem;
+    height: 3px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, transparent, var(--hts-purple-300), transparent);
+    box-shadow: 0 0 10px 1px rgba(176, 105, 255, 0.7);
+    animation: flow-beam 3.6s var(--hts-ease) infinite;
+}
+
+@keyframes flow-beam {
+    0% {
+        left: 6%;
+        opacity: 0;
+    }
+
+    12%, 82% {
+        opacity: 1;
+    }
+
+    100% {
+        left: calc(94% - 2.5rem);
+        opacity: 0;
+    }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SERVER ALLOCATION - a capacity schematic
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.map {
+    padding: var(--hts-space-5);
+    border: 1px solid var(--hts-border-strong);
+    border-radius: var(--hts-radius-md);
+    background:
+        radial-gradient(100% 70% at 20% 0%, rgba(131, 168, 243, 0.10) 0%, transparent 62%),
+        var(--hts-surface);
+    box-shadow: var(--hts-rim), var(--hts-shadow-md);
+}
+
+.map-label {
+    margin-bottom: var(--hts-space-4);
+    color: var(--hts-blue-400);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    font-weight: 620;
+    letter-spacing: 0.22em;
+}
+
+.map-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 4px;
+}
+
+.map-tile {
+    aspect-ratio: 3 / 2;
+    border: 1px dashed var(--hts-cell-border);
+    border-radius: 3px;
+    background: var(--hts-cell-bg);
+}
+
+.map-tile.is-allocated {
+    border-style: solid;
+    border-color: var(--hts-border-blue);
+    background: linear-gradient(140deg, rgba(131, 168, 243, 0.26), rgba(131, 168, 243, 0.08));
+    box-shadow: var(--hts-rim);
+}
+
+.map-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--hts-space-5);
+    margin-top: var(--hts-space-5);
+}
+
+.legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.18em;
+}
+
+.legend-swatch {
+    width: 0.7rem;
+    height: 0.5rem;
+    border: 1px dashed var(--hts-cell-border);
+    border-radius: 2px;
+    background: var(--hts-cell-bg);
+}
+
+.legend-item.is-allocated .legend-swatch {
+    border-style: solid;
+    border-color: var(--hts-border-blue);
+    background: rgba(131, 168, 243, 0.26);
+}
+
+.map-note {
+    margin-top: var(--hts-space-4);
+    padding-top: var(--hts-space-4);
+    border-top: 1px solid var(--hts-border);
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.18em;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   RELIABILITY / OPERATIONS - a ticked rail
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.ops {
+    position: relative;
+    display: grid;
+    gap: var(--hts-space-5);
+    padding-left: 2.25rem;
+}
+
+.ops::before {
+    content: "";
+    position: absolute;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    width: 1px;
+    background: linear-gradient(180deg,
+        rgba(176, 105, 255, 0.5),
+        rgba(131, 168, 243, 0.35) 60%,
+        transparent);
+}
+
+.op {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, auto) minmax(0, 1fr);
+    align-items: baseline;
+    gap: var(--hts-space-4);
+    padding-bottom: var(--hts-space-5);
+    border-bottom: 1px solid var(--hts-border);
+}
+
+.op:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+/* A tick on the rail rather than a dot: this is a schedule, not a network. */
+.op-tick {
+    position: absolute;
+    top: 0.42rem;
+    left: -1.87rem;
+    width: 0.65rem;
+    height: 1px;
+    background: var(--hts-blue-400);
+    box-shadow: 0 0 8px 1px rgba(131, 168, 243, 0.55);
+}
+
+.op-label {
+    min-width: 8.5rem;
+    color: var(--hts-ink);
+    font-family: var(--hts-font-mono);
+    font-size: 0.625rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+}
+
+.op ::deep .copy-slot {
+    width: 100%;
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+
+@media (max-width: 1080px) {
+    .chapter-inner {
+        grid-template-columns: minmax(0, 1fr);
+        gap: clamp(2.25rem, 6vw, 3rem);
+    }
+
+    /* Copy always leads on a narrow screen; a mirrored chapter would otherwise open with an
+       illustration whose caption has not been read yet. */
+    .chapter.is-mirrored .chapter-copy {
+        order: 0;
+    }
+
+    .chapter.is-mirrored .chapter-visual {
+        order: 0;
+    }
+
+    .chapter-lede {
+        max-width: 34rem;
+    }
+}
+
+@media (max-width: 720px) {
+    .flow {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: var(--hts-space-5) var(--hts-space-4);
+    }
+
+    /* The single rail no longer connects two rows of hops, so it is dropped rather than left
+       crossing the drawing at a meaningless height. */
+    .flow::before,
+    .flow-beam {
+        display: none;
+    }
+
+    .hop-mark {
+        top: -0.5rem;
+    }
+
+    .map-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .op {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.5rem;
+    }
+}
+
+@media (max-width: 560px) {
+    .plate:nth-child(2),
+    .plate:nth-child(3) {
+        margin-left: 0;
+    }
+
+    .die {
+        padding: var(--hts-space-5);
+    }
+
+    .readout--wide {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

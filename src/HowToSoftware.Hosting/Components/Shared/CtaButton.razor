@@ -19,10 +19,15 @@
 }
 else
 {
-    <button type="button" class="@ClassName" disabled="@Disabled" @onclick="OnClick"
+    <button type="@ButtonType" class="@ClassName" disabled="@(Disabled || IsBusy)"
+            aria-busy="@(IsBusy ? "true" : null)" @onclick="OnClick"
             @attributes="AdditionalAttributes">
+        @if (IsBusy)
+        {
+            <span class="cta-spinner" aria-hidden="true"></span>
+        }
         @ChildContent
-        @if (TrailingIcon is { } trailing)
+        @if (TrailingIcon is { } trailing && !IsBusy)
         {
             <Icon Name="trailing" CssClass="cta-icon" />
         }
@@ -49,6 +54,20 @@ else
     /// <summary>Disables the button. Ignored when <see cref="Href"/> is set.</summary>
     [Parameter]
     public bool Disabled { get; set; }
+
+    /// <summary>
+    /// Native <c>type</c> for the button form. Set to <c>submit</c> when the action is the
+    /// primary action of a form, so Enter in a field still submits it.
+    /// </summary>
+    [Parameter]
+    public string ButtonType { get; set; } = "button";
+
+    /// <summary>
+    /// Shows a spinner and blocks further presses while a request is in flight. The label
+    /// stays in place so the button does not change width mid-action.
+    /// </summary>
+    [Parameter]
+    public bool IsBusy { get; set; }
 
     /// <summary>Anchor <c>rel</c> attribute.</summary>
     [Parameter]

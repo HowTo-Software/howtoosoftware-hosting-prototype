@@ -1,0 +1,116 @@
+@*
+    Physical infrastructure.
+
+    An editorial split rather than a card grid: the specification sheet is set as a ledger -
+    label, dot leader, value - beside a drawn rack elevation. Ledgers are what specification
+    documents actually look like, and they survive a page where every value is still pending
+    far better than four boxes each saying TEXT ABOUT HERE.
+
+    Values come from IInfrastructureContentService. Any spec whose value has not been
+    confirmed renders the placeholder; when a real figure is supplied the same row shows it.
+*@
+
+@inject IStringLocalizer<HardwareText> Text
+@inject IInfrastructureContentService Content
+
+<section class="physical hts-section--soft" id="physical" aria-labelledby="physical-heading">
+    <div class="hts-container hts-container--wide physical-inner">
+        <div class="physical-copy" data-reveal="left">
+            <p class="chapter-kicker">
+                <span class="kicker-index">@Text["Physical.Index"]</span>
+                @Text["Physical.Kicker"]
+            </p>
+
+            <h2 class="physical-title" id="physical-heading">@Text["Physical.Title"]</h2>
+
+            <p class="physical-lede">
+                <CopySlot Size="CopySlot.SlotSize.Lede" />
+            </p>
+
+            <div class="sheet">
+                <p class="sheet-label">@Text["Physical.SheetLabel"]</p>
+
+                <dl class="ledger">
+                    @foreach (var spec in Content.SpecSheet)
+                    {
+                        <div class="ledger-row">
+                            <dt>@SpecLabel(spec.Kind)</dt>
+                            <dd><CopySlot Value="@spec.Value" /></dd>
+                        </div>
+                    }
+                </dl>
+
+                <p class="sheet-note">@Text["Note.Pending"]</p>
+            </div>
+        </div>
+
+        <div class="physical-figure" data-reveal="right">
+            <p class="figure-label">@Text["Physical.RackLabel"]</p>
+
+            @*
+                A rack elevation, drawn rather than photographed. Twelve units: three carrying
+                a node, the rest open. The numbers down the side are unit positions, which is
+                the one label on this page that is a fact about a drawing rather than a claim
+                about hardware.
+            *@
+            <div class="rack" data-spotlight aria-hidden="true">
+                <span class="rack-post rack-post--left"></span>
+                <span class="rack-post rack-post--right"></span>
+
+                <ol class="rack-stack">
+                    @for (var unit = 12; unit >= 1; unit--)
+                    {
+                        var node = NodeAt(unit);
+
+                        <li class="rack-u @(node is null ? "is-open" : "is-filled") @(node?.Health is NodeHealth.Reserved ? "is-reserved" : null)">
+                            <span class="u-index">@unit.ToString("00")</span>
+                            @if (node is not null)
+                            {
+                                <span class="u-body">
+                                    <span class="u-name">@Text["Topology.NodeLabel"] / @node.Ordinal</span>
+                                    <span class="u-leds">
+                                        <span class="u-led"></span>
+                                        <span class="u-led"></span>
+                                        <span class="u-led"></span>
+                                    </span>
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="u-body u-body--open"></span>
+                            }
+                        </li>
+                    }
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    /// <summary>
+    /// Which rack unit each node sits in. Fixed positions so the drawing is stable between
+    /// renders; they describe the illustration, not a real elevation.
+    /// </summary>
+    private static readonly int[] OccupiedUnits = [10, 7, 4];
+
+    private HardwareNode? NodeAt(int unit)
+    {
+        var index = Array.IndexOf(OccupiedUnits, unit);
+
+        return index >= 0 && index < Content.Nodes.Count ? Content.Nodes[index] : null;
+    }
+
+    private string SpecLabel(HardwareSpecKind kind) => kind switch
+    {
+        HardwareSpecKind.Cpu => Text["Spec.Cpu"],
+        HardwareSpecKind.Memory => Text["Spec.Memory"],
+        HardwareSpecKind.Storage => Text["Spec.Storage"],
+        _ => Text["Spec.Network"]
+    };
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

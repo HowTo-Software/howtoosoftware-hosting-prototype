@@ -1,0 +1,717 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Hero.Kicker" xml:space="preserve">
+    <value>PROJECT ZOMBOID / SERVER INFRASTRUCTURE</value>
+  </data>
+  <data name="Hero.Line1" xml:space="preserve">
+    <value>Built for worlds</value>
+  </data>
+  <data name="Hero.Line2" xml:space="preserve">
+    <value>that refuse</value>
+  </data>
+  <data name="Hero.Line3" xml:space="preserve">
+    <value>to die.</value>
+  </data>
+  <data name="Hero.Copy" xml:space="preserve">
+    <value>Persistent Knox County worlds on dedicated allocation. Workshop collections resolved for you, provisioning handled by software, and a control panel that treats your server like the running system it is.</value>
+  </data>
+  <data name="Hero.CtaPrimary" xml:space="preserve">
+    <value>Deploy your server</value>
+  </data>
+  <data name="Hero.CtaSecondary" xml:space="preserve">
+    <value>See the panel</value>
+  </data>
+  <data name="Hero.FootCell" xml:space="preserve">
+    <value>CELL 38x27 / KNOX COUNTY</value>
+  </data>
+  <data name="Hero.FootScroll" xml:space="preserve">
+    <value>SCROLL</value>
+  </data>
+  <data name="Hero.FootAllocation" xml:space="preserve">
+    <value>ALLOCATION 203.0.113.24:16261</value>
+  </data>
+  <data name="Cluster.ServerStatus" xml:space="preserve">
+    <value>SERVER STATUS</value>
+  </data>
+  <data name="Cluster.World" xml:space="preserve">
+    <value>WORLD</value>
+  </data>
+  <data name="Cluster.Node" xml:space="preserve">
+    <value>NODE</value>
+  </data>
+  <data name="Cluster.WorkshopSync" xml:space="preserve">
+    <value>WORKSHOP SYNC</value>
+  </data>
+  <data name="Cluster.Build" xml:space="preserve">
+    <value>BUILD 42</value>
+  </data>
+  <data name="Strip.Label" xml:space="preserve">
+    <value>Platform telemetry</value>
+  </data>
+  <data name="Strip.Live" xml:space="preserve">
+    <value>LIVE</value>
+  </data>
+  <data name="World.Kicker" xml:space="preserve">
+    <value>PERSISTENT WORLDS</value>
+  </data>
+  <data name="World.Line1" xml:space="preserve">
+    <value>Knox County</value>
+  </data>
+  <data name="World.Line2" xml:space="preserve">
+    <value>keeps</value>
+  </data>
+  <data name="World.Accent" xml:space="preserve">
+    <value>running</value>
+  </data>
+  <data name="World.Line3" xml:space="preserve">
+    <value>without you.</value>
+  </data>
+  <data name="World.Body1" xml:space="preserve">
+    <value>A Project Zomboid world is a long-lived simulation, not a match. Map state, safehouses, vehicles and loot are written to storage that outlives restarts, build changes and rebuilds of the instance underneath it.</value>
+  </data>
+  <data name="World.Body2" xml:space="preserve">
+    <value>When you roll a mod back, your community does not roll back with it. Restore points are taken on a schedule, and the world you return to is the world you left.</value>
+  </data>
+  <data name="World.DataLabel" xml:space="preserve">
+    <value>WORLD DATA</value>
+  </data>
+  <data name="World.DataValue" xml:space="preserve">
+    <value>Durable volume</value>
+  </data>
+  <data name="World.RestoreLabel" xml:space="preserve">
+    <value>RESTORE POINTS</value>
+  </data>
+  <data name="World.RestoreValue" xml:space="preserve">
+    <value>Scheduled</value>
+  </data>
+  <data name="World.CellLabel" xml:space="preserve">
+    <value>CELL SIZE</value>
+  </data>
+  <data name="World.CellValue" xml:space="preserve">
+    <value>300 x 300</value>
+  </data>
+  <data name="Grid.Caption" xml:space="preserve">
+    <value>KNOX COUNTY / CELL FIELD</value>
+  </data>
+  <data name="Grid.Streaming" xml:space="preserve">
+    <value>STREAMING</value>
+  </data>
+  <data name="Workshop.Kicker" xml:space="preserve">
+    <value>WORKSHOP</value>
+  </data>
+  <data name="Workshop.Line1" xml:space="preserve">
+    <value>82 mods?</value>
+  </data>
+  <data name="Workshop.Accent" xml:space="preserve">
+    <value>Good.</value>
+  </data>
+  <data name="Workshop.Body" xml:space="preserve">
+    <value>A large Workshop collection should not turn server setup into a second job. Paste a collection, and the platform resolves every item, writes the mod and Workshop identifier lists in the right order, and keeps them in step whenever you add, remove or reorder something.</value>
+  </data>
+  <data name="Workshop.Point1" xml:space="preserve">
+    <value>Collections resolved to item lists automatically</value>
+  </data>
+  <data name="Workshop.Point2" xml:space="preserve">
+    <value>Load order editable without touching config files</value>
+  </data>
+  <data name="Workshop.Point3" xml:space="preserve">
+    <value>Updates staged, then applied on your next restart</value>
+  </data>
+  <data name="Workshop.Collection" xml:space="preserve">
+    <value>WORKSHOP COLLECTION</value>
+  </data>
+  <data name="Workshop.ModsReady" xml:space="preserve">
+    <value>MODS READY</value>
+  </data>
+  <data name="Workshop.Verified" xml:space="preserve">
+    <value>MOD LOAD ORDER VERIFIED</value>
+  </data>
+  <data name="Workshop.LastSync" xml:space="preserve">
+    <value>LAST SYNC 42 MIN AGO</value>
+  </data>
+  <data name="Provisioning.Kicker" xml:space="preserve">
+    <value>PROVISIONING</value>
+  </data>
+  <data name="Provisioning.Line1" xml:space="preserve">
+    <value>From order to</value>
+  </data>
+  <data name="Provisioning.Accent" xml:space="preserve">
+    <value>world online.</value>
+  </data>
+  <data name="Provisioning.Lede" xml:space="preserve">
+    <value>Five stages, no hand-offs. Follow them down the page and watch the deployment path build itself.</value>
+  </data>
+  <data name="Provisioning.PathLabel" xml:space="preserve">
+    <value>DEPLOYMENT PATH</value>
+  </data>
+  <data name="Provisioning.StageCounter" xml:space="preserve">
+    <value>STAGE {0} / 05</value>
+  </data>
+  <data name="Provisioning.Note" xml:space="preserve">
+    <value>Illustrative flow. Provisioning is not yet wired to live infrastructure.</value>
+  </data>
+  <data name="Diagram.Description" xml:space="preserve">
+    <value>Deployment topology from customer order through the provisioner and a node to the running Project Zomboid world.</value>
+  </data>
+  <data name="Diagram.Customer" xml:space="preserve">
+    <value>CUSTOMER</value>
+  </data>
+  <data name="Diagram.CustomerCaption" xml:space="preserve">
+    <value>order placed</value>
+  </data>
+  <data name="Diagram.Software" xml:space="preserve">
+    <value>HTS SOFTWARE</value>
+  </data>
+  <data name="Diagram.SoftwareCaption" xml:space="preserve">
+    <value>validates + routes</value>
+  </data>
+  <data name="Diagram.Provisioner" xml:space="preserve">
+    <value>PROVISIONER</value>
+  </data>
+  <data name="Diagram.ProvisionerCaption" xml:space="preserve">
+    <value>reserves capacity</value>
+  </data>
+  <data name="Diagram.Node01" xml:space="preserve">
+    <value>NODE 01</value>
+  </data>
+  <data name="Diagram.Node01Caption" xml:space="preserve">
+    <value>62% allocated</value>
+  </data>
+  <data name="Diagram.Node02" xml:space="preserve">
+    <value>NODE 02</value>
+  </data>
+  <data name="Diagram.Node02Caption" xml:space="preserve">
+    <value>41% allocated</value>
+  </data>
+  <data name="Diagram.Panel" xml:space="preserve">
+    <value>GAME PANEL</value>
+  </data>
+  <data name="Diagram.PanelCaption" xml:space="preserve">
+    <value>builds instance</value>
+  </data>
+  <data name="Diagram.World" xml:space="preserve">
+    <value>ZOMBOID WORLD</value>
+  </data>
+  <data name="Diagram.WorldCaption" xml:space="preserve">
+    <value>online</value>
+  </data>
+  <data name="Cp.Kicker" xml:space="preserve">
+    <value>CONTROL PANEL</value>
+  </data>
+  <data name="Cp.Line1" xml:space="preserve">
+    <value>The whole server,</value>
+  </data>
+  <data name="Cp.Accent" xml:space="preserve">
+    <value>one screen.</value>
+  </data>
+  <data name="Cp.Lede" xml:space="preserve">
+    <value>Power, resources, console, mods and files in a single interface. Try it - the controls below drive real component state on illustrative data.</value>
+  </data>
+  <data name="Cp.Env" xml:space="preserve">
+    <value>PREVIEW</value>
+  </data>
+  <data name="Cp.SectionsLabel" xml:space="preserve">
+    <value>Server sections</value>
+  </data>
+  <data name="Cp.Server" xml:space="preserve">
+    <value>SERVER</value>
+  </data>
+  <data name="Cp.Node" xml:space="preserve">
+    <value>NODE</value>
+  </data>
+  <data name="Cp.NodeValue" xml:space="preserve">
+    <value>EU WEST / 01</value>
+  </data>
+  <data name="Cp.PowerLabel" xml:space="preserve">
+    <value>Server power controls</value>
+  </data>
+  <data name="Cp.Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="Cp.Restart" xml:space="preserve">
+    <value>Restart</value>
+  </data>
+  <data name="Cp.Stop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="Cp.Backup" xml:space="preserve">
+    <value>Backup</value>
+  </data>
+  <data name="Cp.ViewOverview" xml:space="preserve">
+    <value>Overview</value>
+  </data>
+  <data name="Cp.ViewConsole" xml:space="preserve">
+    <value>Console</value>
+  </data>
+  <data name="Cp.ViewMods" xml:space="preserve">
+    <value>Mods</value>
+  </data>
+  <data name="Cp.ViewFiles" xml:space="preserve">
+    <value>Files</value>
+  </data>
+  <data name="Cp.ViewBackups" xml:space="preserve">
+    <value>Backups</value>
+  </data>
+  <data name="Cp.ViewNetwork" xml:space="preserve">
+    <value>Network</value>
+  </data>
+  <data name="Cp.ViewSettings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Cp.MetricUsage" xml:space="preserve">
+    <value>{0} usage</value>
+  </data>
+  <data name="Cp.ModsHead" xml:space="preserve">
+    <value>WORKSHOP COLLECTION 3021845517</value>
+  </data>
+  <data name="Cp.ModsCount" xml:space="preserve">
+    <value>82 / 82 READY</value>
+  </data>
+  <data name="Cp.PlaceholderCopy" xml:space="preserve">
+    <value>This area is part of the planned panel and is not built in the prototype yet.</value>
+  </data>
+  <data name="Cp.Loading" xml:space="preserve">
+    <value>Loading server state</value>
+  </data>
+  <data name="Cp.Note" xml:space="preserve">
+    <value>Interface preview on mock data. No server is created, started or stopped.</value>
+  </data>
+  <data name="Console.Key" xml:space="preserve">
+    <value>CONSOLE</value>
+  </data>
+  <data name="Console.Meta" xml:space="preserve">
+    <value>{0} LINES / LIVE TAIL</value>
+  </data>
+  <data name="Console.Label" xml:space="preserve">
+    <value>Server console output</value>
+  </data>
+  <data name="Nodes.Kicker" xml:space="preserve">
+    <value>HARDWARE</value>
+  </data>
+  <data name="Nodes.Line1" xml:space="preserve">
+    <value>Worlds land on</value>
+  </data>
+  <data name="Nodes.Accent" xml:space="preserve">
+    <value>real metal.</value>
+  </data>
+  <data name="Nodes.Lede" xml:space="preserve">
+    <value>Instances are placed on nodes with headroom to spare, and your allocation is reserved before a single file is written.</value>
+  </data>
+  <data name="Nodes.Bus" xml:space="preserve">
+    <value>PROVISIONING BUS</value>
+  </data>
+  <data name="Nodes.Allocation" xml:space="preserve">
+    <value>ALLOCATION</value>
+  </data>
+  <data name="Nodes.WorldsPlaced" xml:space="preserve">
+    <value>{0} worlds placed</value>
+  </data>
+  <data name="Nodes.Awaiting" xml:space="preserve">
+    <value>Awaiting first placement</value>
+  </data>
+  <data name="Nodes.Note" xml:space="preserve">
+    <value>Node specifications describe the intended platform. Exact hardware is confirmed as capacity is commissioned.</value>
+  </data>
+  <data name="Caps.Heading" xml:space="preserve">
+    <value>What the platform does</value>
+  </data>
+  <data name="Plans.Kicker" xml:space="preserve">
+    <value>PLANS</value>
+  </data>
+  <data name="Plans.Line1" xml:space="preserve">
+    <value>Pick a world size,</value>
+  </data>
+  <data name="Plans.Accent" xml:space="preserve">
+    <value>not a support tier.</value>
+  </data>
+  <data name="Plans.Lede" xml:space="preserve">
+    <value>Every plan gets the same platform: Workshop sync, backups, full console and automated deployment. The only thing that changes is how much world you are running.</value>
+  </data>
+  <data name="Plans.FlagTag" xml:space="preserve">
+    <value>TEST DATA</value>
+  </data>
+  <data name="Plans.FlagBody" xml:space="preserve">
+    <value>This catalogue exists to review the interface. Prices, discounts and promotional codes are placeholders, nothing here is a commercial offer, and no checkout is connected.</value>
+  </data>
+  <data name="Plans.BillingLabel" xml:space="preserve">
+    <value>Billing period</value>
+  </data>
+  <data name="Plans.CouponLabel" xml:space="preserve">
+    <value>PROMOTIONAL CODE</value>
+  </data>
+  <data name="Plans.CouponPlaceholder" xml:space="preserve">
+    <value>TRY SURVIVOR10</value>
+  </data>
+  <data name="Plans.CouponApply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="Plans.CouponRemove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="Plans.CouponHint" xml:space="preserve">
+    <value>Demo codes only. Nothing is charged.</value>
+  </data>
+  <data name="Plans.MostChosen" xml:space="preserve">
+    <value>MOST CHOSEN</value>
+  </data>
+  <data name="Plans.PriceUnit" xml:space="preserve">
+    <value>/ MONTH</value>
+  </data>
+  <data name="Plans.CycleMulti" xml:space="preserve">
+    <value>{0} billed every {1} months</value>
+  </data>
+  <data name="Plans.CycleMonthly" xml:space="preserve">
+    <value>Billed monthly</value>
+  </data>
+  <data name="Plans.Slots" xml:space="preserve">
+    <value>PLAYER SLOTS</value>
+  </data>
+  <data name="Plans.Deploy" xml:space="preserve">
+    <value>Deploy {0}</value>
+  </data>
+  <data name="Faq.Kicker" xml:space="preserve">
+    <value>FAQ</value>
+  </data>
+  <data name="Faq.Line1" xml:space="preserve">
+    <value>Before you</value>
+  </data>
+  <data name="Faq.Accent" xml:space="preserve">
+    <value>commit a world.</value>
+  </data>
+  <data name="Faq.Note" xml:space="preserve">
+    <value>Still deciding whether the platform fits your community? Start here, then talk to us about anything this does not cover.</value>
+  </data>
+  <data name="Faq.Cta" xml:space="preserve">
+    <value>Ask us directly</value>
+  </data>
+  <data name="Closing.Kicker" xml:space="preserve">
+    <value>READY WHEN YOU ARE</value>
+  </data>
+  <data name="Closing.Line1" xml:space="preserve">
+    <value>Bring your community</value>
+  </data>
+  <data name="Closing.Accent" xml:space="preserve">
+    <value>to Knox County.</value>
+  </data>
+  <data name="Closing.Lede" xml:space="preserve">
+    <value>We are onboarding the first Project Zomboid worlds now. Tell us how your group plays and we will get one stood up.</value>
+  </data>
+  <data name="Closing.Cta1" xml:space="preserve">
+    <value>Choose a plan</value>
+  </data>
+  <data name="Closing.Cta2" xml:space="preserve">
+    <value>Explore the panel</value>
+  </data>
+  <data name="Closing.ContactKey" xml:space="preserve">
+    <value>DIRECT LINE</value>
+  </data>
+  <data name="Closing.ContactTitle" xml:space="preserve">
+    <value>Talk to the people building it.</value>
+  </data>
+  <data name="Closing.ContactCopy" xml:space="preserve">
+    <value>Plans and pricing are still being finalised. Describe your community - how many players, how heavily you mod, how you like to play - and we will match it to the right world.</value>
+  </data>
+  <data name="Telemetry.GameBuild" xml:space="preserve">
+    <value>GAME BUILD</value>
+  </data>
+  <data name="Telemetry.Systems" xml:space="preserve">
+    <value>SYSTEMS</value>
+  </data>
+  <data name="Telemetry.SurvivorsOnline" xml:space="preserve">
+    <value>SURVIVORS ONLINE</value>
+  </data>
+  <data name="Telemetry.WorkshopSynced" xml:space="preserve">
+    <value>WORKSHOP SYNCED</value>
+  </data>
+  <data name="Telemetry.WorldUptime" xml:space="preserve">
+    <value>WORLD UPTIME</value>
+  </data>
+  <data name="Telemetry.NodeStatus" xml:space="preserve">
+    <value>NODE STATUS</value>
+  </data>
+  <data name="Telemetry.Allocation" xml:space="preserve">
+    <value>ALLOCATION</value>
+  </data>
+  <data name="Telemetry.Backup" xml:space="preserve">
+    <value>BACKUP</value>
+  </data>
+  <data name="Telemetry.BackupValue" xml:space="preserve">
+    <value>42 MIN AGO</value>
+  </data>
+  <data name="Signal.Survivors" xml:space="preserve">
+    <value>SURVIVORS</value>
+  </data>
+  <data name="Signal.Workshop" xml:space="preserve">
+    <value>WORKSHOP</value>
+  </data>
+  <data name="Signal.Uptime" xml:space="preserve">
+    <value>UPTIME</value>
+  </data>
+  <data name="Signal.Mods" xml:space="preserve">
+    <value>82 MODS</value>
+  </data>
+  <data name="Cell.Survivor" xml:space="preserve">
+    <value>SURVIVOR</value>
+  </data>
+  <data name="Cell.Safehouse" xml:space="preserve">
+    <value>SAFEHOUSE</value>
+  </data>
+  <data name="Cell.WorldState" xml:space="preserve">
+    <value>WORLD STATE</value>
+  </data>
+  <data name="Stage01.Title" xml:space="preserve">
+    <value>ORDER RECEIVED</value>
+  </data>
+  <data name="Stage01.Detail" xml:space="preserve">
+    <value>Your configuration is captured the moment you confirm it - region, slot count, sandbox rules and mod list all travel together as one order.</value>
+  </data>
+  <data name="Stage02.Title" xml:space="preserve">
+    <value>PAYMENT CONFIRMED</value>
+  </data>
+  <data name="Stage02.Detail" xml:space="preserve">
+    <value>The order is released to the provisioner as soon as billing clears. Nothing waits in a queue for a human to approve it.</value>
+  </data>
+  <data name="Stage03.Title" xml:space="preserve">
+    <value>NODE SELECTED</value>
+  </data>
+  <data name="Stage03.Detail" xml:space="preserve">
+    <value>The platform picks a healthy node with enough headroom for your allocation and reserves your CPU, memory and storage before anything is installed.</value>
+  </data>
+  <data name="Stage04.Title" xml:space="preserve">
+    <value>PANEL PROVISIONING</value>
+  </data>
+  <data name="Stage04.Detail" xml:space="preserve">
+    <value>The game panel builds the instance: runtime, game files, your Workshop collection and your server configuration, applied in one pass.</value>
+  </data>
+  <data name="Stage05.Title" xml:space="preserve">
+    <value>WORLD ONLINE</value>
+  </data>
+  <data name="Stage05.Detail" xml:space="preserve">
+    <value>Health checks pass, the world generates, and the connection details come straight back to you. No ticket, no hand-off.</value>
+  </data>
+  <data name="Spec.Cpu" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="Spec.Memory" xml:space="preserve">
+    <value>MEMORY</value>
+  </data>
+  <data name="Spec.Storage" xml:space="preserve">
+    <value>STORAGE</value>
+  </data>
+  <data name="Spec.Network" xml:space="preserve">
+    <value>NETWORK</value>
+  </data>
+  <data name="Spec.Vcpu" xml:space="preserve">
+    <value>VCPU</value>
+  </data>
+  <data name="Node.CpuValue" xml:space="preserve">
+    <value>High-frequency dedicated cores</value>
+  </data>
+  <data name="Node.MemoryValue" xml:space="preserve">
+    <value>256 GB ECC</value>
+  </data>
+  <data name="Node.StorageValue" xml:space="preserve">
+    <value>NVMe array</value>
+  </data>
+  <data name="Node.NetworkValue" xml:space="preserve">
+    <value>Redundant uplink</value>
+  </data>
+  <data name="Node.RegionEuWest" xml:space="preserve">
+    <value>EU WEST</value>
+  </data>
+  <data name="Node.RegionPending" xml:space="preserve">
+    <value>PENDING</value>
+  </data>
+  <data name="Cap01.Kicker" xml:space="preserve">
+    <value>WORKSHOP</value>
+  </data>
+  <data name="Cap01.Headline" xml:space="preserve">
+    <value>82 mods? Good.</value>
+  </data>
+  <data name="Cap01.Body" xml:space="preserve">
+    <value>A large Workshop collection should not turn server setup into a second job. Paste a collection, and the platform resolves the item list, writes the mod and Workshop identifiers in the right order, and keeps them in step every time you change something.</value>
+  </data>
+  <data name="Cap01.Key1" xml:space="preserve">
+    <value>RESOLVED</value>
+  </data>
+  <data name="Cap01.Value1" xml:space="preserve">
+    <value>AUTOMATIC</value>
+  </data>
+  <data name="Cap01.Key2" xml:space="preserve">
+    <value>LOAD ORDER</value>
+  </data>
+  <data name="Cap01.Value2" xml:space="preserve">
+    <value>EDITABLE</value>
+  </data>
+  <data name="Cap02.Kicker" xml:space="preserve">
+    <value>PERSISTENCE</value>
+  </data>
+  <data name="Cap02.Headline" xml:space="preserve">
+    <value>Your world outlives the server.</value>
+  </data>
+  <data name="Cap02.Body" xml:space="preserve">
+    <value>Map state, safehouses and loot live on storage that survives restarts, version changes and rebuilds of the instance underneath it. Rolling a mod back does not mean rolling your community back.</value>
+  </data>
+  <data name="Cap02.Key1" xml:space="preserve">
+    <value>WORLD DATA</value>
+  </data>
+  <data name="Cap02.Value1" xml:space="preserve">
+    <value>DURABLE</value>
+  </data>
+  <data name="Cap02.Key2" xml:space="preserve">
+    <value>RESTORE POINTS</value>
+  </data>
+  <data name="Cap02.Value2" xml:space="preserve">
+    <value>SCHEDULED</value>
+  </data>
+  <data name="Cap03.Kicker" xml:space="preserve">
+    <value>CONTROL</value>
+  </data>
+  <data name="Cap03.Headline" xml:space="preserve">
+    <value>Every knob, none of the FTP.</value>
+  </data>
+  <data name="Cap03.Body" xml:space="preserve">
+    <value>Sandbox rules, INI configuration, player permissions and the live console all sit in one panel. The things you would normally email support about are buttons instead.</value>
+  </data>
+  <data name="Cap03.Key1" xml:space="preserve">
+    <value>CONSOLE</value>
+  </data>
+  <data name="Cap03.Value1" xml:space="preserve">
+    <value>LIVE</value>
+  </data>
+  <data name="Cap03.Key2" xml:space="preserve">
+    <value>FILES</value>
+  </data>
+  <data name="Cap03.Value2" xml:space="preserve">
+    <value>DIRECT</value>
+  </data>
+  <data name="Cap04.Kicker" xml:space="preserve">
+    <value>BUILD 42</value>
+  </data>
+  <data name="Cap04.Headline" xml:space="preserve">
+    <value>Versioned, not frozen.</value>
+  </data>
+  <data name="Cap04.Body" xml:space="preserve">
+    <value>Server builds are handled as configurable environments rather than one fixed version, so an instance can follow the build your community actually plays. We will publish exactly which builds are selectable at launch.</value>
+  </data>
+  <data name="Cap04.Key1" xml:space="preserve">
+    <value>ENVIRONMENTS</value>
+  </data>
+  <data name="Cap04.Value1" xml:space="preserve">
+    <value>VERSIONED</value>
+  </data>
+  <data name="Cap04.Key2" xml:space="preserve">
+    <value>MIGRATION</value>
+  </data>
+  <data name="Cap04.Value2" xml:space="preserve">
+    <value>SUPPORTED</value>
+  </data>
+  <data name="Faq.Mods.Question" xml:space="preserve">
+    <value>Can I install Project Zomboid mods?</value>
+  </data>
+  <data name="Faq.Mods.Answer" xml:space="preserve">
+    <value>Yes. Steam Workshop items and standalone mods can be added from the control panel, which keeps the Workshop and mod identifier lists in sync for you. Load order stays editable, so you can reorder or disable an item without rewriting server configuration by hand.</value>
+  </data>
+  <data name="Faq.Build42.Question" xml:space="preserve">
+    <value>Does the service support Build 42?</value>
+  </data>
+  <data name="Faq.Build42.Answer" xml:space="preserve">
+    <value>Server builds are handled as configurable environments rather than one fixed version, so an instance can be pointed at the build your community plays. As Build 42 stabilises we will publish exactly which builds are selectable at launch.</value>
+  </data>
+  <data name="Faq.Panel.Question" xml:space="preserve">
+    <value>Can I manage my server through a control panel?</value>
+  </data>
+  <data name="Faq.Panel.Answer" xml:space="preserve">
+    <value>That is the core of the product. Power actions, resource usage, live console output, configuration and file access are all designed to live in a single web panel that works on desktop and on mobile.</value>
+  </data>
+  <data name="Faq.Restart.Question" xml:space="preserve">
+    <value>Can the server be restarted remotely?</value>
+  </data>
+  <data name="Faq.Restart.Answer" xml:space="preserve">
+    <value>Yes. Start, restart and stop actions are available from the panel at any time, and scheduled restarts can be configured so your world resets on a rhythm that suits your community.</value>
+  </data>
+  <data name="Faq.Automatic.Question" xml:space="preserve">
+    <value>Will servers be deployed automatically?</value>
+  </data>
+  <data name="Faq.Automatic.Answer" xml:space="preserve">
+    <value>Deployment is an automated pipeline. Once a server is created the platform reserves capacity, installs the game files, applies your configuration and reports back when health checks pass, without manual intervention.</value>
+  </data>
+  <data name="Faq.Pricing.Question" xml:space="preserve">
+    <value>Are the plans and prices on this page final?</value>
+  </data>
+  <data name="Faq.Pricing.Answer" xml:space="preserve">
+    <value>No. The catalogue on this page is placeholder test data used to review the interface, including the promotional-code field. Final plans, prices and discounts are still being decided and nothing here is a commercial offer.</value>
+  </data>
+  <data name="Faq.Migrate.Question" xml:space="preserve">
+    <value>Can I migrate an existing server?</value>
+  </data>
+  <data name="Faq.Migrate.Answer" xml:space="preserve">
+    <value>Bringing an existing world across is a supported goal for launch. The intended flow is to upload your current save and configuration, then validate the world on the new instance before you point players at it. Talk to us about your setup and we will confirm the details.</value>
+  </data>
+  <data name="Billing.Monthly" xml:space="preserve">
+    <value>Monthly</value>
+  </data>
+  <data name="Billing.Quarterly" xml:space="preserve">
+    <value>Quarterly</value>
+  </data>
+  <data name="Billing.Annual" xml:space="preserve">
+    <value>Annual</value>
+  </data>
+  <data name="Coupon.Applied" xml:space="preserve">
+    <value>Demo code applied - {0}% off the preview.</value>
+  </data>
+  <data name="Coupon.Rejected" xml:space="preserve">
+    <value>Not a recognised demo code.</value>
+  </data>
+  <data name="Plan.Outpost.Tagline" xml:space="preserve">
+    <value>A small group riding out the first month.</value>
+  </data>
+  <data name="Plan.Settlement.Tagline" xml:space="preserve">
+    <value>The size most modded communities actually land on.</value>
+  </data>
+  <data name="Plan.Stronghold.Tagline" xml:space="preserve">
+    <value>Heavy mod lists and a population that keeps growing.</value>
+  </data>
+  <data name="Plan.KnoxCell.Tagline" xml:space="preserve">
+    <value>A whole community, on dedicated allocation.</value>
+  </data>
+  <data name="Plan.Cores" xml:space="preserve">
+    <value>{0} cores</value>
+  </data>
+  <data name="Include.WorkshopSync" xml:space="preserve">
+    <value>Workshop mod sync</value>
+  </data>
+  <data name="Include.DailyBackups" xml:space="preserve">
+    <value>Daily backups</value>
+  </data>
+  <data name="Include.TwiceDailyBackups" xml:space="preserve">
+    <value>Twice-daily backups</value>
+  </data>
+  <data name="Include.HourlyBackups" xml:space="preserve">
+    <value>Hourly backups</value>
+  </data>
+  <data name="Include.FullConsole" xml:space="preserve">
+    <value>Full console access</value>
+  </data>
+  <data name="Include.ScheduledRestarts" xml:space="preserve">
+    <value>Scheduled restarts</value>
+  </data>
+  <data name="Include.PriorityPlacement" xml:space="preserve">
+    <value>Priority placement</value>
+  </data>
+  <data name="Include.DedicatedAllocation" xml:space="preserve">
+    <value>Dedicated allocation</value>
+  </data>
+</root>

@@ -6,16 +6,14 @@
 *@
 
 @inject IMarketingContentService Content
+@inject IStringLocalizer<CommonText> Text
 @inject IOptions<SiteOptions> Site
 
 <footer class="site-footer">
-    <div class="hts-container footer-inner">
+    <div class="hts-container hts-container--wide footer-inner">
         <div class="footer-brand">
-            <BrandMark Name="@Options.Name" Tagline="Hosting" CssClass="is-lg is-plain" />
-            <p class="footer-blurb">
-                Software-driven hosting for Project Zomboid communities. Built and run by the
-                team behind @Options.Name.
-            </p>
+            <BrandMark Name="@Options.Name" Tagline="@Text["Brand.Tagline"]" CssClass="is-lg is-plain" />
+            <p class="footer-blurb">@Text["Footer.Blurb", Options.Name]</p>
             <a class="footer-mail" href="mailto:@Options.ContactEmail">
                 <Icon Name="IconName.Mail" CssClass="is-sm" />
                 <span>@Options.ContactEmail</span>
@@ -23,7 +21,7 @@
         </div>
 
         <nav class="footer-column" aria-labelledby="footer-product">
-            <h2 class="footer-title" id="footer-product">Product</h2>
+            <h2 class="footer-title" id="footer-product">@Text["Footer.Product"]</h2>
             <ul>
                 @foreach (var link in Content.ProductLinks)
                 {
@@ -33,7 +31,7 @@
         </nav>
 
         <nav class="footer-column" aria-labelledby="footer-company">
-            <h2 class="footer-title" id="footer-company">Company</h2>
+            <h2 class="footer-title" id="footer-company">@Text["Footer.Company"]</h2>
             <ul>
                 @foreach (var link in Content.CompanyLinks)
                 {
@@ -43,22 +41,22 @@
         </nav>
 
         <section class="footer-column" aria-labelledby="footer-legal">
-            <h2 class="footer-title" id="footer-legal">Legal</h2>
+            <h2 class="footer-title" id="footer-legal">@Text["Footer.Legal"]</h2>
             <ul>
                 @foreach (var placeholder in Content.LegalPlaceholders)
                 {
                     <li class="footer-placeholder">
                         <span>@placeholder</span>
-                        <span class="footer-chip">Soon</span>
+                        <span class="footer-chip">@Text["Footer.Soon"]</span>
                     </li>
                 }
             </ul>
         </section>
     </div>
 
-    <div class="hts-container footer-base">
-        <p>&copy; @Year @Options.Name. All rights reserved.</p>
-        <p class="footer-note">Project Zomboid is a trademark of its respective owner. This site is not affiliated with The Indie Stone.</p>
+    <div class="hts-container hts-container--wide footer-base">
+        <p>@Text["Footer.Rights", Year, Options.Name]</p>
+        <p class="footer-note">@Text["Footer.Trademark"]</p>
     </div>
 </footer>
 

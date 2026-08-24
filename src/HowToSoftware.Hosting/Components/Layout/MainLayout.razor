@@ -1,12 +1,19 @@
 @inherits LayoutComponentBase
 @inject IOptions<SiteOptions> Site
+@inject IStringLocalizer<CommonText> Text
 
-<a class="hts-skip-link" href="#main">Skip to main content</a>
+<a class="hts-skip-link" href="#main">@Text["Nav.SkipToContent"]</a>
 
 <div class="site-shell">
     <SiteHeader SiteName="@Site.Value.Name" />
 
-    <main id="main" tabindex="-1">
+    @*
+        `data-page-enter` is the hook the route-entrance animation hangs from. The CSS runs on
+        first paint; wwwroot/js/site.js re-arms it after Blazor's enhanced navigation patches
+        the DOM, because a patched element never replays its animation on its own. Without
+        scripting the animation simply runs once, on load, and nothing else changes.
+    *@
+    <main id="main" tabindex="-1" data-page-enter>
         @Body
     </main>
 
@@ -14,8 +21,8 @@
 </div>
 
 <div id="blazor-error-ui" data-nosnippet>
-    Something went wrong on our side.
-    <a href="." class="reload">Reload</a>
+    @Text["Blazor.ErrorMessage"]
+    <a href="." class="reload">@Text["Blazor.Reload"]</a>
     <span class="dismiss">&#128473;</span>
 </div>
 

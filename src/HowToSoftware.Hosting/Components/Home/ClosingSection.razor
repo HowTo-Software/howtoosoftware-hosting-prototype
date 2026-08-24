@@ -6,6 +6,7 @@
 *@
 
 @inject IOptions<SiteOptions> Site
+@inject IStringLocalizer<HomeText> Text
 
 <section class="closing" id="get-started" aria-labelledby="closing-heading">
     <div class="closing-field" aria-hidden="true">
@@ -17,37 +18,30 @@
         <div class="closing-copy" data-reveal="left">
             <p class="closing-kicker">
                 <span class="kicker-dot"></span>
-                READY WHEN YOU ARE
+                @Text["Closing.Kicker"]
             </p>
 
             <h2 id="closing-heading" class="closing-title">
-                Bring your community<br />
-                <span class="closing-accent">to Knox County.</span>
+                @Text["Closing.Line1"]<br />
+                <span class="closing-accent">@Text["Closing.Accent"]</span>
             </h2>
 
-            <p class="closing-lede">
-                We are onboarding the first Project Zomboid worlds now. Tell us how your group
-                plays and we will get one stood up.
-            </p>
+            <p class="closing-lede">@Text["Closing.Lede"]</p>
 
             <div class="closing-actions">
                 <CtaButton Href="#plans" Size="CtaSize.Large" TrailingIcon="IconName.ArrowRight">
-                    Choose a plan
+                    @Text["Closing.Cta1"]
                 </CtaButton>
                 <CtaButton Href="#control-panel" Variant="CtaVariant.Secondary" Size="CtaSize.Large">
-                    Explore the panel
+                    @Text["Closing.Cta2"]
                 </CtaButton>
             </div>
         </div>
 
         <aside class="closing-contact" id="contact" aria-labelledby="contact-heading" data-reveal="right">
-            <p class="contact-key">DIRECT LINE</p>
-            <h3 id="contact-heading" class="contact-title">Talk to the people building it.</h3>
-            <p class="contact-copy">
-                Plans and pricing are still being finalised. Describe your community - how many
-                players, how heavily you mod, how you like to play - and we will match it to the
-                right world.
-            </p>
+            <p class="contact-key">@Text["Closing.ContactKey"]</p>
+            <h3 id="contact-heading" class="contact-title">@Text["Closing.ContactTitle"]</h3>
+            <p class="contact-copy">@Text["Closing.ContactCopy"]</p>
             <a class="contact-link" href="mailto:@Site.Value.ContactEmail">
                 <span>@Site.Value.ContactEmail</span>
                 <span class="contact-arrow" aria-hidden="true"></span>

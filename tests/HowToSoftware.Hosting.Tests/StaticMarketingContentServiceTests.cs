@@ -1,12 +1,20 @@
 using System.Text.RegularExpressions;
+using HowToSoftware.Hosting.Localization;
 using HowToSoftware.Hosting.Models;
 using HowToSoftware.Hosting.Services;
 
 namespace HowToSoftware.Hosting.Tests;
 
-public class StaticMarketingContentServiceTests
+/// <summary>
+/// Content assertions run against the English resource set, so the culture is pinned for the
+/// life of each test rather than inherited from whatever locale the machine is set to.
+/// </summary>
+public class StaticMarketingContentServiceTests : IDisposable
 {
-    private readonly StaticMarketingContentService _sut = new();
+    private readonly CultureScope _culture = new(SupportedCultures.Default);
+    private readonly StaticMarketingContentService _sut = new(TestLocalizer.For<CommonText>(), TestLocalizer.For<HomeText>());
+
+    public void Dispose() => _culture.Dispose();
 
     [Fact]
     public void EveryContentCollection_IsPopulated()
@@ -26,12 +34,13 @@ public class StaticMarketingContentServiceTests
     }
 
     [Theory]
-    [InlineData("#world")]
-    [InlineData("#workshop")]
-    [InlineData("#provisioning")]
-    [InlineData("#control-panel")]
-    [InlineData("#plans")]
-    [InlineData("#faq")]
+    [InlineData("/#world")]
+    [InlineData("/#workshop")]
+    [InlineData("/#provisioning")]
+    [InlineData("/#control-panel")]
+    [InlineData("/#plans")]
+    [InlineData("/#faq")]
+    [InlineData("/infrastructure")]
     public void PrimaryNavigation_LinksToTheSectionsTheHomepageRenders(string anchor)
     {
         Assert.Contains(_sut.PrimaryNavigation, link => link.Href == anchor);

@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Brand.HomeLabel" xml:space="preserve">
+    <value>Início de {0}</value>
+  </data>
+  <data name="Brand.Tagline" xml:space="preserve">
+    <value>Hospedagem</value>
+  </data>
+  <data name="Brand.LogoLabel" xml:space="preserve">
+    <value>Logo da {0}</value>
+  </data>
+  <data name="Nav.Primary" xml:space="preserve">
+    <value>Principal</value>
+  </data>
+  <data name="Nav.SkipToContent" xml:space="preserve">
+    <value>Pular para o conteúdo principal</value>
+  </data>
+  <data name="Nav.OpenMenu" xml:space="preserve">
+    <value>Abrir menu</value>
+  </data>
+  <data name="Nav.CloseMenu" xml:space="preserve">
+    <value>Fechar menu</value>
+  </data>
+  <data name="Nav.World" xml:space="preserve">
+    <value>Mundo</value>
+  </data>
+  <data name="Nav.Workshop" xml:space="preserve">
+    <value>Workshop</value>
+  </data>
+  <data name="Nav.Provisioning" xml:space="preserve">
+    <value>Provisionamento</value>
+  </data>
+  <data name="Nav.ControlPanel" xml:space="preserve">
+    <value>Painel de controle</value>
+  </data>
+  <data name="Nav.Infrastructure" xml:space="preserve">
+    <value>Infraestrutura</value>
+  </data>
+  <data name="Nav.Plans" xml:space="preserve">
+    <value>Planos</value>
+  </data>
+  <data name="Nav.Faq" xml:space="preserve">
+    <value>FAQ</value>
+  </data>
+  <data name="Cta.SeePlans" xml:space="preserve">
+    <value>Ver planos</value>
+  </data>
+  <data name="Cta.SignIn" xml:space="preserve">
+    <value>Entrar</value>
+  </data>
+  <data name="Cta.BackToHomepage" xml:space="preserve">
+    <value>Voltar para a página inicial</value>
+  </data>
+  <data name="Cta.SeeTheInfrastructure" xml:space="preserve">
+    <value>Ver a infraestrutura</value>
+  </data>
+  <data name="Cta.DeployYourServer" xml:space="preserve">
+    <value>Criar seu servidor</value>
+  </data>
+  <data name="Theme.SwitchToDark" xml:space="preserve">
+    <value>Mudar para o tema escuro</value>
+  </data>
+  <data name="Theme.SwitchToLight" xml:space="preserve">
+    <value>Mudar para o tema claro</value>
+  </data>
+  <data name="Theme.Dark" xml:space="preserve">
+    <value>ESCURO</value>
+  </data>
+  <data name="Theme.Light" xml:space="preserve">
+    <value>CLARO</value>
+  </data>
+  <data name="Language.Label" xml:space="preserve">
+    <value>Idioma</value>
+  </data>
+  <data name="Language.SwitchTo" xml:space="preserve">
+    <value>Mudar o idioma para {0}</value>
+  </data>
+  <data name="Language.EnShort" xml:space="preserve">
+    <value>EN</value>
+  </data>
+  <data name="Language.PtShort" xml:space="preserve">
+    <value>PT-BR</value>
+  </data>
+  <data name="Language.EnName" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Language.PtName" xml:space="preserve">
+    <value>Português (Brasil)</value>
+  </data>
+  <data name="Footer.Product" xml:space="preserve">
+    <value>Produto</value>
+  </data>
+  <data name="Footer.Company" xml:space="preserve">
+    <value>Empresa</value>
+  </data>
+  <data name="Footer.Legal" xml:space="preserve">
+    <value>Jurídico</value>
+  </data>
+  <data name="Footer.Blurb" xml:space="preserve">
+    <value>Hospedagem movida a software para comunidades de Project Zomboid. Construída e operada pelo time por trás da {0}.</value>
+  </data>
+  <data name="Footer.Rights" xml:space="preserve">
+    <value>© {0} {1}. Todos os direitos reservados.</value>
+  </data>
+  <data name="Footer.Trademark" xml:space="preserve">
+    <value>Project Zomboid é marca registrada de seu respectivo proprietário. Este site não tem vínculo com a The Indie Stone.</value>
+  </data>
+  <data name="Footer.Soon" xml:space="preserve">
+    <value>Em breve</value>
+  </data>
+  <data name="Product.PersistentWorlds" xml:space="preserve">
+    <value>Mundos persistentes</value>
+  </data>
+  <data name="Product.WorkshopSync" xml:space="preserve">
+    <value>Sincronização do Workshop</value>
+  </data>
+  <data name="Product.ProvisioningPipeline" xml:space="preserve">
+    <value>Pipeline de provisionamento</value>
+  </data>
+  <data name="Product.ControlPanel" xml:space="preserve">
+    <value>Painel de controle</value>
+  </data>
+  <data name="Product.Nodes" xml:space="preserve">
+    <value>Nós</value>
+  </data>
+  <data name="Product.Infrastructure" xml:space="preserve">
+    <value>Infraestrutura</value>
+  </data>
+  <data name="Product.Plans" xml:space="preserve">
+    <value>Planos</value>
+  </data>
+  <data name="Company.WhatWeBuild" xml:space="preserve">
+    <value>O que construímos</value>
+  </data>
+  <data name="Company.Faq" xml:space="preserve">
+    <value>Perguntas frequentes</value>
+  </data>
+  <data name="Company.GetStarted" xml:space="preserve">
+    <value>Começar</value>
+  </data>
+  <data name="Company.Contact" xml:space="preserve">
+    <value>Fale conosco</value>
+  </data>
+  <data name="Company.SignIn" xml:space="preserve">
+    <value>Entrar</value>
+  </data>
+  <data name="Legal.Terms" xml:space="preserve">
+    <value>Termos de Serviço</value>
+  </data>
+  <data name="Legal.Privacy" xml:space="preserve">
+    <value>Política de Privacidade</value>
+  </data>
+  <data name="Legal.AcceptableUse" xml:space="preserve">
+    <value>Política de Uso Aceitável</value>
+  </data>
+  <data name="Legal.Status" xml:space="preserve">
+    <value>Status do Serviço</value>
+  </data>
+  <data name="Status.Healthy" xml:space="preserve">
+    <value>SAUDÁVEL</value>
+  </data>
+  <data name="Status.Provisioning" xml:space="preserve">
+    <value>PROVISIONANDO</value>
+  </data>
+  <data name="Status.Reserved" xml:space="preserve">
+    <value>RESERVADO</value>
+  </data>
+  <data name="Status.Pending" xml:space="preserve">
+    <value>PENDENTE</value>
+  </data>
+  <data name="Status.Online" xml:space="preserve">
+    <value>ONLINE</value>
+  </data>
+  <data name="Status.Offline" xml:space="preserve">
+    <value>OFFLINE</value>
+  </data>
+  <data name="Status.Live" xml:space="preserve">
+    <value>AO VIVO</value>
+  </data>
+  <data name="Status.Operational" xml:space="preserve">
+    <value>OPERACIONAL</value>
+  </data>
+  <data name="Error.Code" xml:space="preserve">
+    <value>500</value>
+  </data>
+  <data name="Error.Title" xml:space="preserve">
+    <value>Algo deu errado</value>
+  </data>
+  <data name="Error.Body" xml:space="preserve">
+    <value>Um erro inesperado interrompeu essa solicitação. Tente novamente em instantes; se continuar acontecendo, avise a gente que vamos investigar.</value>
+  </data>
+  <data name="NotFound.Code" xml:space="preserve">
+    <value>404</value>
+  </data>
+  <data name="NotFound.Title" xml:space="preserve">
+    <value>Não encontramos essa página</value>
+  </data>
+  <data name="NotFound.Body" xml:space="preserve">
+    <value>O link pode estar desatualizado ou a página pode ter mudado de lugar. Volte para a página inicial e continue de onde parou.</value>
+  </data>
+  <data name="Blazor.ErrorMessage" xml:space="preserve">
+    <value>Algo deu errado do nosso lado.</value>
+  </data>
+  <data name="Blazor.Reload" xml:space="preserve">
+    <value>Recarregar</value>
+  </data>
+  <data name="Status.Synced" xml:space="preserve">
+    <value>SINCRONIZADO</value>
+  </data>
+  <data name="Status.Syncing" xml:space="preserve">
+    <value>SINCRONIZANDO</value>
+  </data>
+  <data name="Status.Queued" xml:space="preserve">
+    <value>NA FILA</value>
+  </data>
+  <data name="Status.Starting" xml:space="preserve">
+    <value>INICIANDO</value>
+  </data>
+  <data name="Status.Restarting" xml:space="preserve">
+    <value>REINICIANDO</value>
+  </data>
+  <data name="Status.Stopping" xml:space="preserve">
+    <value>PARANDO</value>
+  </data>
+</root>

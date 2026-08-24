@@ -1,4 +1,6 @@
+using HowToSoftware.Hosting.Localization;
 using HowToSoftware.Hosting.Models;
+using Microsoft.Extensions.Localization;
 
 namespace HowToSoftware.Hosting.Services;
 
@@ -6,97 +8,129 @@ namespace HowToSoftware.Hosting.Services;
 /// Prototype implementation of <see cref="IMarketingContentService"/> backed by compiled copy.
 /// </summary>
 /// <remarks>
+/// <para>
 /// Every collection here is placeholder content for the frontend prototype. Swap this
 /// registration in <c>Program.cs</c> for a CMS- or database-backed implementation later; no
 /// component needs to change.
+/// </para>
+/// <para>
+/// The copy itself lives in <c>Localization/HomeText.resx</c> and its <c>pt-BR</c> sibling.
+/// What stays in this file is structure - which items exist, in what order, with which
+/// identifiers and figures - because that is the part a translation must not be able to break.
+/// The lists are therefore built on access rather than once at construction: the culture is
+/// chosen per request.
+/// </para>
 /// </remarks>
 public sealed class StaticMarketingContentService : IMarketingContentService
 {
+    private readonly IStringLocalizer<CommonText> _text;
+    private readonly IStringLocalizer<HomeText> _home;
+
+    /// <summary>Creates the service.</summary>
+    /// <param name="text">
+    /// Shared UI strings, already resolved to the culture chosen for this request by the
+    /// localisation middleware.
+    /// </param>
+    /// <param name="home">Homepage copy for the same culture.</param>
+    public StaticMarketingContentService(IStringLocalizer<CommonText> text, IStringLocalizer<HomeText> home)
+    {
+        _text = text;
+        _home = home;
+    }
+
     /// <inheritdoc />
-    public IReadOnlyList<NavigationLink> PrimaryNavigation { get; } =
+    /// <remarks>
+    /// Targets are structure and never change; only the labels follow the language. Section
+    /// anchors are written as <c>/#section</c> because the header now rides on the sign-in and
+    /// infrastructure pages too, where a bare <c>#section</c> would point at nothing.
+    /// </remarks>
+    public IReadOnlyList<NavigationLink> PrimaryNavigation =>
     [
-        new("World", "#world"),
-        new("Workshop", "#workshop"),
-        new("Provisioning", "#provisioning"),
-        new("Control panel", "#control-panel"),
-        new("Plans", "#plans"),
-        new("FAQ", "#faq")
+        new(_text["Nav.World"], "/#world"),
+        new(_text["Nav.Workshop"], "/#workshop"),
+        new(_text["Nav.Provisioning"], "/#provisioning"),
+        new(_text["Nav.ControlPanel"], "/#control-panel"),
+        new(_text["Nav.Infrastructure"], "/infrastructure"),
+        new(_text["Nav.Plans"], "/#plans"),
+        new(_text["Nav.Faq"], "/#faq")
     ];
 
     /// <inheritdoc />
-    public IReadOnlyList<NavigationLink> ProductLinks { get; } =
+    public IReadOnlyList<NavigationLink> ProductLinks =>
     [
-        new("Persistent worlds", "#world"),
-        new("Workshop sync", "#workshop"),
-        new("Provisioning pipeline", "#provisioning"),
-        new("Control panel", "#control-panel"),
-        new("Nodes", "#nodes"),
-        new("Plans", "#plans")
+        new(_text["Product.PersistentWorlds"], "/#world"),
+        new(_text["Product.WorkshopSync"], "/#workshop"),
+        new(_text["Product.ProvisioningPipeline"], "/#provisioning"),
+        new(_text["Product.ControlPanel"], "/#control-panel"),
+        new(_text["Product.Infrastructure"], "/infrastructure"),
+        new(_text["Product.Plans"], "/#plans")
     ];
 
     /// <inheritdoc />
-    public IReadOnlyList<NavigationLink> CompanyLinks { get; } =
+    public IReadOnlyList<NavigationLink> CompanyLinks =>
     [
-        new("What we build", "#capabilities"),
-        new("Frequently asked questions", "#faq"),
-        new("Get started", "#get-started"),
-        new("Contact us", "#contact")
+        new(_text["Company.WhatWeBuild"], "/#capabilities"),
+        new(_text["Company.Faq"], "/#faq"),
+        new(_text["Company.SignIn"], "/login"),
+        new(_text["Company.GetStarted"], "/#get-started"),
+        new(_text["Company.Contact"], "/#contact")
     ];
 
     /// <inheritdoc />
-    public IReadOnlyList<string> LegalPlaceholders { get; } =
+    public IReadOnlyList<string> LegalPlaceholders =>
     [
-        "Terms of Service",
-        "Privacy Policy",
-        "Acceptable Use Policy",
-        "Service Status"
+        _text["Legal.Terms"],
+        _text["Legal.Privacy"],
+        _text["Legal.AcceptableUse"],
+        _text["Legal.Status"]
     ];
 
     /// <inheritdoc />
-    public IReadOnlyList<TelemetrySignal> HeroSignals { get; } =
+    public IReadOnlyList<TelemetrySignal> HeroSignals =>
     [
-        new("SURVIVORS", "27 / 64", SignalTone.Data),
-        new("WORKSHOP", "82 MODS", SignalTone.Routing),
-        new("UPTIME", "06D 14H", SignalTone.Primary)
+        new(_home["Signal.Survivors"], "27 / 64", SignalTone.Data),
+        new(_home["Signal.Workshop"], _home["Signal.Mods"], SignalTone.Routing),
+        new(_home["Signal.Uptime"], "06D 14H", SignalTone.Primary)
     ];
 
     /// <inheritdoc />
-    public IReadOnlyList<TelemetrySignal> TelemetryStrip { get; } =
+    public IReadOnlyList<TelemetrySignal> TelemetryStrip =>
     [
-        new("GAME BUILD", "42", SignalTone.Primary),
-        new("SYSTEMS", "OPERATIONAL", SignalTone.Data, ShowPulse: true),
-        new("SURVIVORS ONLINE", "27", SignalTone.Data),
-        new("WORKSHOP SYNCED", "82 / 82", SignalTone.Routing),
-        new("WORLD UPTIME", "06D 14H", SignalTone.Primary),
-        new("NODE STATUS", "HEALTHY", SignalTone.Data, ShowPulse: true),
-        new("ALLOCATION", "203.0.113.24:16261", SignalTone.Routing),
-        new("BACKUP", "42 MIN AGO", SignalTone.Primary)
+        new(_home["Telemetry.GameBuild"], "42", SignalTone.Primary),
+        new(_home["Telemetry.Systems"], _text["Status.Operational"], SignalTone.Data, ShowPulse: true),
+        new(_home["Telemetry.SurvivorsOnline"], "27", SignalTone.Data),
+        new(_home["Telemetry.WorkshopSynced"], "82 / 82", SignalTone.Routing),
+        new(_home["Telemetry.WorldUptime"], "06D 14H", SignalTone.Primary),
+        new(_home["Telemetry.NodeStatus"], _text["Status.Healthy"], SignalTone.Data, ShowPulse: true),
+        new(_home["Telemetry.Allocation"], "203.0.113.24:16261", SignalTone.Routing),
+        new(_home["Telemetry.Backup"], _home["Telemetry.BackupValue"], SignalTone.Primary)
     ];
 
     /// <inheritdoc />
-    public IReadOnlyList<WorldCell> WorldCells { get; } =
+    public IReadOnlyList<WorldCell> WorldCells =>
     [
         new(2, 1, WorldCellKind.Loaded),
         new(3, 1, WorldCellKind.Loaded),
-        new(5, 1, WorldCellKind.Player, "SURVIVOR"),
+        new(5, 1, WorldCellKind.Player, _home["Cell.Survivor"]),
         new(1, 2, WorldCellKind.Loaded),
-        new(2, 2, WorldCellKind.Safehouse, "SAFEHOUSE"),
+        new(2, 2, WorldCellKind.Safehouse, _home["Cell.Safehouse"]),
         new(3, 2, WorldCellKind.Loaded),
         new(4, 2, WorldCellKind.Loaded),
         new(6, 2, WorldCellKind.Loaded),
         new(2, 3, WorldCellKind.Loaded),
-        new(4, 3, WorldCellKind.Server, "WORLD STATE"),
+        new(4, 3, WorldCellKind.Server, _home["Cell.WorldState"]),
         new(5, 3, WorldCellKind.Loaded),
-        new(7, 3, WorldCellKind.Player, "SURVIVOR"),
+        new(7, 3, WorldCellKind.Player, _home["Cell.Survivor"]),
         new(1, 4, WorldCellKind.Loaded),
         new(3, 4, WorldCellKind.Loaded),
         new(4, 4, WorldCellKind.Loaded),
         new(6, 4, WorldCellKind.Loaded),
-        new(3, 5, WorldCellKind.Player, "SURVIVOR"),
+        new(3, 5, WorldCellKind.Player, _home["Cell.Survivor"]),
         new(5, 5, WorldCellKind.Loaded)
     ];
 
     /// <inheritdoc />
+    /// <remarks>Workshop items carry the mods' own names, which are never translated.</remarks>
     public IReadOnlyList<WorkshopItem> WorkshopItems { get; } =
     [
         new("More Traits", "2685168362", "4.2 MB", ModSyncState.Synced, 100),
@@ -108,91 +142,79 @@ public sealed class StaticMarketingContentService : IMarketingContentService
     ];
 
     /// <inheritdoc />
-    public IReadOnlyList<ProvisioningStage> ProvisioningStages { get; } =
+    /// <remarks>
+    /// The diagram key is an identifier the provisioning diagram matches on, not a label, so it
+    /// stays in English regardless of culture.
+    /// </remarks>
+    public IReadOnlyList<ProvisioningStage> ProvisioningStages =>
     [
-        new("01", "ORDER RECEIVED",
-            "Your configuration is captured the moment you confirm it - region, slot count, sandbox rules and mod list all travel together as one order.",
-            "order"),
-        new("02", "PAYMENT CONFIRMED",
-            "The order is released to the provisioner as soon as billing clears. Nothing waits in a queue for a human to approve it.",
-            "billing"),
-        new("03", "NODE SELECTED",
-            "The platform picks a healthy node with enough headroom for your allocation and reserves your CPU, memory and storage before anything is installed.",
-            "node"),
-        new("04", "PANEL PROVISIONING",
-            "The game panel builds the instance: runtime, game files, your Workshop collection and your server configuration, applied in one pass.",
-            "panel"),
-        new("05", "WORLD ONLINE",
-            "Health checks pass, the world generates, and the connection details come straight back to you. No ticket, no hand-off.",
-            "world")
+        new("01", _home["Stage01.Title"], _home["Stage01.Detail"], "order"),
+        new("02", _home["Stage02.Title"], _home["Stage02.Detail"], "billing"),
+        new("03", _home["Stage03.Title"], _home["Stage03.Detail"], "node"),
+        new("04", _home["Stage04.Title"], _home["Stage04.Detail"], "panel"),
+        new("05", _home["Stage05.Title"], _home["Stage05.Detail"], "world")
     ];
 
     /// <inheritdoc />
-    public IReadOnlyList<InfrastructureNode> Nodes { get; } =
+    public IReadOnlyList<InfrastructureNode> Nodes =>
     [
-        new("NODE / 01", "EU WEST",
-            [
-                new("CPU", "High-frequency dedicated cores"),
-                new("MEMORY", "256 GB ECC"),
-                new("STORAGE", "NVMe array"),
-                new("NETWORK", "Redundant uplink")
-            ],
-            NodeHealth.Healthy, 62, 24),
-        new("NODE / 02", "EU WEST",
-            [
-                new("CPU", "High-frequency dedicated cores"),
-                new("MEMORY", "256 GB ECC"),
-                new("STORAGE", "NVMe array"),
-                new("NETWORK", "Redundant uplink")
-            ],
-            NodeHealth.Healthy, 41, 17),
-        new("NODE / 03", "PENDING",
-            [
-                new("CPU", "High-frequency dedicated cores"),
-                new("MEMORY", "256 GB ECC"),
-                new("STORAGE", "NVMe array"),
-                new("NETWORK", "Redundant uplink")
-            ],
-            NodeHealth.Reserved, 0, 0)
+        new("NODE / 01", _home["Node.RegionEuWest"], NodeSpecs, NodeHealth.Healthy, 62, 24),
+        new("NODE / 02", _home["Node.RegionEuWest"], NodeSpecs, NodeHealth.Healthy, 41, 17),
+        new("NODE / 03", _home["Node.RegionPending"], NodeSpecs, NodeHealth.Reserved, 0, 0)
     ];
 
     /// <inheritdoc />
-    public IReadOnlyList<CapabilityStatement> Capabilities { get; } =
+    public IReadOnlyList<CapabilityStatement> Capabilities =>
     [
-        new("01", "WORKSHOP",
-            "82 mods? Good.",
-            "A large Workshop collection should not turn server setup into a second job. Paste a collection, and the platform resolves the item list, writes the mod and Workshop identifiers in the right order, and keeps them in step every time you change something.",
-            [new("RESOLVED", "AUTOMATIC"), new("LOAD ORDER", "EDITABLE")]),
-        new("02", "PERSISTENCE",
-            "Your world outlives the server.",
-            "Map state, safehouses and loot live on storage that survives restarts, version changes and rebuilds of the instance underneath it. Rolling a mod back does not mean rolling your community back.",
-            [new("WORLD DATA", "DURABLE"), new("RESTORE POINTS", "SCHEDULED")]),
-        new("03", "CONTROL",
-            "Every knob, none of the FTP.",
-            "Sandbox rules, INI configuration, player permissions and the live console all sit in one panel. The things you would normally email support about are buttons instead.",
-            [new("CONSOLE", "LIVE"), new("FILES", "DIRECT")]),
-        new("04", "BUILD 42",
-            "Versioned, not frozen.",
-            "Server builds are handled as configurable environments rather than one fixed version, so an instance can follow the build your community actually plays. We will publish exactly which builds are selectable at launch.",
-            [new("ENVIRONMENTS", "VERSIONED"), new("MIGRATION", "SUPPORTED")])
+        new("01", _home["Cap01.Kicker"], _home["Cap01.Headline"], _home["Cap01.Body"],
+            [
+                new(_home["Cap01.Key1"], _home["Cap01.Value1"]),
+                new(_home["Cap01.Key2"], _home["Cap01.Value2"])
+            ]),
+        new("02", _home["Cap02.Kicker"], _home["Cap02.Headline"], _home["Cap02.Body"],
+            [
+                new(_home["Cap02.Key1"], _home["Cap02.Value1"]),
+                new(_home["Cap02.Key2"], _home["Cap02.Value2"])
+            ]),
+        new("03", _home["Cap03.Kicker"], _home["Cap03.Headline"], _home["Cap03.Body"],
+            [
+                new(_home["Cap03.Key1"], _home["Cap03.Value1"]),
+                new(_home["Cap03.Key2"], _home["Cap03.Value2"])
+            ]),
+        new("04", _home["Cap04.Kicker"], _home["Cap04.Headline"], _home["Cap04.Body"],
+            [
+                new(_home["Cap04.Key1"], _home["Cap04.Value1"]),
+                new(_home["Cap04.Key2"], _home["Cap04.Value2"])
+            ])
     ];
 
     /// <inheritdoc />
-    public IReadOnlyList<FaqItem> Faqs { get; } =
+    /// <remarks>Ids are stable slugs, not copy: they build the accordion's aria wiring.</remarks>
+    public IReadOnlyList<FaqItem> Faqs =>
     [
-        new("mods", "Can I install Project Zomboid mods?",
-            "Yes. Steam Workshop items and standalone mods can be added from the control panel, which keeps the Workshop and mod identifier lists in sync for you. Load order stays editable, so you can reorder or disable an item without rewriting server configuration by hand."),
-        new("build-42", "Does the service support Build 42?",
-            "Server builds are handled as configurable environments rather than one fixed version, so an instance can be pointed at the build your community plays. As Build 42 stabilises we will publish exactly which builds are selectable at launch."),
-        new("panel", "Can I manage my server through a control panel?",
-            "That is the core of the product. Power actions, resource usage, live console output, configuration and file access are all designed to live in a single web panel that works on desktop and on mobile."),
-        new("restart", "Can the server be restarted remotely?",
-            "Yes. Start, restart and stop actions are available from the panel at any time, and scheduled restarts can be configured so your world resets on a rhythm that suits your community."),
-        new("automatic", "Will servers be deployed automatically?",
-            "Deployment is an automated pipeline. Once a server is created the platform reserves capacity, installs the game files, applies your configuration and reports back when health checks pass, without manual intervention."),
-        new("pricing", "Are the plans and prices on this page final?",
-            "No. The catalogue on this page is placeholder test data used to review the interface, including the promotional-code field. Final plans, prices and discounts are still being decided and nothing here is a commercial offer."),
-        new("migrate", "Can I migrate an existing server?",
-            "Bringing an existing world across is a supported goal for launch. The intended flow is to upload your current save and configuration, then validate the world on the new instance before you point players at it. Talk to us about your setup and we will confirm the details.")
+        new("mods", _home["Faq.Mods.Question"], _home["Faq.Mods.Answer"]),
+        new("build-42", _home["Faq.Build42.Question"], _home["Faq.Build42.Answer"]),
+        new("panel", _home["Faq.Panel.Question"], _home["Faq.Panel.Answer"]),
+        new("restart", _home["Faq.Restart.Question"], _home["Faq.Restart.Answer"]),
+        new("automatic", _home["Faq.Automatic.Question"], _home["Faq.Automatic.Answer"]),
+        new("pricing", _home["Faq.Pricing.Question"], _home["Faq.Pricing.Answer"]),
+        new("migrate", _home["Faq.Migrate.Question"], _home["Faq.Migrate.Answer"])
+    ];
+
+    /// <summary>
+    /// The specification lines every node panel shows. Identical across nodes on purpose - the
+    /// platform is one class of machine, and what differs between them is the load figure.
+    /// </summary>
+    private IReadOnlyList<PlanSpec> NodeSpecs =>
+    [
+        new(_home["Spec.Cpu"], _home["Node.CpuValue"]),
+        new(_home["Spec.Memory"], _home["Node.MemoryValue"]),
+        new(_home["Spec.Storage"], _home["Node.StorageValue"]),
+        new(_home["Spec.Network"], _home["Node.NetworkValue"])
     ];
 }
+
+// =============================================================
+// © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+// Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+// =============================================================

@@ -1,0 +1,331 @@
+@*
+    The sign-in screen.
+
+    One interactive island holds the whole composition, because the form and the gateway
+    instrument beside it are two views of the same state: what the visitor typed, whether a
+    request is in flight, and where that request stopped.
+
+    Every interaction here is Blazor state in C# - password visibility, validation, the busy
+    state, the notices. The only JavaScript involved is the framework transport itself.
+
+    Nothing authenticates. IAuthenticationGateway is the seam a real provider plugs into; the
+    prototype implementation behind it checks nothing, keeps nothing, and says so.
+*@
+
+@rendermode InteractiveServer
+@inject IAuthenticationGateway Gateway
+@inject IStringLocalizer<LoginText> Text
+
+<div class="signin">
+    <div class="signin-primary">
+        <p class="signin-kicker">
+            <span class="kicker-rule" aria-hidden="true"></span>
+            @Text["Eyebrow"]
+        </p>
+
+        <h1 class="signin-title" id="signin-heading">
+            <span class="title-line">@Text["Heading"]</span>
+            <span class="title-line title-line--accent">@Text["HeadingAccent"]</span>
+        </h1>
+
+        <p class="signin-lede">@Text["Lede"]</p>
+
+        <div class="signin-card" data-spotlight>
+            <span class="card-rim" aria-hidden="true"></span>
+
+            @if (!Gateway.IsConfigured)
+            {
+                <p class="card-flag">
+                    <span class="flag-badge">@Text["Notice.PrototypeBadge"]</span>
+                    <span>@Text["Security.Note"]</span>
+                </p>
+            }
+
+            <form class="signin-form"
+                  aria-labelledby="signin-heading"
+                  novalidate
+                  @onsubmit="SubmitAsync"
+                  @onsubmit:preventDefault>
+
+                <div class="field @(EmailError ? "has-error" : null)">
+                    <label class="field-label" for="signin-email">@Text["Field.Email"]</label>
+                    <div class="field-shell">
+                        <input class="field-input"
+                               id="signin-email"
+                               name="email"
+                               type="email"
+                               inputmode="email"
+                               autocomplete="username"
+                               spellcheck="false"
+                               autocapitalize="none"
+                               placeholder="@Text["Field.EmailPlaceholder"]"
+                               value="@_email"
+                               disabled="@_isBusy"
+                               aria-invalid="@(EmailError ? "true" : null)"
+                               aria-describedby="@(EmailError ? "signin-email-error" : null)"
+                               @oninput="OnEmailInput" />
+                    </div>
+                    @if (EmailError)
+                    {
+                        <p class="field-message" id="signin-email-error">@EmailMessage</p>
+                    }
+                </div>
+
+                <div class="field @(PasswordError ? "has-error" : null)">
+                    <label class="field-label" for="signin-password">@Text["Field.Password"]</label>
+                    <div class="field-shell">
+                        <input class="field-input"
+                               id="signin-password"
+                               name="password"
+                               type="@(_showPassword ? "text" : "password")"
+                               autocomplete="current-password"
+                               spellcheck="false"
+                               placeholder="@Text["Field.PasswordPlaceholder"]"
+                               value="@_password"
+                               disabled="@_isBusy"
+                               aria-invalid="@(PasswordError ? "true" : null)"
+                               aria-describedby="@(PasswordError ? "signin-password-error" : null)"
+                               @oninput="OnPasswordInput" />
+
+                        <button type="button"
+                                class="field-reveal @(_showPassword ? "is-shown" : null)"
+                                aria-pressed="@(_showPassword ? "true" : "false")"
+                                aria-controls="signin-password"
+                                aria-label="@RevealLabel"
+                                title="@RevealLabel"
+                                disabled="@_isBusy"
+                                @onclick="TogglePassword">
+                            <Icon Name="@(_showPassword ? IconName.EyeOff : IconName.Eye)" CssClass="is-sm" />
+                        </button>
+                    </div>
+                    @if (PasswordError)
+                    {
+                        <p class="field-message" id="signin-password-error">@PasswordMessage</p>
+                    }
+                </div>
+
+                @* Announced when it changes, so the state of a masked field is never a surprise
+                   to someone who cannot see it. *@
+                <p class="visually-hidden" role="status" aria-live="polite">
+                    @(_showPassword ? Text["Action.PasswordShown"] : Text["Action.PasswordHidden"])
+                </p>
+
+                <div class="field-row">
+                    <label class="checkbox" for="signin-remember">
+                        <input class="checkbox-input"
+                               id="signin-remember"
+                               name="remember"
+                               type="checkbox"
+                               checked="@_rememberMe"
+                               disabled="@_isBusy"
+                               @onchange="OnRememberChanged" />
+                        <span class="checkbox-box" aria-hidden="true">
+                            <span class="checkbox-tick"></span>
+                        </span>
+                        <span class="checkbox-label">@Text["Field.RememberMe"]</span>
+                    </label>
+
+                    <button type="button" class="link-action" @onclick="ShowRecoveryNotice">
+                        @Text["Action.ForgotPassword"]
+                    </button>
+                </div>
+
+                <CtaButton ButtonType="submit"
+                           Variant="CtaVariant.Primary"
+                           Size="CtaSize.Large"
+                           IsBusy="_isBusy"
+                           TrailingIcon="IconName.ArrowRight"
+                           CssClass="signin-submit">
+                    @(_isBusy ? Text["Action.SigningIn"] : Text["Action.SignIn"])
+                </CtaButton>
+
+                @* One live region for every outcome: the validation summary, the provider
+                   result, and the two "not connected yet" notices all land here. *@
+                <div class="notice-slot" role="alert" aria-live="assertive">
+                    @if (_notice is not NoticeKind.None)
+                    {
+                        <p class="notice notice--@NoticeToneClass">
+                            <span class="notice-mark" aria-hidden="true"></span>
+                            <span>@NoticeMessage</span>
+                        </p>
+                    }
+                </div>
+            </form>
+
+            <footer class="card-foot">
+                <span class="foot-prompt">@Text["Prompt.NoAccount"]</span>
+                <button type="button" class="link-action is-strong" @onclick="ShowSignUpNotice">
+                    @Text["Action.CreateAccount"]
+                </button>
+            </footer>
+        </div>
+
+        <a class="signin-back" href="/">
+            <span class="back-arrow" aria-hidden="true"></span>
+            @Text["Action.BackToWebsite"]
+        </a>
+    </div>
+
+    <div class="signin-aside">
+        <AuthGatewayPanel Phase="Phase" />
+    </div>
+</div>
+
+@code {
+    /// <summary>Which message the notice region is currently carrying.</summary>
+    private enum NoticeKind
+    {
+        None,
+        Validation,
+        Outcome,
+        Recovery,
+        SignUp
+    }
+
+    private string _email = string.Empty;
+    private string _password = string.Empty;
+    private bool _rememberMe;
+    private bool _showPassword;
+    private bool _isBusy;
+    private bool _submitted;
+    private SignInValidation _validation = SignInValidation.Clean;
+    private SignInOutcome? _outcome;
+    private NoticeKind _notice = NoticeKind.None;
+
+    /// <summary>What the gateway instrument should be depicting right now.</summary>
+    private GatewayPhase Phase => _isBusy
+        ? GatewayPhase.Verifying
+        : _outcome is null ? GatewayPhase.Idle : GatewayPhase.Halted;
+
+    private string RevealLabel =>
+        _showPassword ? Text["Action.HidePassword"] : Text["Action.ShowPassword"];
+
+    // Field errors only appear after a submission attempt: flagging an address as invalid
+    // while it is still being typed is noise, not help.
+    private bool EmailError => _submitted && _validation.Email is not SignInFieldError.None;
+
+    private bool PasswordError => _submitted && _validation.Password is not SignInFieldError.None;
+
+    private string EmailMessage => _validation.Email switch
+    {
+        SignInFieldError.EmailRequired => Text["Validation.EmailRequired"],
+        SignInFieldError.EmailInvalid => Text["Validation.EmailInvalid"],
+        _ => string.Empty
+    };
+
+    private string PasswordMessage =>
+        _validation.Password is SignInFieldError.PasswordRequired
+            ? Text["Validation.PasswordRequired"]
+            : string.Empty;
+
+    private string NoticeMessage => _notice switch
+    {
+        NoticeKind.Validation => Text["Validation.Summary"],
+        NoticeKind.Recovery => Text["Notice.RecoveryUnavailable"],
+        NoticeKind.SignUp => Text["Notice.SignUpUnavailable"],
+        NoticeKind.Outcome => _outcome switch
+        {
+            SignInOutcome.InvalidCredentials => Text["Notice.InvalidCredentials"],
+            SignInOutcome.Locked => Text["Notice.Locked"],
+            _ => Text["Notice.Unavailable"]
+        },
+        _ => string.Empty
+    };
+
+    /// <summary>
+    /// A rejected attempt is a warning; "this is not built yet" is information. Colouring the
+    /// two the same would tell a visitor they did something wrong when they did not.
+    /// </summary>
+    private string NoticeToneClass => _notice switch
+    {
+        NoticeKind.Validation => "warning",
+        NoticeKind.Outcome when _outcome is SignInOutcome.InvalidCredentials or SignInOutcome.Locked => "warning",
+        _ => "info"
+    };
+
+    private void OnEmailInput(ChangeEventArgs args)
+    {
+        _email = args.Value?.ToString() ?? string.Empty;
+        Revalidate();
+    }
+
+    private void OnPasswordInput(ChangeEventArgs args)
+    {
+        _password = args.Value?.ToString() ?? string.Empty;
+        Revalidate();
+    }
+
+    private void OnRememberChanged(ChangeEventArgs args) =>
+        _rememberMe = args.Value is bool value && value;
+
+    private void TogglePassword() => _showPassword = !_showPassword;
+
+    /// <summary>
+    /// Once a field has been flagged, re-check on every keystroke so the error clears as soon
+    /// as it is fixed instead of waiting for the next submit.
+    /// </summary>
+    private void Revalidate()
+    {
+        if (!_submitted)
+        {
+            return;
+        }
+
+        _validation = SignInValidator.Validate(_email, _password);
+
+        if (_notice is NoticeKind.Validation && _validation.IsValid)
+        {
+            _notice = NoticeKind.None;
+        }
+    }
+
+    private void ShowRecoveryNotice() => _notice = NoticeKind.Recovery;
+
+    private void ShowSignUpNotice() => _notice = NoticeKind.SignUp;
+
+    private async Task SubmitAsync()
+    {
+        _submitted = true;
+        _outcome = null;
+        _validation = SignInValidator.Validate(_email, _password);
+
+        if (!_validation.IsValid)
+        {
+            _notice = NoticeKind.Validation;
+            return;
+        }
+
+        _notice = NoticeKind.None;
+        _isBusy = true;
+
+        try
+        {
+            var result = await Gateway.SignInAsync(new SignInRequest
+            {
+                Email = _email.Trim(),
+                Password = _password,
+                RememberMe = _rememberMe
+            });
+
+            _outcome = result.Outcome;
+            _notice = NoticeKind.Outcome;
+
+            if (result.IsSuccess)
+            {
+                // Reached only once a real provider is connected. Until then there is nothing
+                // to clear and nowhere to send anyone.
+                _notice = NoticeKind.None;
+                _password = string.Empty;
+            }
+        }
+        finally
+        {
+            _isBusy = false;
+        }
+    }
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

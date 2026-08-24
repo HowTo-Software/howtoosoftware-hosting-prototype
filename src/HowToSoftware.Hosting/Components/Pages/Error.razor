@@ -1,16 +1,14 @@
 @page "/error"
+@inject IStringLocalizer<CommonText> Text
 
-<PageTitle>Something went wrong</PageTitle>
+<PageTitle>@Text["Error.Title"]</PageTitle>
 
 <section class="hts-section">
     <div class="hts-container hts-container--narrow status-page">
-        <p class="status-code">500</p>
-        <h1>Something went wrong</h1>
-        <p class="hts-lede">
-            An unexpected error interrupted that request. Try again in a moment; if it keeps
-            happening, let us know and we will look into it.
-        </p>
-        <CtaButton Href="/" TrailingIcon="IconName.ArrowRight">Back to the homepage</CtaButton>
+        <p class="status-code">@Text["Error.Code"]</p>
+        <h1>@Text["Error.Title"]</h1>
+        <p class="hts-lede">@Text["Error.Body"]</p>
+        <CtaButton Href="/" TrailingIcon="IconName.ArrowRight">@Text["Cta.BackToHomepage"]</CtaButton>
     </div>
 </section>
 

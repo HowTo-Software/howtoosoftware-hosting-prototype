@@ -1,0 +1,47 @@
+@page "/infrastructure"
+@page "/hardware"
+@inject IStringLocalizer<HardwareText> Text
+@inject IInfrastructureContentService Content
+@inject IOptions<SiteOptions> Site
+
+@*
+    The infrastructure page.
+
+    Two routes on purpose. "Infrastructure" is what the navigation calls it and what the
+    footer links to; "/hardware" is the word people type, and the homepage section on the same
+    subject is already labelled HARDWARE. One component answers to both rather than one of them
+    404ing or redirecting.
+
+    Chapter order and layout come from IInfrastructureContentService, so re-sequencing the page
+    is a data change. All descriptive copy is still pending and renders as TEXT ABOUT HERE.
+*@
+
+<PageTitle>@Text["Meta.Title", Site.Value.Name]</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="@Text["Meta.Description"]" />
+    @* One canonical URL for two routes, so the duplicate does not compete with itself. *@
+    <link rel="canonical" href="@($"{Site.Value.BaseUrl.TrimEnd('/')}/infrastructure")" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="@Text["Meta.Title", Site.Value.Name]" />
+    <meta property="og:description" content="@Text["Meta.Description"]" />
+    <meta property="og:url" content="@($"{Site.Value.BaseUrl.TrimEnd('/')}/infrastructure")" />
+    <meta property="og:site_name" content="@Site.Value.Name" />
+</HeadContent>
+
+<HardwareHero SiteName="@Site.Value.Name" />
+<PhysicalSection />
+<NodeTopologySection />
+
+@foreach (var chapter in Content.Chapters)
+{
+    <ChapterSection Chapter="chapter" @key="chapter.Id" />
+}
+
+<HardwareClosing />
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

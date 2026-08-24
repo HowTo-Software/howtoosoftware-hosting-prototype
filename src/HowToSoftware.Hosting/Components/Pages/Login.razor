@@ -1,0 +1,26 @@
+@page "/login"
+@inject IStringLocalizer<LoginText> Text
+@inject IOptions<SiteOptions> Site
+
+<PageTitle>@Text["Meta.Title", Site.Value.Name]</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="@Text["Meta.Description"]" />
+    <link rel="canonical" href="@($"{Site.Value.BaseUrl.TrimEnd('/')}/login")" />
+    @* A sign-in screen has nothing a search engine should index, and indexing one is how
+       stale login pages end up outranking the product. *@
+    <meta name="robots" content="noindex, follow" />
+</HeadContent>
+
+<section class="login-page">
+    <AuthFieldBackdrop />
+
+    <div class="hts-container hts-container--wide login-inner">
+        <SignInExperience />
+    </div>
+</section>
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@
