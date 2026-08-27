@@ -1,0 +1,103 @@
+@*
+    The plans, in one paragraph and a price, on the home page.
+
+    The full grid lives at /project-zomboid. Eight cards is a page, not a section, and putting
+    them here would make the home page mostly a price list for one game - which is the opposite
+    of what a platform's front page is for.
+
+    Every figure below is read from the catalogue rather than written out, so the teaser cannot
+    fall behind the ladder it is teasing.
+*@
+
+@inject IPlanCatalogService Catalog
+@inject IStringLocalizer<HomeText> Text
+
+<section class="teaser" id="plans" aria-labelledby="teaser-heading">
+    <div class="hts-container hts-container--wide teaser-inner" data-reveal>
+        <div class="teaser-copy">
+            <p class="teaser-kicker" data-text-effect="flicker">
+                <span class="kicker-index">@Text["PlansTeaser.Index"]</span>
+                @Text["PlansTeaser.Kicker"]
+            </p>
+
+            <h2 id="teaser-heading" class="teaser-title" data-text-effect="rise">
+                @Text["PlansTeaser.Title"]
+            </h2>
+
+            <p class="teaser-lede">@Text["PlansTeaser.Lede"]</p>
+
+            <ul class="teaser-points">
+                @if (Smallest is { } small && Largest is { } large)
+                {
+                    <li>@Text["PlansTeaser.Range", small.MemoryGb, large.MemoryGb, Catalog.Plans.Count]</li>
+                    <li>@Text["PlansTeaser.Storage", small.DiskGb, large.DiskGb]</li>
+                }
+                <li>@Text["PlansTeaser.Custom"]</li>
+            </ul>
+
+            <CtaButton Href="/project-zomboid"
+                       Variant="CtaVariant.Primary"
+                       TrailingIcon="IconName.ArrowRight"
+                       CssClass="teaser-cta">
+                @Text["PlansTeaser.Cta"]
+            </CtaButton>
+        </div>
+
+        <div class="teaser-price" data-spotlight>
+            @if (EntryPrice is { } price)
+            {
+                <p class="price-label">@Text["PlansTeaser.From"]</p>
+                <p class="price-figure">
+                    <span class="price-symbol">@Catalog.CurrencySymbol</span>@price.ToString("0.00", Invariant)
+                </p>
+                <p class="price-unit">@Text["PlansTeaser.PerMonth"]</p>
+
+                @if (Smallest is { } entry)
+                {
+                    <dl class="price-spec">
+                        <div>
+                            <dt>@Text["Plans.MemoryLabel"]</dt>
+                            <dd>@entry.MemoryGb @Text["Plans.MemoryUnit"]</dd>
+                        </div>
+                        <div>
+                            <dt>@Text["Plans.SpecCpu"]</dt>
+                            <dd>@Text["Plans.CpuValue", entry.CpuPercent]</dd>
+                        </div>
+                        <div>
+                            <dt>@Text["Plans.SpecStorage"]</dt>
+                            <dd>@Text["Plans.StorageValue", entry.DiskGb]</dd>
+                        </div>
+                    </dl>
+                }
+            }
+            else
+            {
+                @* No rate card on this deployment. The teaser still says what the ladder is; it
+                   simply has no figure to lead with. *@
+                <p class="price-label">@Text["PlansTeaser.From"]</p>
+                <p class="price-pending">@Text["PlansTeaser.Unpriced"]</p>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private static readonly System.Globalization.CultureInfo Invariant =
+        System.Globalization.CultureInfo.InvariantCulture;
+
+    private HostingPlan? Smallest => Catalog.Plans.Count == 0 ? null : Catalog.Plans[0];
+
+    private HostingPlan? Largest => Catalog.Plans.Count == 0 ? null : Catalog.Plans[^1];
+
+    /// <summary>
+    /// The cheapest plan that has a price, which is not assumed to be the smallest one - an
+    /// override on the entry tier could put it above the next.
+    /// </summary>
+    private decimal? EntryPrice =>
+        Catalog.Plans.Where(plan => plan.IsPriced).Min(plan => plan.PriceMonthly);
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

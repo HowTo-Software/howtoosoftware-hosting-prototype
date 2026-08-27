@@ -227,3 +227,73 @@
         align-items: stretch;
     }
 }
+
+/* ── Entrance choreography ─────────────────────────────────────────────────
+
+   The hero arrives in order rather than all at once: eyebrow, headline, copy, actions, then
+   the world cluster and the strip under it. Each element declares its own place in the queue
+   through --stage, and the whole thing is one animation with a delay - no timers, no
+   JavaScript sequencing, and no state.
+
+   The total is deliberately short. A visitor should never be waiting for the interface; the
+   sequence is there to give the composition an order to be read in, not to perform.
+
+   Two things stay out of it. The headline runs its own per-character reveal, and the telemetry
+   figures are content rather than decoration - neither is delayed behind an animation.
+*/
+
+html.hts-js .hero[data-stage] .hero-kicker { --stage: 0; }
+html.hts-js .hero[data-stage] .hero-title { --stage: 1; }
+html.hts-js .hero[data-stage] .hero-copy { --stage: 2; }
+html.hts-js .hero[data-stage] .hero-actions { --stage: 3; }
+html.hts-js .hero[data-stage] .hero-product { --stage: 3; }
+html.hts-js .hero[data-stage] .hero-foot { --stage: 5; }
+
+html.hts-js .hero[data-stage] .hero-copy,
+html.hts-js .hero[data-stage] .hero-actions,
+html.hts-js .hero[data-stage] .hero-product,
+html.hts-js .hero[data-stage] .hero-foot {
+    animation: hero-enter 0.66s var(--hts-ease-out) both;
+    animation-delay: calc(var(--stage, 0) * 90ms);
+}
+
+@keyframes hero-enter {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 14px, 0);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+/* The world cluster carries more of the composition, so it arrives from further out. */
+html.hts-js .hero[data-stage] .hero-product {
+    animation-name: hero-enter-figure;
+    animation-duration: 0.9s;
+}
+
+@keyframes hero-enter-figure {
+    from {
+        opacity: 0;
+        transform: translate3d(18px, 0, 0) scale(0.985);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.hts-js .hero[data-stage] .hero-kicker,
+    html.hts-js .hero[data-stage] .hero-title,
+    html.hts-js .hero[data-stage] .hero-copy,
+    html.hts-js .hero[data-stage] .hero-actions,
+    html.hts-js .hero[data-stage] .hero-product,
+    html.hts-js .hero[data-stage] .hero-foot {
+        animation: none;
+    }
+}

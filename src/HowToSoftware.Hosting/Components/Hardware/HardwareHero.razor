@@ -16,20 +16,30 @@
     <RackFieldBackdrop />
 
     <div class="hts-container hts-container--wide hw-hero-inner">
-        <p class="hw-kicker">
-            <span class="kicker-rule" aria-hidden="true"></span>
-            @Text["Hero.Eyebrow"]
-        </p>
+        <div class="hw-hero-type">
+            <p class="hw-kicker" data-text-effect="flicker">
+                <span class="kicker-rule" aria-hidden="true"></span>
+                @Text["Hero.Eyebrow"]
+            </p>
 
-        <h1 class="hw-title">
-            <span class="title-line">@Text["Hero.Line1"]</span>
-            <span class="title-line title-line--accent">@Text["Hero.Line2"]</span>
-            <span class="title-line">@Text["Hero.Line3"]</span>
-        </h1>
+            <h1 class="hw-title" data-text-effect="rise">
+                <span class="title-line">@Text["Hero.Line1"]</span>
+                <span class="title-line title-line--accent">@Text["Hero.Line2"]</span>
+                <span class="title-line">@Text["Hero.Line3"]</span>
+            </h1>
 
-        <p class="hw-lede">
-            <CopySlot Size="CopySlot.SlotSize.Lede" />
-        </p>
+            <p class="hw-lede">
+                <CopySlot Size="CopySlot.SlotSize.Lede" />
+            </p>
+        </div>
+
+        @* The establishing shot. Above the fold, so it is fetched eagerly rather than lazily. *@
+        <div class="hw-hero-plate">
+            <HardwarePhoto Slot="HardwarePhotoSlot.RackFront"
+                           Alt="@Text["Photo.Alt.Rack"]"
+                           Caption="@Text["Photo.Caption.Rack"]"
+                           IsAboveTheFold="true" />
+        </div>
     </div>
 
     <div class="hts-container hts-container--wide hw-hero-foot">
@@ -43,7 +53,7 @@
         </span>
         <span class="foot-item">
             <span class="foot-label">@Text["Hero.Rail.Region"]</span>
-            <span class="foot-value"><CopySlot Size="CopySlot.SlotSize.Micro" /></span>
+            <span class="foot-value">@Text["Node.RegionValue"]</span>
         </span>
     </div>
 </section>

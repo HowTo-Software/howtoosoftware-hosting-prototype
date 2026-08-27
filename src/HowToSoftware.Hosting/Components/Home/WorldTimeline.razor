@@ -1,0 +1,77 @@
+@*
+    World continuity.
+
+    Two lanes running down the figure. The left one is the world; it is a single unbroken line
+    from top to bottom. The right one is the instance the world runs on; it is cut wherever
+    something happens to it. The events sit between them, saying what the cut was.
+
+    The whole argument of this section is in the difference between the two lines, so the figure
+    is built to make that difference the first thing you see rather than something you work out
+    from a legend.
+
+    The lanes are drawn per row rather than as two absolutely positioned lines. Adjacent rows
+    butt together and read as one continuous stroke, and a break lands exactly on its own row
+    with no coordinates to keep in sync.
+*@
+
+@inject IStringLocalizer<HomeText> Text
+
+<figure class="continuity">
+    <figcaption class="continuity-head">
+        <span class="head-key">@Text["Timeline.Caption"]</span>
+        <span class="head-live">
+            <span class="head-dot" aria-hidden="true"></span>
+            @Text["Timeline.Persistent"]
+        </span>
+    </figcaption>
+
+    <div class="continuity-frame">
+        <div class="lane-heads" aria-hidden="true">
+            <span class="lane-head lane-head--world">@Text["Timeline.WorldLane"]</span>
+            <span class="lane-head lane-head--instance">@Text["Timeline.InstanceLane"]</span>
+        </div>
+
+        <ol class="events">
+            @foreach (var (item, index) in Events.Select((e, i) => (e, i)))
+            {
+                var isCheckpoint = item.Kind is WorldEventKind.WorldCheckpoint;
+
+                <li class="event @(isCheckpoint ? "is-checkpoint" : "is-break")"
+                    style="--row-index: @index">
+
+                    @* The world lane. Solid on every row without exception - that is the point. *@
+                    <span class="lane lane--world" aria-hidden="true">
+                        @if (isCheckpoint)
+                        {
+                            <span class="lane-node"></span>
+                        }
+                    </span>
+
+                    @* The instance lane. Cut on every row that is not a checkpoint. *@
+                    <span class="lane lane--instance" aria-hidden="true"></span>
+
+                    <span class="event-body">
+                        <span class="event-tag">@item.Tag</span>
+                        <span class="event-detail">@item.Detail</span>
+                    </span>
+                </li>
+            }
+        </ol>
+    </div>
+
+    <p class="continuity-note">
+        <span class="note-mark" aria-hidden="true"></span>
+        @Text["Timeline.Note"]
+    </p>
+</figure>
+
+@code {
+    /// <summary>The events drawn down the figure, in order.</summary>
+    [Parameter, EditorRequired]
+    public IReadOnlyList<WorldEvent> Events { get; set; } = [];
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

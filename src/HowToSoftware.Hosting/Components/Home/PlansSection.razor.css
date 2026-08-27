@@ -297,11 +297,33 @@
     font-weight: 620;
 }
 
+/*
+    Three lines, reserved whether the tier has a tagline yet or not.
+
+    The cards sit in one row and are read across, not down: the eye compares price with price
+    and spec with spec. Letting each card size its own tagline put every figure below it at a
+    different height and made the row look like eight unrelated boxes.
+*/
 .plan-tagline {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    min-height: calc(var(--hts-leading-snug) * var(--hts-text-base) * 3);
     margin-top: 0.35rem;
+    overflow: hidden;
     color: var(--hts-ink-muted);
     font-size: var(--hts-text-base);
     line-height: var(--hts-leading-snug);
+}
+
+/* The renewal price. Quiet, directly under the headline figure it modifies. */
+.plan-renewal {
+    margin-top: 0.15rem;
+    color: var(--hts-blue-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.12em;
+    line-height: 1.5;
 }
 
 .plan-price {
@@ -344,6 +366,77 @@
     color: var(--hts-blue-300);
     font-family: var(--hts-font-mono);
     font-size: var(--hts-text-xs);
+}
+
+/* The headline resource. RAM is what differs between the tiers, so it takes the position and
+   the weight the slot count used to hold. */
+.plan-headline {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    padding: var(--hts-space-4) var(--hts-space-5);
+    border: 1px solid var(--hts-border-blue);
+    border-radius: var(--hts-radius-sm);
+    background:
+        linear-gradient(100deg, rgba(131, 168, 243, 0.12), transparent 70%),
+        var(--hts-surface-inset);
+}
+
+.headline-value {
+    color: var(--hts-ink);
+    font-family: var(--hts-font-mono);
+    font-size: 1.7rem;
+    font-weight: 620;
+    line-height: 1;
+    letter-spacing: -0.02em;
+}
+
+.headline-unit {
+    color: var(--hts-blue-300);
+    font-family: var(--hts-font-mono);
+    font-size: var(--hts-text-base);
+    font-weight: 600;
+}
+
+.headline-key {
+    margin-left: auto;
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.2em;
+}
+
+/* No price configured. Reads as a deliberate blank, in the same treatment the infrastructure
+   page uses for copy that has not been written. */
+.price-pending {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: var(--hts-text-md);
+    font-weight: 500;
+    letter-spacing: 0.16em;
+}
+
+.price-pending::before {
+    content: "";
+    width: 0.4rem;
+    height: 0.4rem;
+    background: var(--hts-blue-400);
+    opacity: 0.55;
+    transform: rotate(45deg);
+}
+
+/* Said once under the grid rather than repeated on four cards. */
+.plans-note {
+    max-width: 46rem;
+    margin-top: clamp(2rem, 3.5vw, 3rem);
+    padding-top: var(--hts-space-5);
+    border-top: 1px solid var(--hts-border);
+    color: var(--hts-ink-muted);
+    font-size: var(--hts-text-sm);
+    line-height: var(--hts-leading-normal);
 }
 
 .plan-slots {
@@ -391,6 +484,41 @@
 .plan-specs dd {
     color: var(--hts-ink-soft);
     font-size: var(--hts-text-base);
+}
+
+/* The bot line. Purple, because it is the one thing on the card that is our own software
+   rather than an allocation - and set apart from the includes list for the same reason. */
+.plan-bot {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid var(--hts-border-brand);
+    border-radius: var(--hts-radius-sm);
+    background: rgba(176, 105, 255, 0.09);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.14em;
+}
+
+.bot-dot {
+    width: 0.35rem;
+    height: 0.35rem;
+    flex: none;
+    border-radius: 50%;
+    background: var(--hts-purple-300);
+    box-shadow: 0 0 8px 1px rgba(176, 105, 255, 0.85);
+}
+
+.bot-name {
+    color: var(--hts-ink);
+    font-weight: 640;
+}
+
+.bot-state {
+    margin-left: auto;
+    color: var(--hts-purple-300);
+    white-space: nowrap;
 }
 
 .plan-includes {

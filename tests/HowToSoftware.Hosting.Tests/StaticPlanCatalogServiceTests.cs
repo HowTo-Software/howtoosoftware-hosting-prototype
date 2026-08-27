@@ -1,13 +1,37 @@
 using HowToSoftware.Hosting.Localization;
 using HowToSoftware.Hosting.Models;
 using HowToSoftware.Hosting.Services;
+using Microsoft.Extensions.Options;
 
 namespace HowToSoftware.Hosting.Tests;
 
+/// <summary>
+/// The pricing presentation: discounts, coupons and rounding.
+/// </summary>
+/// <remarks>
+/// Resource mapping is covered by <see cref="HostingPlanMappingTests"/>. These tests give the
+/// catalogue configured prices, because arithmetic on an unpriced plan has nothing to assert.
+/// </remarks>
 public class StaticPlanCatalogServiceTests : IDisposable
 {
     private readonly CultureScope _culture = new(SupportedCultures.Default);
-    private readonly StaticPlanCatalogService _sut = new(TestLocalizer.For<HomeText>());
+    private readonly StaticPlanCatalogService _sut;
+
+    public StaticPlanCatalogServiceTests() =>
+        _sut = new StaticPlanCatalogService(
+            TestLocalizer.For<HomeText>(),
+            Options.Create(new HostingPlanPricingOptions
+            {
+                // The shipped rate card, so every tier is priced without this file holding a
+                // second copy of the ladder that would go stale the moment a tier is added.
+                Rates = new PlanRateCard
+                {
+                    CpuPer100Percent = "0.90",
+                    MemoryPerGb = "1.20",
+                    DiskPerBlock = "0.30",
+                    DiskBlockGb = 20
+                }
+            }));
 
     public void Dispose() => _culture.Dispose();
 
@@ -18,8 +42,8 @@ public class StaticPlanCatalogServiceTests : IDisposable
     {
         Assert.NotEmpty(_sut.Plans);
 
-        var ids = _sut.Plans.Select(plan => plan.Id).ToArray();
-        Assert.Equal(ids.Length, ids.Distinct(StringComparer.Ordinal).Count());
+        var slugs = _sut.Plans.Select(plan => plan.Slug).ToArray();
+        Assert.Equal(slugs.Length, slugs.Distinct(StringComparer.Ordinal).Count());
     }
 
     [Fact]
@@ -29,13 +53,13 @@ public class StaticPlanCatalogServiceTests : IDisposable
     }
 
     [Fact]
-    public void Plans_AreOrderedByAscendingPriceAndSlots()
+    public void Plans_AreOrderedByAscendingPriceAndAllocation()
     {
-        var prices = _sut.Plans.Select(plan => plan.MonthlyPrice).ToArray();
-        var slots = _sut.Plans.Select(plan => plan.PlayerSlots).ToArray();
+        var prices = _sut.Plans.Select(plan => plan.PriceMonthly).ToArray();
+        var memory = _sut.Plans.Select(plan => plan.MemoryMib).ToArray();
 
         Assert.Equal(prices.OrderBy(price => price), prices);
-        Assert.Equal(slots.OrderBy(slot => slot), slots);
+        Assert.Equal(memory.OrderBy(value => value), memory);
     }
 
     [Fact]
@@ -52,7 +76,7 @@ public class StaticPlanCatalogServiceTests : IDisposable
         var quarterly = _sut.GetMonthlyRate(FirstPlan, BillingPeriod.Quarterly, CouponResult.None);
         var annual = _sut.GetMonthlyRate(FirstPlan, BillingPeriod.Annual, CouponResult.None);
 
-        Assert.Equal(FirstPlan.MonthlyPrice, monthly);
+        Assert.Equal(FirstPlan.PriceMonthly, monthly);
         Assert.True(quarterly < monthly, $"Quarterly {quarterly} should be below monthly {monthly}.");
         Assert.True(annual < quarterly, $"Annual {annual} should be below quarterly {quarterly}.");
     }
@@ -119,7 +143,9 @@ public class StaticPlanCatalogServiceTests : IDisposable
         var withCoupon = _sut.GetMonthlyRate(FirstPlan, BillingPeriod.Annual, coupon);
 
         // Annual is 20% off, the code adds 25%, so the rate lands at 55% of the headline.
-        Assert.Equal(Math.Round(FirstPlan.MonthlyPrice * 0.55m, 2, MidpointRounding.AwayFromZero), withCoupon);
+        Assert.Equal(
+            Math.Round(FirstPlan.PriceMonthly!.Value * 0.55m, 2, MidpointRounding.AwayFromZero),
+            withCoupon);
         Assert.True(withCoupon < withoutCoupon);
     }
 

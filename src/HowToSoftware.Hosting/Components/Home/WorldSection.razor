@@ -1,8 +1,12 @@
 @*
     Editorial world section.
 
-    Asymmetric split: oversized statement type on the left, a stylised Knox County coordinate
-    grid on the right. No cards, no icons - the grid itself carries the meaning.
+    Asymmetric split: oversized statement type on the left, the continuity figure on the right.
+
+    The figure used to be a coordinate grid of map cells. It was decorative and said nothing -
+    a visitor could read every square of it and learn none of what this section claims. It now
+    draws the claim itself: one lane for the world, one for the instance underneath it, and the
+    events that break the second without touching the first.
 *@
 
 @inject IMarketingContentService Content
@@ -11,12 +15,12 @@
 <section class="world" id="world" aria-labelledby="world-heading">
     <div class="hts-container hts-container--wide world-inner">
         <div class="world-copy" data-reveal="left">
-            <p class="world-kicker">
+            <p class="world-kicker" data-text-effect="flicker">
                 <span class="kicker-index">01</span>
                 @Text["World.Kicker"]
             </p>
 
-            <h2 id="world-heading" class="world-title">
+            <h2 id="world-heading" class="world-title" data-text-effect="rise">
                 @Text["World.Line1"]<br />
                 @Text["World.Line2"] <span class="world-accent">@Text["World.Accent"]</span><br />
                 @Text["World.Line3"]
@@ -43,7 +47,26 @@
         </div>
 
         <div class="world-figure" data-reveal="right">
-            <WorldGrid Cells="Content.WorldCells" Columns="7" Rows="5" />
+            @*
+                The world this section is about, above the figure that explains what happens to
+                it. The overlay is the state a persistent world has - not a reading from one.
+            *@
+            <ZomboidPlate Slot="ZomboidPhotoSlot.World"
+                          Ratio="16 / 9"
+                          CssClass="world-plate"
+                          Alt="@Text["World.PlateAlt"]">
+                <Overlay>
+                    <div class="plate-state">
+                        <p class="state-key">@Text["World.PlateKey"]</p>
+                        <p class="state-value">
+                            <span class="state-dot" aria-hidden="true"></span>
+                            @Text["World.PlateState"]
+                        </p>
+                    </div>
+                </Overlay>
+            </ZomboidPlate>
+
+            <WorldTimeline Events="Content.WorldEvents" />
         </div>
     </div>
 </section>

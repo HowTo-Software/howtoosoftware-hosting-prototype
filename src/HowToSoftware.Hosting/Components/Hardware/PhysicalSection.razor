@@ -16,12 +16,12 @@
 <section class="physical hts-section--soft" id="physical" aria-labelledby="physical-heading">
     <div class="hts-container hts-container--wide physical-inner">
         <div class="physical-copy" data-reveal="left">
-            <p class="chapter-kicker">
+            <p class="chapter-kicker" data-text-effect="flicker">
                 <span class="kicker-index">@Text["Physical.Index"]</span>
                 @Text["Physical.Kicker"]
             </p>
 
-            <h2 class="physical-title" id="physical-heading">@Text["Physical.Title"]</h2>
+            <h2 class="physical-title" id="physical-heading" data-text-effect="rise">@Text["Physical.Title"]</h2>
 
             <p class="physical-lede">
                 <CopySlot Size="CopySlot.SlotSize.Lede" />
@@ -83,6 +83,16 @@
                     }
                 </ol>
             </div>
+
+            @*
+                And the rack itself, so the drawing above is not the only thing the visitor has
+                to go on. The drawing shows unit positions; the photograph shows the cabinet
+                they are in.
+            *@
+            <HardwarePhoto Slot="HardwarePhotoSlot.RackElevation"
+                           CssClass="figure-photo"
+                           Alt="@Text["Photo.Alt.RackElevation"]"
+                           Caption="@Text["Photo.Caption.Elevation"]" />
         </div>
     </div>
 </section>

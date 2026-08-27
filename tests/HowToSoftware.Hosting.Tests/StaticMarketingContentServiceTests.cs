@@ -25,7 +25,7 @@ public class StaticMarketingContentServiceTests : IDisposable
         Assert.NotEmpty(_sut.LegalPlaceholders);
         Assert.NotEmpty(_sut.HeroSignals);
         Assert.NotEmpty(_sut.TelemetryStrip);
-        Assert.NotEmpty(_sut.WorldCells);
+        Assert.NotEmpty(_sut.WorldEvents);
         Assert.NotEmpty(_sut.WorkshopItems);
         Assert.NotEmpty(_sut.ProvisioningStages);
         Assert.NotEmpty(_sut.Nodes);
@@ -38,7 +38,7 @@ public class StaticMarketingContentServiceTests : IDisposable
     [InlineData("/#workshop")]
     [InlineData("/#provisioning")]
     [InlineData("/#control-panel")]
-    [InlineData("/#plans")]
+    [InlineData("/project-zomboid")]
     [InlineData("/#faq")]
     [InlineData("/infrastructure")]
     public void PrimaryNavigation_LinksToTheSectionsTheHomepageRenders(string anchor)
@@ -69,21 +69,33 @@ public class StaticMarketingContentServiceTests : IDisposable
     }
 
     [Fact]
-    public void WorldCells_StayInsideTheRenderedGrid()
+    public void WorldEvents_AreAllLabelled()
     {
-        Assert.All(_sut.WorldCells, cell =>
+        Assert.All(_sut.WorldEvents, item =>
         {
-            Assert.InRange(cell.X, 1, 7);
-            Assert.InRange(cell.Y, 1, 5);
+            Assert.False(string.IsNullOrWhiteSpace(item.Tag), "an event has no tag");
+            Assert.False(string.IsNullOrWhiteSpace(item.Detail), $"{item.Tag} has no detail");
         });
     }
 
+    /// <summary>
+    /// The figure draws two lanes and its entire argument is the difference between them, so it
+    /// needs at least one event of each kind. All interruptions and it never shows the world
+    /// being checkpointed; all checkpoints and it never shows the instance being cut.
+    /// </summary>
     [Fact]
-    public void WorldCells_DoNotOverlap()
+    public void WorldEvents_ShowBothLanesDoingSomething()
     {
-        var coordinates = _sut.WorldCells.Select(cell => (cell.X, cell.Y)).ToArray();
+        Assert.Contains(_sut.WorldEvents, item => item.Kind is WorldEventKind.InstanceInterrupted);
+        Assert.Contains(_sut.WorldEvents, item => item.Kind is WorldEventKind.WorldCheckpoint);
+    }
 
-        Assert.Equal(coordinates.Length, coordinates.Distinct().Count());
+    [Fact]
+    public void WorldEvents_DoNotRepeatATag()
+    {
+        var tags = _sut.WorldEvents.Select(item => item.Tag).ToArray();
+
+        Assert.Equal(tags.Length, tags.Distinct(StringComparer.OrdinalIgnoreCase).Count());
     }
 
     [Fact]
@@ -100,24 +112,71 @@ public class StaticMarketingContentServiceTests : IDisposable
         Assert.All(_sut.WorkshopItems, item => Assert.InRange(item.Progress, 0, 100));
     }
 
+    /// <summary>
+    /// A load percentage is live data. A statically rendered page cannot keep one current, so
+    /// either there is a real figure in range or there is none at all - never a number frozen at
+    /// build time and read as a fact about the platform right now.
+    /// </summary>
     [Fact]
-    public void NodeLoad_StaysWithinRange()
+    public void NodeLoad_IsEitherAbsentOrInRange()
     {
-        Assert.All(_sut.Nodes, node => Assert.InRange(node.LoadPercent, 0, 100));
+        Assert.All(_sut.Nodes, node =>
+        {
+            if (node.LoadPercent is { } load)
+            {
+                Assert.InRange(load, 0, 100);
+            }
+        });
     }
 
     /// <summary>
-    /// The plan catalogue is placeholder test data, so the page has to say so somewhere a
-    /// visitor will actually read. This guards that disclosure against being edited away.
+    /// The prototype advertised "256 GB ECC" on hardware that cannot take ECC. The homepage node
+    /// panels now carry the specifications read from the running hosts.
     /// </summary>
     [Fact]
-    public void Faqs_DiscloseThatPricingIsPlaceholder()
+    public void NodeSpecifications_DoNotClaimEccMemory()
     {
-        var disclosure = new Regex(
-            @"placeholder|test data|not a commercial offer",
+        Assert.All(_sut.Nodes, node =>
+            Assert.All(node.Specs, spec =>
+                Assert.DoesNotContain("ECC", spec.Value, StringComparison.OrdinalIgnoreCase)));
+    }
+
+    /// <summary>
+    /// The pricing answer has to describe the ladder that is actually on sale.
+    /// </summary>
+    /// <remarks>
+    /// It has been wrong once already: it went on describing four tiers and 25 GB of storage
+    /// after the ladder grew to eight and storage stepped at the 8 GB tier. Matched on the
+    /// figures rather than on a phrase, so the answer can be rewritten freely - it just cannot
+    /// describe a different product from the one the cards sell.
+    /// </remarks>
+    [Fact]
+    public void Faqs_DescribeTheLadderThatIsActuallyOnSale()
+    {
+        var pricing = _sut.Faqs.SingleOrDefault(faq => faq.Id == "pricing");
+
+        Assert.NotNull(pricing);
+        Assert.Contains("4 GB", pricing.Answer, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("16 GB", pricing.Answer, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("25 GB", pricing.Answer, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("40 GB", pricing.Answer, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Prices are configured now, so no answer may still be telling a visitor they are not.
+    /// </summary>
+    /// <remarks>
+    /// The inverse of the guard this replaced. While the cards had no figures the page had to
+    /// disclose that; now that they do, the same sentence would be the false statement.
+    /// </remarks>
+    [Fact]
+    public void Faqs_DoNotStillClaimPricingIsUndecided()
+    {
+        var undecided = new Regex(
+            @"not (yet )?(decided|set|final)|pricing is pending|placeholder price",
             RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
-        Assert.Contains(_sut.Faqs, faq => disclosure.IsMatch(faq.Answer));
+        Assert.All(_sut.Faqs, faq => Assert.DoesNotMatch(undecided, faq.Answer));
     }
 
     /// <summary>

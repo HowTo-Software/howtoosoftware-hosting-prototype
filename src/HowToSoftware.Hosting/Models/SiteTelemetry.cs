@@ -66,15 +66,24 @@ public enum NodeHealth
 /// <param name="Region">Deployment region.</param>
 /// <param name="Specs">Hardware allocation lines.</param>
 /// <param name="Health">Current health.</param>
-/// <param name="LoadPercent">Allocation load between 0 and 100.</param>
-/// <param name="Worlds">Number of Project Zomboid worlds currently placed on the node.</param>
+/// <param name="LoadPercent">
+/// Allocation load between 0 and 100, or <see langword="null"/> when there is no live figure.
+/// </param>
+/// <param name="Worlds">
+/// Worlds currently placed on the node, or <see langword="null"/> when unknown.
+/// </param>
+/// <remarks>
+/// Load and world count are live values that a statically-rendered page cannot keep current, so
+/// both are optional. A stale number invented at build time is worse than no number: it is read
+/// as a fact about the platform right now.
+/// </remarks>
 public sealed record InfrastructureNode(
     string Id,
     string Region,
     IReadOnlyList<PlanSpec> Specs,
     NodeHealth Health,
-    int LoadPercent,
-    int Worlds);
+    int? LoadPercent = null,
+    int? Worlds = null);
 
 /// <summary>
 /// One stage of the provisioning story told by the sticky scroll section.
@@ -101,22 +110,21 @@ public sealed record CapabilityStatement(
     IReadOnlyList<PlanSpec> Readout);
 
 /// <summary>
-/// A coordinate cell in the stylised Project Zomboid world grid.
+/// Something that happens to a server over its life, and what it does to the world on it.
 /// </summary>
-/// <param name="X">Column, 1-based.</param>
-/// <param name="Y">Row, 1-based.</param>
-/// <param name="Kind">What the cell represents.</param>
-/// <param name="Label">Optional label drawn inside the cell.</param>
-public sealed record WorldCell(int X, int Y, WorldCellKind Kind, string? Label = null);
+/// <param name="Tag">Short mono label, e.g. RESTART.</param>
+/// <param name="Detail">One line saying what the world does while that happens.</param>
+/// <param name="Kind">Whether the instance is interrupted, or the world is checkpointed.</param>
+public sealed record WorldEvent(string Tag, string Detail, WorldEventKind Kind);
 
 /// <summary>
-/// What a world-grid cell represents.
+/// What an event does to the two lanes of the continuity figure.
 /// </summary>
-public enum WorldCellKind
+public enum WorldEventKind
 {
-    Empty,
-    Loaded,
-    Player,
-    Safehouse,
-    Server
+    /// <summary>The instance underneath stops and comes back. The world lane is untouched.</summary>
+    InstanceInterrupted,
+
+    /// <summary>A restore point. Marked on the world lane; the instance keeps running.</summary>
+    WorldCheckpoint
 }

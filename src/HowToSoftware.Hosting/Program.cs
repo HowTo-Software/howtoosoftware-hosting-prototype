@@ -1,7 +1,9 @@
 using HowToSoftware.Hosting.Components;
+using HowToSoftware.Hosting.Infrastructure.Pterodactyl;
 using HowToSoftware.Hosting.Localization;
 using HowToSoftware.Hosting.Models;
 using HowToSoftware.Hosting.Services;
+using HowToSoftware.Hosting.Services.Provisioning;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,15 +20,63 @@ builder.Services.Configure<RequestLocalizationOptions>(SiteLocalization.Configur
 builder.Services.AddOptions<SiteOptions>()
     .Bind(builder.Configuration.GetSection(SiteOptions.SectionName));
 
+// Plan prices are commercial values that change without the plans changing, so they arrive from
+// configuration. A plan with no configured price renders as visibly unpriced rather than
+// defaulting to a number nobody agreed to.
+builder.Services.AddOptions<HostingPlanPricingOptions>()
+    .Bind(builder.Configuration.GetSection(HostingPlanPricingOptions.SectionName));
+
+// ── Pterodactyl ───────────────────────────────────────────────────────────
+//
+// The API key is NOT in appsettings.json and must never be. It is read from the environment
+// (Pterodactyl__ApiKey) or from user-secrets in development. Options are validated on first
+// use rather than at startup, so the site still serves its marketing pages on a host that has
+// no panel credentials - only provisioning needs them.
+builder.Services.AddOptions<PterodactylOptions>()
+    .Bind(builder.Configuration.GetSection(PterodactylOptions.SectionName));
+builder.Services.AddSingleton<
+    Microsoft.Extensions.Options.IValidateOptions<PterodactylOptions>,
+    PterodactylOptionsValidator>();
+
+builder.Services.AddOptions<ProvisioningLabOptions>()
+    .Bind(builder.Configuration.GetSection(ProvisioningLabOptions.SectionName));
+
+builder.Services.AddHttpClient<IPterodactylClient, PterodactylClient>(PterodactylClient.HttpClientName,
+    (provider, client) =>
+    {
+        var options = provider
+            .GetRequiredService<Microsoft.Extensions.Options.IOptionsMonitor<PterodactylOptions>>()
+            .CurrentValue;
+
+        client.Timeout = TimeSpan.FromSeconds(options.TimeoutSeconds);
+        // The Authorization header is attached per request inside the client, not here: it is
+        // read from options each time so a rotated key takes effect without a restart, and it
+        // stays in exactly one place in the codebase.
+        client.DefaultRequestHeaders.Add("User-Agent", "HowToSoftware-Hosting/1.0");
+    })
+    .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+    {
+        // Redirects are never legitimate on this API, and following one is actively dangerous:
+        // the panel answers an unauthenticated request with a 302 to its HTML login page, so a
+        // redirect-following client sees HTTP 200 and a page of HTML and calls it success.
+        AllowAutoRedirect = false
+    });
+
 // Content and server telemetry are resolved through interfaces so the prototype's static and
 // mock implementations can be replaced by CMS- and panel-backed services later on.
 builder.Services.AddSingleton(TimeProvider.System);
 // Marketing content is scoped rather than singleton now that its labels follow the request's
 // culture; the data behind them is still compiled-in and allocation-cheap.
 builder.Services.AddScoped<IMarketingContentService, StaticMarketingContentService>();
-builder.Services.AddSingleton<IPlanCatalogService, StaticPlanCatalogService>();
+builder.Services.AddScoped<IPlanCatalogService, StaticPlanCatalogService>();
+builder.Services.AddScoped<ICustomBuildService, RateCardBuildService>();
 builder.Services.AddSingleton<IInfrastructureContentService, StaticInfrastructureContentService>();
+builder.Services.AddSingleton<IHardwarePhotoLibrary, HardwarePhotoLibrary>();
+builder.Services.AddSingleton<IZomboidPhotoLibrary, ZomboidPhotoLibrary>();
+builder.Services.AddSingleton<IGameTemplateCatalog, GameTemplateCatalog>();
 builder.Services.AddScoped<IServerPreviewService, MockServerPreviewService>();
+builder.Services.AddScoped<IProvisioningService, ProvisioningService>();
+builder.Services.AddSingleton<IProvisioningLabGuard, ProvisioningLabGuard>();
 // No identity provider exists yet. This gateway authenticates nobody and stores nothing; see
 // PrototypeAuthenticationGateway for why that is the only honest stand-in.
 builder.Services.AddScoped<IAuthenticationGateway, PrototypeAuthenticationGateway>();

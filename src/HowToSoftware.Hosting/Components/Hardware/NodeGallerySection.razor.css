@@ -1,0 +1,262 @@
+.gallery {
+    position: relative;
+    padding-block: clamp(4.5rem, 8vw, 8rem);
+    border-top: 1px solid var(--hts-border);
+    overflow: hidden;
+}
+
+/* One low bloom behind the photographs, so the images sit in light rather than on flat black. */
+.gallery::before {
+    content: "";
+    position: absolute;
+    top: 22%;
+    right: -10%;
+    width: min(52rem, 80vw);
+    height: 32rem;
+    background: radial-gradient(ellipse at center, rgba(61, 92, 224, 0.14) 0%, transparent 68%);
+    filter: blur(60px);
+    pointer-events: none;
+}
+
+.gallery-head {
+    position: relative;
+    max-width: 44rem;
+    margin-bottom: clamp(3rem, 5vw, 4.5rem);
+}
+
+.chapter-kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: var(--hts-space-5);
+    color: var(--hts-purple-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+}
+
+.kicker-index {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: none;
+    border-radius: var(--hts-radius-xs);
+    background: var(--hts-blue-700);
+    color: var(--hts-white);
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+}
+
+.gallery-title {
+    font-size: clamp(2rem, 1.25rem + 2.6vw, 3.1rem);
+    font-weight: 660;
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+}
+
+.gallery-lede {
+    max-width: 30rem;
+    margin-top: var(--hts-space-5);
+}
+
+/* --- Lead: the open rack, and the two machines inside it ---------------- */
+
+/* The photograph is portrait and tall; the two readouts stack beside it and together match its
+   height, so the row reads as one block rather than a tall image with a gap under the text. */
+.gallery-lead {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+    align-items: stretch;
+    gap: clamp(1.5rem, 3vw, 2.75rem);
+}
+
+.node-list {
+    display: grid;
+    align-content: stretch;
+    gap: clamp(1.25rem, 2.5vw, 2rem);
+    min-width: 0;
+}
+
+/* --- Readout ------------------------------------------------------------ */
+
+.node-readout {
+    display: grid;
+    align-content: start;
+    padding: var(--hts-space-5);
+    border: 1px solid var(--hts-border-strong);
+    border-radius: var(--hts-radius-md);
+    background: var(--hts-surface);
+    box-shadow: var(--hts-rim);
+}
+
+.readout-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--hts-space-3);
+    padding-bottom: var(--hts-space-4);
+    border-bottom: 1px solid var(--hts-border);
+}
+
+.readout-id {
+    color: var(--hts-ink);
+    font-family: var(--hts-font-mono);
+    font-size: var(--hts-text-sm);
+    font-weight: 620;
+    letter-spacing: 0.12em;
+}
+
+.readout-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-family: var(--hts-font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.16em;
+    white-space: nowrap;
+}
+
+.status-dot {
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 50%;
+    background: currentColor;
+}
+
+.readout-status.is-healthy {
+    color: var(--hts-blue-300);
+}
+
+.readout-status.is-healthy .status-dot {
+    box-shadow: 0 0 8px 1px rgba(131, 168, 243, 0.85);
+    animation: status-breathe 3.2s var(--hts-ease) infinite;
+}
+
+@keyframes status-breathe {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    55% {
+        opacity: 0.35;
+    }
+}
+
+.readout-status.is-provisioning {
+    color: var(--hts-purple-300);
+}
+
+.readout-status.is-reserved {
+    color: var(--hts-ink-muted);
+}
+
+/* Two specification columns inside a readout, because the card is now wide and short rather than
+   narrow and tall. It collapses back to one below. */
+.readout-specs {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--hts-space-5);
+}
+
+.readout-row {
+    display: grid;
+    align-content: start;
+    gap: 0.35rem;
+    padding-block: var(--hts-space-4);
+    border-bottom: 1px solid var(--hts-border);
+}
+
+/* The last row of each column, not just the last of the card. */
+.readout-row:nth-last-child(-n + 2) {
+    padding-bottom: 0;
+    border-bottom: 0;
+}
+
+.readout-row dt {
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.2em;
+}
+
+.readout-row dd {
+    display: grid;
+    gap: 0.2rem;
+    min-width: 0;
+}
+
+.readout-detail {
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.12em;
+}
+
+/* --- Strip: the rest of the rack ---------------------------------------- */
+
+.gallery-strip {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(1rem, 2vw, 1.75rem);
+    margin-top: clamp(1.5rem, 3vw, 2.75rem);
+}
+
+.gallery-note {
+    position: relative;
+    max-width: 42rem;
+    margin-top: clamp(2.5rem, 4vw, 3.5rem);
+    padding-top: var(--hts-space-5);
+    border-top: 1px solid var(--hts-border);
+    color: var(--hts-ink-muted);
+    font-size: var(--hts-text-sm);
+    line-height: var(--hts-leading-normal);
+}
+
+/* --- Responsive --------------------------------------------------------- */
+
+@media (max-width: 1080px) {
+    .gallery-lead {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* A full-width portrait photograph would run past a laptop screen on its own, so the lead
+       image takes the landscape crop once it stops sharing the row. */
+    .gallery-lead ::deep .photo .photo-frame {
+        --photo-ratio: 3 / 2;
+    }
+}
+
+@media (max-width: 720px) {
+    .readout-specs {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .readout-row:nth-last-child(-n + 2) {
+        padding-bottom: var(--hts-space-4);
+        border-bottom: 1px solid var(--hts-border);
+    }
+
+    .readout-row:last-child {
+        padding-bottom: 0;
+        border-bottom: 0;
+    }
+
+    /* Three portrait frames side by side become slivers; two rows of readable frames is better
+       than one row of unreadable ones. The third would be left on its own, so it runs the full
+       width and takes a landscape crop rather than sitting in half a row. */
+    .gallery-strip {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .gallery-strip ::deep .photo:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .gallery-strip ::deep .photo:last-child .photo-frame {
+        --photo-ratio: 3 / 2;
+    }
+}

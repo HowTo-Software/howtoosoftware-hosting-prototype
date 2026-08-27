@@ -1,0 +1,127 @@
+.zomboid-hero {
+    position: relative;
+    padding-block: clamp(5rem, 10vw, 9rem) clamp(4rem, 7vw, 7rem);
+    overflow: hidden;
+}
+
+.zomboid-hero-inner {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    align-items: center;
+    gap: clamp(2.5rem, 6vw, 5rem);
+}
+
+.zomboid-kicker {
+    margin-bottom: var(--hts-space-5);
+    color: var(--hts-purple-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.22em;
+}
+
+.zomboid-title {
+    font-size: clamp(2.4rem, 1.4rem + 3.6vw, 4.2rem);
+    font-weight: 680;
+    line-height: 1.02;
+    letter-spacing: -0.035em;
+}
+
+.zomboid-accent {
+    background: linear-gradient(100deg, var(--hts-blue-300) 0%, var(--hts-purple-300) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+.zomboid-lede {
+    max-width: 34rem;
+    margin-top: var(--hts-space-6);
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-lg);
+    line-height: var(--hts-leading-relaxed);
+}
+
+.zomboid-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--hts-space-4);
+    margin-top: var(--hts-space-7);
+}
+
+/* ── Points ────────────────────────────────────────────────────────────── */
+
+.zomboid-points {
+    display: grid;
+    gap: var(--hts-space-4);
+    min-width: 0;
+}
+
+.zomboid-points li {
+    padding: var(--hts-space-5);
+    border: 1px solid var(--hts-border);
+    border-radius: var(--hts-radius-md);
+    background: var(--hts-surface);
+    box-shadow: var(--hts-rim);
+}
+
+.zomboid-points h2 {
+    margin-bottom: 0.45rem;
+    color: var(--hts-ink);
+    font-size: var(--hts-text-md);
+    font-weight: 600;
+    letter-spacing: -0.012em;
+}
+
+.zomboid-points p {
+    color: var(--hts-ink-muted);
+    font-size: var(--hts-text-sm);
+    line-height: var(--hts-leading-normal);
+}
+
+/* ── Back ──────────────────────────────────────────────────────────────── */
+
+.zomboid-back {
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+    border-top: 1px solid var(--hts-border);
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    transition: color var(--hts-duration-fast) var(--hts-ease);
+}
+
+/* The arrow points back where the link goes. */
+.back-link ::deep svg {
+    transform: rotate(180deg);
+    transition: transform var(--hts-duration-base) var(--hts-ease-out);
+}
+
+.back-link:hover {
+    color: var(--hts-blue-300);
+}
+
+.back-link:hover ::deep svg {
+    transform: rotate(180deg) translateX(3px);
+}
+
+@media (max-width: 1024px) {
+    .zomboid-hero-inner {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .back-link:hover ::deep svg {
+        transform: rotate(180deg);
+    }
+}

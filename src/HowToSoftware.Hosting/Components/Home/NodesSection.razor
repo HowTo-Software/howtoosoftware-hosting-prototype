@@ -1,6 +1,13 @@
 @*
-    Hardware presented as abstract node panels wired into the provisioning bus, rather than
-    stock server-rack photography. Load bars are the only decoration.
+    The machines, opening on a photograph of the actual rack.
+
+    The abstract node panels are still here and still carry the specifications - but they used
+    to carry the section on their own, which meant the strongest claim the company can make,
+    that this hardware physically exists and we own it, was being made entirely in vector
+    graphics. A drawing of a server proves nothing. The photograph does.
+
+    The plate is the real rack with its door open. The overlay is the node state, set over it
+    rather than beside it, so the reading is one thing: these machines, this state.
 *@
 
 @inject IMarketingContentService Content
@@ -10,15 +17,41 @@
 <section class="nodes" id="nodes" aria-labelledby="nodes-heading">
     <div class="hts-container hts-container--wide">
         <header class="nodes-head" data-reveal="rise">
-            <p class="nodes-kicker">
+            <p class="nodes-kicker" data-text-effect="flicker">
                 <span class="kicker-index">05</span>
                 @Text["Nodes.Kicker"]
             </p>
-            <h2 id="nodes-heading" class="nodes-title">
+            <h2 id="nodes-heading" class="nodes-title" data-text-effect="rise">
                 @Text["Nodes.Line1"] <span class="nodes-accent">@Text["Nodes.Accent"]</span>
             </h2>
             <p class="nodes-lede">@Text["Nodes.Lede"]</p>
         </header>
+
+        @*
+            Wide crop of a portrait photograph, anchored at 40% so the crop takes the mounted
+            machines rather than the ceiling or the floor.
+        *@
+        <RackPlate Slot="HardwarePhotoSlot.RackOpen"
+                   Ratio="21 / 9"
+                   Position="center 40%"
+                   CssClass="nodes-plate"
+                   Alt="@Text["Nodes.PlateAlt"]">
+            <Overlay>
+                <div class="plate-readout">
+                    <p class="readout-key">@Text["Nodes.PlateKey"]</p>
+                    <ul class="readout-nodes">
+                        @foreach (var node in Content.Nodes)
+                        {
+                            <li>
+                                <span class="readout-dot" aria-hidden="true"></span>
+                                <span class="readout-id">@node.Id</span>
+                                <span class="readout-state">@HealthLabel(node.Health)</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </Overlay>
+        </RackPlate>
 
         <div class="bus" aria-hidden="true">
             <span class="bus-line"></span>
@@ -53,18 +86,26 @@
                         }
                     </dl>
 
-                    <div class="node-load">
-                        <div class="load-head">
-                            <span>@Text["Nodes.Allocation"]</span>
-                            <span class="load-value">@node.LoadPercent%</span>
+                    @if (node.LoadPercent is { } load)
+                    {
+                        @* Only drawn when there is a live figure behind it. A percentage frozen
+                           at build time reads as a fact about the platform right now. *@
+                        <div class="node-load">
+                            <div class="load-head">
+                                <span>@Text["Nodes.Allocation"]</span>
+                                <span class="load-value">@load%</span>
+                            </div>
+                            <div class="load-track">
+                                <span class="load-fill" style="--target: @(load)%"></span>
+                            </div>
+                            @if (node.Worlds is { } worlds)
+                            {
+                                <p class="load-note">
+                                    @(worlds > 0 ? Text["Nodes.WorldsPlaced", worlds].Value : Text["Nodes.Awaiting"].Value)
+                                </p>
+                            }
                         </div>
-                        <div class="load-track">
-                            <span class="load-fill" style="--target: @(node.LoadPercent)%"></span>
-                        </div>
-                        <p class="load-note">
-                            @(node.Worlds > 0 ? Text["Nodes.WorldsPlaced", node.Worlds].Value : Text["Nodes.Awaiting"].Value)
-                        </p>
-                    </div>
+                    }
                 </li>
             }
         </ul>

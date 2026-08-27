@@ -18,12 +18,12 @@
          aria-labelledby="@HeadingId">
     <div class="hts-container hts-container--wide chapter-inner">
         <div class="chapter-copy" data-reveal="@(Chapter.Mirrored ? "right" : "left")">
-            <p class="chapter-kicker">
+            <p class="chapter-kicker" data-text-effect="flicker">
                 <span class="kicker-index">@Chapter.Index</span>
                 @Text[$"{KeyPrefix}.Kicker"]
             </p>
 
-            <h2 class="chapter-title" id="@HeadingId">@Text[$"{KeyPrefix}.Title"]</h2>
+            <h2 class="chapter-title" id="@HeadingId" data-text-effect="rise">@Text[$"{KeyPrefix}.Title"]</h2>
 
             <p class="chapter-lede">
                 <CopySlot Size="CopySlot.SlotSize.Lede" />

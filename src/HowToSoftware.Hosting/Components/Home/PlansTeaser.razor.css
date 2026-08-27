@@ -1,0 +1,201 @@
+.teaser {
+    position: relative;
+    padding-block: clamp(4.5rem, 8vw, 8rem);
+    border-top: 1px solid var(--hts-border);
+    background: var(--hts-navy-900);
+    overflow: hidden;
+}
+
+.teaser::before {
+    content: "";
+    position: absolute;
+    top: 8%;
+    right: -6%;
+    width: min(44rem, 74vw);
+    height: 28rem;
+    background: radial-gradient(ellipse at center, rgba(61, 92, 224, 0.16) 0%, transparent 68%);
+    filter: blur(70px);
+    pointer-events: none;
+}
+
+.teaser-inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    align-items: center;
+    gap: clamp(2.5rem, 6vw, 5rem);
+}
+
+.teaser-kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: var(--hts-space-5);
+    color: var(--hts-purple-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+}
+
+.kicker-index {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: none;
+    border-radius: var(--hts-radius-xs);
+    background: var(--hts-blue-700);
+    color: var(--hts-white);
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+}
+
+.teaser-title {
+    font-size: clamp(2rem, 1.3rem + 2.5vw, 3.1rem);
+    font-weight: 660;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+}
+
+.teaser-lede {
+    max-width: 34rem;
+    margin-top: var(--hts-space-5);
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-md);
+    line-height: var(--hts-leading-relaxed);
+}
+
+.teaser-points {
+    display: grid;
+    gap: 0.55rem;
+    margin-top: var(--hts-space-6);
+}
+
+.teaser-points li {
+    position: relative;
+    padding-left: 1.15rem;
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+}
+
+/* A square tick rather than a bullet, matching the plan cards. */
+.teaser-points li::before {
+    content: "";
+    position: absolute;
+    top: 0.42em;
+    left: 0;
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 1px;
+    background: var(--hts-blue-400);
+}
+
+/*
+    ::deep, because this class lands on CtaButton's own root element and that element carries
+    CtaButton's scope attribute rather than this component's. Without it the rule compiles,
+    ships, matches nothing, and the button sits flush against the list above it.
+*/
+.teaser-copy ::deep .teaser-cta {
+    margin-top: var(--hts-space-8);
+}
+
+/* ── Price ─────────────────────────────────────────────────────────────── */
+
+.teaser-price {
+    display: grid;
+    justify-items: start;
+    gap: 0.2rem;
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    border: 1px solid var(--hts-border-blue);
+    border-radius: var(--hts-radius-lg);
+    background:
+        radial-gradient(130% 90% at 50% 0%, rgba(61, 92, 224, 0.16) 0%, transparent 66%),
+        var(--hts-surface);
+    box-shadow: var(--hts-rim), var(--hts-shadow-md);
+    min-width: 0;
+}
+
+.price-label {
+    color: var(--hts-blue-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    font-weight: 700;
+    letter-spacing: 0.24em;
+}
+
+.price-figure {
+    display: flex;
+    align-items: baseline;
+    gap: 0.25rem;
+    margin-top: 0.35rem;
+    color: var(--hts-ink);
+    font-size: clamp(2.4rem, 1.6rem + 2.4vw, 3.4rem);
+    font-weight: 680;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    font-variant-numeric: tabular-nums;
+}
+
+.price-symbol {
+    color: var(--hts-ink-muted);
+    font-size: 0.42em;
+    font-weight: 560;
+}
+
+.price-unit {
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.16em;
+}
+
+.price-pending {
+    margin-top: 0.35rem;
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-sm);
+    line-height: var(--hts-leading-normal);
+}
+
+.price-spec {
+    display: grid;
+    width: 100%;
+    margin-top: var(--hts-space-5);
+    padding-top: var(--hts-space-4);
+    border-top: 1px solid var(--hts-border);
+}
+
+.price-spec > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--hts-space-4);
+    padding-block: 0.4rem;
+}
+
+.price-spec dt {
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.2em;
+}
+
+.price-spec dd {
+    color: var(--hts-ink-soft);
+    font-family: var(--hts-font-mono);
+    font-size: 0.6875rem;
+    white-space: nowrap;
+}
+
+@media (max-width: 1024px) {
+    .teaser-inner {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .teaser-price {
+        justify-self: stretch;
+        max-width: 26rem;
+    }
+}

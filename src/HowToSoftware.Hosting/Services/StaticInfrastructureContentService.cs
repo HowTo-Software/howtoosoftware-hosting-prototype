@@ -1,52 +1,67 @@
+using HowToSoftware.Hosting.Localization;
 using HowToSoftware.Hosting.Models;
+using Microsoft.Extensions.Localization;
 
 namespace HowToSoftware.Hosting.Services;
 
 /// <summary>
-/// The prototype's infrastructure structure.
+/// The infrastructure page's structure and the specifications behind it.
 /// </summary>
 /// <remarks>
 /// <para>
-/// <b>No hardware figures appear in this file, and none should.</b> CPU models, memory sizes,
-/// storage layout, link speeds, datacentre locations and uptime numbers have not been supplied
-/// yet, so every specification is left pending and the page shows the <c>TEXT ABOUT HERE</c>
-/// placeholder in its place. Filling one in here is how a placeholder quietly becomes a claim.
+/// The four platform specifications are now real: they were read from the running hosts rather
+/// than taken from a datasheet, and nothing here is invented. Anything still undecided stays
+/// <see langword="null"/> so the page renders the visible <c>TEXT ABOUT HERE</c> placeholder
+/// instead of a plausible-looking figure.
 /// </para>
 /// <para>
-/// Node identity and health mirror the node panels already on the homepage, so the two pages
-/// describe the same platform.
+/// What is deliberately absent: hostnames, addresses, serial numbers and live utilisation. This
+/// page describes the class of machine a customer's world lands on; it is not an inventory of
+/// the estate.
 /// </para>
 /// </remarks>
 public sealed class StaticInfrastructureContentService : IInfrastructureContentService
 {
-    private static readonly HardwareSpec[] PendingSpecSheet =
+    private readonly IStringLocalizer<HardwareText> _text;
+
+    /// <summary>Creates the service.</summary>
+    /// <param name="text">Hardware copy for the culture chosen for this request.</param>
+    public StaticInfrastructureContentService(IStringLocalizer<HardwareText> text) => _text = text;
+
+    /// <inheritdoc />
+    public IReadOnlyList<HardwareSpec> SpecSheet =>
     [
-        new(HardwareSpecKind.Cpu),
-        new(HardwareSpecKind.Memory),
-        new(HardwareSpecKind.Storage),
-        new(HardwareSpecKind.Network)
+        new(HardwareSpecKind.Cpu, _text["Node.CpuValue"]),
+        new(HardwareSpecKind.Memory, _text["Node.MemoryValue"]),
+        new(HardwareSpecKind.Storage, _text["Node.StorageValue"]),
+        new(HardwareSpecKind.Network, _text["Node.NetworkValue"])
     ];
 
     /// <inheritdoc />
-    public IReadOnlyList<HardwareSpec> SpecSheet => PendingSpecSheet;
-
-    /// <inheritdoc />
-    public IReadOnlyList<HardwareNode> Nodes { get; } =
+    /// <remarks>
+    /// Two machines, identically specified - same board, same CPU, same memory, same storage
+    /// class. Neither carries an allocation figure: that is live data a statically rendered page
+    /// cannot keep current, so the page draws an indeterminate bar rather than a number that
+    /// would be stale the moment it shipped.
+    /// </remarks>
+    public IReadOnlyList<HardwareNode> Nodes =>
     [
-        new("01", NodeHealth.Healthy, PendingSpecSheet),
-        new("02", NodeHealth.Healthy, PendingSpecSheet),
-        new("03", NodeHealth.Reserved, PendingSpecSheet)
+        new("01", NodeHealth.Healthy, SpecSheet),
+        new("02", NodeHealth.Healthy, SpecSheet)
     ];
 
     /// <inheritdoc />
+    /// <remarks>
+    /// Indices start at 04: the hero, the specification sheet and the machines take 01-03.
+    /// </remarks>
     public IReadOnlyList<InfrastructureChapter> Chapters { get; } =
     [
-        new("compute", "03", InfrastructureTopic.Compute, InfrastructureLayout.SpecFigure),
-        new("memory", "04", InfrastructureTopic.Memory, InfrastructureLayout.LayerDiagram, Mirrored: true),
-        new("storage", "05", InfrastructureTopic.Storage, InfrastructureLayout.EditorialSplit),
-        new("network", "06", InfrastructureTopic.Network, InfrastructureLayout.FlowDiagram),
-        new("allocation", "07", InfrastructureTopic.Allocation, InfrastructureLayout.AllocationMap, Mirrored: true),
-        new("reliability", "08", InfrastructureTopic.Reliability, InfrastructureLayout.OperationsRail)
+        new("compute", "04", InfrastructureTopic.Compute, InfrastructureLayout.SpecFigure),
+        new("memory", "05", InfrastructureTopic.Memory, InfrastructureLayout.LayerDiagram, Mirrored: true),
+        new("storage", "06", InfrastructureTopic.Storage, InfrastructureLayout.EditorialSplit),
+        new("network", "07", InfrastructureTopic.Network, InfrastructureLayout.FlowDiagram),
+        new("allocation", "08", InfrastructureTopic.Allocation, InfrastructureLayout.AllocationMap, Mirrored: true),
+        new("reliability", "09", InfrastructureTopic.Reliability, InfrastructureLayout.OperationsRail)
     ];
 }
 

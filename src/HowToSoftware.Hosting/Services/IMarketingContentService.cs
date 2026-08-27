@@ -31,7 +31,7 @@ public interface IMarketingContentService
     IReadOnlyList<TelemetrySignal> TelemetryStrip { get; }
 
     /// <summary>Cells that make up the stylised world grid.</summary>
-    IReadOnlyList<WorldCell> WorldCells { get; }
+    IReadOnlyList<WorldEvent> WorldEvents { get; }
 
     /// <summary>Workshop items shown in the mod-synchronisation panel.</summary>
     IReadOnlyList<WorkshopItem> WorkshopItems { get; }

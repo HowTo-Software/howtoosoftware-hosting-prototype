@@ -1,0 +1,159 @@
+.photo {
+    display: grid;
+    gap: var(--hts-space-3);
+    margin: 0;
+    min-width: 0;
+}
+
+/* The box reserves its space before the image decodes, so nothing below it moves when the
+   photograph arrives. `cover` then crops to fill it rather than letterboxing. */
+.photo-frame {
+    position: relative;
+    aspect-ratio: var(--photo-ratio, 3 / 4);
+    border-radius: var(--hts-radius-md);
+    background:
+        radial-gradient(120% 90% at 50% 0%, rgba(131, 168, 243, 0.10) 0%, transparent 62%),
+        var(--hts-surface-inset);
+    overflow: hidden;
+    isolation: isolate;
+}
+
+.photo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* The rack photography is shot in a lit room; the page is not. A small grade settles the
+       photograph into the page instead of letting it glare out of it. */
+    filter: saturate(0.92) contrast(1.04) brightness(0.95);
+    transform: scale(1.001);
+    transition:
+        transform var(--hts-duration-slow) var(--hts-ease-out),
+        filter var(--hts-duration-slow) var(--hts-ease);
+}
+
+.photo:hover .photo-image {
+    transform: scale(1.03);
+    filter: saturate(0.98) contrast(1.05) brightness(0.98);
+}
+
+/* Rim light on the inside edge, matching every other panel in the system. */
+.photo-rim {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border: 1px solid var(--hts-border-strong);
+    border-radius: inherit;
+    box-shadow: var(--hts-rim);
+    pointer-events: none;
+}
+
+/* A registration tick in the corner, borrowed from the diagrams, so a photograph reads as part
+   of the same technical drawing set. */
+.photo-tick {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    z-index: 3;
+    width: 0.9rem;
+    height: 0.9rem;
+    border-top: 1px solid var(--hts-blue-300);
+    border-left: 1px solid var(--hts-blue-300);
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.photo-caption {
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+}
+
+/* ── Pending: no photograph supplied yet ───────────────────────────────── */
+
+.photo--pending .photo-frame {
+    display: grid;
+    place-items: center;
+    background:
+        repeating-linear-gradient(
+            -45deg,
+            var(--hts-cell-bg) 0 10px,
+            transparent 10px 20px),
+        var(--hts-surface-inset);
+}
+
+.photo--pending .photo-rim {
+    border-style: dashed;
+    border-color: var(--hts-rule);
+}
+
+.photo--pending .photo-tick {
+    border-color: var(--hts-ink-muted);
+    opacity: 0.5;
+}
+
+.pending-body {
+    display: grid;
+    justify-items: center;
+    gap: var(--hts-space-3);
+    padding: var(--hts-space-5);
+    text-align: center;
+}
+
+.pending-badge {
+    padding: 0.16rem 0.55rem;
+    border: 1px solid var(--hts-border-blue);
+    border-radius: var(--hts-radius-pill);
+    color: var(--hts-blue-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+}
+
+.pending-label {
+    color: var(--hts-ink-soft);
+    font-family: var(--hts-font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+/* The instruction lives on the page, because a note in a README is a note nobody opens. */
+.pending-path {
+    max-width: 100%;
+    padding: 0.35rem 0.6rem;
+    border: 1px solid var(--hts-border);
+    border-radius: var(--hts-radius-xs);
+    background: var(--hts-console);
+    color: var(--hts-console-accent);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* ── Variants ──────────────────────────────────────────────────────────── */
+
+/* A rack is photographed standing up, so portrait is the default. These two exist for the
+   occasional shot that is not. */
+.photo.is-landscape .photo-frame {
+    --photo-ratio: 3 / 2;
+}
+
+.photo.is-tall .photo-frame {
+    --photo-ratio: 9 / 16;
+}
+
+.photo.is-wide .photo-frame {
+    --photo-ratio: 16 / 9;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .photo-image,
+    .photo:hover .photo-image {
+        transform: none;
+        transition: none;
+    }
+}

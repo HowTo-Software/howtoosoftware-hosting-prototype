@@ -309,6 +309,335 @@ html.hts-js [data-reveal="rise"] {
     transform: translate3d(0, 40px, 0);
 }
 
+/*
+    A reveal that enters from the right sits 26px outside the page until it fires, and on a
+    narrow screen that is 26px the visitor can scroll sideways into. `clip` rather than `hidden`
+    because `hidden` would make the body a scroll container and break every `position: sticky`
+    on the site.
+*/
+body {
+    overflow-x: clip;
+}
+
+/*
+    Mobile keeps the reveals but drops the horizontal ones.
+
+    On a phone every section is one column, so content entering from the side is travelling
+    across the whole screen to arrive where it would have been anyway - motion for its own
+    sake, and the more expensive kind. The vertical reveals and the image wipes stay, because
+    those are the ones that give the page its rhythm.
+*/
+@media (max-width: 720px) {
+    html.hts-js [data-reveal="left"],
+    html.hts-js [data-reveal="right"] {
+        transform: translate3d(0, 18px, 0);
+    }
+}
+
+/* ── Photo plates ─────────────────────────────────────────────────────── */
+
+/*
+    A photograph used as a composition element rather than as an illustration in a box:
+    full-bleed inside its frame, graded down into the page, with room for technical type on
+    top of it.
+
+    Shared here rather than in a component, because two very different families of image use
+    it - photographs we took of our own rack, and game imagery belonging to a studio - and the
+    difference between them belongs in the folders and the READMEs, not in two near-identical
+    stylesheets.
+
+    Everything below is CSS. The reveal is one transition on a class an IntersectionObserver
+    adds; there is no frame loop, and nothing crosses to the server.
+*/
+
+.hts-plate {
+    position: relative;
+    margin: 0;
+    min-width: 0;
+}
+
+/* The frame reserves its ratio before anything decodes, so nothing below it moves on arrival. */
+.hts-plate-frame {
+    position: relative;
+    aspect-ratio: var(--plate-ratio, 16 / 9);
+    border-radius: var(--hts-radius-lg);
+    overflow: hidden;
+    isolation: isolate;
+    background: var(--hts-navy-950);
+}
+
+.hts-plate-image,
+.hts-plate-standin {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: var(--plate-position, center);
+}
+
+/* A lit photograph dropped into a near-black page glares. The grade settles it into the
+   environment instead of leaving it sitting on top of it. */
+.hts-plate-image {
+    filter: saturate(0.9) contrast(1.05) brightness(0.86);
+    transform: scale(1.045);
+    transition: transform 1.5s var(--hts-ease-out);
+}
+
+/* Two gradients: down from the top so type has contrast wherever it lands, up from the bottom
+   so the plate dissolves into the page rather than ending on a hard edge. */
+.hts-plate-scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+        linear-gradient(180deg, rgba(7, 10, 22, 0.74) 0%, rgba(7, 10, 22, 0.14) 40%, transparent 64%),
+        linear-gradient(0deg, rgba(7, 10, 22, 0.92) 0%, rgba(7, 10, 22, 0.34) 28%, transparent 60%);
+    pointer-events: none;
+}
+
+.hts-plate-overlay {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: flex-end;
+    padding: clamp(1.1rem, 3vw, 2.5rem);
+}
+
+/* A rim, so a plate belongs to the same drawing set as the panels around it. */
+.hts-plate-frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    border: 1px solid var(--hts-border-strong);
+    border-radius: inherit;
+    box-shadow: var(--hts-rim);
+    pointer-events: none;
+}
+
+.hts-plate.is-pending .hts-plate-frame::after {
+    border-style: dashed;
+    border-color: var(--hts-rule);
+}
+
+/*
+    The reveal is a wipe, not a fade: the frame opens from the bottom while the image settles
+    out of a slight over-scale, which reads as a photograph arriving rather than an element
+    switching on.
+*/
+html.hts-js [data-reveal="plate"] {
+    opacity: 1;
+    transform: none;
+}
+
+html.hts-js [data-reveal="plate"] .hts-plate-frame {
+    clip-path: inset(0 0 100% 0);
+    transition: clip-path 1.05s var(--hts-ease-out);
+}
+
+html.hts-js [data-reveal="plate"].is-revealed .hts-plate-frame {
+    clip-path: inset(0 0 0 0);
+}
+
+html.hts-js [data-reveal="plate"].is-revealed .hts-plate-image {
+    transform: scale(1);
+}
+
+/* Where to drop a file that has not been supplied. On the page, because a note in a README is
+   a note nobody opens. */
+.hts-plate-drop {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin-top: var(--hts-space-3);
+}
+
+.hts-plate-drop .drop-badge {
+    padding: 0.16rem 0.55rem;
+    border: 1px solid var(--hts-border-blue);
+    border-radius: var(--hts-radius-pill);
+    color: var(--hts-blue-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5rem;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    white-space: nowrap;
+}
+
+.hts-plate-drop .drop-path {
+    color: var(--hts-console-accent);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html.hts-js [data-reveal="plate"] .hts-plate-frame {
+        clip-path: none;
+        transition: none;
+    }
+
+    .hts-plate-image {
+        transform: none;
+        transition: none;
+    }
+}
+
+/* ── Text effects ────────────────────────────────────────────────────────── */
+
+/*
+    `wwwroot/js/site.js` wraps each character of a `[data-text-effect]` element in a
+    `.char` span carrying its index. Everything below decides what that is worth.
+
+    All of it is additive: without scripting there are no spans, the selectors match
+    nothing, and the heading is simply a heading. The stagger runs off the character
+    index, so a line settles left to right at a fixed rate rather than a fixed total
+    duration - a long headline takes longer than a short one, which is what reading
+    it does too.
+*/
+
+/* The wrapper keeps the split to a single item, so a flex parent lays it out as one run of
+   text rather than as one item per word. */
+[data-text-effect] .split {
+    display: inline;
+}
+
+/* A word is the unit a line breaks on. Without this the characters, being inline-block,
+   would let the browser break a heading in the middle of a word. */
+[data-text-effect] .word {
+    display: inline-block;
+    white-space: nowrap;
+}
+
+[data-text-effect] .char {
+    display: inline-block;
+}
+
+/* --- rise: characters lift into focus, one after another ---------------- */
+
+html.hts-js [data-text-effect="rise"] .char {
+    opacity: 0;
+    transform: translate3d(0, 0.55em, 0);
+    filter: blur(6px);
+}
+
+html.hts-js [data-text-effect="rise"].is-revealed .char,
+html.hts-js .is-revealed [data-text-effect="rise"] .char {
+    animation: char-rise 0.62s var(--hts-ease-out) both;
+    animation-delay: calc(var(--char-index) * 26ms);
+}
+
+@keyframes char-rise {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 0.55em, 0);
+        filter: blur(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+        filter: blur(0);
+    }
+}
+
+/* --- flicker: characters come up like a display warming, some twice ------
+
+   The offset on the second keyframe is deliberately not uniform: every character
+   dips once on its way in, and because the dip sits at a different point in each
+   character's own timeline the line reads as letters appearing and disappearing
+   rather than as one block fading up. */
+
+html.hts-js [data-text-effect="flicker"] .char {
+    opacity: 0;
+}
+
+html.hts-js [data-text-effect="flicker"].is-revealed .char,
+html.hts-js .is-revealed [data-text-effect="flicker"] .char {
+    animation: char-flicker 0.9s var(--hts-ease) both;
+    animation-delay: calc(var(--char-index) * 34ms);
+}
+
+@keyframes char-flicker {
+    0% {
+        opacity: 0;
+        transform: translate3d(0, -0.18em, 0);
+    }
+
+    18% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+
+    26% {
+        opacity: 0.06;
+    }
+
+    40% {
+        opacity: 1;
+    }
+
+    52% {
+        opacity: 0.35;
+    }
+
+    100% {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+/* --- sweep: a light passes along the line as the characters arrive ------ */
+
+html.hts-js [data-text-effect="sweep"] .char {
+    opacity: 0;
+}
+
+html.hts-js [data-text-effect="sweep"].is-revealed .char,
+html.hts-js .is-revealed [data-text-effect="sweep"] .char {
+    animation: char-sweep 0.85s var(--hts-ease-out) both;
+    animation-delay: calc(var(--char-index) * 30ms);
+}
+
+@keyframes char-sweep {
+    0% {
+        opacity: 0;
+        color: var(--hts-blue-300);
+        transform: translate3d(-0.3em, 0, 0);
+    }
+
+    45% {
+        opacity: 1;
+        color: var(--hts-blue-300);
+        text-shadow: 0 0 14px rgba(131, 168, 243, 0.75);
+    }
+
+    100% {
+        opacity: 1;
+        color: inherit;
+        text-shadow: none;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+/*
+    Motion is a preference, not a detail. With it suppressed every effect collapses
+    to "the text is there" - no animation, no residual transform, no blur.
+*/
+@media (prefers-reduced-motion: reduce) {
+    html.hts-js [data-text-effect] .char {
+        opacity: 1 !important;
+        transform: none !important;
+        filter: none !important;
+        text-shadow: none !important;
+        animation: none !important;
+    }
+}
+
 /* ── Pointer spotlight ─────────────────────────────────────────────────── */
 
 /* A panel marked `data-spotlight` lights from wherever the cursor is over it.

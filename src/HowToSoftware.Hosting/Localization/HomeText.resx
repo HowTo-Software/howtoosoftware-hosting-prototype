@@ -102,12 +102,6 @@
   <data name="World.CellValue" xml:space="preserve">
     <value>300 x 300</value>
   </data>
-  <data name="Grid.Caption" xml:space="preserve">
-    <value>KNOX COUNTY / CELL FIELD</value>
-  </data>
-  <data name="Grid.Streaming" xml:space="preserve">
-    <value>STREAMING</value>
-  </data>
   <data name="Workshop.Kicker" xml:space="preserve">
     <value>WORKSHOP</value>
   </data>
@@ -232,7 +226,7 @@
     <value>NODE</value>
   </data>
   <data name="Cp.NodeValue" xml:space="preserve">
-    <value>EU WEST / 01</value>
+    <value>US CENTRAL / 01</value>
   </data>
   <data name="Cp.PowerLabel" xml:space="preserve">
     <value>Server power controls</value>
@@ -421,7 +415,7 @@
     <value>Talk to the people building it.</value>
   </data>
   <data name="Closing.ContactCopy" xml:space="preserve">
-    <value>Plans and pricing are still being finalised. Describe your community - how many players, how heavily you mod, how you like to play - and we will match it to the right world.</value>
+    <value>Describe your community - how many players, how heavily you mod, how you like to play - and we will match it to the right plan, or price a build that is not on the list.</value>
   </data>
   <data name="Telemetry.GameBuild" xml:space="preserve">
     <value>GAME BUILD</value>
@@ -461,15 +455,6 @@
   </data>
   <data name="Signal.Mods" xml:space="preserve">
     <value>82 MODS</value>
-  </data>
-  <data name="Cell.Survivor" xml:space="preserve">
-    <value>SURVIVOR</value>
-  </data>
-  <data name="Cell.Safehouse" xml:space="preserve">
-    <value>SAFEHOUSE</value>
-  </data>
-  <data name="Cell.WorldState" xml:space="preserve">
-    <value>WORLD STATE</value>
   </data>
   <data name="Stage01.Title" xml:space="preserve">
     <value>ORDER RECEIVED</value>
@@ -517,22 +502,22 @@
     <value>VCPU</value>
   </data>
   <data name="Node.CpuValue" xml:space="preserve">
-    <value>High-frequency dedicated cores</value>
+    <value>Intel Core i9-10980XE</value>
   </data>
   <data name="Node.MemoryValue" xml:space="preserve">
-    <value>256 GB ECC</value>
+    <value>256 GB</value>
   </data>
   <data name="Node.StorageValue" xml:space="preserve">
-    <value>NVMe array</value>
+    <value>5 TB NVMe</value>
   </data>
   <data name="Node.NetworkValue" xml:space="preserve">
-    <value>Redundant uplink</value>
+    <value>1 GbE uplink</value>
   </data>
-  <data name="Node.RegionEuWest" xml:space="preserve">
-    <value>EU WEST</value>
+  <data name="Node.RegionPrimary" xml:space="preserve">
+    <value>US CENTRAL</value>
   </data>
-  <data name="Node.RegionPending" xml:space="preserve">
-    <value>PENDING</value>
+  <data name="Node.RegionSecondary" xml:space="preserve">
+    <value>US CENTRAL</value>
   </data>
   <data name="Cap01.Kicker" xml:space="preserve">
     <value>WORKSHOP</value>
@@ -652,7 +637,7 @@
     <value>Are the plans and prices on this page final?</value>
   </data>
   <data name="Faq.Pricing.Answer" xml:space="preserve">
-    <value>No. The catalogue on this page is placeholder test data used to review the interface, including the promotional-code field. Final plans, prices and discounts are still being decided and nothing here is a commercial offer.</value>
+    <value>Eight tiers, 4 GB to 16 GB of memory. Storage is 25 GB up to the 6 GB tier and 40 GB from 8 GB up. The prices are not eight separate decisions: each one is a published rate card - CPU, memory and NVMe - applied to what that tier actually ships, so a plan cannot be repriced without repricing what it is made of.</value>
   </data>
   <data name="Faq.Migrate.Question" xml:space="preserve">
     <value>Can I migrate an existing server?</value>
@@ -687,9 +672,6 @@
   <data name="Plan.KnoxCell.Tagline" xml:space="preserve">
     <value>A whole community, on dedicated allocation.</value>
   </data>
-  <data name="Plan.Cores" xml:space="preserve">
-    <value>{0} cores</value>
-  </data>
   <data name="Include.WorkshopSync" xml:space="preserve">
     <value>Workshop mod sync</value>
   </data>
@@ -713,5 +695,329 @@
   </data>
   <data name="Include.DedicatedAllocation" xml:space="preserve">
     <value>Dedicated allocation</value>
+  </data>
+  <data name="Plans.FlagBodyUnpriced" xml:space="preserve">
+    <value>The resource allocations here are final. Prices are not set yet, so the cards show the hardware each plan is provisioned with and leave the figure blank rather than guessing one.</value>
+  </data>
+  <data name="Plans.MemoryLabel" xml:space="preserve">
+    <value>RAM</value>
+  </data>
+  <data name="Plans.MemoryUnit" xml:space="preserve">
+    <value>GB</value>
+  </data>
+  <data name="Plans.SpecCpu" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="Plans.SpecStorage" xml:space="preserve">
+    <value>STORAGE</value>
+  </data>
+  <data name="Plans.SpecBackups" xml:space="preserve">
+    <value>BACKUPS</value>
+  </data>
+  <data name="Plans.CpuValue" xml:space="preserve">
+    <value>{0}% allocation</value>
+  </data>
+  <data name="Plans.StorageValue" xml:space="preserve">
+    <value>{0} GB NVMe</value>
+  </data>
+  <data name="Plans.PricePending" xml:space="preserve">
+    <value>PRICE PENDING</value>
+  </data>
+  <data name="Plans.PricePendingNote" xml:space="preserve">
+    <value>Pricing not set</value>
+  </data>
+  <data name="Plans.CpuNote" xml:space="preserve">
+    <value>CPU allocation is a share of a node’s threads, not pinned cores: 100% is the equivalent of one thread, so 300% lets a server burst across three. Every plan runs on the same hardware; storage steps up from 25 GB to 40 GB at the 8 GB tier.</value>
+  </data>
+  <data name="Plans.FlagTagUnpriced" xml:space="preserve">
+    <value>PRICING PENDING</value>
+  </data>
+  <data name="CustomBuild.Index" xml:space="preserve">
+    <value>09</value>
+  </data>
+  <data name="CustomBuild.Kicker" xml:space="preserve">
+    <value>BUILD TO ORDER</value>
+  </data>
+  <data name="CustomBuild.Title" xml:space="preserve">
+    <value>Need more than the largest plan?</value>
+  </data>
+  <data name="CustomBuild.Lede" xml:space="preserve">
+    <value>Set the memory, CPU allocation and storage your community actually needs. The estimate is worked out from the same published rates every plan on this page is priced from, so you can check the arithmetic rather than take our word for the number.</value>
+  </data>
+  <data name="CustomBuild.Ceiling" xml:space="preserve">
+    <value>The sliders stop at {0} GB, {1}% and {2} GB. That is a limit on this form, not on what can be built - past it, write to</value>
+  </data>
+  <data name="CustomBuild.MemoryLabel" xml:space="preserve">
+    <value>Memory</value>
+  </data>
+  <data name="CustomBuild.MemoryUnit" xml:space="preserve">
+    <value>GB</value>
+  </data>
+  <data name="CustomBuild.CpuLabel" xml:space="preserve">
+    <value>CPU allocation</value>
+  </data>
+  <data name="CustomBuild.DiskLabel" xml:space="preserve">
+    <value>NVMe storage</value>
+  </data>
+  <data name="CustomBuild.DiskUnit" xml:space="preserve">
+    <value>GB</value>
+  </data>
+  <data name="CustomBuild.PlayersLabel" xml:space="preserve">
+    <value>Players expected</value>
+  </data>
+  <data name="CustomBuild.PlayersPlaceholder" xml:space="preserve">
+    <value>Optional</value>
+  </data>
+  <data name="CustomBuild.NotesLabel" xml:space="preserve">
+    <value>Anything else</value>
+  </data>
+  <data name="CustomBuild.NotesPlaceholder" xml:space="preserve">
+    <value>Mod list, how long the world has been running, whatever matters.</value>
+  </data>
+  <data name="CustomBuild.EstimateLabel" xml:space="preserve">
+    <value>ESTIMATE</value>
+  </data>
+  <data name="CustomBuild.PerMonth" xml:space="preserve">
+    <value>per month</value>
+  </data>
+  <data name="CustomBuild.LineCpu" xml:space="preserve">
+    <value>CPU {0}%</value>
+  </data>
+  <data name="CustomBuild.LineMemory" xml:space="preserve">
+    <value>Memory {0} GB</value>
+  </data>
+  <data name="CustomBuild.LineDisk" xml:space="preserve">
+    <value>Storage {0} GB</value>
+  </data>
+  <data name="CustomBuild.ComparedTo" xml:space="preserve">
+    <value>For comparison, {0} - the largest listed plan - is {1} GB at {2}% for {3} a month.</value>
+  </data>
+  <data name="CustomBuild.EstimateNote" xml:space="preserve">
+    <value>An estimate, not a quote. It is the published rates applied to the figures above; availability and the final price are confirmed by a person.</value>
+  </data>
+  <data name="CustomBuild.Send" xml:space="preserve">
+    <value>Send this specification</value>
+  </data>
+  <data name="CustomBuild.SendNote" xml:space="preserve">
+    <value>Opens your own mail client with the specification filled in. Nothing is submitted from this page - there is no order behind this button yet.</value>
+  </data>
+  <data name="CustomBuild.NoRates" xml:space="preserve">
+    <value>No rate card is configured on this deployment, so there is no figure to show. Send the specification and we will price it.</value>
+  </data>
+  <data name="CustomBuild.MailSubject" xml:space="preserve">
+    <value>Custom build request</value>
+  </data>
+  <data name="CustomBuild.MailIntro" xml:space="preserve">
+    <value>I would like a quote for a Project Zomboid server with the following:</value>
+  </data>
+  <data name="Zomboid.MetaTitle" xml:space="preserve">
+    <value>Project Zomboid Plans</value>
+  </data>
+  <data name="Zomboid.MetaDescription" xml:space="preserve">
+    <value>Project Zomboid server plans from 4 GB to 16 GB, priced from a published rate card, with a build-to-order option for communities the ladder does not reach.</value>
+  </data>
+  <data name="Zomboid.Kicker" xml:space="preserve">
+    <value>PROJECT ZOMBOID / PLANS</value>
+  </data>
+  <data name="Zomboid.Line1" xml:space="preserve">
+    <value>Pick the world</value>
+  </data>
+  <data name="Zomboid.Accent" xml:space="preserve">
+    <value>your group can hold.</value>
+  </data>
+  <data name="Zomboid.Lede" xml:space="preserve">
+    <value>Eight tiers, one rate card and no surprises at the bottom of the invoice. Every figure on this page is what the server is provisioned with, not a marketing round number.</value>
+  </data>
+  <data name="Zomboid.Cta1" xml:space="preserve">
+    <value>See the plans</value>
+  </data>
+  <data name="Zomboid.Cta2" xml:space="preserve">
+    <value>Build to order</value>
+  </data>
+  <data name="Zomboid.PointRates" xml:space="preserve">
+    <value>Priced from published rates</value>
+  </data>
+  <data name="Zomboid.PointRatesBody" xml:space="preserve">
+    <value>CPU, memory and storage each carry a rate. A plan is those rates applied to what it ships, which is why no tier costs more than it contains.</value>
+  </data>
+  <data name="Zomboid.PointResources" xml:space="preserve">
+    <value>The figures are the provisioning</value>
+  </data>
+  <data name="Zomboid.PointResourcesBody" xml:space="preserve">
+    <value>The memory, CPU allocation and storage on each card are the exact values sent to the game panel when the server is created. There is no second set of numbers.</value>
+  </data>
+  <data name="Zomboid.PointCustom" xml:space="preserve">
+    <value>The ladder is not the limit</value>
+  </data>
+  <data name="Zomboid.PointCustomBody" xml:space="preserve">
+    <value>A community that needs more than the largest tier can specify it and get an estimate from the same rates, rather than being told to enquire.</value>
+  </data>
+  <data name="Zomboid.BackToMain" xml:space="preserve">
+    <value>Back to the main site</value>
+  </data>
+  <data name="PlansTeaser.Index" xml:space="preserve">
+    <value>08</value>
+  </data>
+  <data name="PlansTeaser.Kicker" xml:space="preserve">
+    <value>PLANS</value>
+  </data>
+  <data name="PlansTeaser.Title" xml:space="preserve">
+    <value>Eight tiers, one rate card.</value>
+  </data>
+  <data name="PlansTeaser.Lede" xml:space="preserve">
+    <value>Project Zomboid plans run from 4 GB to 16 GB, and every price on them is the same three published rates applied to what the tier ships. They have a page of their own.</value>
+  </data>
+  <data name="PlansTeaser.From" xml:space="preserve">
+    <value>FROM</value>
+  </data>
+  <data name="PlansTeaser.PerMonth" xml:space="preserve">
+    <value>per month</value>
+  </data>
+  <data name="PlansTeaser.Range" xml:space="preserve">
+    <value>{0} GB to {1} GB of memory across {2} tiers</value>
+  </data>
+  <data name="PlansTeaser.Storage" xml:space="preserve">
+    <value>{0} GB or {1} GB of NVMe, by tier</value>
+  </data>
+  <data name="PlansTeaser.Custom" xml:space="preserve">
+    <value>Build to order above the top tier</value>
+  </data>
+  <data name="PlansTeaser.Cta" xml:space="preserve">
+    <value>See Project Zomboid plans</value>
+  </data>
+  <data name="PlansTeaser.Unpriced" xml:space="preserve">
+    <value>Pricing not set on this deployment</value>
+  </data>
+  <data name="Timeline.Caption" xml:space="preserve">
+    <value>WORLD CONTINUITY</value>
+  </data>
+  <data name="Timeline.Persistent" xml:space="preserve">
+    <value>PERSISTENT</value>
+  </data>
+  <data name="Timeline.WorldLane" xml:space="preserve">
+    <value>WORLD</value>
+  </data>
+  <data name="Timeline.InstanceLane" xml:space="preserve">
+    <value>INSTANCE</value>
+  </data>
+  <data name="Timeline.Note" xml:space="preserve">
+    <value>The left line never breaks. That is the whole promise.</value>
+  </data>
+  <data name="Event.Restart.Tag" xml:space="preserve">
+    <value>RESTART</value>
+  </data>
+  <data name="Event.Restart.Detail" xml:space="preserve">
+    <value>The instance stops and comes back. The world it was serving does not stop with it.</value>
+  </data>
+  <data name="Event.Build.Tag" xml:space="preserve">
+    <value>BUILD CHANGE</value>
+  </data>
+  <data name="Event.Build.Detail" xml:space="preserve">
+    <value>A different game build runs against the same saved world.</value>
+  </data>
+  <data name="Event.Restore.Tag" xml:space="preserve">
+    <value>RESTORE POINT</value>
+  </data>
+  <data name="Event.Restore.Detail" xml:space="preserve">
+    <value>Taken on a schedule, without the server going down for it.</value>
+  </data>
+  <data name="Event.Rollback.Tag" xml:space="preserve">
+    <value>MOD ROLLBACK</value>
+  </data>
+  <data name="Event.Rollback.Detail" xml:space="preserve">
+    <value>You roll a mod back. Your community does not roll back with it.</value>
+  </data>
+  <data name="Event.Rebuild.Tag" xml:space="preserve">
+    <value>REBUILD</value>
+  </data>
+  <data name="Event.Rebuild.Detail" xml:space="preserve">
+    <value>The container underneath is rebuilt from scratch. The world volume outlives it.</value>
+  </data>
+  <data name="Plans.RenewalLine" xml:space="preserve">
+    <value>After the first month, {0}/mo</value>
+  </data>
+  <data name="Plans.RenewalNote" xml:space="preserve">
+    <value>The figure on each card is the first month. The rate charged from the second month onwards is printed under it.</value>
+  </data>
+  <data name="CustomBuild.RenewalLine" xml:space="preserve">
+    <value>After the first month, {0} a month.</value>
+  </data>
+  <data name="Zomboid.Photo.Pending" xml:space="preserve">
+    <value>IMAGE PENDING</value>
+  </data>
+  <data name="Nodes.PlateAlt" xml:space="preserve">
+    <value>The HowToSoftware rack with its door open, showing the machines the worlds run on</value>
+  </data>
+  <data name="Nodes.PlateKey" xml:space="preserve">
+    <value>THE RACK / US CENTRAL</value>
+  </data>
+  <data name="World.PlateAlt" xml:space="preserve">
+    <value>A Project Zomboid world in play</value>
+  </data>
+  <data name="World.PlateKey" xml:space="preserve">
+    <value>WORLD</value>
+  </data>
+  <data name="World.PlateState" xml:space="preserve">
+    <value>PERSISTENT</value>
+  </data>
+  <data name="Hero.PlateAlt" xml:space="preserve">
+    <value>A Project Zomboid world at dusk</value>
+  </data>
+  <data name="Bot.Index" xml:space="preserve">
+    <value>06</value>
+  </data>
+  <data name="Bot.Kicker" xml:space="preserve">
+    <value>OUR OWN SOFTWARE</value>
+  </data>
+  <data name="Bot.Title" xml:space="preserve">
+    <value>A server that watches itself.</value>
+  </data>
+  <data name="Bot.Lede" xml:space="preserve">
+    <value>Servers configured with more than 5 GB of memory can run our own server-side management bot, built here rather than bought in. It sits alongside the world and exists to help hold performance steady as players, mods and saved state accumulate.</value>
+  </data>
+  <data name="Bot.Threshold" xml:space="preserve">
+    <value>OFFERED ABOVE {0} GB OF MEMORY</value>
+  </data>
+  <data name="Bot.Caveat" xml:space="preserve">
+    <value>What it does not do is promise a number. There is no optimisation percentage, no uptime figure and no claim that a world cannot slow down - only software whose job is to watch for it and help you act.</value>
+  </data>
+  <data name="Bot.SystemName" xml:space="preserve">
+    <value>HTS SERVER BOT</value>
+  </data>
+  <data name="Bot.SystemState" xml:space="preserve">
+    <value>ATTACHED</value>
+  </data>
+  <data name="Bot.EndServer" xml:space="preserve">
+    <value>THE SERVER</value>
+  </data>
+  <data name="Bot.EndWorld" xml:space="preserve">
+    <value>THE WORLD</value>
+  </data>
+  <data name="Bot.Channel.Performance" xml:space="preserve">
+    <value>PERFORMANCE</value>
+  </data>
+  <data name="Bot.Channel.Memory" xml:space="preserve">
+    <value>MEMORY</value>
+  </data>
+  <data name="Bot.Channel.World" xml:space="preserve">
+    <value>WORLD STATE</value>
+  </data>
+  <data name="Bot.Channel.Management" xml:space="preserve">
+    <value>MANAGEMENT</value>
+  </data>
+  <data name="Bot.State.Watched" xml:space="preserve">
+    <value>WATCHED</value>
+  </data>
+  <data name="Bot.State.Managed" xml:space="preserve">
+    <value>MANAGED</value>
+  </data>
+  <data name="Plans.BotBadge" xml:space="preserve">
+    <value>HTS SERVER BOT</value>
+  </data>
+  <data name="Plans.BotIncluded" xml:space="preserve">
+    <value>INCLUDED</value>
+  </data>
+  <data name="Plans.BotNote" xml:space="preserve">
+    <value>The HTS server bot is offered on every tier above {0} GB of memory. The two smallest tiers do not carry it, and their cards do not claim it.</value>
   </data>
 </root>

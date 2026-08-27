@@ -1,0 +1,104 @@
+@*
+    The HowToSoftware server bot.
+
+    Not a robot. It is server-side software that sits beside a running world, so it is drawn the
+    way the rest of the platform is drawn: a link, a set of channels and a state - the same
+    visual language as the provisioning topology and the world continuity figure.
+
+    What the copy claims is bounded by what has actually been confirmed: it is ours, it is
+    offered above 5 GB, and it exists to help hold performance as a world grows. No percentage,
+    no guarantee, no automatic fix. The eligibility figure is read from ServerBot rather than
+    written into the copy, so the threshold and the sentence describing it cannot drift apart.
+
+    The channel bars fill on entry through a single CSS transition keyed off a class an
+    IntersectionObserver adds. Nothing here loops, and nothing crosses to the server.
+*@
+
+@inject IStringLocalizer<HomeText> Text
+
+<section class="bot" id="server-bot" aria-labelledby="bot-heading">
+    <div class="hts-container hts-container--wide bot-inner">
+        <header class="bot-copy" data-reveal="left">
+            <p class="bot-kicker" data-text-effect="flicker">
+                <span class="kicker-index">@Text["Bot.Index"]</span>
+                @Text["Bot.Kicker"]
+            </p>
+
+            <h2 id="bot-heading" class="bot-title" data-text-effect="rise">
+                @Text["Bot.Title"]
+            </h2>
+
+            <p class="bot-lede">@Text["Bot.Lede"]</p>
+
+            <p class="bot-threshold">
+                <span class="threshold-mark" aria-hidden="true"></span>
+                @Text["Bot.Threshold", ServerBot.MinimumMemoryGb]
+            </p>
+
+            <p class="bot-caveat">@Text["Bot.Caveat"]</p>
+        </header>
+
+        <div class="bot-system" data-reveal="right" data-spotlight>
+            <div class="system-head">
+                <span class="system-name">@Text["Bot.SystemName"]</span>
+                <span class="system-state">
+                    <span class="state-dot" aria-hidden="true"></span>
+                    @Text["Bot.SystemState"]
+                </span>
+            </div>
+
+            @*
+                The link. One rail from the server down into the game, with the bot attached to
+                the side of it - because that is where it sits: alongside a running world, not
+                between the customer and it.
+            *@
+            <div class="system-body">
+                <div class="rail" aria-hidden="true">
+                    <span class="rail-line"></span>
+                    <span class="rail-node rail-node--top"></span>
+                    <span class="rail-tap"></span>
+                    <span class="rail-node rail-node--bottom"></span>
+                </div>
+
+                <div class="system-rows">
+                    <p class="row-end row-end--top">@Text["Bot.EndServer"]</p>
+
+                    <ul class="channels">
+                        @foreach (var (channel, index) in Channels.Select((c, i) => (c, i)))
+                        {
+                            <li class="channel channel--@channel.Kind.ToString().ToLowerInvariant()"
+                                style="--channel-index: @index">
+                                <span class="channel-label">@channel.Label</span>
+                                <span class="channel-bar" aria-hidden="true">
+                                    <span class="channel-fill"></span>
+                                </span>
+                                <span class="channel-state">@channel.State</span>
+                            </li>
+                        }
+                    </ul>
+
+                    <p class="row-end row-end--bottom">@Text["Bot.EndWorld"]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@code {
+    /// <summary>
+    /// What the bot attends to. Descriptions of its job, not readings from a server - the
+    /// section says as much on the page.
+    /// </summary>
+    private BotChannel[] Channels =>
+    [
+        new(Text["Bot.Channel.Performance"], Text["Bot.State.Watched"], BotChannelKind.Watched),
+        new(Text["Bot.Channel.Memory"], Text["Bot.State.Watched"], BotChannelKind.Watched),
+        new(Text["Bot.Channel.World"], Text["Bot.State.Managed"], BotChannelKind.Managed),
+        new(Text["Bot.Channel.Management"], Text["Bot.State.Managed"], BotChannelKind.Managed)
+    ];
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

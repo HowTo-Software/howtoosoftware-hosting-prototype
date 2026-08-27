@@ -1,0 +1,126 @@
+@*
+    The machines.
+
+    Photographs of the rack, beside the specifications of the two nodes mounted in it.
+
+    Note what this section deliberately does *not* claim: none of the photographs is captioned
+    "this is node 01". Both nodes live in the same rack and no supplied photograph distinguishes
+    them, so the images are captioned as what they are - the rack, open, its interior, its upper
+    and lower halves - and the node readouts stand on their own beside them. Labelling a rack
+    shot as a particular machine would be a small lie for no gain.
+*@
+
+@inject IStringLocalizer<HardwareText> Text
+@inject IStringLocalizer<CommonText> Common
+@inject IInfrastructureContentService Content
+
+<section class="gallery" id="machines" aria-labelledby="gallery-heading">
+    <div class="hts-container hts-container--wide">
+        <header class="gallery-head" data-reveal="rise">
+            <p class="chapter-kicker" data-text-effect="flicker">
+                <span class="kicker-index">@Text["Nodes.Index"]</span>
+                @Text["Nodes.Kicker"]
+            </p>
+            <h2 id="gallery-heading" class="gallery-title" data-text-effect="rise">@Text["Nodes.Title"]</h2>
+            <p class="gallery-lede">
+                <CopySlot Size="CopySlot.SlotSize.Lede" />
+            </p>
+        </header>
+
+        <div class="gallery-lead" data-reveal>
+            @* The rack with its door open: the one shot that shows the machines themselves. *@
+            <HardwarePhoto Slot="HardwarePhotoSlot.RackOpen"
+                           Alt="@Text["Photo.Alt.RackOpen"]"
+                           Caption="@Text["Photo.Caption.Open"]" />
+
+            <ul class="node-list">
+                @foreach (var node in Content.Nodes)
+                {
+                    <li class="node-readout" data-spotlight>
+                        <header class="readout-head">
+                            <span class="readout-id">@Text["Topology.NodeLabel"] / @node.Ordinal</span>
+                            <span class="readout-status @HealthClass(node.Health)">
+                                <span class="status-dot" aria-hidden="true"></span>
+                                @StatusLabel(node.Health)
+                            </span>
+                        </header>
+
+                        <dl class="readout-specs">
+                            @foreach (var spec in node.Specs)
+                            {
+                                <div class="readout-row">
+                                    <dt>@SpecLabel(spec.Kind)</dt>
+                                    <dd>
+                                        <CopySlot Value="@spec.Value" />
+                                        @if (spec.Kind is HardwareSpecKind.Cpu && !spec.IsPending)
+                                        {
+                                            @* Cores and clock sit under the model name rather than
+                                               beside it, so the row stays one line on a phone. *@
+                                            <span class="readout-detail">@Text["Node.CpuDetail"]</span>
+                                        }
+                                    </dd>
+                                </div>
+                            }
+
+                            <div class="readout-row">
+                                <dt>@Text["Spec.Platform"]</dt>
+                                <dd><CopySlot Value="@Text["Node.PlatformValue"].Value" /></dd>
+                            </div>
+
+                            <div class="readout-row">
+                                <dt>@Text["Spec.Region"]</dt>
+                                <dd><CopySlot Value="@Text["Node.RegionValue"].Value" /></dd>
+                            </div>
+                        </dl>
+                    </li>
+                }
+            </ul>
+        </div>
+
+        @* The rest of the rack, as a strip. *@
+        <div class="gallery-strip" data-reveal>
+            <HardwarePhoto Slot="HardwarePhotoSlot.RackInterior"
+                           Alt="@Text["Photo.Alt.RackInterior"]"
+                           Caption="@Text["Photo.Caption.Interior"]" />
+
+            <HardwarePhoto Slot="HardwarePhotoSlot.RackDetailTop"
+                           Alt="@Text["Photo.Alt.RackDetailTop"]"
+                           Caption="@Text["Photo.Caption.DetailTop"]" />
+
+            <HardwarePhoto Slot="HardwarePhotoSlot.RackDetailBottom"
+                           Alt="@Text["Photo.Alt.RackDetailBottom"]"
+                           Caption="@Text["Photo.Caption.DetailBottom"]" />
+        </div>
+
+        <p class="gallery-note">@Text["Nodes.Note"]</p>
+    </div>
+</section>
+
+@code {
+    private static string HealthClass(NodeHealth health) => health switch
+    {
+        NodeHealth.Healthy => "is-healthy",
+        NodeHealth.Provisioning => "is-provisioning",
+        _ => "is-reserved"
+    };
+
+    private string StatusLabel(NodeHealth health) => health switch
+    {
+        NodeHealth.Healthy => Text["Status.Operational"],
+        NodeHealth.Provisioning => Common["Status.Provisioning"],
+        _ => Common["Status.Reserved"]
+    };
+
+    private string SpecLabel(HardwareSpecKind kind) => kind switch
+    {
+        HardwareSpecKind.Cpu => Text["Spec.Cpu"],
+        HardwareSpecKind.Memory => Text["Spec.Memory"],
+        HardwareSpecKind.Storage => Text["Spec.Storage"],
+        _ => Text["Spec.Network"]
+    };
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

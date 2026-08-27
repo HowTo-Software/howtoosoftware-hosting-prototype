@@ -17,6 +17,9 @@ built with **C# / .NET 10 / Blazor**. Three pages, in **English and Brazilian Po
 >   is ever created, started or stopped.
 > - **No game panel integration yet.** Pterodactyl is the intended target and the code is
 >   structured for it, but it is not wired up.
+> - **Provisioning is real, and it is gated.** The Pterodactyl integration creates and deletes
+>   actual servers. It is reachable only from a development-only lab page, only after an explicit
+>   confirmation, and only with an API key supplied from outside the repository.
 > - **Sign-in authenticates nobody.** There is no identity provider, no user list, no demo
 >   credential and no password storage. Every attempt reports that authentication is not
 >   connected, and the screen says so before you type anything.
@@ -67,7 +70,7 @@ Then open **http://localhost:5147**.
 
 ```bash
 dotnet build          # build everything
-dotnet test           # run the 153 unit tests
+dotnet test           # run the 356 unit tests
 ```
 
 The site has three routes:
@@ -76,9 +79,171 @@ The site has three routes:
 |---|---|
 | `/` | the marketing homepage |
 | `/infrastructure` (also `/hardware`) | the hardware and infrastructure page |
+| `/project-zomboid` | the plan ladder, build-to-order and the plan questions |
 | `/login` | the control-panel sign-in screen |
+| `/dev/provisioning` | the provisioning lab — Development only, see below |
 
 There is nothing else to install. No npm, no database, no configuration, no API keys.
+
+---
+
+## Plans
+
+Eight tiers, from 4 GB to 16 GB of memory. The figures below are the product **and** the
+provisioning payload — [`StaticPlanCatalogService`](src/HowToSoftware.Hosting/Services/StaticPlanCatalogService.cs)
+is the only place they exist, and both the plan cards and the Pterodactyl request read from it.
+
+| Plan | RAM | CPU | Storage | Backups | Computed | Charged | Renews at |
+|---|---|---|---|---|---|---|---|
+| Outpost | 4 GB | 300% | 25 GB | 1 | 7.88 | **7.99** | 7.59 |
+| Settlement | 5 GB | 400% | 25 GB | 2 | 9.98 | **9.99** | 9.49 |
+| Stronghold | 6 GB | 400% | 25 GB | 3 | 11.18 | **10.99** | 10.44 |
+| Knox Cell | 8 GB | 500% | 40 GB | 5 | 14.70 | **14.99** | 14.24 |
+| Rosewood | 10 GB | 500% | 40 GB | 6 | 17.10 | **16.99** | 16.14 |
+| West Point | 12 GB | 600% | 40 GB | 7 | 20.40 | **19.99** | 18.99 |
+| Louisville | 14 GB | 600% | 40 GB | 8 | 22.80 | **22.99** | 21.84 |
+| Knox County | 16 GB | 700% | 40 GB | 10 | 26.10 | **25.99** | 24.69 |
+
+**CPU is a share, not a core count.** Pterodactyl's `cpu` limit is a percentage of one logical
+thread: 100 is one thread, 300 lets a container burst across three. It does not pin cores, so the
+site says "300% CPU allocation" and never "3 dedicated cores".
+
+Memory and disk reach Pterodactyl in **MiB**, not MB — 4 GB is 4096, 25 GB is 25600, 40 GB is
+40960. The conversion happens once, in the catalogue. Storage steps up once, at the 8 GB tier.
+
+### Prices are a rate card, not a price list
+
+There is no list of eight agreed prices anywhere. There are three rates, and every price is those
+rates applied to what the tier actually ships:
+
+```jsonc
+"HostingPlans": {
+  "CurrencySymbol": "$",
+  "Rates": {
+    "CpuPer100Percent": "0.90",   // per 100% CPU, the equivalent of one thread
+    "MemoryPerGb": "1.20",
+    "DiskPerBlock": "0.30",       // per DiskBlockGb, prorated within a block
+    "DiskBlockGb": 20
+  },
+  "Prices": { "zomboid-4gb": "" } // optional per-slug override
+}
+```
+
+So the 4 GB tier computes to `(300 ÷ 100 × 0.90) + (4 × 1.20) + (25 ÷ 20 × 0.30)` = **7.88**, and
+a rate change moves every tier at once rather than leaving one card quietly inconsistent with the
+rest. Storage is prorated inside a block, so 25 GB costs a block and a quarter rather than being
+rounded up to two.
+
+### Charm pricing, and the renewal rate
+
+`"CharmPricing": true` snaps every computed price to the nearest `x.99`:
+
+- **at or above the half unit** the price keeps its unit and takes 99 cents — 14.70 → **14.99**
+- **below it** the price drops a whole unit first — 17.10 → **16.99**
+
+Dropping the unit is the point; it is what makes 17.10 read as sixteen rather than seventeen.
+It applies to *computed* prices only. A figure typed into `Prices` is a decision somebody already
+made and is charged exactly as written.
+
+`"RenewalDiscountPercent": 5` prints the second-month-onward rate on every card. It is a plain
+percentage off the first month and is **not** charm-rounded — a figure nudged to `x.99` afterwards
+would not be the percentage the site just claimed. Set it to `0` to remove the line entirely
+rather than print "0% off".
+
+An entry in `Prices` overrides the rate card for that slug alone — that is how a promotional price
+is set without disturbing the ladder. With no rate card and no override a plan renders as
+**PRICE PENDING**: there is deliberately no fallback number, because a default price is a price
+somebody reads as real.
+
+Rates and overrides are held as **strings** and parsed with the invariant culture. Bound as
+decimals, a configuration provider would use the host's culture and read `0.90` as ninety wherever
+the decimal separator is a comma.
+
+### Build to order
+
+Above the top tier, `/project-zomboid` carries a
+[build-to-order panel](src/HowToSoftware.Hosting/Components/Home/CustomBuildSection.razor):
+memory, CPU and storage sliders, a live estimate priced from the same rate card, and the
+breakdown that produced it.
+
+The panel is careful about two things. The estimate says it is an estimate, and the total is the
+three visible lines added up rather than a fourth calculation — a breakdown that does not sum to
+the figure above it is the kind of detail a reader checks once and then stops trusting. And
+**nothing is submitted**: there is no request table behind it yet, so the button hands the
+specification to the visitor's own mail client instead of pretending to file it.
+
+The quote carries its rounding as a **line of the breakdown**, signed, so the lines still sum to
+the total. Applying charm pricing silently after printing the lines would leave a total that
+disagreed with its own arithmetic — the one thing the breakdown exists to prevent. The renewal
+rate is quoted too, and both figures go into the mail draft.
+
+Slider limits are configuration (`HostingPlans:CustomBuild`):
+
+| Limit | Value | Where it comes from |
+|---|---|---|
+| Memory | 64 GB | agreed ceiling |
+| CPU | 3600% | the 36 threads of the processor the infrastructure page names (Pterodactyl counts 100% as one thread, so 36 threads is 3600, not 36000) |
+| Storage | 500 GB | agreed ceiling |
+
+The **floor** is read from the largest plan rather than restated, so adding a tier moves it
+automatically. The ceilings bound the *form*, not the hardware, and the panel says so — past them
+it prints the contact address instead of a slider.
+
+---
+
+---
+
+## Provisioning
+
+Real integration with the Pterodactyl **Application API**, verified against Panel source at
+v1.15.1. Setup, the exact request shape and the pitfalls are in
+**[docs/PTERODACTYL-SETUP.md](docs/PTERODACTYL-SETUP.md)**.
+
+```
+order → resolve plan → read egg → find-or-create panel user → create server
+```
+
+| Piece | What it does |
+|---|---|
+| [`IPterodactylClient`](src/HowToSoftware.Hosting/Infrastructure/Pterodactyl/IPterodactylClient.cs) | the panel API, narrowed to what provisioning needs |
+| [`IProvisioningService`](src/HowToSoftware.Hosting/Services/Provisioning/IProvisioningService.cs) | the pipeline the payment webhook will call |
+| [`GameTemplateCatalog`](src/HowToSoftware.Hosting/Services/GameTemplateCatalog.cs) | egg, image, startup and variables, per game |
+| `/dev/provisioning` | a development-only lab that drives it by hand |
+
+**Idempotent on the request id.** Every provisioning request writes an `external_id`, and the
+pipeline looks it up before creating anything. A retried payment webhook, a double-clicked button
+and a re-run test all reuse the existing server. Payment providers retry webhooks; this is not a
+nicety.
+
+**Node placement is the panel's job.** The request carries a `deploy` block naming the location
+and Pterodactyl picks a public node with headroom and a free allocation. There is no load
+balancer in this codebase, on purpose.
+
+### The API key
+
+Never in `appsettings.json`, never in the repository, never sent to a browser, never logged.
+Supplied from the environment or user-secrets:
+
+```bash
+dotnet user-secrets --project src/HowToSoftware.Hosting set "Pterodactyl:ApiKey" "ptla_..."
+export Pterodactyl__ApiKey="ptla_..."
+```
+
+Diagnostics show the key's prefix and length and nothing else. With no key configured the site
+still runs — only provisioning reports `NotConfigured`.
+
+### The lab
+
+`/dev/provisioning` is guarded three ways: the page renders a closed notice outside Development
+unless `ProvisioningTest:Enabled` is set, **every action re-checks that on the server** rather than
+trusting a hidden button, and both creating and deleting require an explicit confirmation.
+
+Deletion is guarded again: the button passes a provisioning request id, not a server id, and the
+service re-reads the server and refuses unless its `external_id` begins with `hts-test-server:`.
+A customer's server cannot be reached from that page.
+
+**Payments are deliberately not implemented.** The manual button and a future webhook call the
+same `ProvisionAsync`, so the pipeline exists before the checkout does.
 
 ---
 
@@ -248,6 +413,45 @@ for why that is the only honest stand-in.
 
 ---
 
+## Text effects
+
+Headlines and mono kickers carry `data-text-effect`. [`site.js`](src/HowToSoftware.Hosting/wwwroot/js/site.js)
+splits their text into per-character spans — walking the text nodes, so a heading keeps its `<br>`
+and its accent span — and [`app.css`](src/HowToSoftware.Hosting/wwwroot/css/app.css) decides what
+that is worth: `rise` lifts characters into focus, `flicker` brings them up like a display
+warming, `sweep` runs a light along the line.
+
+The stagger runs off the character index, so a long headline takes longer to settle than a short
+one. Characters are wrapped a word at a time, because a line will otherwise break between any two
+inline-blocks and split a word down the middle.
+
+All of it is additive: with scripting off there are no spans and the selectors match nothing, and
+with `prefers-reduced-motion` set every effect collapses to "the text is there".
+
+---
+
+## Infrastructure photography
+
+The infrastructure page shows photographs of the actual machines. It never substitutes stock
+imagery: a slot with no file renders a labelled placeholder naming the exact path to drop it at,
+and the next render picks the file up with no code change.
+
+Files go in
+[`wwwroot/images/infrastructure/`](src/HowToSoftware.Hosting/wwwroot/images/infrastructure/) —
+`rack-front.webp`, `rack-elevation.webp`, `rack-open.webp`, `rack-interior.webp`,
+`rack-detail-top.webp`, `rack-detail-bottom.webp`, each with a `.jpg` beside it for browsers
+without WebP. That folder's README covers format, sizing and what to check for before publishing
+a photo of a rack.
+
+Captions describe the photograph, not the hardware: both nodes live in the same cabinet and no
+supplied frame tells them apart, so the node specifications sit beside the images rather than
+labelling one of them "node 01".
+
+Every frame reserves its aspect ratio before the image decodes, so nothing reflows; everything
+below the fold loads lazily.
+
+---
+
 ## Ready for the real backend
 
 The mock data sits behind interfaces, so replacing it does not touch a single component:
@@ -349,7 +553,7 @@ Depois abra **http://localhost:5147**.
 
 ```bash
 dotnet build          # compila tudo
-dotnet test           # roda os 153 testes unitários
+dotnet test           # roda os 243 testes unitários
 ```
 
 O site tem três rotas:
@@ -359,8 +563,38 @@ O site tem três rotas:
 | `/` | a página inicial |
 | `/infrastructure` (e também `/hardware`) | a página de hardware e infraestrutura |
 | `/login` | a tela de acesso ao painel de controle |
+| `/dev/provisioning` | o laboratório de provisionamento — só em Development |
 
 Não precisa instalar mais nada. Sem npm, sem banco de dados, sem configuração, sem chaves.
+
+---
+
+## Planos e provisionamento
+
+Quatro planos, diferindo em memória e alocação de CPU. Os números são o produto **e** o payload de
+provisionamento ao mesmo tempo — existem em um lugar só, e tanto os cards quanto a requisição ao
+Pterodactyl leem de lá.
+
+| Plano | RAM | Alocação de CPU | Armazenamento | Backups | `limits` do Pterodactyl |
+|---|---|---|---|---|---|
+| Outpost | 4 GB | 300% | 25 GB | 1 | `memory 4096 · cpu 300 · disk 25600` |
+| Settlement | 5 GB | 400% | 25 GB | 2 | `memory 5120 · cpu 400 · disk 25600` |
+| Stronghold | 6 GB | 400% | 25 GB | 3 | `memory 6144 · cpu 400 · disk 25600` |
+| Knox Cell | 8 GB | 500% | 25 GB | 5 | `memory 8192 · cpu 500 · disk 25600` |
+
+**CPU é uma fatia, não uma contagem de núcleos.** O limite `cpu` do Pterodactyl é uma porcentagem
+de uma thread: 100 é uma thread, 300 permite estourar em três. Não fixa núcleos, por isso o site
+diz "300% de alocação de CPU" e nunca "3 núcleos dedicados".
+
+Memória e disco são **MiB**, não MB — 4 GB é 4096, 25 GB é 25600.
+
+Ainda não há preços, e os cards dizem isso. Os preços vêm de configuração (`HostingPlans:Prices`),
+e um plano sem preço configurado aparece como **PREÇO PENDENTE**.
+
+A integração com a Application API do Pterodactyl é real e está verificada contra o código-fonte
+do painel v1.15.1. A configuração está em
+**[docs/PTERODACTYL-SETUP.md](docs/PTERODACTYL-SETUP.md)**. A chave de API nunca vai para o
+`appsettings.json`, nunca vai para o repositório e nunca chega ao navegador.
 
 ---
 

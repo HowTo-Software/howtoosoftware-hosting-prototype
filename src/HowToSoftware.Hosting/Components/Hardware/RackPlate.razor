@@ -1,0 +1,103 @@
+@*
+    A real rack photograph used as a plate.
+
+    Same composition pattern as the game imagery - the frame, grade, scrim and reveal are
+    `.hts-plate` in app.css - resolving against the hardware library instead. The difference
+    that matters is not visual: these are photographs of our own machines, and the component
+    will not substitute anything for a missing one.
+*@
+
+@inject IHardwarePhotoLibrary Library
+@inject IStringLocalizer<HardwareText> Text
+
+<figure class="hts-plate @CssClass @(Resolved.IsAvailable ? null : "is-pending")" data-reveal="plate">
+    <div class="hts-plate-frame" style="--plate-ratio: @Ratio; --plate-position: @Position">
+        @if (Resolved is { IsAvailable: true, WebPath: { } source })
+        {
+            <picture>
+                @if (Resolved.FallbackWebPath is { } fallback)
+                {
+                    <source srcset="@source" type="image/webp" />
+                    <img class="hts-plate-image"
+                         src="@fallback"
+                         alt="@Alt"
+                         loading="@LoadingMode"
+                         decoding="async"
+                         fetchpriority="@FetchPriority" />
+                }
+                else
+                {
+                    <img class="hts-plate-image"
+                         src="@source"
+                         alt="@Alt"
+                         loading="@LoadingMode"
+                         decoding="async"
+                         fetchpriority="@FetchPriority" />
+                }
+            </picture>
+        }
+
+        <span class="hts-plate-scrim" aria-hidden="true"></span>
+
+        @if (Overlay is not null)
+        {
+            <div class="hts-plate-overlay">@Overlay</div>
+        }
+    </div>
+
+    @if (!Resolved.IsAvailable)
+    {
+        <figcaption class="hts-plate-drop">
+            <span class="drop-badge">@Text["Placeholder.Label"]</span>
+            <code class="drop-path">@Resolved.DropPath</code>
+        </figcaption>
+    }
+</figure>
+
+@code {
+    private HardwarePhotoAsset? _resolved;
+
+    /// <summary>Which photograph to show.</summary>
+    [Parameter, EditorRequired]
+    public HardwarePhotoSlot Slot { get; set; }
+
+    /// <summary>Alternative text describing the machine, not the file.</summary>
+    [Parameter, EditorRequired]
+    public string Alt { get; set; } = string.Empty;
+
+    /// <summary>Aspect ratio the frame reserves.</summary>
+    [Parameter]
+    public string Ratio { get; set; } = "16 / 9";
+
+    /// <summary>
+    /// How the image is anchored when it is cropped. The supplied photographs are portrait and
+    /// a wide crop of one takes its middle by default, which is where the machines are.
+    /// </summary>
+    [Parameter]
+    public string Position { get; set; } = "center";
+
+    /// <summary>Technical content drawn over the photograph.</summary>
+    [Parameter]
+    public RenderFragment? Overlay { get; set; }
+
+    /// <summary>Set for a plate above the fold.</summary>
+    [Parameter]
+    public bool IsAboveTheFold { get; set; }
+
+    /// <summary>Optional additional CSS classes.</summary>
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    private HardwarePhotoAsset Resolved => _resolved ??= Library.Resolve(Slot);
+
+    private string LoadingMode => IsAboveTheFold ? "eager" : "lazy";
+
+    private string FetchPriority => IsAboveTheFold ? "high" : "auto";
+
+    protected override void OnParametersSet() => _resolved = null;
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

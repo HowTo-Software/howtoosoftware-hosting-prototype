@@ -14,12 +14,17 @@
 <svg class="topology" viewBox="0 0 420 540" fill="none" role="img"
      aria-label="@Description" xmlns="http://www.w3.org/2000/svg">
     <g class="links">
-        <path class="@LinkClass(0)" d="M210 62 V108" />
-        <path class="@LinkClass(1)" d="M210 152 V198" />
-        <path class="@LinkClass(2)" d="M210 242 V272 H106 V298" />
-        <path class="@LinkClass(2)" d="M210 242 V272 H314 V298" />
-        <path class="@LinkClass(3)" d="M314 342 V388" />
-        <path class="@LinkClass(4)" d="M314 432 V468" />
+        @foreach (var link in Links)
+        {
+            @* Two paths, not one. The route is always drawn; the packet is a second stroke on
+               top of it. Animating the dash pattern of the route itself made the whole segment
+               disappear for most of each cycle - the line would vanish on the stage the reader
+               was actually looking at. *@
+            <g class="@LinkClass(link.Stage)">
+                <path class="link-route" d="@link.Path" />
+                <path class="link-packet" d="@link.Path" pathLength="100" />
+            </g>
+        }
     </g>
 
     @foreach (var box in Boxes)
@@ -34,6 +39,23 @@
 
 @code {
     private sealed record TopologyBox(int Stage, int X, int Y, int W, int H, string Title, string Caption);
+
+    private sealed record TopologyLink(int Stage, string Path);
+
+    /// <summary>
+    /// The routes between boxes. Each is normalised to <c>pathLength="100"</c> in the markup, so
+    /// the travelling packet crosses a short branch and a long one in the same time and with the
+    /// same dash geometry - no per-path tuning.
+    /// </summary>
+    private static readonly TopologyLink[] Links =
+    [
+        new(0, "M210 62 V108"),
+        new(1, "M210 152 V198"),
+        new(2, "M210 242 V272 H106 V298"),
+        new(2, "M210 242 V272 H314 V298"),
+        new(3, "M314 342 V388"),
+        new(4, "M314 432 V468")
+    ];
 
     /// <summary>
     /// Geometry is fixed; the words on each box come from the resource set, so the diagram

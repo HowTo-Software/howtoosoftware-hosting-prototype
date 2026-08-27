@@ -1,0 +1,341 @@
+.bot {
+    position: relative;
+    padding-block: clamp(4.5rem, 8vw, 8rem);
+    border-top: 1px solid var(--hts-border);
+    background: var(--hts-navy-900);
+    overflow: hidden;
+}
+
+.bot::before {
+    content: "";
+    position: absolute;
+    top: -18%;
+    right: -6%;
+    width: min(42rem, 72vw);
+    height: 28rem;
+    background: radial-gradient(ellipse at center, rgba(176, 105, 255, 0.14) 0%, transparent 66%);
+    filter: blur(70px);
+    pointer-events: none;
+}
+
+.bot-inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(2.5rem, 6vw, 5rem);
+}
+
+/* ── Copy ──────────────────────────────────────────────────────────────── */
+
+.bot-kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: var(--hts-space-5);
+    color: var(--hts-purple-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+}
+
+.kicker-index {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: none;
+    border-radius: var(--hts-radius-xs);
+    background: var(--hts-purple-600);
+    color: var(--hts-white);
+    font-size: 0.6875rem;
+    letter-spacing: 0.02em;
+}
+
+.bot-title {
+    font-size: clamp(2rem, 1.25rem + 2.5vw, 3.1rem);
+    font-weight: 660;
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+}
+
+.bot-lede {
+    max-width: 32rem;
+    margin-top: var(--hts-space-5);
+    color: var(--hts-ink-soft);
+    font-size: var(--hts-text-md);
+    line-height: var(--hts-leading-relaxed);
+}
+
+/* The eligibility rule, set as a rule rather than as a sentence in a paragraph. */
+.bot-threshold {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    max-width: 30rem;
+    margin-top: var(--hts-space-6);
+    padding: var(--hts-space-4) var(--hts-space-5);
+    border: 1px solid var(--hts-border-blue);
+    border-radius: var(--hts-radius-md);
+    background: rgba(61, 92, 224, 0.08);
+    color: var(--hts-ink);
+    font-family: var(--hts-font-mono);
+    font-size: 0.6875rem;
+    letter-spacing: 0.08em;
+    line-height: 1.6;
+}
+
+.threshold-mark {
+    width: 0.4rem;
+    height: 0.4rem;
+    flex: none;
+    border-radius: 1px;
+    background: var(--hts-blue-300);
+    transform: rotate(45deg);
+}
+
+.bot-caveat {
+    max-width: 30rem;
+    margin-top: var(--hts-space-4);
+    color: var(--hts-ink-muted);
+    font-size: var(--hts-text-sm);
+    line-height: var(--hts-leading-normal);
+}
+
+/* ── System ────────────────────────────────────────────────────────────── */
+
+.bot-system {
+    padding: clamp(1.25rem, 2.5vw, 1.75rem);
+    border: 1px solid var(--hts-border-strong);
+    border-radius: var(--hts-radius-lg);
+    background:
+        radial-gradient(120% 80% at 80% 0%, rgba(176, 105, 255, 0.12) 0%, transparent 62%),
+        var(--hts-surface);
+    box-shadow: var(--hts-rim), var(--hts-shadow-md);
+    min-width: 0;
+}
+
+.system-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--hts-space-4);
+    padding-bottom: var(--hts-space-4);
+    border-bottom: 1px solid var(--hts-border);
+}
+
+.system-name {
+    color: var(--hts-ink);
+    font-family: var(--hts-font-mono);
+    font-size: var(--hts-text-sm);
+    font-weight: 640;
+    letter-spacing: 0.14em;
+}
+
+.system-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: var(--hts-purple-300);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.18em;
+    white-space: nowrap;
+}
+
+.state-dot {
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow: 0 0 8px 1px rgba(176, 105, 255, 0.85);
+    animation: bot-breathe 3.4s var(--hts-ease) infinite;
+}
+
+@keyframes bot-breathe {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    55% {
+        opacity: 0.32;
+    }
+}
+
+/* The rail on the left, the channels on the right. */
+.system-body {
+    display: grid;
+    grid-template-columns: 1.6rem minmax(0, 1fr);
+    gap: var(--hts-space-4);
+    padding-top: var(--hts-space-4);
+}
+
+.rail {
+    position: relative;
+}
+
+.rail-line {
+    position: absolute;
+    top: 0.55rem;
+    bottom: 0.55rem;
+    left: 50%;
+    width: 2px;
+    border-radius: 1px;
+    background: linear-gradient(180deg, var(--hts-blue-400) 0%, var(--hts-purple-400) 100%);
+    transform: translateX(-50%);
+}
+
+.rail-node {
+    position: absolute;
+    left: 50%;
+    width: 0.55rem;
+    height: 0.55rem;
+    border: 2px solid var(--hts-blue-300);
+    border-radius: 50%;
+    background: var(--hts-navy-900);
+    transform: translateX(-50%);
+}
+
+.rail-node--top {
+    top: 0.28rem;
+}
+
+.rail-node--bottom {
+    bottom: 0.28rem;
+    border-color: var(--hts-purple-300);
+}
+
+/* Where the bot attaches: a tap on the side of the rail, not a link in the middle of it. */
+.rail-tap {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0.65rem;
+    height: 0.65rem;
+    background: var(--hts-purple-500);
+    box-shadow: 0 0 14px rgba(176, 105, 255, 0.85);
+    transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.system-rows {
+    display: grid;
+    gap: var(--hts-space-4);
+    min-width: 0;
+}
+
+.row-end {
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5625rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+
+/* ── Channels ──────────────────────────────────────────────────────────── */
+
+.channels {
+    display: grid;
+    gap: 0.7rem;
+    padding: var(--hts-space-4) 0;
+    border-block: 1px solid var(--hts-border);
+}
+
+.channel {
+    display: grid;
+    grid-template-columns: minmax(5.5rem, 0.9fr) minmax(0, 1.4fr) auto;
+    align-items: center;
+    gap: var(--hts-space-4);
+    min-width: 0;
+}
+
+.channel-label {
+    color: var(--hts-ink-soft);
+    font-family: var(--hts-font-mono);
+    font-size: 0.625rem;
+    letter-spacing: 0.12em;
+}
+
+.channel-bar {
+    position: relative;
+    height: 3px;
+    border-radius: var(--hts-radius-pill);
+    background: var(--hts-cell-bg);
+    overflow: hidden;
+}
+
+.channel-fill {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    transform-origin: left center;
+}
+
+.channel--watched .channel-fill {
+    background: linear-gradient(90deg, var(--hts-blue-500) 0%, var(--hts-blue-300) 100%);
+}
+
+.channel--managed .channel-fill {
+    background: linear-gradient(90deg, var(--hts-purple-600) 0%, var(--hts-purple-300) 100%);
+}
+
+.channel-state {
+    color: var(--hts-ink-muted);
+    font-family: var(--hts-font-mono);
+    font-size: 0.5rem;
+    letter-spacing: 0.16em;
+    white-space: nowrap;
+}
+
+.channel--managed .channel-state {
+    color: var(--hts-purple-300);
+}
+
+.channel--watched .channel-state {
+    color: var(--hts-blue-300);
+}
+
+/*
+    The fill runs on entry, one channel after another. A transform, not a width, so it stays on
+    the compositor; and a transition off a class rather than a keyframe loop, so it happens once
+    and then stops.
+*/
+html.hts-js .bot-system[data-reveal] .channel-fill {
+    transform: scaleX(0);
+    transition: transform 0.72s var(--hts-ease-out);
+    transition-delay: calc(var(--channel-index) * 110ms);
+}
+
+html.hts-js .bot-system[data-reveal].is-revealed .channel-fill {
+    transform: scaleX(1);
+}
+
+/* ── Responsive ────────────────────────────────────────────────────────── */
+
+@media (max-width: 1024px) {
+    .bot-inner {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@media (max-width: 560px) {
+    .channel {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    /* The bar is the first thing to go on a phone: the label and the state carry the meaning. */
+    .channel-bar {
+        display: none;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .state-dot {
+        animation: none;
+    }
+
+    html.hts-js .bot-system[data-reveal] .channel-fill {
+        transform: scaleX(1);
+        transition: none;
+    }
+}

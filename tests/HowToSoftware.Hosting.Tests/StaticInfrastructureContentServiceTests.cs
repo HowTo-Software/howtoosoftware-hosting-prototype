@@ -1,3 +1,4 @@
+using HowToSoftware.Hosting.Localization;
 using HowToSoftware.Hosting.Models;
 using HowToSoftware.Hosting.Services;
 
@@ -7,22 +8,54 @@ namespace HowToSoftware.Hosting.Tests;
 /// The infrastructure page's structure - and, more importantly, the guarantee that it states
 /// no specification nobody has agreed to.
 /// </summary>
-public class StaticInfrastructureContentServiceTests
+public class StaticInfrastructureContentServiceTests : IDisposable
 {
-    private readonly StaticInfrastructureContentService _sut = new();
+    private readonly CultureScope _culture = new(SupportedCultures.Default);
+    private readonly StaticInfrastructureContentService _sut =
+        new(TestLocalizer.For<HardwareText>());
+
+    public void Dispose() => _culture.Dispose();
 
     /// <summary>
-    /// The whole point of the page in its current state: every hardware figure is pending, so
-    /// the page renders a visible placeholder instead of a plausible-looking number. A value
-    /// appearing here is how a placeholder quietly becomes a commitment.
+    /// The four platform specifications were read from the running hosts, so they are stated.
+    /// Anything that ever goes back to pending must go back through the placeholder, not through
+    /// an empty string that renders as a blank line.
     /// </summary>
     [Fact]
-    public void NoHardwareSpecificationIsStatedYet()
+    public void EveryPlatformSpecificationIsEitherStatedOrVisiblyPending()
     {
-        Assert.All(_sut.SpecSheet, spec => Assert.True(spec.IsPending, $"{spec.Kind} has a value"));
+        Assert.All(_sut.SpecSheet, spec =>
+            Assert.True(spec.IsPending || !string.IsNullOrWhiteSpace(spec.Value),
+                $"{spec.Kind} is neither pending nor stated"));
 
         Assert.All(_sut.Nodes, node =>
-            Assert.All(node.Specs, spec => Assert.True(spec.IsPending, $"{node.Ordinal}/{spec.Kind} has a value")));
+            Assert.All(node.Specs, spec =>
+                Assert.True(spec.IsPending || !string.IsNullOrWhiteSpace(spec.Value),
+                    $"{node.Ordinal}/{spec.Kind} is neither pending nor stated")));
+    }
+
+    /// <summary>
+    /// The CPU line is the one a customer shops on, and it is the one the prototype used to
+    /// invent. It now names the real part.
+    /// </summary>
+    [Fact]
+    public void TheCpuSpecificationNamesTheRealPart()
+    {
+        var cpu = _sut.SpecSheet.Single(spec => spec.Kind is HardwareSpecKind.Cpu);
+
+        Assert.False(cpu.IsPending);
+        Assert.Contains("i9-10980XE", cpu.Value!, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// The prototype advertised "256 GB ECC". An X299 board with a Core i9 does not take ECC
+    /// memory, so that was a claim about hardware that does not exist.
+    /// </summary>
+    [Fact]
+    public void NoSpecificationClaimsEccMemory()
+    {
+        Assert.All(_sut.SpecSheet, spec =>
+            Assert.DoesNotContain("ECC", spec.Value ?? string.Empty, StringComparison.OrdinalIgnoreCase));
     }
 
     /// <summary>
@@ -75,9 +108,17 @@ public class StaticInfrastructureContentServiceTests
     /// fixed at 01 and 02.
     /// </summary>
     [Fact]
-    public void ChapterIndicesRunInOrderFromThree()
+    public void ChapterIndicesRunInOrderFromFour()
     {
-        Assert.Equal(["03", "04", "05", "06", "07", "08"], _sut.Chapters.Select(chapter => chapter.Index));
+        // 01 spec sheet, 02 the machines, 03 topology, then the chapters.
+        Assert.Equal(["04", "05", "06", "07", "08", "09"], _sut.Chapters.Select(chapter => chapter.Index));
+    }
+
+    /// <summary>Two machines, because there are two.</summary>
+    [Fact]
+    public void TheEstateHasTwoNodes()
+    {
+        Assert.Equal(2, _sut.Nodes.Count);
     }
 
     [Fact]

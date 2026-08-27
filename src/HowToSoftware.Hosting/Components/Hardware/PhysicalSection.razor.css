@@ -129,6 +129,13 @@
     letter-spacing: 0.22em;
 }
 
+/* The photograph sits under the drawing at half width, so it reads as a reference alongside the
+   elevation rather than competing with it. */
+.physical-figure ::deep .figure-photo {
+    max-width: 15rem;
+    margin-top: var(--hts-space-5);
+}
+
 .rack {
     position: relative;
     padding: var(--hts-space-4) var(--hts-space-5);

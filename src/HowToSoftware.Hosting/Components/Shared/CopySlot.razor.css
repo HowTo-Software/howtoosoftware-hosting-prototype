@@ -81,12 +81,20 @@
     opacity: 0.75;
 }
 
-/* Once real copy lands the slot stops shouting and just renders the text. */
+/*
+    Once real copy lands the slot stops shouting and just renders the text.
+
+    Including the layout: the placeholder is a chip - an inline-flex row of tick, label and
+    leader rule that must stay on one line - but a resolved value is a sentence, and inheriting
+    the chip's `nowrap` sent plan taglines straight out through the side of their card.
+*/
 .copy-slot.is-resolved {
+    display: inline;
     color: var(--hts-ink-soft);
     font-family: var(--hts-font-sans);
     letter-spacing: normal;
     text-transform: none;
+    text-wrap: pretty;
 }
 
 .copy-slot.is-resolved::after {

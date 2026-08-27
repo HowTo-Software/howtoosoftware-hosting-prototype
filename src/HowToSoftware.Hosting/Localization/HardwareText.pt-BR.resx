@@ -55,7 +55,7 @@
     <value>Infraestrutura física</value>
   </data>
   <data name="Physical.RackLabel" xml:space="preserve">
-    <value>ELEVAÇÃO DO RACK</value>
+    <value>ESQUEMA DO RACK</value>
   </data>
   <data name="Physical.SheetLabel" xml:space="preserve">
     <value>FICHA TÉCNICA</value>
@@ -73,7 +73,7 @@
     <value>REDE</value>
   </data>
   <data name="Topology.Index" xml:space="preserve">
-    <value>02</value>
+    <value>03</value>
   </data>
   <data name="Topology.Kicker" xml:space="preserve">
     <value>TOPOLOGIA DE NÓS</value>
@@ -214,6 +214,105 @@
     <value>Voltar para a página inicial</value>
   </data>
   <data name="Note.Pending" xml:space="preserve">
-    <value>As especificações dos nós descrevem a plataforma pretendida. O hardware exato é confirmado conforme a capacidade é comissionada.</value>
+    <value>As especificações são lidas dos hosts em execução. Os números que ainda faltam aparecem como TEXTO SOBRE AQUI, e não como estimativa.</value>
+  </data>
+  <data name="Photo.Pending" xml:space="preserve">
+    <value>FOTO PENDENTE</value>
+  </data>
+  <data name="Photo.Slot.RackFront" xml:space="preserve">
+    <value>Rack, na sala</value>
+  </data>
+  <data name="Photo.Alt.Rack" xml:space="preserve">
+    <value>O rack de servidores da HowToSoftware na sala, com as portas fechadas</value>
+  </data>
+  <data name="Photo.Caption.Rack" xml:space="preserve">
+    <value>O RACK</value>
+  </data>
+  <data name="Nodes.Index" xml:space="preserve">
+    <value>02</value>
+  </data>
+  <data name="Nodes.Kicker" xml:space="preserve">
+    <value>AS MÁQUINAS</value>
+  </data>
+  <data name="Nodes.Title" xml:space="preserve">
+    <value>As máquinas</value>
+  </data>
+  <data name="Nodes.Note" xml:space="preserve">
+    <value>Fotos do rack em que estes dois nós estão montados. As especificações são lidas dos hosts em execução, não de uma ficha técnica.</value>
+  </data>
+  <data name="Spec.Platform" xml:space="preserve">
+    <value>PLATAFORMA</value>
+  </data>
+  <data name="Spec.Region" xml:space="preserve">
+    <value>REGIÃO</value>
+  </data>
+  <data name="Node.CpuValue" xml:space="preserve">
+    <value>Intel Core i9-10980XE</value>
+  </data>
+  <data name="Node.CpuDetail" xml:space="preserve">
+    <value>18C / 36T · até 4,8 GHz</value>
+  </data>
+  <data name="Node.MemoryValue" xml:space="preserve">
+    <value>256 GB</value>
+  </data>
+  <data name="Node.StorageValue" xml:space="preserve">
+    <value>5 TB NVMe</value>
+  </data>
+  <data name="Node.NetworkValue" xml:space="preserve">
+    <value>Uplink 1 GbE</value>
+  </data>
+  <data name="Node.PlatformValue" xml:space="preserve">
+    <value>Ubuntu 24.04 LTS · bare metal</value>
+  </data>
+  <data name="Node.RegionValue" xml:space="preserve">
+    <value>US Central</value>
+  </data>
+  <data name="Status.Operational" xml:space="preserve">
+    <value>OPERACIONAL</value>
+  </data>
+  <data name="Photo.Slot.RackElevation" xml:space="preserve">
+    <value>Rack, vista frontal</value>
+  </data>
+  <data name="Photo.Slot.RackOpen" xml:space="preserve">
+    <value>Rack, porta aberta</value>
+  </data>
+  <data name="Photo.Slot.RackInterior" xml:space="preserve">
+    <value>Interior do rack</value>
+  </data>
+  <data name="Photo.Slot.RackDetailTop" xml:space="preserve">
+    <value>Parte superior, detalhe</value>
+  </data>
+  <data name="Photo.Slot.RackDetailBottom" xml:space="preserve">
+    <value>Parte inferior, detalhe</value>
+  </data>
+  <data name="Photo.Alt.RackElevation" xml:space="preserve">
+    <value>O rack de servidores fotografado de frente, portas fechadas</value>
+  </data>
+  <data name="Photo.Alt.RackOpen" xml:space="preserve">
+    <value>O rack com a porta aberta, mostrando as máquinas montadas nele</value>
+  </data>
+  <data name="Photo.Alt.RackInterior" xml:space="preserve">
+    <value>Dentro do rack: o switch de rede, o cabeamento e as máquinas abaixo dele</value>
+  </data>
+  <data name="Photo.Alt.RackDetailTop" xml:space="preserve">
+    <value>Vista aproximada da parte superior do rack</value>
+  </data>
+  <data name="Photo.Alt.RackDetailBottom" xml:space="preserve">
+    <value>Vista aproximada da parte inferior do rack</value>
+  </data>
+  <data name="Photo.Caption.Elevation" xml:space="preserve">
+    <value>FRENTE</value>
+  </data>
+  <data name="Photo.Caption.Open" xml:space="preserve">
+    <value>PORTA ABERTA</value>
+  </data>
+  <data name="Photo.Caption.Interior" xml:space="preserve">
+    <value>INTERIOR</value>
+  </data>
+  <data name="Photo.Caption.DetailTop" xml:space="preserve">
+    <value>SUPERIOR</value>
+  </data>
+  <data name="Photo.Caption.DetailBottom" xml:space="preserve">
+    <value>INFERIOR</value>
   </data>
 </root>

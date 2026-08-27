@@ -1,0 +1,130 @@
+@*
+    A Project Zomboid image used as a plate.
+
+    The frame, the grade, the scrim and the reveal live in app.css as `.hts-plate`, shared with
+    the hardware photography - this component only supplies what is specific to game imagery:
+    the library it resolves against, and the stand-in drawn while a slot is empty.
+
+    With no file supplied it composes a placeholder from the site's own drawing language and
+    names the path to drop the image at. It never substitutes stock photography for the game.
+*@
+
+@inject IZomboidPhotoLibrary Library
+@inject IStringLocalizer<HomeText> Text
+
+<figure class="hts-plate @CssClass @(Resolved.IsAvailable ? null : "is-pending")" data-reveal="plate">
+    <div class="hts-plate-frame" style="--plate-ratio: @Ratio; --plate-position: @Position">
+        @if (Resolved is { IsAvailable: true, WebPath: { } source })
+        {
+            <picture>
+                @if (Resolved.FallbackWebPath is { } fallback)
+                {
+                    <source srcset="@source" type="image/webp" />
+                    <img class="hts-plate-image"
+                         src="@fallback"
+                         alt="@Alt"
+                         loading="@LoadingMode"
+                         decoding="async"
+                         fetchpriority="@FetchPriority" />
+                }
+                else
+                {
+                    <img class="hts-plate-image"
+                         src="@source"
+                         alt="@Alt"
+                         loading="@LoadingMode"
+                         decoding="async"
+                         fetchpriority="@FetchPriority" />
+                }
+            </picture>
+        }
+        else
+        {
+            @* Composed, not blank: a horizon, a grid and a low bloom, in the site's own
+               palette. It reads as a deliberate reservation rather than a broken image. *@
+            <svg class="hts-plate-standin" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice"
+                 aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="@($"plate-sky-{Slot}")" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="#141a34" />
+                        <stop offset="62%" stop-color="#0b0f22" />
+                        <stop offset="100%" stop-color="#070a16" />
+                    </linearGradient>
+                    <pattern id="@($"plate-grid-{Slot}")" width="40" height="40" patternUnits="userSpaceOnUse">
+                        <path d="M40 0H0V40" fill="none" stroke="rgba(131,168,243,0.10)" stroke-width="1" />
+                    </pattern>
+                </defs>
+
+                <rect width="800" height="450" fill="@($"url(#plate-sky-{Slot})")" />
+                <rect width="800" height="450" fill="@($"url(#plate-grid-{Slot})")" />
+                <ellipse cx="400" cy="472" rx="420" ry="150" fill="rgba(176,105,255,0.16)" />
+                <path d="M0 300 L120 300 L160 266 L300 266 L340 296 L500 296 L540 262 L680 262 L720 300 L800 300"
+                      fill="none" stroke="rgba(131,168,243,0.34)" stroke-width="1.5" />
+                <line x1="0" y1="300" x2="800" y2="300" stroke="rgba(131,168,243,0.16)" stroke-width="1" />
+            </svg>
+        }
+
+        <span class="hts-plate-scrim" aria-hidden="true"></span>
+
+        @if (Overlay is not null)
+        {
+            <div class="hts-plate-overlay">@Overlay</div>
+        }
+    </div>
+
+    @if (!Resolved.IsAvailable)
+    {
+        <figcaption class="hts-plate-drop">
+            <span class="drop-badge">@Text["Zomboid.Photo.Pending"]</span>
+            <code class="drop-path">@Resolved.DropPath</code>
+        </figcaption>
+    }
+</figure>
+
+@code {
+    private ZomboidPhotoAsset? _resolved;
+
+    /// <summary>Which image to show.</summary>
+    [Parameter, EditorRequired]
+    public ZomboidPhotoSlot Slot { get; set; }
+
+    /// <summary>
+    /// Alternative text. Describes the world, not the file - somebody using a screen reader
+    /// wants to know what the picture shows.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public string Alt { get; set; } = string.Empty;
+
+    /// <summary>Aspect ratio the frame reserves, e.g. <c>16 / 9</c>.</summary>
+    [Parameter]
+    public string Ratio { get; set; } = "16 / 9";
+
+    /// <summary>How the image is anchored inside the frame when it is cropped.</summary>
+    [Parameter]
+    public string Position { get; set; } = "center";
+
+    /// <summary>Technical content drawn over the image.</summary>
+    [Parameter]
+    public RenderFragment? Overlay { get; set; }
+
+    /// <summary>Set for a plate above the fold, which is fetched eagerly.</summary>
+    [Parameter]
+    public bool IsAboveTheFold { get; set; }
+
+    /// <summary>Optional additional CSS classes.</summary>
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    private ZomboidPhotoAsset Resolved => _resolved ??= Library.Resolve(Slot);
+
+    private string LoadingMode => IsAboveTheFold ? "eager" : "lazy";
+
+    private string FetchPriority => IsAboveTheFold ? "high" : "auto";
+
+    protected override void OnParametersSet() => _resolved = null;
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

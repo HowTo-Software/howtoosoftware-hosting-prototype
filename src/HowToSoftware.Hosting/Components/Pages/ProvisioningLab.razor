@@ -1,0 +1,449 @@
+@page "/dev/provisioning"
+@rendermode InteractiveServer
+@inject IProvisioningLabGuard Guard
+@inject IProvisioningService Provisioning
+@inject IPlanCatalogService Catalog
+@inject IGameTemplateCatalog Templates
+@inject IWebHostEnvironment Environment
+@inject ILogger<ProvisioningLab> Logger
+
+@*
+    Development-only provisioning lab.
+
+    This page creates and deletes REAL servers on a REAL panel. It is guarded three ways:
+
+      1. The route renders nothing but a closed notice unless IProvisioningLabGuard says the lab
+         is open - Development, or ProvisioningTest:Enabled set deliberately.
+      2. Every action re-checks the guard on the server before doing any work. Hiding a button is
+         not a control: the circuit is still reachable.
+      3. Creating and deleting both require an explicit confirmation step. Loading the page
+         creates nothing.
+
+    Nothing on this page renders the API key, a password, or a raw panel response. The only
+    diagnostic detail shown is the failure category and the panel's own field-level messages.
+*@
+
+<PageTitle>Provisioning lab</PageTitle>
+
+<HeadContent>
+    @* Never indexed, never followed. *@
+    <meta name="robots" content="noindex, nofollow" />
+</HeadContent>
+
+<section class="lab">
+    <div class="hts-container hts-container--wide">
+
+        @if (!Guard.IsAvailable)
+        {
+            <div class="lab-closed" role="alert">
+                <p class="closed-badge">LAB CLOSED</p>
+                <h1 class="closed-title">Not available on this host</h1>
+                <p class="closed-copy">@Guard.ClosedReason</p>
+            </div>
+        }
+        else
+        {
+            <header class="lab-head">
+                <p class="lab-kicker">
+                    <span class="kicker-rule" aria-hidden="true"></span>
+                    DEVELOPMENT ONLY &middot; @Environment.EnvironmentName.ToUpperInvariant()
+                </p>
+                <h1 class="lab-title">Provisioning lab</h1>
+                <p class="lab-lede">
+                    Exercises the real pipeline against the real panel. Every deployment started here
+                    creates a server that costs capacity, so both actions ask twice.
+                </p>
+            </header>
+
+            <div class="lab-grid">
+
+                @* ── Panel connection ──────────────────────────────────── *@
+                <section class="panel" aria-labelledby="panel-heading">
+                    <header class="panel-head">
+                        <h2 class="panel-title" id="panel-heading">PTERODACTYL CONNECTION</h2>
+                        <CtaButton Variant="CtaVariant.Secondary"
+                                   Size="CtaSize.Small"
+                                   IsBusy="_isInspecting"
+                                   OnClick="InspectAsync">
+                            Test connection
+                        </CtaButton>
+                    </header>
+
+                    @if (_snapshot is { } snapshot)
+                    {
+                        <dl class="readout">
+                            <div>
+                                <dt>PANEL</dt>
+                                <dd class="@(snapshot.IsReachable ? "is-ok" : "is-bad")">
+                                    <span class="dot" aria-hidden="true"></span>
+                                    @(snapshot.IsReachable ? "CONNECTED" : snapshot.Failure.ToString().ToUpperInvariant())
+                                </dd>
+                            </div>
+                            <div>
+                                <dt>API KEY</dt>
+                                @* Prefix and length only. The value is never rendered. *@
+                                <dd>@snapshot.KeyDescription</dd>
+                            </div>
+                        </dl>
+
+                        @if (!string.IsNullOrEmpty(snapshot.Message))
+                        {
+                            <p class="panel-message" role="status">@snapshot.Message</p>
+                        }
+
+                        @if (snapshot.Nodes.Count > 0)
+                        {
+                            <ul class="node-list">
+                                @foreach (var node in snapshot.Nodes)
+                                {
+                                    <li class="node @(node.IsDeployable ? "is-deployable" : "is-blocked")">
+                                        <span class="node-name">@node.Name</span>
+                                        <span class="node-meta">
+                                            #@node.Id &middot; location @node.LocationId
+                                            @if (!node.IsPublic)
+                                            {
+                                                <span class="node-warn">private</span>
+                                            }
+                                            @if (node.MaintenanceMode)
+                                            {
+                                                <span class="node-warn">maintenance</span>
+                                            }
+                                        </span>
+                                        <span class="node-free">
+                                            @((node.FreeMemoryMib / 1024.0).ToString("0.0")) GB free
+                                        </span>
+                                    </li>
+                                }
+                            </ul>
+                        }
+
+                        @if (snapshot.EggName is { } eggName)
+                        {
+                            <dl class="readout">
+                                <div>
+                                    <dt>EGG</dt>
+                                    <dd>@eggName</dd>
+                                </div>
+                                <div>
+                                    <dt>IMAGE</dt>
+                                    <dd class="is-wrap">@snapshot.EggDockerImage</dd>
+                                </div>
+                            </dl>
+
+                            @if (snapshot.RequiredVariables.Count > 0)
+                            {
+                                <p class="panel-hint">
+                                    Egg requires: @string.Join(", ", snapshot.RequiredVariables)
+                                </p>
+                            }
+                        }
+                        else if (snapshot.IsReachable)
+                        {
+                            <p class="panel-hint is-warn">
+                                The panel answered but the configured egg could not be read. Check
+                                Pterodactyl:NestId and Pterodactyl:EggId — an egg lookup is scoped to
+                                its nest, so a correct egg id under the wrong nest is a 404.
+                            </p>
+                        }
+                    }
+                    else
+                    {
+                        <p class="panel-hint">Not tested yet.</p>
+                    }
+                </section>
+
+                @* ── Test deployment ───────────────────────────────────── *@
+                <section class="panel" aria-labelledby="deploy-heading">
+                    <header class="panel-head">
+                        <h2 class="panel-title" id="deploy-heading">TEST DEPLOYMENT</h2>
+                    </header>
+
+                    <div class="field">
+                        <label class="field-label" for="lab-email">TEST CUSTOMER EMAIL</label>
+                        <input class="field-input"
+                               id="lab-email"
+                               type="email"
+                               autocomplete="off"
+                               spellcheck="false"
+                               value="@_email"
+                               disabled="@_isBusy"
+                               @oninput="e => _email = e.Value?.ToString() ?? string.Empty" />
+                    </div>
+
+                    <div class="field">
+                        <label class="field-label" for="lab-plan">PLAN</label>
+                        <select class="field-input"
+                                id="lab-plan"
+                                disabled="@_isBusy"
+                                @onchange="e => _planSlug = e.Value?.ToString() ?? _planSlug">
+                            @foreach (var plan in Catalog.Plans)
+                            {
+                                <option value="@plan.Slug" selected="@(plan.Slug == _planSlug)">
+                                    @plan.Name — @plan.MemoryGb GB / @plan.CpuPercent% / @plan.DiskGb GB
+                                </option>
+                            }
+                        </select>
+                    </div>
+
+                    @if (Catalog.FindBySlug(_planSlug) is { } selected)
+                    {
+                        @* Exactly what will be sent, in the panel's own units, so a mistake in the
+                           mapping is visible before anything is created. *@
+                        <pre class="payload">memory = @selected.MemoryMib
+cpu    = @selected.CpuPercent
+disk   = @selected.DiskMib
+backups = @selected.BackupLimit  ·  allocations = @selected.AllocationLimit  ·  databases = @selected.DatabaseLimit</pre>
+                    }
+
+                    @if (Templates.Find(GameTemplateCatalog.ProjectZomboidId) is { } template)
+                    {
+                        <dl class="readout">
+                            <div>
+                                <dt>TEMPLATE</dt>
+                                <dd>@template.GameName</dd>
+                            </div>
+                            <div>
+                                <dt>NEST / EGG / LOCATION</dt>
+                                <dd>@template.NestId / @template.EggId / @template.LocationId</dd>
+                            </div>
+                        </dl>
+                    }
+
+                    <div class="lab-actions">
+                        @if (!_confirmingDeploy)
+                        {
+                            <CtaButton Variant="CtaVariant.Primary"
+                                       Size="CtaSize.Medium"
+                                       Disabled="@_isBusy"
+                                       OnClick="() => _confirmingDeploy = true">
+                                Create test server
+                            </CtaButton>
+                        }
+                        else
+                        {
+                            <div class="confirm" role="alertdialog" aria-label="Confirm test deployment">
+                                <p class="confirm-copy">
+                                    You are about to create a <strong>real</strong> Pterodactyl server on the
+                                    live panel. It will consume capacity until it is deleted.
+                                </p>
+                                <div class="confirm-actions">
+                                    <CtaButton Variant="CtaVariant.Primary"
+                                               Size="CtaSize.Small"
+                                               IsBusy="_isBusy"
+                                               OnClick="DeployAsync">
+                                        Confirm test deployment
+                                    </CtaButton>
+                                    <CtaButton Variant="CtaVariant.Secondary"
+                                               Size="CtaSize.Small"
+                                               Disabled="@_isBusy"
+                                               OnClick="() => _confirmingDeploy = false">
+                                        Cancel
+                                    </CtaButton>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </section>
+            </div>
+
+            @* ── Result ────────────────────────────────────────────────── *@
+            @if (_result is { } result)
+            {
+                <section class="panel result @(result.IsSuccess ? "is-ok" : "is-bad")"
+                         aria-labelledby="result-heading"
+                         aria-live="polite">
+                    <header class="panel-head">
+                        <h2 class="panel-title" id="result-heading">
+                            @result.Outcome.ToString().ToUpperInvariant()
+                        </h2>
+                    </header>
+
+                    <p class="result-message">@result.Message</p>
+
+                    <dl class="readout readout--wide">
+                        <div>
+                            <dt>PROVISIONING REQUEST</dt>
+                            <dd class="is-wrap">@result.RequestId</dd>
+                        </div>
+                        @if (result.ServerId is { } serverId)
+                        {
+                            <div>
+                                <dt>SERVER ID</dt>
+                                <dd>@serverId</dd>
+                            </div>
+                            <div>
+                                <dt>UUID</dt>
+                                <dd class="is-wrap">@result.ServerUuid</dd>
+                            </div>
+                            <div>
+                                <dt>IDENTIFIER</dt>
+                                <dd>@result.ServerIdentifier</dd>
+                            </div>
+                            <div>
+                                <dt>NODE</dt>
+                                <dd>@result.NodeId</dd>
+                            </div>
+                            <div>
+                                <dt>ALLOCATION</dt>
+                                <dd>@result.AllocationId</dd>
+                            </div>
+                            <div>
+                                <dt>PANEL USER</dt>
+                                <dd>@result.PanelUserId (@(result.UserWasReused ? "reused" : "created"))</dd>
+                            </div>
+                            <div>
+                                <dt>STATUS</dt>
+                                <dd>@(result.Status ?? "installed")</dd>
+                            </div>
+                        }
+                        <div>
+                            <dt>PLAN</dt>
+                            <dd>@(result.PlanSlug ?? "—")</dd>
+                        </div>
+                        @if (result.Failure is not PterodactylFailure.None)
+                        {
+                            <div>
+                                <dt>FAILURE</dt>
+                                <dd class="is-bad">@result.Failure</dd>
+                            </div>
+                        }
+                    </dl>
+
+                    @if (result.IsSuccess && result.ServerId is not null)
+                    {
+                        <div class="lab-actions">
+                            @if (!_confirmingDelete)
+                            {
+                                <CtaButton Variant="CtaVariant.Secondary"
+                                           Size="CtaSize.Small"
+                                           Disabled="@_isBusy"
+                                           OnClick="() => _confirmingDelete = true">
+                                    Delete test server
+                                </CtaButton>
+                            }
+                            else
+                            {
+                                <div class="confirm" role="alertdialog" aria-label="Confirm deletion">
+                                    <p class="confirm-copy">
+                                        This deletes server <strong>@result.ServerId</strong> from the panel.
+                                        Only servers whose external id begins with
+                                        <code>@PterodactylNaming.TestServerPrefix</code> can be removed here.
+                                    </p>
+                                    <div class="confirm-actions">
+                                        <CtaButton Variant="CtaVariant.Primary"
+                                                   Size="CtaSize.Small"
+                                                   IsBusy="_isBusy"
+                                                   OnClick="DeleteAsync">
+                                            Confirm deletion
+                                        </CtaButton>
+                                        <CtaButton Variant="CtaVariant.Secondary"
+                                                   Size="CtaSize.Small"
+                                                   Disabled="@_isBusy"
+                                                   OnClick="() => _confirmingDelete = false">
+                                            Cancel
+                                        </CtaButton>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                </section>
+            }
+        }
+    </div>
+</section>
+
+@code {
+    private PanelSnapshot? _snapshot;
+    private ProvisioningResult? _result;
+
+    private string _email = "lab@howtoosoftware.test";
+    private string _planSlug = "zomboid-4gb";
+
+    private bool _isInspecting;
+    private bool _isBusy;
+    private bool _confirmingDeploy;
+    private bool _confirmingDelete;
+
+    /// <summary>
+    /// The request id this lab session provisions under. Generated once per circuit so pressing
+    /// the button twice reuses the existing server rather than creating a second one - which is
+    /// also how the idempotence guarantee gets exercised.
+    /// </summary>
+    private readonly Guid _requestId = Guid.NewGuid();
+
+    /// <summary>Synthetic customer, stable for this session.</summary>
+    private readonly Guid _customerId = Guid.NewGuid();
+
+    private async Task InspectAsync()
+    {
+        // Re-checked on the server. Hiding the button would not stop a circuit message.
+        Guard.EnsureAvailable();
+
+        _isInspecting = true;
+
+        try
+        {
+            _snapshot = await Provisioning.InspectPanelAsync();
+        }
+        finally
+        {
+            _isInspecting = false;
+        }
+    }
+
+    private async Task DeployAsync()
+    {
+        Guard.EnsureAvailable();
+
+        _isBusy = true;
+        _confirmingDeploy = false;
+
+        try
+        {
+            Logger.LogInformation("Provisioning lab: deploy requested for {RequestId}", _requestId);
+
+            _result = await Provisioning.ProvisionAsync(new ProvisioningRequest
+            {
+                RequestId = _requestId,
+                CustomerId = _customerId,
+                CustomerEmail = _email.Trim(),
+                PlanSlug = _planSlug,
+                ServerName = $"hts-lab-{_requestId.ToString("N")[..8]}",
+                FirstName = "HowToSoftware",
+                LastName = "Lab",
+                // Marks the external ids with the test prefix, which is what makes the result
+                // eligible for deletion here and nothing else.
+                IsTest = true
+            });
+        }
+        finally
+        {
+            _isBusy = false;
+        }
+    }
+
+    private async Task DeleteAsync()
+    {
+        Guard.EnsureAvailable();
+
+        _isBusy = true;
+        _confirmingDelete = false;
+
+        try
+        {
+            // Takes the request id, not a server id: there is no field on this page that can name
+            // an arbitrary server, and the service re-checks the external id before deleting.
+            _result = await Provisioning.DeleteTestServerAsync(_requestId);
+        }
+        finally
+        {
+            _isBusy = false;
+        }
+    }
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

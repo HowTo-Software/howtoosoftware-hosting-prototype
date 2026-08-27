@@ -1,0 +1,115 @@
+@*
+    A photograph of our own hardware - or an honest gap where one is not supplied yet.
+
+    The library tells us whether the file is on disk. If it is, it is served inside a fixed
+    aspect-ratio box so the page never reflows when it decodes, lazily unless it is above the
+    fold, with a WebP source and a JPEG fallback when both exist.
+
+    If it is not, the slot renders a labelled placeholder that names the exact path to drop the
+    file at. It never falls back to stock imagery: this page tells a customer "this is the
+    machine your world runs on", and a stock photo would make that a lie.
+*@
+
+@inject IHardwarePhotoLibrary Library
+@inject IStringLocalizer<HardwareText> Text
+
+@if (Resolved.IsAvailable)
+{
+    <figure class="photo @CssClass" data-spotlight>
+        <div class="photo-frame">
+            <picture>
+                @if (Resolved.FallbackWebPath is { } fallback)
+                {
+                    <source srcset="@Resolved.WebPath" type="image/webp" />
+                    <img class="photo-image"
+                         src="@fallback"
+                         alt="@Alt"
+                         loading="@LoadingMode"
+                         decoding="async"
+                         fetchpriority="@FetchPriority" />
+                }
+                else
+                {
+                    <img class="photo-image"
+                         src="@Resolved.WebPath"
+                         alt="@Alt"
+                         loading="@LoadingMode"
+                         decoding="async"
+                         fetchpriority="@FetchPriority" />
+                }
+            </picture>
+
+            @* A hairline frame and a corner tick, so a photograph sits inside the same drawing
+               language as the diagrams around it rather than floating as a bare rectangle. *@
+            <span class="photo-rim" aria-hidden="true"></span>
+            <span class="photo-tick" aria-hidden="true"></span>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Caption))
+        {
+            <figcaption class="photo-caption">@Caption</figcaption>
+        }
+    </figure>
+}
+else
+{
+    <div class="photo photo--pending @CssClass">
+        <div class="photo-frame">
+            <div class="pending-body">
+                <span class="pending-badge">@Text["Photo.Pending"]</span>
+                <p class="pending-label">@Text[$"Photo.Slot.{Slot}"]</p>
+                <code class="pending-path">@Resolved.DropPath</code>
+            </div>
+            <span class="photo-rim" aria-hidden="true"></span>
+            <span class="photo-tick" aria-hidden="true"></span>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Caption))
+        {
+            <p class="photo-caption">@Caption</p>
+        }
+    </div>
+}
+
+@code {
+    private HardwarePhotoAsset? _resolved;
+
+    /// <summary>Which photograph to show.</summary>
+    [Parameter, EditorRequired]
+    public HardwarePhotoSlot Slot { get; set; }
+
+    /// <summary>
+    /// Alternative text. Describes the machine, not the file - someone using a screen reader
+    /// wants to know what is in the rack, not that this is a photo.
+    /// </summary>
+    [Parameter, EditorRequired]
+    public string Alt { get; set; } = string.Empty;
+
+    /// <summary>Optional caption rendered under the frame.</summary>
+    [Parameter]
+    public string? Caption { get; set; }
+
+    /// <summary>
+    /// Set for a photograph above the fold, which is fetched eagerly and at high priority
+    /// because it is part of the first impression rather than something scrolled to.
+    /// </summary>
+    [Parameter]
+    public bool IsAboveTheFold { get; set; }
+
+    /// <summary>Optional additional CSS classes, used for size variants.</summary>
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    private HardwarePhotoAsset Resolved => _resolved ??= Library.Resolve(Slot);
+
+    private string LoadingMode => IsAboveTheFold ? "eager" : "lazy";
+
+    private string FetchPriority => IsAboveTheFold ? "high" : "auto";
+
+    protected override void OnParametersSet() => _resolved = null;
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

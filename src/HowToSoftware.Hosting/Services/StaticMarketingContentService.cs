@@ -51,7 +51,7 @@ public sealed class StaticMarketingContentService : IMarketingContentService
         new(_text["Nav.Provisioning"], "/#provisioning"),
         new(_text["Nav.ControlPanel"], "/#control-panel"),
         new(_text["Nav.Infrastructure"], "/infrastructure"),
-        new(_text["Nav.Plans"], "/#plans"),
+        new(_text["Nav.Plans"], "/project-zomboid"),
         new(_text["Nav.Faq"], "/#faq")
     ];
 
@@ -63,7 +63,7 @@ public sealed class StaticMarketingContentService : IMarketingContentService
         new(_text["Product.ProvisioningPipeline"], "/#provisioning"),
         new(_text["Product.ControlPanel"], "/#control-panel"),
         new(_text["Product.Infrastructure"], "/infrastructure"),
-        new(_text["Product.Plans"], "/#plans")
+        new(_text["Product.Plans"], "/project-zomboid")
     ];
 
     /// <inheritdoc />
@@ -107,26 +107,23 @@ public sealed class StaticMarketingContentService : IMarketingContentService
     ];
 
     /// <inheritdoc />
-    public IReadOnlyList<WorldCell> WorldCells =>
+    /// <remarks>
+    /// Every one of these is something the section copy already states happens - restarts,
+    /// build changes, rebuilds of the instance, mod rollbacks and scheduled restore points.
+    /// The figure illustrates that copy; it does not add a claim to it.
+    /// </remarks>
+    public IReadOnlyList<WorldEvent> WorldEvents =>
     [
-        new(2, 1, WorldCellKind.Loaded),
-        new(3, 1, WorldCellKind.Loaded),
-        new(5, 1, WorldCellKind.Player, _home["Cell.Survivor"]),
-        new(1, 2, WorldCellKind.Loaded),
-        new(2, 2, WorldCellKind.Safehouse, _home["Cell.Safehouse"]),
-        new(3, 2, WorldCellKind.Loaded),
-        new(4, 2, WorldCellKind.Loaded),
-        new(6, 2, WorldCellKind.Loaded),
-        new(2, 3, WorldCellKind.Loaded),
-        new(4, 3, WorldCellKind.Server, _home["Cell.WorldState"]),
-        new(5, 3, WorldCellKind.Loaded),
-        new(7, 3, WorldCellKind.Player, _home["Cell.Survivor"]),
-        new(1, 4, WorldCellKind.Loaded),
-        new(3, 4, WorldCellKind.Loaded),
-        new(4, 4, WorldCellKind.Loaded),
-        new(6, 4, WorldCellKind.Loaded),
-        new(3, 5, WorldCellKind.Player, _home["Cell.Survivor"]),
-        new(5, 5, WorldCellKind.Loaded)
+        new(_home["Event.Restart.Tag"], _home["Event.Restart.Detail"],
+            WorldEventKind.InstanceInterrupted),
+        new(_home["Event.Build.Tag"], _home["Event.Build.Detail"],
+            WorldEventKind.InstanceInterrupted),
+        new(_home["Event.Restore.Tag"], _home["Event.Restore.Detail"],
+            WorldEventKind.WorldCheckpoint),
+        new(_home["Event.Rollback.Tag"], _home["Event.Rollback.Detail"],
+            WorldEventKind.InstanceInterrupted),
+        new(_home["Event.Rebuild.Tag"], _home["Event.Rebuild.Detail"],
+            WorldEventKind.InstanceInterrupted)
     ];
 
     /// <inheritdoc />
@@ -156,11 +153,15 @@ public sealed class StaticMarketingContentService : IMarketingContentService
     ];
 
     /// <inheritdoc />
+    /// <remarks>
+    /// Two machines, because there are two. Neither carries a load percentage: that is a live
+    /// figure a statically-rendered marketing page cannot keep current, and a number frozen at
+    /// build time reads as a claim about the platform right now.
+    /// </remarks>
     public IReadOnlyList<InfrastructureNode> Nodes =>
     [
-        new("NODE / 01", _home["Node.RegionEuWest"], NodeSpecs, NodeHealth.Healthy, 62, 24),
-        new("NODE / 02", _home["Node.RegionEuWest"], NodeSpecs, NodeHealth.Healthy, 41, 17),
-        new("NODE / 03", _home["Node.RegionPending"], NodeSpecs, NodeHealth.Reserved, 0, 0)
+        new("NODE / 01", _home["Node.RegionPrimary"], NodeSpecs, NodeHealth.Healthy),
+        new("NODE / 02", _home["Node.RegionSecondary"], NodeSpecs, NodeHealth.Healthy)
     ];
 
     /// <inheritdoc />
@@ -202,8 +203,9 @@ public sealed class StaticMarketingContentService : IMarketingContentService
     ];
 
     /// <summary>
-    /// The specification lines every node panel shows. Identical across nodes on purpose - the
-    /// platform is one class of machine, and what differs between them is the load figure.
+    /// The specification lines every node panel shows. Identical across nodes because the two
+    /// machines are identically specified - same board, same CPU, same memory, same storage
+    /// class. Read from the running hosts rather than from a datasheet.
     /// </summary>
     private IReadOnlyList<PlanSpec> NodeSpecs =>
     [

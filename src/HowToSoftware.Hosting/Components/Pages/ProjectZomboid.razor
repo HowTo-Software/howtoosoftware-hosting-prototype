@@ -1,0 +1,82 @@
+@*
+    The Project Zomboid plans, on a page of their own.
+
+    Separate from the home page on purpose. The home page sells the platform - what the worlds
+    do, how provisioning works, what the hardware is. This page sells one game's plans, and a
+    visitor who arrives here from a search for "project zomboid server hosting" should land on
+    the ladder rather than scroll past eight sections to reach it.
+
+    The two pages share components but not their job: the home page carries a teaser that links
+    here, and this page carries the full grid, the build-to-order panel and the plan questions.
+*@
+
+@page "/project-zomboid"
+@inject IOptions<SiteOptions> Site
+@inject IStringLocalizer<HomeText> Text
+
+<PageTitle>@Text["Zomboid.MetaTitle"] | @Site.Value.Name</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="@Text["Zomboid.MetaDescription"]" />
+    <link rel="canonical" href="@($"{Site.Value.BaseUrl.TrimEnd('/')}/project-zomboid")" />
+</HeadContent>
+
+<section class="zomboid-hero" aria-labelledby="zomboid-heading">
+    <WorldFieldBackdrop />
+
+    <div class="hts-container hts-container--wide zomboid-hero-inner">
+        <div class="zomboid-copy" data-reveal>
+            <p class="zomboid-kicker" data-text-effect="flicker">@Text["Zomboid.Kicker"]</p>
+
+            <h1 id="zomboid-heading" class="zomboid-title" data-text-effect="rise">
+                @Text["Zomboid.Line1"]<br />
+                <span class="zomboid-accent">@Text["Zomboid.Accent"]</span>
+            </h1>
+
+            <p class="zomboid-lede">@Text["Zomboid.Lede"]</p>
+
+            <div class="zomboid-actions">
+                <CtaButton Href="#plans" Variant="CtaVariant.Primary" TrailingIcon="IconName.ArrowRight">
+                    @Text["Zomboid.Cta1"]
+                </CtaButton>
+                <CtaButton Href="#custom-build" Variant="CtaVariant.Secondary">
+                    @Text["Zomboid.Cta2"]
+                </CtaButton>
+            </div>
+        </div>
+
+        <ul class="zomboid-points" data-reveal="right">
+            <li data-spotlight>
+                <h2>@Text["Zomboid.PointRates"]</h2>
+                <p>@Text["Zomboid.PointRatesBody"]</p>
+            </li>
+            <li data-spotlight>
+                <h2>@Text["Zomboid.PointResources"]</h2>
+                <p>@Text["Zomboid.PointResourcesBody"]</p>
+            </li>
+            <li data-spotlight>
+                <h2>@Text["Zomboid.PointCustom"]</h2>
+                <p>@Text["Zomboid.PointCustomBody"]</p>
+            </li>
+        </ul>
+    </div>
+</section>
+
+<PlansSection />
+<BotSection />
+<CustomBuildSection />
+<FaqSection />
+
+<section class="zomboid-back">
+    <div class="hts-container hts-container--wide">
+        <a class="back-link" href="/">
+            <Icon Name="IconName.ArrowRight" CssClass="is-sm" />
+            <span>@Text["Zomboid.BackToMain"]</span>
+        </a>
+    </div>
+</section>
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

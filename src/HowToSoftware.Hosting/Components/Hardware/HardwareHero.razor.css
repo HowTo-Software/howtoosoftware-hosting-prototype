@@ -13,10 +13,25 @@
     position: relative;
     z-index: var(--hts-z-content);
     flex: 1;
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    align-items: center;
+    gap: clamp(2rem, 5vw, 4.5rem);
+    padding-block: clamp(2.5rem, 6vw, 5rem);
+}
+
+.hw-hero-type {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    padding-block: clamp(2.5rem, 6vw, 5rem);
+    min-width: 0;
+}
+
+/* The rack photograph sits at the scale of the headline rather than as an inset thumbnail. */
+.hw-hero-plate {
+    min-width: 0;
+    max-width: 26rem;
+    margin-left: auto;
 }
 
 .hw-kicker {
@@ -92,6 +107,17 @@
 .foot-value {
     color: var(--hts-blue-300);
     font-weight: 600;
+}
+
+@media (max-width: 1080px) {
+    .hw-hero-inner {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .hw-hero-plate {
+        max-width: 22rem;
+        margin-left: 0;
+    }
 }
 
 @media (max-width: 900px) {

@@ -7,6 +7,7 @@
  *   1. Reveal elements the first time they scroll into view.
  *   2. Flag the header once the page has scrolled past the top.
  *   3. Report which provisioning stage is centred in the viewport.
+ *   4. Split headline text into characters so CSS can animate them.
  *
  * Note the split of responsibilities in (3): JavaScript observes, Blazor
  * decides. The observer calls [JSInvokable] SetActiveStage and every visual
@@ -43,12 +44,17 @@
         }, { rootMargin: "0px 0px -10% 0px", threshold: 0.05 });
     }
 
+    var REVEALS = "[data-reveal], [data-text-effect]";
+
     function observe(node) {
-        if (!observer || !node.hasAttribute || !node.hasAttribute("data-reveal")) {
+        if (!observer || !node.matches) {
             return;
         }
 
-        if (node.classList.contains("is-revealed")) {
+        // Split text animates off the same class as a scroll reveal, so an element carrying
+        // only [data-text-effect] has to be watched too. The hero headline is one: it sits
+        // outside any [data-reveal] wrapper, and before this it never became visible at all.
+        if (!node.matches(REVEALS) || node.classList.contains("is-revealed")) {
             return;
         }
 
@@ -63,8 +69,125 @@
         observe(scope);
 
         if (scope.querySelectorAll) {
-            scope.querySelectorAll("[data-reveal]:not(.is-revealed)").forEach(observe);
+            scope.querySelectorAll(REVEALS).forEach(observe);
         }
+    }
+
+    // ── 1b. Character split ───────────────────────────────────────────────
+    //
+    // CSS can animate an element. It cannot animate the letters inside one, because
+    // there is nothing in the DOM to address. This wraps each character in a span
+    // carrying its index, and the stylesheet does the rest - what the animation
+    // looks like is not decided here.
+    //
+    // Accessibility: the original string is put on the element as aria-label and the
+    // split spans are hidden from assistive technology, so a screen reader reads one
+    // sentence rather than a stream of single letters.
+    var SPLIT_LIMIT = 220;
+
+    function splitTextNode(textNode, offset) {
+        var words = textNode.nodeValue.split(/\s+/).filter(Boolean);
+
+        if (!words.length) {
+            return offset;
+        }
+
+        // One wrapper, not a run of loose nodes. The parent may be a flex container -
+        // several of these kickers are - and a flex container drops whitespace-only
+        // anonymous items, which ate the spaces between the words.
+        var wrapper = document.createElement("span");
+        wrapper.className = "split";
+
+        // Whether this text node touched a sibling across a space. "keeps <span>running</span>"
+        // is two nodes, and trimming the first one's trailing space closed the gap between the
+        // words - the headline rendered as "keepsrunning".
+        var raw = textNode.nodeValue;
+
+        if (/^[\s]/.test(raw)) {
+            wrapper.appendChild(document.createTextNode(" "));
+        }
+
+        var index = offset;
+
+        for (var w = 0; w < words.length; w += 1) {
+            if (w > 0) {
+                // A real space inside normal inline layout, so the line can still break here.
+                wrapper.appendChild(document.createTextNode(" "));
+            }
+
+            // Characters are inline-block, and a browser will break a line between any two
+            // of them. Wrapping each word keeps the break points where words are.
+            var word = document.createElement("span");
+            word.className = "word";
+
+            for (var i = 0; i < words[w].length; i += 1) {
+                var span = document.createElement("span");
+                span.className = "char";
+                span.style.setProperty("--char-index", index);
+                span.textContent = words[w].charAt(i);
+                word.appendChild(span);
+                index += 1;
+            }
+
+            wrapper.appendChild(word);
+        }
+
+        if (/[\s]$/.test(raw)) {
+            wrapper.appendChild(document.createTextNode(" "));
+        }
+
+        textNode.parentNode.replaceChild(wrapper, textNode);
+        return index;
+    }
+
+    function splitText(node) {
+        if (node.dataset.textSplit === "done") {
+            return;
+        }
+
+        node.dataset.textSplit = "done";
+
+        var label = node.textContent.replace(/\s+/g, " ").trim();
+
+        // A long paragraph is not worth hundreds of spans, and an empty element has
+        // nothing to split. Both are left exactly as they are.
+        if (!label || label.length > SPLIT_LIMIT) {
+            return;
+        }
+
+        // Walk the text nodes rather than rewriting the element, so a heading keeps
+        // its <br> and its accent <span> and the stagger still runs continuously
+        // across all of them.
+        var walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT, null);
+        var pending = [];
+        var found;
+
+        while ((found = walker.nextNode())) {
+            if (found.nodeValue.trim()) {
+                pending.push(found);
+            }
+        }
+
+        var index = 0;
+
+        for (var i = 0; i < pending.length; i += 1) {
+            index = splitTextNode(pending[i], index);
+        }
+
+        if (!index) {
+            return;
+        }
+
+        node.setAttribute("aria-label", label);
+        node.style.setProperty("--char-count", index);
+    }
+
+    function splitScope(scope) {
+        if (!root.classList.contains("hts-js") || !scope.querySelectorAll) {
+            return;
+        }
+
+        scope.querySelectorAll("[data-text-effect]").forEach(splitText);
     }
 
     // ── 2. Header scroll state ──────────────────────────────────────────────
@@ -232,6 +355,7 @@
 
     function onEnhancedLoad() {
         clearSpotlight();
+        splitScope(document.body);
         scan(document.body);
         applyScrollState();
         replayPageEnter();
@@ -239,6 +363,7 @@
 
     // ── Wiring ──────────────────────────────────────────────────────────────
     function start() {
+        splitScope(document.body);
         scan(document.body);
         applyScrollState();
     }
@@ -268,6 +393,7 @@
             mutations.forEach(function (mutation) {
                 mutation.addedNodes.forEach(function (node) {
                     if (node.nodeType === 1) {
+                        splitScope(node);
                         scan(node);
                     }
                 });

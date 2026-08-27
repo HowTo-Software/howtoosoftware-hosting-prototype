@@ -102,12 +102,6 @@
   <data name="World.CellValue" xml:space="preserve">
     <value>300 x 300</value>
   </data>
-  <data name="Grid.Caption" xml:space="preserve">
-    <value>KNOX COUNTY / CAMPO DE CÉLULAS</value>
-  </data>
-  <data name="Grid.Streaming" xml:space="preserve">
-    <value>CARREGANDO</value>
-  </data>
   <data name="Workshop.Kicker" xml:space="preserve">
     <value>WORKSHOP</value>
   </data>
@@ -232,7 +226,7 @@
     <value>NÓ</value>
   </data>
   <data name="Cp.NodeValue" xml:space="preserve">
-    <value>EU WEST / 01</value>
+    <value>US CENTRAL / 01</value>
   </data>
   <data name="Cp.PowerLabel" xml:space="preserve">
     <value>Controles de energia do servidor</value>
@@ -421,7 +415,7 @@
     <value>Fale com quem está construindo.</value>
   </data>
   <data name="Closing.ContactCopy" xml:space="preserve">
-    <value>Planos e preços ainda estão sendo definidos. Descreva sua comunidade - quantos jogadores, o quanto vocês usam mods, como gostam de jogar - e a gente encaixa no mundo certo.</value>
+    <value>Descreva sua comunidade - quantos jogadores, o quanto vocês usam mods, como gostam de jogar - e a gente encaixa no plano certo, ou orça uma configuração que não está na lista.</value>
   </data>
   <data name="Telemetry.GameBuild" xml:space="preserve">
     <value>BUILD DO JOGO</value>
@@ -461,15 +455,6 @@
   </data>
   <data name="Signal.Mods" xml:space="preserve">
     <value>82 MODS</value>
-  </data>
-  <data name="Cell.Survivor" xml:space="preserve">
-    <value>SOBREVIVENTE</value>
-  </data>
-  <data name="Cell.Safehouse" xml:space="preserve">
-    <value>ABRIGO</value>
-  </data>
-  <data name="Cell.WorldState" xml:space="preserve">
-    <value>ESTADO DO MUNDO</value>
   </data>
   <data name="Stage01.Title" xml:space="preserve">
     <value>PEDIDO RECEBIDO</value>
@@ -517,22 +502,22 @@
     <value>VCPU</value>
   </data>
   <data name="Node.CpuValue" xml:space="preserve">
-    <value>Núcleos dedicados de alta frequência</value>
+    <value>Intel Core i9-10980XE</value>
   </data>
   <data name="Node.MemoryValue" xml:space="preserve">
-    <value>256 GB ECC</value>
+    <value>256 GB</value>
   </data>
   <data name="Node.StorageValue" xml:space="preserve">
-    <value>Array NVMe</value>
+    <value>5 TB NVMe</value>
   </data>
   <data name="Node.NetworkValue" xml:space="preserve">
-    <value>Uplink redundante</value>
+    <value>Uplink 1 GbE</value>
   </data>
-  <data name="Node.RegionEuWest" xml:space="preserve">
-    <value>EU WEST</value>
+  <data name="Node.RegionPrimary" xml:space="preserve">
+    <value>US CENTRAL</value>
   </data>
-  <data name="Node.RegionPending" xml:space="preserve">
-    <value>PENDENTE</value>
+  <data name="Node.RegionSecondary" xml:space="preserve">
+    <value>US CENTRAL</value>
   </data>
   <data name="Cap01.Kicker" xml:space="preserve">
     <value>WORKSHOP</value>
@@ -652,7 +637,7 @@
     <value>Os planos e preços desta página são finais?</value>
   </data>
   <data name="Faq.Pricing.Answer" xml:space="preserve">
-    <value>Não. O catálogo desta página são dados de teste usados para avaliar a interface, incluindo o campo de cupom. Planos, preços e descontos finais ainda estão sendo decididos e nada aqui é uma oferta comercial.</value>
+    <value>São oito planos, de 4 GB a 16 GB de memória. O armazenamento é de 25 GB até o plano de 6 GB e de 40 GB a partir de 8 GB. Os preços não são oito decisões separadas: cada um é uma tabela de preços publicada - CPU, memória e NVMe - aplicada ao que aquele plano realmente entrega, então um plano não pode ser reprecificado sem reprecificar o que ele contém.</value>
   </data>
   <data name="Faq.Migrate.Question" xml:space="preserve">
     <value>Posso migrar um servidor que já existe?</value>
@@ -687,9 +672,6 @@
   <data name="Plan.KnoxCell.Tagline" xml:space="preserve">
     <value>Uma comunidade inteira, em alocação dedicada.</value>
   </data>
-  <data name="Plan.Cores" xml:space="preserve">
-    <value>{0} núcleos</value>
-  </data>
   <data name="Include.WorkshopSync" xml:space="preserve">
     <value>Sincronização de mods do Workshop</value>
   </data>
@@ -713,5 +695,329 @@
   </data>
   <data name="Include.DedicatedAllocation" xml:space="preserve">
     <value>Alocação dedicada</value>
+  </data>
+  <data name="Plans.FlagBodyUnpriced" xml:space="preserve">
+    <value>As alocações de recurso aqui são definitivas. Os preços ainda não foram definidos, então os cards mostram o hardware de cada plano e deixam o valor em branco em vez de chutar um.</value>
+  </data>
+  <data name="Plans.MemoryLabel" xml:space="preserve">
+    <value>RAM</value>
+  </data>
+  <data name="Plans.MemoryUnit" xml:space="preserve">
+    <value>GB</value>
+  </data>
+  <data name="Plans.SpecCpu" xml:space="preserve">
+    <value>CPU</value>
+  </data>
+  <data name="Plans.SpecStorage" xml:space="preserve">
+    <value>ARMAZENAMENTO</value>
+  </data>
+  <data name="Plans.SpecBackups" xml:space="preserve">
+    <value>BACKUPS</value>
+  </data>
+  <data name="Plans.CpuValue" xml:space="preserve">
+    <value>{0}% de alocação</value>
+  </data>
+  <data name="Plans.StorageValue" xml:space="preserve">
+    <value>{0} GB NVMe</value>
+  </data>
+  <data name="Plans.PricePending" xml:space="preserve">
+    <value>PREÇO PENDENTE</value>
+  </data>
+  <data name="Plans.PricePendingNote" xml:space="preserve">
+    <value>Preço não definido</value>
+  </data>
+  <data name="Plans.CpuNote" xml:space="preserve">
+    <value>A alocação de CPU é uma fatia das threads do nó, não núcleos dedicados: 100% equivale a uma thread, então 300% permite que o servidor use até três. Todos os planos rodam no mesmo hardware; o armazenamento sobe de 25 GB para 40 GB a partir do plano de 8 GB.</value>
+  </data>
+  <data name="Plans.FlagTagUnpriced" xml:space="preserve">
+    <value>PREÇO PENDENTE</value>
+  </data>
+  <data name="CustomBuild.Index" xml:space="preserve">
+    <value>09</value>
+  </data>
+  <data name="CustomBuild.Kicker" xml:space="preserve">
+    <value>SOB MEDIDA</value>
+  </data>
+  <data name="CustomBuild.Title" xml:space="preserve">
+    <value>Precisa de mais que o maior plano?</value>
+  </data>
+  <data name="CustomBuild.Lede" xml:space="preserve">
+    <value>Defina a memória, a alocação de CPU e o armazenamento que a sua comunidade realmente precisa. A estimativa sai das mesmas tabelas de preço que precificam todos os planos desta página, então dá para conferir a conta em vez de acreditar no número.</value>
+  </data>
+  <data name="CustomBuild.Ceiling" xml:space="preserve">
+    <value>Os controles vão até {0} GB, {1}% e {2} GB. Isso é um limite deste formulário, não do que dá para montar - acima disso, escreva para</value>
+  </data>
+  <data name="CustomBuild.MemoryLabel" xml:space="preserve">
+    <value>Memória</value>
+  </data>
+  <data name="CustomBuild.MemoryUnit" xml:space="preserve">
+    <value>GB</value>
+  </data>
+  <data name="CustomBuild.CpuLabel" xml:space="preserve">
+    <value>Alocação de CPU</value>
+  </data>
+  <data name="CustomBuild.DiskLabel" xml:space="preserve">
+    <value>Armazenamento NVMe</value>
+  </data>
+  <data name="CustomBuild.DiskUnit" xml:space="preserve">
+    <value>GB</value>
+  </data>
+  <data name="CustomBuild.PlayersLabel" xml:space="preserve">
+    <value>Jogadores esperados</value>
+  </data>
+  <data name="CustomBuild.PlayersPlaceholder" xml:space="preserve">
+    <value>Opcional</value>
+  </data>
+  <data name="CustomBuild.NotesLabel" xml:space="preserve">
+    <value>Mais alguma coisa</value>
+  </data>
+  <data name="CustomBuild.NotesPlaceholder" xml:space="preserve">
+    <value>Lista de mods, há quanto tempo o mundo roda, o que for importante.</value>
+  </data>
+  <data name="CustomBuild.EstimateLabel" xml:space="preserve">
+    <value>ESTIMATIVA</value>
+  </data>
+  <data name="CustomBuild.PerMonth" xml:space="preserve">
+    <value>por mês</value>
+  </data>
+  <data name="CustomBuild.LineCpu" xml:space="preserve">
+    <value>CPU {0}%</value>
+  </data>
+  <data name="CustomBuild.LineMemory" xml:space="preserve">
+    <value>Memória {0} GB</value>
+  </data>
+  <data name="CustomBuild.LineDisk" xml:space="preserve">
+    <value>Armazenamento {0} GB</value>
+  </data>
+  <data name="CustomBuild.ComparedTo" xml:space="preserve">
+    <value>Para comparar, o {0} - o maior plano da lista - tem {1} GB a {2}% por {3} ao mês.</value>
+  </data>
+  <data name="CustomBuild.EstimateNote" xml:space="preserve">
+    <value>Uma estimativa, não um orçamento fechado. É a tabela de preços publicada aplicada aos valores acima; disponibilidade e preço final são confirmados por uma pessoa.</value>
+  </data>
+  <data name="CustomBuild.Send" xml:space="preserve">
+    <value>Enviar esta configuração</value>
+  </data>
+  <data name="CustomBuild.SendNote" xml:space="preserve">
+    <value>Abre o seu próprio cliente de e-mail com a configuração preenchida. Nada é enviado por esta página - ainda não existe um pedido por trás deste botão.</value>
+  </data>
+  <data name="CustomBuild.NoRates" xml:space="preserve">
+    <value>Esta instalação não tem tabela de preços configurada, então não há valor a mostrar. Envie a configuração e a gente orça.</value>
+  </data>
+  <data name="CustomBuild.MailSubject" xml:space="preserve">
+    <value>Pedido de configuração sob medida</value>
+  </data>
+  <data name="CustomBuild.MailIntro" xml:space="preserve">
+    <value>Gostaria de um orçamento para um servidor de Project Zomboid com o seguinte:</value>
+  </data>
+  <data name="Zomboid.MetaTitle" xml:space="preserve">
+    <value>Planos de Project Zomboid</value>
+  </data>
+  <data name="Zomboid.MetaDescription" xml:space="preserve">
+    <value>Planos de servidor de Project Zomboid de 4 GB a 16 GB, precificados por uma tabela de preços publicada, com opção sob medida para comunidades que precisam de mais.</value>
+  </data>
+  <data name="Zomboid.Kicker" xml:space="preserve">
+    <value>PROJECT ZOMBOID / PLANOS</value>
+  </data>
+  <data name="Zomboid.Line1" xml:space="preserve">
+    <value>Escolha o mundo</value>
+  </data>
+  <data name="Zomboid.Accent" xml:space="preserve">
+    <value>que o seu grupo aguenta.</value>
+  </data>
+  <data name="Zomboid.Lede" xml:space="preserve">
+    <value>Oito planos, uma tabela de preços e nenhuma surpresa no fim da fatura. Todo número desta página é o que o servidor recebe de verdade, não um valor redondo de marketing.</value>
+  </data>
+  <data name="Zomboid.Cta1" xml:space="preserve">
+    <value>Ver os planos</value>
+  </data>
+  <data name="Zomboid.Cta2" xml:space="preserve">
+    <value>Montar sob medida</value>
+  </data>
+  <data name="Zomboid.PointRates" xml:space="preserve">
+    <value>Preço vindo de uma tabela publicada</value>
+  </data>
+  <data name="Zomboid.PointRatesBody" xml:space="preserve">
+    <value>CPU, memória e armazenamento têm cada um a sua taxa. Um plano é essas taxas aplicadas ao que ele entrega, por isso nenhum plano custa mais do que contém.</value>
+  </data>
+  <data name="Zomboid.PointResources" xml:space="preserve">
+    <value>Os números são o provisionamento</value>
+  </data>
+  <data name="Zomboid.PointResourcesBody" xml:space="preserve">
+    <value>A memória, a alocação de CPU e o armazenamento em cada card são os valores exatos enviados ao painel do jogo quando o servidor é criado. Não existe um segundo conjunto de números.</value>
+  </data>
+  <data name="Zomboid.PointCustom" xml:space="preserve">
+    <value>A lista não é o limite</value>
+  </data>
+  <data name="Zomboid.PointCustomBody" xml:space="preserve">
+    <value>Uma comunidade que precisa de mais que o maior plano pode especificar o que quer e receber uma estimativa da mesma tabela, em vez de ouvir "entre em contato".</value>
+  </data>
+  <data name="Zomboid.BackToMain" xml:space="preserve">
+    <value>Voltar para o site principal</value>
+  </data>
+  <data name="PlansTeaser.Index" xml:space="preserve">
+    <value>08</value>
+  </data>
+  <data name="PlansTeaser.Kicker" xml:space="preserve">
+    <value>PLANOS</value>
+  </data>
+  <data name="PlansTeaser.Title" xml:space="preserve">
+    <value>Oito planos, uma tabela de preços.</value>
+  </data>
+  <data name="PlansTeaser.Lede" xml:space="preserve">
+    <value>Os planos de Project Zomboid vão de 4 GB a 16 GB, e todo preço neles é a mesma tabela de três taxas aplicada ao que o plano entrega. Eles têm uma página só deles.</value>
+  </data>
+  <data name="PlansTeaser.From" xml:space="preserve">
+    <value>A PARTIR DE</value>
+  </data>
+  <data name="PlansTeaser.PerMonth" xml:space="preserve">
+    <value>por mês</value>
+  </data>
+  <data name="PlansTeaser.Range" xml:space="preserve">
+    <value>De {0} GB a {1} GB de memória em {2} planos</value>
+  </data>
+  <data name="PlansTeaser.Storage" xml:space="preserve">
+    <value>{0} GB ou {1} GB de NVMe, conforme o plano</value>
+  </data>
+  <data name="PlansTeaser.Custom" xml:space="preserve">
+    <value>Sob medida acima do maior plano</value>
+  </data>
+  <data name="PlansTeaser.Cta" xml:space="preserve">
+    <value>Ver os planos de Project Zomboid</value>
+  </data>
+  <data name="PlansTeaser.Unpriced" xml:space="preserve">
+    <value>Preço não definido nesta instalação</value>
+  </data>
+  <data name="Timeline.Caption" xml:space="preserve">
+    <value>CONTINUIDADE DO MUNDO</value>
+  </data>
+  <data name="Timeline.Persistent" xml:space="preserve">
+    <value>PERSISTENTE</value>
+  </data>
+  <data name="Timeline.WorldLane" xml:space="preserve">
+    <value>MUNDO</value>
+  </data>
+  <data name="Timeline.InstanceLane" xml:space="preserve">
+    <value>INSTÂNCIA</value>
+  </data>
+  <data name="Timeline.Note" xml:space="preserve">
+    <value>A linha da esquerda nunca quebra. É essa a promessa inteira.</value>
+  </data>
+  <data name="Event.Restart.Tag" xml:space="preserve">
+    <value>REINÍCIO</value>
+  </data>
+  <data name="Event.Restart.Detail" xml:space="preserve">
+    <value>A instância para e volta. O mundo que ela servia não para junto.</value>
+  </data>
+  <data name="Event.Build.Tag" xml:space="preserve">
+    <value>MUDANÇA DE BUILD</value>
+  </data>
+  <data name="Event.Build.Detail" xml:space="preserve">
+    <value>Uma build diferente do jogo roda sobre o mesmo mundo salvo.</value>
+  </data>
+  <data name="Event.Restore.Tag" xml:space="preserve">
+    <value>PONTO DE RESTAURAÇÃO</value>
+  </data>
+  <data name="Event.Restore.Detail" xml:space="preserve">
+    <value>Feito em uma agenda, sem o servidor cair para isso.</value>
+  </data>
+  <data name="Event.Rollback.Tag" xml:space="preserve">
+    <value>ROLLBACK DE MOD</value>
+  </data>
+  <data name="Event.Rollback.Detail" xml:space="preserve">
+    <value>Você reverte um mod. Sua comunidade não volta atrás junto.</value>
+  </data>
+  <data name="Event.Rebuild.Tag" xml:space="preserve">
+    <value>RECONSTRUÇÃO</value>
+  </data>
+  <data name="Event.Rebuild.Detail" xml:space="preserve">
+    <value>O contêiner por baixo é reconstruído do zero. O volume do mundo sobrevive a ele.</value>
+  </data>
+  <data name="Plans.RenewalLine" xml:space="preserve">
+    <value>Após o primeiro mês, {0}/mês</value>
+  </data>
+  <data name="Plans.RenewalNote" xml:space="preserve">
+    <value>O valor em cada card é o do primeiro mês. A mensalidade cobrada a partir do segundo está impressa logo abaixo dele.</value>
+  </data>
+  <data name="CustomBuild.RenewalLine" xml:space="preserve">
+    <value>Após o primeiro mês, {0} por mês.</value>
+  </data>
+  <data name="Zomboid.Photo.Pending" xml:space="preserve">
+    <value>IMAGEM PENDENTE</value>
+  </data>
+  <data name="Nodes.PlateAlt" xml:space="preserve">
+    <value>O rack da HowToSoftware com a porta aberta, mostrando as máquinas em que os mundos rodam</value>
+  </data>
+  <data name="Nodes.PlateKey" xml:space="preserve">
+    <value>O RACK / US CENTRAL</value>
+  </data>
+  <data name="World.PlateAlt" xml:space="preserve">
+    <value>Um mundo de Project Zomboid em jogo</value>
+  </data>
+  <data name="World.PlateKey" xml:space="preserve">
+    <value>MUNDO</value>
+  </data>
+  <data name="World.PlateState" xml:space="preserve">
+    <value>PERSISTENTE</value>
+  </data>
+  <data name="Hero.PlateAlt" xml:space="preserve">
+    <value>Um mundo de Project Zomboid ao entardecer</value>
+  </data>
+  <data name="Bot.Index" xml:space="preserve">
+    <value>06</value>
+  </data>
+  <data name="Bot.Kicker" xml:space="preserve">
+    <value>SOFTWARE NOSSO</value>
+  </data>
+  <data name="Bot.Title" xml:space="preserve">
+    <value>Um servidor que se observa.</value>
+  </data>
+  <data name="Bot.Lede" xml:space="preserve">
+    <value>Servidores configurados com mais de 5 GB de memória podem rodar o nosso próprio bot de gerenciamento no lado do servidor, feito aqui e não comprado pronto. Ele fica ao lado do mundo e existe para ajudar a segurar o desempenho conforme jogadores, mods e estado salvo se acumulam.</value>
+  </data>
+  <data name="Bot.Threshold" xml:space="preserve">
+    <value>DISPONÍVEL ACIMA DE {0} GB DE MEMÓRIA</value>
+  </data>
+  <data name="Bot.Caveat" xml:space="preserve">
+    <value>O que ele não faz é prometer um número. Não há porcentagem de otimização, não há índice de disponibilidade e não há promessa de que um mundo não vai ficar lento — só um software cujo trabalho é vigiar isso e ajudar você a agir.</value>
+  </data>
+  <data name="Bot.SystemName" xml:space="preserve">
+    <value>HTS SERVER BOT</value>
+  </data>
+  <data name="Bot.SystemState" xml:space="preserve">
+    <value>ACOPLADO</value>
+  </data>
+  <data name="Bot.EndServer" xml:space="preserve">
+    <value>O SERVIDOR</value>
+  </data>
+  <data name="Bot.EndWorld" xml:space="preserve">
+    <value>O MUNDO</value>
+  </data>
+  <data name="Bot.Channel.Performance" xml:space="preserve">
+    <value>DESEMPENHO</value>
+  </data>
+  <data name="Bot.Channel.Memory" xml:space="preserve">
+    <value>MEMÓRIA</value>
+  </data>
+  <data name="Bot.Channel.World" xml:space="preserve">
+    <value>ESTADO DO MUNDO</value>
+  </data>
+  <data name="Bot.Channel.Management" xml:space="preserve">
+    <value>GERENCIAMENTO</value>
+  </data>
+  <data name="Bot.State.Watched" xml:space="preserve">
+    <value>VIGIADO</value>
+  </data>
+  <data name="Bot.State.Managed" xml:space="preserve">
+    <value>GERENCIADO</value>
+  </data>
+  <data name="Plans.BotBadge" xml:space="preserve">
+    <value>HTS SERVER BOT</value>
+  </data>
+  <data name="Plans.BotIncluded" xml:space="preserve">
+    <value>INCLUSO</value>
+  </data>
+  <data name="Plans.BotNote" xml:space="preserve">
+    <value>O HTS server bot é oferecido em todos os planos acima de {0} GB de memória. Os dois planos menores não o têm, e os cards deles não afirmam que têm.</value>
   </data>
 </root>

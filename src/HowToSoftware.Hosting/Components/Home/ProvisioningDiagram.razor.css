@@ -4,34 +4,63 @@
     height: auto;
 }
 
-/* ── Links ─────────────────────────────────────────────────────────────── */
+/* ── Links ───────────────────────────────────────────────────────── */
 
-.link {
-    stroke-width: 1.5;
+.link-route,
+.link-packet {
     fill: none;
+    stroke-linecap: round;
+}
+
+/* The route. Always drawn, whatever the stage - a connection that exists does not stop
+   existing because the reader has not scrolled to it yet. */
+.link-route {
+    stroke: var(--hts-rule);
+    stroke-width: 1.5;
     transition: stroke var(--hts-duration-slow) var(--hts-ease);
 }
 
-.link.is-idle {
-    stroke: var(--hts-rule);
-}
-
 /* Completed routes stay lit in light blue: data has already flowed through. */
-.link.is-done {
+.is-done .link-route {
     stroke: rgba(131, 168, 243, 0.55);
 }
 
-/* The live route is purple and carries a travelling packet. */
-.link.is-live {
-    stroke: var(--hts-purple-400);
-    stroke-dasharray: 18 220;
-    stroke-dashoffset: 238;
+.is-live .link-route {
+    stroke: rgba(176, 105, 255, 0.42);
+}
+
+/* The packet. A short dash travelling the route, drawn over it rather than cut out of it.
+   pathLength="100" in the markup normalises every route to the same scale, so one dash
+   pattern fits the short vertical hops and the long forked branch alike. */
+.link-packet {
+    stroke: transparent;
+    stroke-width: 2.5;
+    stroke-dasharray: 12 88;
+    stroke-dashoffset: 100;
+}
+
+.is-live .link-packet {
+    stroke: var(--hts-purple-300);
+    filter: drop-shadow(0 0 3px rgba(176, 105, 255, 0.9));
     animation: link-travel 1.9s linear infinite;
 }
 
 @keyframes link-travel {
     to {
         stroke-dashoffset: 0;
+    }
+}
+
+/* With motion suppressed the packet would sit frozen mid-route, reading as a stray mark.
+   The live route simply stays lit instead. */
+@media (prefers-reduced-motion: reduce) {
+    .is-live .link-packet {
+        stroke: transparent;
+        animation: none;
+    }
+
+    .is-live .link-route {
+        stroke: var(--hts-purple-400);
     }
 }
 

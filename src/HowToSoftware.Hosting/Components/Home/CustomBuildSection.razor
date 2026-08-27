@@ -1,0 +1,323 @@
+@*
+    Custom build request.
+
+    For the community the ladder does not reach. Three inputs, a live estimate priced from the
+    same rate card the plan cards use, and a way to send the specification.
+
+    Two things this panel is careful about:
+
+      * The estimate is an estimate and says so. It is real arithmetic on published rates, not a
+        number invented to look attractive, and the breakdown is shown so it can be checked.
+      * Nothing is submitted. There is no request table behind this yet, so the button hands the
+        specification to the visitor's own mail client rather than pretending to file it. A form
+        that silently drops enquiries is worse than no form.
+*@
+
+@using System.Globalization
+@rendermode InteractiveServer
+@inject ICustomBuildService Builds
+@inject IStringLocalizer<HomeText> Text
+@inject IOptions<SiteOptions> Site
+
+<section class="build" id="custom-build" aria-labelledby="build-heading">
+    <div class="hts-container hts-container--wide build-inner">
+        <header class="build-copy" data-reveal="left">
+            <p class="build-kicker" data-text-effect="flicker">
+                <span class="kicker-index">@Text["CustomBuild.Index"]</span>
+                @Text["CustomBuild.Kicker"]
+            </p>
+
+            <h2 id="build-heading" class="build-title" data-text-effect="rise">
+                @Text["CustomBuild.Title"]
+            </h2>
+
+            <p class="build-lede">@Text["CustomBuild.Lede"]</p>
+
+            @if (_bounds is { } bounds)
+            {
+                <p class="build-ceiling">
+                    @Text["CustomBuild.Ceiling", bounds.MaxMemoryGb, bounds.MaxCpuPercent, bounds.MaxDiskGb]
+                    <a href="mailto:@Site.Value.ContactEmail">@Site.Value.ContactEmail</a>
+                </p>
+            }
+        </header>
+
+        <div class="build-panel" data-reveal="right" data-spotlight>
+            @if (_bounds is { } range)
+            {
+                <div class="build-fields">
+                    <div class="field">
+                        <label for="build-memory">@Text["CustomBuild.MemoryLabel"]</label>
+                        <div class="field-row">
+                            <input type="range"
+                                   id="build-memory"
+                                   min="@range.MinMemoryGb"
+                                   max="@range.MaxMemoryGb"
+                                   step="@range.MemoryStepGb"
+                                   value="@_request.MemoryGb"
+                                   @oninput="OnMemoryChanged"
+                                   aria-describedby="build-memory-value" />
+                            <output id="build-memory-value" class="field-value">
+                                @_request.MemoryGb<span class="field-unit">@Text["CustomBuild.MemoryUnit"]</span>
+                            </output>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="build-cpu">@Text["CustomBuild.CpuLabel"]</label>
+                        <div class="field-row">
+                            <input type="range"
+                                   id="build-cpu"
+                                   min="@range.MinCpuPercent"
+                                   max="@range.MaxCpuPercent"
+                                   step="@range.CpuStepPercent"
+                                   value="@_request.CpuPercent"
+                                   @oninput="OnCpuChanged"
+                                   aria-describedby="build-cpu-value" />
+                            <output id="build-cpu-value" class="field-value">
+                                @_request.CpuPercent<span class="field-unit">%</span>
+                            </output>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label for="build-disk">@Text["CustomBuild.DiskLabel"]</label>
+                        <div class="field-row">
+                            <input type="range"
+                                   id="build-disk"
+                                   min="@range.MinDiskGb"
+                                   max="@range.MaxDiskGb"
+                                   step="@range.DiskStepGb"
+                                   value="@_request.DiskGb"
+                                   @oninput="OnDiskChanged"
+                                   aria-describedby="build-disk-value" />
+                            <output id="build-disk-value" class="field-value">
+                                @_request.DiskGb<span class="field-unit">@Text["CustomBuild.DiskUnit"]</span>
+                            </output>
+                        </div>
+                    </div>
+
+                    <div class="field field--text">
+                        <label for="build-players">@Text["CustomBuild.PlayersLabel"]</label>
+                        <input type="number"
+                               id="build-players"
+                               class="field-input"
+                               min="1"
+                               max="512"
+                               inputmode="numeric"
+                               placeholder="@Text["CustomBuild.PlayersPlaceholder"]"
+                               value="@_request.PlayerSlots"
+                               @oninput="OnPlayersChanged" />
+                    </div>
+
+                    <div class="field field--text">
+                        <label for="build-notes">@Text["CustomBuild.NotesLabel"]</label>
+                        <textarea id="build-notes"
+                                  class="field-input field-textarea"
+                                  rows="3"
+                                  maxlength="@CustomBuildBounds.MaxNoteLength"
+                                  placeholder="@Text["CustomBuild.NotesPlaceholder"]"
+                                  @oninput="OnNotesChanged">@_request.Notes</textarea>
+                    </div>
+                </div>
+
+                <div class="build-quote">
+                    @if (_estimate is { } estimate)
+                    {
+                        <p class="quote-label">@Text["CustomBuild.EstimateLabel"]</p>
+
+                        <p class="quote-total">
+                            <span class="quote-symbol">@estimate.CurrencySymbol</span>@Money(estimate.MonthlyTotal)
+                            <span class="quote-unit">@Text["CustomBuild.PerMonth"]</span>
+                        </p>
+
+                        @*
+                            What the price covers, not how it was arrived at.
+
+                            This used to price each line and carry a rounding row so the column
+                            added up. The rounding row is house arithmetic - it tells a customer
+                            nothing about what they are buying - and dropping it while leaving
+                            the prices would have left three figures that visibly fail to sum to
+                            the total above them. So the prices went with it: the quote states
+                            one number, and this says what that number is for.
+                        *@
+                        <ul class="quote-spec">
+                            <li>@Text["CustomBuild.LineCpu", estimate.Request.CpuPercent]</li>
+                            <li>@Text["CustomBuild.LineMemory", estimate.Request.MemoryGb]</li>
+                            <li>@Text["CustomBuild.LineDisk", estimate.Request.DiskGb]</li>
+                        </ul>
+
+                        @if (estimate.RenewalTotal is { } renewal)
+                        {
+                            <p class="quote-renewal">
+                                @Text["CustomBuild.RenewalLine",
+                                      $"{estimate.CurrencySymbol}{Money(renewal)}"]
+                            </p>
+                        }
+
+                        @if (estimate.ComparedTo is { IsPriced: true } largest)
+                        {
+                            <p class="quote-compare">
+                                @Text["CustomBuild.ComparedTo",
+                                      largest.Name,
+                                      largest.MemoryGb,
+                                      largest.CpuPercent,
+                                      $"{estimate.CurrencySymbol}{Money(largest.PriceMonthly!.Value)}"]
+                            </p>
+                        }
+
+                        <p class="quote-note">@Text["CustomBuild.EstimateNote"]</p>
+
+                        <a class="quote-send" href="@MailHref(estimate)">
+                            <span>@Text["CustomBuild.Send"]</span>
+                            <Icon Name="IconName.ArrowRight" CssClass="is-sm" />
+                        </a>
+
+                        <p class="quote-send-note">@Text["CustomBuild.SendNote"]</p>
+                    }
+                    else
+                    {
+                        @* No rate card configured. The specification is still worth collecting;
+                           the figure is simply left out rather than guessed. *@
+                        <p class="quote-label">@Text["CustomBuild.EstimateLabel"]</p>
+                        <p class="quote-unavailable">@Text["CustomBuild.NoRates"]</p>
+
+                        <a class="quote-send" href="@MailHref(null)">
+                            <span>@Text["CustomBuild.Send"]</span>
+                            <Icon Name="IconName.ArrowRight" CssClass="is-sm" />
+                        </a>
+
+                        <p class="quote-send-note">@Text["CustomBuild.SendNote"]</p>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    private static readonly CultureInfo Money2 = CultureInfo.InvariantCulture;
+
+    private CustomBuildBounds? _bounds;
+    private CustomBuildRequest _request = new(0, 0, 0, null, null);
+    private CustomBuildEstimate? _estimate;
+
+    protected override void OnInitialized()
+    {
+        _bounds = Builds.Bounds;
+        _request = Builds.CreateDefault();
+        Reprice();
+    }
+
+    /// <summary>
+    /// Re-prices from the service rather than in the component, and adopts the normalised
+    /// request it returns - so a value the server refused is corrected in the inputs the
+    /// visitor is looking at rather than only in the quote.
+    /// </summary>
+    private void Reprice()
+    {
+        _estimate = Builds.Estimate(_request);
+
+        if (_estimate is { } priced)
+        {
+            _request = priced.Request;
+        }
+        else if (_bounds is { } bounds)
+        {
+            _request = bounds.Normalise(_request);
+        }
+    }
+
+    private void OnMemoryChanged(ChangeEventArgs args)
+    {
+        _request = _request with { MemoryGb = Number(args, _request.MemoryGb) };
+        Reprice();
+    }
+
+    private void OnCpuChanged(ChangeEventArgs args)
+    {
+        _request = _request with { CpuPercent = Number(args, _request.CpuPercent) };
+        Reprice();
+    }
+
+    private void OnDiskChanged(ChangeEventArgs args)
+    {
+        _request = _request with { DiskGb = Number(args, _request.DiskGb) };
+        Reprice();
+    }
+
+    private void OnPlayersChanged(ChangeEventArgs args)
+    {
+        var raw = args.Value?.ToString();
+
+        _request = _request with
+        {
+            PlayerSlots = int.TryParse(raw, NumberStyles.Integer, Money2, out var slots) ? slots : null
+        };
+
+        Reprice();
+    }
+
+    private void OnNotesChanged(ChangeEventArgs args)
+    {
+        _request = _request with { Notes = args.Value?.ToString() };
+        Reprice();
+    }
+
+    private static int Number(ChangeEventArgs args, int fallback) =>
+        int.TryParse(args.Value?.ToString(), NumberStyles.Integer, Money2, out var value)
+            ? value
+            : fallback;
+
+    private static string Money(decimal value) => value.ToString("0.00", Money2);
+
+    /// <summary>
+    /// The request as a mail draft. Everything is escaped, and the body carries the same figures
+    /// the panel shows - there is no second formatting of the numbers to drift from the first.
+    /// </summary>
+    private string MailHref(CustomBuildEstimate? estimate)
+    {
+        var lines = new List<string>
+        {
+            Text["CustomBuild.MailIntro"].Value,
+            string.Empty,
+            $"{Text["CustomBuild.MemoryLabel"]}: {_request.MemoryGb} {Text["CustomBuild.MemoryUnit"]}",
+            $"{Text["CustomBuild.CpuLabel"]}: {_request.CpuPercent}%",
+            $"{Text["CustomBuild.DiskLabel"]}: {_request.DiskGb} {Text["CustomBuild.DiskUnit"]}"
+        };
+
+        if (_request.PlayerSlots is { } slots)
+        {
+            lines.Add($"{Text["CustomBuild.PlayersLabel"]}: {slots}");
+        }
+
+        if (estimate is { } priced)
+        {
+            lines.Add(
+                $"{Text["CustomBuild.EstimateLabel"]}: " +
+                $"{priced.CurrencySymbol}{Money(priced.MonthlyTotal)} {Text["CustomBuild.PerMonth"]}");
+
+            if (priced.RenewalTotal is { } renewal)
+            {
+                lines.Add(Text["CustomBuild.RenewalLine",
+                               $"{priced.CurrencySymbol}{Money(renewal)}"].Value);
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(_request.Notes))
+        {
+            lines.Add(string.Empty);
+            lines.Add(_request.Notes);
+        }
+
+        var subject = Uri.EscapeDataString(Text["CustomBuild.MailSubject"].Value);
+        var body = Uri.EscapeDataString(string.Join("\r\n", lines));
+
+        return $"mailto:{Site.Value.ContactEmail}?subject={subject}&body={body}";
+    }
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

@@ -138,7 +138,63 @@
 }
 
 .cta:hover ::deep .hts-icon {
-    transform: translateX(3px);
+    transform: translateX(4px);
+}
+
+/*
+    A light that crosses the button once on hover.
+
+    A gradient stop moved with a transform rather than a repainted background, so it stays on
+    the compositor; masked to the button's own shape; and pointer-events:none so it can never
+    intercept the click. It runs on hover only - a permanent shimmer on a call to action is the
+    kind of movement that exists because it can.
+*/
+.cta--primary::after,
+.cta--inverse::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+        110deg,
+        transparent 38%,
+        rgba(255, 255, 255, 0.22) 50%,
+        transparent 62%);
+    opacity: 0;
+    transform: translateX(-60%);
+    pointer-events: none;
+}
+
+.cta--primary:hover::after,
+.cta--inverse:hover::after {
+    opacity: 1;
+    transform: translateX(60%);
+    transition:
+        transform 0.62s var(--hts-ease-out),
+        opacity 0.2s linear;
+}
+
+/* The rim brightens under the pointer on the outlined variants, which have no fill to move. */
+.cta--secondary:focus-visible,
+.cta--outline-inverse:focus-visible {
+    outline: 2px solid var(--hts-blue-400);
+    outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cta:hover {
+        transform: none;
+    }
+
+    .cta:hover ::deep .hts-icon {
+        transform: none;
+    }
+
+    .cta--primary:hover::after,
+    .cta--inverse:hover::after {
+        opacity: 0;
+        transition: none;
+    }
 }
 
 @media (max-width: 480px) {
