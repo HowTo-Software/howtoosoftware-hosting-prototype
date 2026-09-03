@@ -11,11 +11,11 @@
     position: absolute;
     inset: 0;
     z-index: 0;
+    /* Light, not ruling. The graticule that used to be here was texture pretending to be
+       information, and it read as a tablecloth laid under the headline. */
     background-image:
-        linear-gradient(to right, var(--hts-grid-line) 1px, transparent 1px),
-        linear-gradient(to bottom, var(--hts-grid-line) 1px, transparent 1px);
-    background-size: 72px 72px;
-    mask-image: radial-gradient(ellipse 70% 80% at 50% 50%, #000 20%, transparent 76%);
+        radial-gradient(ellipse 62% 70% at 50% 46%, rgba(176, 105, 255, 0.16) 0%, transparent 68%),
+        radial-gradient(ellipse 46% 50% at 18% 78%, rgba(61, 92, 224, 0.13) 0%, transparent 70%);
 }
 
 /* The spine that has run between sections terminates here. */

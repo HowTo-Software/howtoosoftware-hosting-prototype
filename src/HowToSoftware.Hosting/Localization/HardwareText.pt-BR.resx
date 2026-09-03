@@ -214,7 +214,7 @@
     <value>Voltar para a página inicial</value>
   </data>
   <data name="Note.Pending" xml:space="preserve">
-    <value>As especificações são lidas dos hosts em execução. Os números que ainda faltam aparecem como TEXTO SOBRE AQUI, e não como estimativa.</value>
+    <value>As especificações são lidas dos hosts em execução, não copiadas de uma ficha técnica. Onde um número não foi confirmado, ele fica de fora em vez de ser estimado.</value>
   </data>
   <data name="Photo.Pending" xml:space="preserve">
     <value>FOTO PENDENTE</value>
@@ -314,5 +314,134 @@
   </data>
   <data name="Photo.Caption.DetailBottom" xml:space="preserve">
     <value>INFERIOR</value>
+  </data>
+  <data name="Physical.Compute.Label" xml:space="preserve">
+    <value>COMPUTAÇÃO</value>
+  </data>
+  <data name="Physical.Compute.Body" xml:space="preserve">
+    <value>As cargas de jogo rodam em nós de computação dedicados, não junto com o site. Nossa plataforma baseada em Pterodactyl, customizada por nós, decide em qual nó um servidor cai e o gerencia lá, então cada carga pode ser implantada, movida ou reiniciada sozinha.</value>
+  </data>
+  <data name="Physical.Memory.Label" xml:space="preserve">
+    <value>MEMÓRIA</value>
+  </data>
+  <data name="Physical.Memory.Body" xml:space="preserve">
+    <value>Cada servidor recebe a própria alocação de memória, definida pelo plano e isolada dos servidores ao lado. A gente acompanha a capacidade dos nós para que um vizinho movimentado nunca coma o que foi dado a outro cliente.</value>
+  </data>
+  <data name="Physical.Storage.Label" xml:space="preserve">
+    <value>ARMAZENAMENTO</value>
+  </data>
+  <data name="Physical.Storage.Body" xml:space="preserve">
+    <value>Os dados do mundo ficam no armazenamento da própria máquina em que o servidor roda, então os saves são lidos e escritos localmente e não pela rede. Os backups de infraestrutura ficam separados dos servidores de onde vieram.</value>
+  </data>
+  <data name="Physical.Network.Label" xml:space="preserve">
+    <value>REDE</value>
+  </data>
+  <data name="Physical.Network.Body" xml:space="preserve">
+    <value>O site público, os nós de jogo e os serviços por trás deles são separados. Os componentes conversam entre si por caminhos privados; o cliente alcança só os serviços que devem ser alcançáveis.</value>
+  </data>
+  <data name="Physical.Database.Label" xml:space="preserve">
+    <value>BANCO DE DADOS</value>
+  </data>
+  <data name="Physical.Database.Body" xml:space="preserve">
+    <value>O painel guarda seu estado num serviço MariaDB central, separado tanto da aplicação web quanto dos nós de jogo. O painel se conecta a ele na implantação e durante a execução, e as migrações de esquema são aplicadas como parte dessa implantação, não na mão.</value>
+  </data>
+  <data name="Physical.Deployment.Label" xml:space="preserve">
+    <value>IMPLANTAÇÃO</value>
+  </data>
+  <data name="Physical.Deployment.Body" xml:space="preserve">
+    <value>O painel é entregue como contêiner. Uma versão nova vira uma imagem nova, o contêiner é recriado a partir dela, e as migrações rodam na subida. Os mesmos passos toda vez, e ninguém editando a aplicação em produção para fazer uma mudança.</value>
+  </data>
+  <data name="Physical.Allocation.Label" xml:space="preserve">
+    <value>ALOCAÇÃO DE SERVIDOR</value>
+  </data>
+  <data name="Physical.Allocation.Body" xml:space="preserve">
+    <value>Quando um servidor é criado, o painel escolhe um nó de jogo com folga e provisiona o que o plano pede. O painel é a camada de gerenciamento; o jogo em si roda no nó de computação, não na camada web.</value>
+  </data>
+  <data name="Physical.Reliability.Label" xml:space="preserve">
+    <value>CONFIABILIDADE</value>
+  </data>
+  <data name="Physical.Reliability.Body" xml:space="preserve">
+    <value>Site, banco de dados e cargas de jogo são papéis de infraestrutura separados. Uma manutenção ou atualização em um tem muito menos como levar os outros junto, e uma falha tem onde menos se esconder.</value>
+  </data>
+  <data name="Compute.Body" xml:space="preserve">
+    <value>As cargas de jogo rodam em nós de computação dedicados, não ao lado do site. Nossa plataforma Pterodactyl customizada decide em qual nó um servidor cai e o gerencia lá, então cada carga pode ser implantada, movida ou reiniciada sozinha.</value>
+  </data>
+  <data name="Memory.Body" xml:space="preserve">
+    <value>Cada servidor recebe a própria alocação de memória, definida pelo plano e isolada dos servidores ao lado. A gente acompanha a capacidade dos nós para que um vizinho movimentado nunca coma o que foi dado a outro cliente.</value>
+  </data>
+  <data name="Storage.Body" xml:space="preserve">
+    <value>Os dados do mundo ficam no armazenamento da máquina em que o servidor roda, então os saves são lidos e escritos localmente e não pela rede. Os backups de infraestrutura ficam separados dos servidores de onde vieram.</value>
+  </data>
+  <data name="Network.Body" xml:space="preserve">
+    <value>O site público, os nós de jogo e os serviços por trás deles são separados. Esses componentes conversam entre si por caminhos privados, e o cliente alcança só os serviços que devem ser alcançáveis.</value>
+  </data>
+  <data name="Database.Index" xml:space="preserve">
+    <value>08</value>
+  </data>
+  <data name="Database.Kicker" xml:space="preserve">
+    <value>BANCO DE DADOS</value>
+  </data>
+  <data name="Database.Title" xml:space="preserve">
+    <value>Banco de dados</value>
+  </data>
+  <data name="Database.Body" xml:space="preserve">
+    <value>O painel guarda seu estado num serviço MariaDB central, separado tanto da aplicação web quanto dos nós de jogo. O painel se conecta a ele quando é implantado e enquanto roda, e as migrações de esquema são aplicadas como parte dessa implantação, não na mão.</value>
+  </data>
+  <data name="Database.LayerAllocated" xml:space="preserve">
+    <value>ESTADO DO PAINEL</value>
+  </data>
+  <data name="Deployment.Index" xml:space="preserve">
+    <value>09</value>
+  </data>
+  <data name="Deployment.Kicker" xml:space="preserve">
+    <value>IMPLANTAÇÃO</value>
+  </data>
+  <data name="Deployment.Title" xml:space="preserve">
+    <value>Implantação</value>
+  </data>
+  <data name="Deployment.Body" xml:space="preserve">
+    <value>O painel é entregue como contêiner. Uma versão nova vira uma imagem nova, o contêiner é recriado a partir dela, e as migrações rodam na subida. Os mesmos passos toda vez, e ninguém editando uma aplicação em produção para fazer uma mudança.</value>
+  </data>
+  <data name="Allocation.Body" xml:space="preserve">
+    <value>Quando um servidor é criado, o painel escolhe um nó de jogo com folga e provisiona o que o plano pede. O painel é a camada de gerenciamento; o jogo em si roda no nó de computação, não na camada web.</value>
+  </data>
+  <data name="Reliability.Body" xml:space="preserve">
+    <value>Site, banco de dados e cargas de jogo são papéis de infraestrutura separados. Uma manutenção ou atualização em um tem muito menos como levar os outros junto, e uma falha tem onde menos se esconder.</value>
+  </data>
+  <data name="Hero.Lede" xml:space="preserve">
+    <value>Duas máquinas num rack que é nosso, numa sala onde a gente entra. Tudo abaixo é o que tem nele e como está arranjado.</value>
+  </data>
+  <data name="Physical.Lede" xml:space="preserve">
+    <value>As especificações abaixo são lidas dos hosts em execução, não copiadas de uma ficha técnica. Onde um número não foi confirmado, ele fica de fora em vez de ser estimado.</value>
+  </data>
+  <data name="Nodes.Lede" xml:space="preserve">
+    <value>Fotos do rack em que estes dois nós estão montados. Os dois ficam no mesmo gabinete, então nenhuma foto é legendada como uma máquina ou a outra.</value>
+  </data>
+  <data name="Topology.Lede" xml:space="preserve">
+    <value>Como um pedido chega a um mundo: o painel decide, um nó executa, e os dois não são a mesma máquina de propósito.</value>
+  </data>
+  <data name="Closing.Lede" xml:space="preserve">
+    <value>Traga uma comunidade, e ela cai neste hardware.</value>
+  </data>
+  <data name="Database.LayerHeadroom" xml:space="preserve">
+    <value>SERVIÇO MARIADB</value>
+  </data>
+  <data name="Database.LayerReserved" xml:space="preserve">
+    <value>MIGRAÇÕES NA IMPLANTAÇÃO</value>
+  </data>
+  <data name="Deployment.HopEdge" xml:space="preserve">
+    <value>IMAGEM NOVA</value>
+  </data>
+  <data name="Deployment.HopUplink" xml:space="preserve">
+    <value>CONTÊINER RECRIADO</value>
+  </data>
+  <data name="Deployment.HopNode" xml:space="preserve">
+    <value>MIGRAÇÕES RODAM</value>
+  </data>
+  <data name="Deployment.HopWorld" xml:space="preserve">
+    <value>PAINEL SERVINDO</value>
+  </data>
+  <data name="Physical.PhotoLabel" xml:space="preserve">
+    <value>O RACK</value>
   </data>
 </root>

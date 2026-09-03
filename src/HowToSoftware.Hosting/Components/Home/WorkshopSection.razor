@@ -1,9 +1,16 @@
 @*
-    Mod section, presented as a synchronisation interface rather than an icon and a paragraph.
+    The mod installer.
 
-    Progress bars fill from zero when the panel scrolls into view: the reveal observer adds
-    `is-revealed`, and the fill animation is scoped to that class so it plays once, at the
-    moment the panel is actually on screen.
+    This panel used to depict a synchronisation queue - bars filling, mods arriving. That showed
+    the platform working, which is not the thing worth showing. What is worth showing is the
+    work it removes: adding a mod to a Project Zomboid server normally means finding it on the
+    Workshop, copying two different identifiers out of the page, pasting each into a different
+    configuration line, and getting the order right. Miss one and the server starts without the
+    mod; get the order wrong and it starts broken.
+
+    So the panel is now the installer itself: a search, a result, and one button. The identifiers
+    are still there, small, under each row - not because a customer needs to read them, but
+    because the ones who do should be able to see we wrote them correctly.
 *@
 
 @inject IMarketingContentService Content
@@ -29,47 +36,56 @@
                 <li><span class="point-mark"></span>@Text["Workshop.Point1"]</li>
                 <li><span class="point-mark"></span>@Text["Workshop.Point2"]</li>
                 <li><span class="point-mark"></span>@Text["Workshop.Point3"]</li>
+                <li><span class="point-mark"></span>@Text["Workshop.Point4"]</li>
             </ul>
         </div>
 
-        <div class="workshop-panel" data-reveal="right">
+        <div class="workshop-panel" data-reveal="right" data-spotlight>
             <header class="panel-bar">
-                <div class="panel-bar-id">
-                    <span class="bar-key">@Text["Workshop.Collection"]</span>
-                    <span class="bar-value">3021845517</span>
-                </div>
-                <span class="panel-bar-count">
-                    <span class="count-value">82 / 82</span>
-                    <span class="bar-key">@Text["Workshop.ModsReady"]</span>
-                </span>
+                <span class="bar-title">@Text["Installer.Title"]</span>
             </header>
+
+            @* The search field. Not interactive here - the installer runs in the panel, and the
+               footer says so rather than letting a visitor discover it by clicking. *@
+            <div class="installer-search" aria-hidden="true">
+                <span class="search-mark"></span>
+                <span class="search-text">@Text["Installer.Search"]</span>
+            </div>
 
             <ul class="mod-list">
                 @foreach (var (item, index) in Content.WorkshopItems.Select((m, i) => (m, i)))
                 {
                     <li class="mod @StateClass(item.State)" style="--i: @index">
-                        <div class="mod-head">
+                        <div class="mod-identity">
                             <span class="mod-name">@item.Name</span>
+                            <span class="mod-ids">
+                                <span class="id-value">@item.WorkshopId</span>
+                                <span class="mod-size">@item.SizeLabel</span>
+                            </span>
+                        </div>
+
+                        @*
+                            One control per row. A mod already on the server shows its state
+                            instead of a button, because a button that would do nothing is worse
+                            than no button.
+                        *@
+                        @if (item.State is ModSyncState.Queued)
+                        {
+                            <span class="mod-action">@Text["Installer.Install"]</span>
+                        }
+                        else
+                        {
                             <span class="mod-state">@StateLabel(item.State)</span>
-                        </div>
-
-                        <div class="mod-track">
-                            <span class="mod-fill" style="--target: @(item.Progress)%"></span>
-                        </div>
-
-                        <div class="mod-meta">
-                            <span>@item.WorkshopId</span>
-                            <span>@item.SizeLabel</span>
-                        </div>
+                        }
                     </li>
                 }
             </ul>
 
             <footer class="panel-foot">
                 <span class="foot-dot"></span>
-                <span>@Text["Workshop.Verified"]</span>
+                <span>@Text["Installer.Applied"]</span>
                 <span class="foot-spacer"></span>
-                <span class="foot-time">@Text["Workshop.LastSync"]</span>
+                <span class="foot-note">@Text["Installer.Note"]</span>
             </footer>
         </div>
     </div>
@@ -78,15 +94,19 @@
 @code {
     private static string StateClass(ModSyncState state) => state switch
     {
-        ModSyncState.Synced => "is-synced",
-        ModSyncState.Syncing => "is-syncing",
-        _ => "is-queued"
+        ModSyncState.Synced => "is-installed",
+        ModSyncState.Syncing => "is-staged",
+        _ => "is-available"
     };
 
     private string StateLabel(ModSyncState state) => state switch
     {
-        ModSyncState.Synced => Common["Status.Synced"],
-        ModSyncState.Syncing => Common["Status.Syncing"],
-        _ => Common["Status.Queued"]
+        ModSyncState.Synced => Text["Installer.Installed"],
+        _ => Text["Installer.Staged"],
     };
 }
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

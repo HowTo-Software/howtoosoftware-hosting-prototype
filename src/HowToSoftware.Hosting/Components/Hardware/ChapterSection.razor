@@ -25,9 +25,7 @@
 
             <h2 class="chapter-title" id="@HeadingId" data-text-effect="rise">@Text[$"{KeyPrefix}.Title"]</h2>
 
-            <p class="chapter-lede">
-                <CopySlot Size="CopySlot.SlotSize.Lede" />
-            </p>
+            <p class="chapter-lede">@Text[$"{KeyPrefix}.Body"]</p>
         </div>
 
         <div class="chapter-visual" data-reveal="@(Chapter.Mirrored ? "left" : "right")">
@@ -48,16 +46,6 @@
                         <span class="die-frame" aria-hidden="true"></span>
                     </div>
 
-                    <dl class="readout readout--wide">
-                        <div>
-                            <dt>@Text["Compute.FigureLabel"]</dt>
-                            <dd><CopySlot /></dd>
-                        </div>
-                        <div>
-                            <dt>@Text["Spec.Cpu"]</dt>
-                            <dd><CopySlot /></dd>
-                        </div>
-                    </dl>
                     break;
 
                 case InfrastructureLayout.LayerDiagram:
@@ -68,27 +56,18 @@
                     <ul class="bands">
                         <li class="band band--allocated">
                             <span class="band-fill" aria-hidden="true"></span>
-                            <span class="band-label">@Text["Memory.LayerAllocated"]</span>
-                            <CopySlot Size="CopySlot.SlotSize.Micro" />
+                            <span class="band-label">@Text[$"{KeyPrefix}.LayerAllocated"]</span>
                         </li>
                         <li class="band band--headroom">
                             <span class="band-fill" aria-hidden="true"></span>
-                            <span class="band-label">@Text["Memory.LayerHeadroom"]</span>
-                            <CopySlot Size="CopySlot.SlotSize.Micro" />
+                            <span class="band-label">@Text[$"{KeyPrefix}.LayerHeadroom"]</span>
                         </li>
                         <li class="band band--reserved">
                             <span class="band-fill" aria-hidden="true"></span>
-                            <span class="band-label">@Text["Memory.LayerReserved"]</span>
-                            <CopySlot Size="CopySlot.SlotSize.Micro" />
+                            <span class="band-label">@Text[$"{KeyPrefix}.LayerReserved"]</span>
                         </li>
                     </ul>
 
-                    <dl class="readout">
-                        <div>
-                            <dt>@Text["Spec.Memory"]</dt>
-                            <dd><CopySlot /></dd>
-                        </div>
-                    </dl>
                     break;
 
                 case InfrastructureLayout.EditorialSplit:
@@ -97,26 +76,17 @@
                         <li class="plate">
                             <span class="plate-mark" aria-hidden="true"></span>
                             <span class="plate-label">@Text["Storage.LayerVolume"]</span>
-                            <CopySlot Size="CopySlot.SlotSize.Micro" />
                         </li>
                         <li class="plate">
                             <span class="plate-mark" aria-hidden="true"></span>
                             <span class="plate-label">@Text["Storage.LayerSnapshot"]</span>
-                            <CopySlot Size="CopySlot.SlotSize.Micro" />
                         </li>
                         <li class="plate">
                             <span class="plate-mark" aria-hidden="true"></span>
                             <span class="plate-label">@Text["Storage.LayerArchive"]</span>
-                            <CopySlot Size="CopySlot.SlotSize.Micro" />
                         </li>
                     </ol>
 
-                    <dl class="readout">
-                        <div>
-                            <dt>@Text["Spec.Storage"]</dt>
-                            <dd><CopySlot /></dd>
-                        </div>
-                    </dl>
                     break;
 
                 case InfrastructureLayout.FlowDiagram:
@@ -127,18 +97,11 @@
                             <li class="hop">
                                 <span class="hop-mark" aria-hidden="true"></span>
                                 <span class="hop-label">@hop</span>
-                                <CopySlot Size="CopySlot.SlotSize.Micro" />
                             </li>
                         }
                         <li class="flow-beam" aria-hidden="true"></li>
                     </ol>
 
-                    <dl class="readout">
-                        <div>
-                            <dt>@Text["Spec.Network"]</dt>
-                            <dd><CopySlot /></dd>
-                        </div>
-                    </dl>
                     break;
 
                 case InfrastructureLayout.AllocationMap:
@@ -176,7 +139,6 @@
                             <li class="op">
                                 <span class="op-tick" aria-hidden="true"></span>
                                 <span class="op-label">@signal</span>
-                                <CopySlot />
                             </li>
                         }
                     </ol>
@@ -218,10 +180,10 @@
 
     private IReadOnlyList<string> NetworkHops =>
     [
-        Text["Network.HopEdge"],
-        Text["Network.HopUplink"],
-        Text["Network.HopNode"],
-        Text["Network.HopWorld"]
+        Text[$"{KeyPrefix}.HopEdge"],
+        Text[$"{KeyPrefix}.HopUplink"],
+        Text[$"{KeyPrefix}.HopNode"],
+        Text[$"{KeyPrefix}.HopWorld"]
     ];
 
     private IReadOnlyList<string> OperationsSignals =>

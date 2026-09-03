@@ -60,8 +60,15 @@ public sealed class StaticInfrastructureContentService : IInfrastructureContentS
         new("memory", "05", InfrastructureTopic.Memory, InfrastructureLayout.LayerDiagram, Mirrored: true),
         new("storage", "06", InfrastructureTopic.Storage, InfrastructureLayout.EditorialSplit),
         new("network", "07", InfrastructureTopic.Network, InfrastructureLayout.FlowDiagram),
-        new("allocation", "08", InfrastructureTopic.Allocation, InfrastructureLayout.AllocationMap, Mirrored: true),
-        new("reliability", "09", InfrastructureTopic.Reliability, InfrastructureLayout.OperationsRail)
+
+        // The panel's state store and its release process are as much a part of how this
+        // platform is arranged as the machines are, and a page that described the metal but not
+        // how software reaches it was only telling half of it.
+        new("database", "08", InfrastructureTopic.Database, InfrastructureLayout.LayerDiagram, Mirrored: true),
+        new("deployment", "09", InfrastructureTopic.Deployment, InfrastructureLayout.FlowDiagram),
+
+        new("allocation", "10", InfrastructureTopic.Allocation, InfrastructureLayout.AllocationMap, Mirrored: true),
+        new("reliability", "11", InfrastructureTopic.Reliability, InfrastructureLayout.OperationsRail)
     ];
 }
 

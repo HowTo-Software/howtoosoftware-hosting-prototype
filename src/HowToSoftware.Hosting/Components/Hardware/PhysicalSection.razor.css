@@ -129,144 +129,10 @@
     letter-spacing: 0.22em;
 }
 
-/* The photograph sits under the drawing at half width, so it reads as a reference alongside the
-   elevation rather than competing with it. */
+/* The photograph is the figure now. It gets the column at full width rather than sitting at
+   a third of it beside a drawing of the same thing. */
 .physical-figure ::deep .figure-photo {
-    max-width: 15rem;
-    margin-top: var(--hts-space-5);
-}
-
-.rack {
-    position: relative;
-    padding: var(--hts-space-4) var(--hts-space-5);
-    border: 1px solid var(--hts-border-strong);
-    border-radius: var(--hts-radius-md);
-    background:
-        radial-gradient(110% 70% at 70% 0%, rgba(176, 105, 255, 0.10) 0%, transparent 62%),
-        var(--hts-surface-soft);
-    box-shadow: var(--hts-rim), var(--hts-shadow-md);
-}
-
-/* The two mounting posts the units bolt to. */
-.rack-post {
-    position: absolute;
-    top: var(--hts-space-4);
-    bottom: var(--hts-space-4);
-    width: 1px;
-    background: linear-gradient(180deg,
-        transparent,
-        rgba(131, 168, 243, 0.35) 12%,
-        rgba(131, 168, 243, 0.35) 88%,
-        transparent);
-}
-
-.rack-post--left {
-    left: calc(var(--hts-space-5) - 6px);
-}
-
-.rack-post--right {
-    right: calc(var(--hts-space-5) - 6px);
-}
-
-.rack-stack {
-    display: grid;
-    gap: 3px;
-}
-
-.rack-u {
-    display: grid;
-    grid-template-columns: 1.6rem minmax(0, 1fr);
-    align-items: center;
-    gap: var(--hts-space-3);
-}
-
-.u-index {
-    color: var(--hts-ink-muted);
-    font-family: var(--hts-font-mono);
-    font-size: 0.5rem;
-    letter-spacing: 0.1em;
-    opacity: 0.7;
-}
-
-.u-body {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--hts-space-3);
-    height: 1.85rem;
-    padding-inline: 0.7rem;
-    border: 1px solid var(--hts-border);
-    border-radius: 3px;
-}
-
-/* An empty unit is a slot with a shadow in it, not a box. */
-.u-body--open {
-    border-style: dashed;
-    border-color: var(--hts-cell-border);
-    background: var(--hts-cell-bg);
-}
-
-.rack-u.is-filled .u-body {
-    border-color: var(--hts-border-blue);
-    background:
-        linear-gradient(90deg, rgba(131, 168, 243, 0.10), transparent 60%),
-        var(--hts-surface-raised);
-    box-shadow: var(--hts-rim);
-}
-
-.u-name {
-    color: var(--hts-ink);
-    font-family: var(--hts-font-mono);
-    font-size: 0.5625rem;
-    font-weight: 600;
-    letter-spacing: 0.16em;
-    white-space: nowrap;
-}
-
-.u-leds {
-    display: flex;
-    gap: 0.3rem;
-}
-
-.u-led {
-    width: 0.28rem;
-    height: 0.28rem;
-    border-radius: 50%;
-    background: var(--hts-blue-400);
-    box-shadow: 0 0 6px 1px rgba(131, 168, 243, 0.7);
-}
-
-/* Staggered activity, so the three mounted units are not one synchronised blink. */
-.rack-u.is-filled .u-led:nth-child(2) {
-    animation: led-flicker 2.6s steps(2, jump-none) infinite;
-}
-
-.rack-u.is-filled .u-led:nth-child(3) {
-    background: var(--hts-purple-400);
-    box-shadow: 0 0 6px 1px rgba(176, 105, 255, 0.7);
-    animation: led-flicker 1.7s steps(2, jump-none) 0.3s infinite;
-}
-
-@keyframes led-flicker {
-    50% {
-        opacity: 0.25;
-    }
-}
-
-/* A reserved node is racked but not commissioned: present, unlit. */
-.rack-u.is-reserved .u-body {
-    border-color: var(--hts-border);
-    background: var(--hts-surface);
-}
-
-.rack-u.is-reserved .u-name {
-    color: var(--hts-ink-muted);
-}
-
-.rack-u.is-reserved .u-led {
-    background: var(--hts-muted-mark);
-    box-shadow: none;
-    animation: none;
+    max-width: 28rem;
 }
 
 @media (max-width: 1080px) {
@@ -290,7 +156,4 @@
         gap: 0.5rem;
     }
 
-    .rack {
-        padding-inline: var(--hts-space-4);
-    }
 }

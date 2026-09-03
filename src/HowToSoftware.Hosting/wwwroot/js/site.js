@@ -334,6 +334,103 @@
         spotQueued = null;
     }
 
+    // ── 5b. Navigation progress ─────────────────────────────────────────────
+    //
+    // Enhanced navigation swaps the document in place, which is fast and completely
+    // silent: a visitor clicks, nothing appears to happen, and then the page is
+    // different. The entrance animation alone cannot fix that, because it plays
+    // *after* the wait rather than during it.
+    //
+    // So the bar covers the gap. It starts on the click, creeps while the request is
+    // in flight, and completes when the new document lands. What it reports is real -
+    // it begins and ends on actual navigation events - it just cannot know the
+    // percentage, so it eases toward 90% and never claims to have arrived early.
+    var progress = null;
+    var progressTimer = null;
+    var progressValue = 0;
+
+    function ensureProgress() {
+        if (progress) {
+            return progress;
+        }
+
+        progress = document.createElement("div");
+        progress.className = "hts-progress";
+        progress.setAttribute("aria-hidden", "true");
+        document.body.appendChild(progress);
+        return progress;
+    }
+
+    function startProgress() {
+        var bar = ensureProgress();
+
+        window.clearInterval(progressTimer);
+        progressValue = 8;
+        bar.classList.remove("is-done");
+        bar.classList.add("is-active");
+        bar.style.setProperty("--progress", progressValue + "%");
+
+        // Decelerating creep. Each tick closes a fraction of the remaining distance, so
+        // it approaches 90 and never reaches it - a bar that hit 100 and then waited
+        // would be lying about being finished.
+        progressTimer = window.setInterval(function () {
+            progressValue += (90 - progressValue) * 0.12;
+            bar.style.setProperty("--progress", progressValue.toFixed(1) + "%");
+        }, 180);
+    }
+
+    function finishProgress() {
+        if (!progress) {
+            return;
+        }
+
+        window.clearInterval(progressTimer);
+        progress.style.setProperty("--progress", "100%");
+        progress.classList.add("is-done");
+
+        window.setTimeout(function () {
+            if (progress) {
+                progress.classList.remove("is-active", "is-done");
+                progress.style.setProperty("--progress", "0%");
+            }
+        }, 320);
+    }
+
+    // Which clicks are about to become an enhanced navigation. Anything the browser
+    // would handle itself - a new tab, a download, an external host, a modifier key -
+    // is left alone, because showing progress for a navigation that never happens
+    // leaves the bar stuck across the top of the page.
+    function onDocumentClick(event) {
+        if (event.defaultPrevented || event.button !== 0 ||
+            event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+            return;
+        }
+
+        var link = event.target.closest ? event.target.closest("a[href]") : null;
+
+        if (!link || link.target === "_blank" || link.hasAttribute("download")) {
+            return;
+        }
+
+        var url;
+        try {
+            url = new URL(link.href, window.location.href);
+        } catch (e) {
+            return;
+        }
+
+        if (url.origin !== window.location.origin) {
+            return;
+        }
+
+        // Same page, different anchor: the browser scrolls, it does not navigate.
+        if (url.pathname === window.location.pathname && url.hash) {
+            return;
+        }
+
+        startProgress();
+    }
+
     // ── 6. Route entrance ───────────────────────────────────────────────────
     // Blazor's enhanced navigation patches the existing DOM instead of replacing
     // it, and a patched element never replays its CSS animation. Removing and
@@ -353,16 +450,73 @@
         main.setAttribute("data-page-enter", "");
     }
 
+    /*
+        Enhanced navigation patches the document from the server's HTML, and that HTML has
+        never heard of anything this file did. Every attribute set on <html> at runtime is
+        reverted by the patch: the `hts-js` class that gates the entire progressive-
+        enhancement layer, the `hts-scrolled` state the header reads, and the theme the
+        visitor chose.
+
+        The symptom was that the site worked correctly exactly once. After the first
+        navigation the page-entrance animation stopped playing, the scroll reveals stopped
+        hiding, the split-text effects stopped running and a chosen light theme snapped back
+        to dark - because every selector behind them begins `html.hts-js`, and the class was
+        no longer there.
+
+        So the root's runtime state is re-derived on every navigation, before anything else
+        looks at it.
+    */
+    function restoreRootState() {
+        if (!prefersReducedMotion.matches && "IntersectionObserver" in window) {
+            root.classList.add("hts-js");
+        }
+
+        try {
+            var theme = localStorage.getItem("hts-theme");
+            if (theme === "light" || theme === "dark") {
+                root.setAttribute("data-theme", theme);
+            }
+        } catch (e) {
+            // Private mode or storage disabled. The server-rendered default stands.
+        }
+
+        applyScrollState();
+    }
+
+    /*
+        Restoring on `enhancedload` alone was not enough. Blazor patches the document and
+        raises the event, but the two are not strictly ordered against every attribute it
+        syncs - in practice the first navigation restored correctly and the second did not,
+        because the patch landed after our handler had already run.
+
+        Watching the element removes the question. Whenever something strips the runtime
+        state off <html>, it goes straight back on. The observer only ever adds what is
+        missing, so its own writes do not start a loop.
+    */
+    function watchRootState() {
+        if (!("MutationObserver" in window)) {
+            return;
+        }
+
+        new MutationObserver(function () {
+            if (!root.classList.contains("hts-js")) {
+                restoreRootState();
+            }
+        }).observe(root, { attributes: true, attributeFilter: ["class"] });
+    }
+
     function onEnhancedLoad() {
+        restoreRootState();
+        finishProgress();
         clearSpotlight();
         splitScope(document.body);
         scan(document.body);
-        applyScrollState();
         replayPageEnter();
     }
 
     // ── Wiring ──────────────────────────────────────────────────────────────
     function start() {
+        watchRootState();
         splitScope(document.body);
         scan(document.body);
         applyScrollState();
@@ -373,6 +527,13 @@
     if (root.classList.contains("hts-js")) {
         document.addEventListener("pointermove", onPointerMove, { passive: true });
         document.addEventListener("pointerleave", clearSpotlight, { passive: true });
+        document.addEventListener("click", onDocumentClick, { capture: true, passive: true });
+
+        // A navigation that ends in the browser going somewhere else, or in the back
+        // button, still has to clear the bar - otherwise it survives into the page the
+        // visitor lands on.
+        window.addEventListener("pagehide", finishProgress);
+        window.addEventListener("popstate", startProgress);
     }
 
     if (document.readyState === "loading") {

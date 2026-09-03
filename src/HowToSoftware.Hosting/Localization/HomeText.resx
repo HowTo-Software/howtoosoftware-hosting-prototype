@@ -103,25 +103,25 @@
     <value>300 x 300</value>
   </data>
   <data name="Workshop.Kicker" xml:space="preserve">
-    <value>WORKSHOP</value>
+    <value>MODS</value>
   </data>
   <data name="Workshop.Line1" xml:space="preserve">
-    <value>82 mods?</value>
+    <value>Install a mod</value>
   </data>
   <data name="Workshop.Accent" xml:space="preserve">
-    <value>Good.</value>
+    <value>in one click.</value>
   </data>
   <data name="Workshop.Body" xml:space="preserve">
-    <value>A large Workshop collection should not turn server setup into a second job. Paste a collection, and the platform resolves every item, writes the mod and Workshop identifier lists in the right order, and keeps them in step whenever you add, remove or reorder something.</value>
+    <value>Adding a mod to a Project Zomboid server normally means finding it on the Workshop, copying two different identifiers out of the page, pasting them into two different config lines and getting the order right. Our panel does that part. You search, you press install, and the server is configured on its next restart.</value>
   </data>
   <data name="Workshop.Point1" xml:space="preserve">
-    <value>Collections resolved to item lists automatically</value>
+    <value>Search and install from inside the panel</value>
   </data>
   <data name="Workshop.Point2" xml:space="preserve">
-    <value>Load order editable without touching config files</value>
+    <value>Mod IDs and Workshop IDs written for you, in the right order</value>
   </data>
   <data name="Workshop.Point3" xml:space="preserve">
-    <value>Updates staged, then applied on your next restart</value>
+    <value>Load order editable without touching a config file</value>
   </data>
   <data name="Workshop.Collection" xml:space="preserve">
     <value>WORKSHOP COLLECTION</value>
@@ -1019,5 +1019,41 @@
   </data>
   <data name="Plans.BotNote" xml:space="preserve">
     <value>The HTS server bot is offered on every tier above {0} GB of memory. The two smallest tiers do not carry it, and their cards do not claim it.</value>
+  </data>
+  <data name="Workshop.Point4" xml:space="preserve">
+    <value>Changes staged, then applied on your next restart</value>
+  </data>
+  <data name="Installer.Title" xml:space="preserve">
+    <value>MOD INSTALLER</value>
+  </data>
+  <data name="Installer.Search" xml:space="preserve">
+    <value>Search Project Zomboid mods…</value>
+  </data>
+  <data name="Installer.Install" xml:space="preserve">
+    <value>Install</value>
+  </data>
+  <data name="Installer.Installed" xml:space="preserve">
+    <value>INSTALLED</value>
+  </data>
+  <data name="Installer.Staged" xml:space="preserve">
+    <value>STAGED</value>
+  </data>
+  <data name="Installer.Applied" xml:space="preserve">
+    <value>Applied on next restart</value>
+  </data>
+  <data name="Installer.Note" xml:space="preserve">
+    <value>Interface preview. The installer runs in the panel, not on this page.</value>
+  </data>
+  <data name="Plan.Rosewood.Tagline" xml:space="preserve">
+    <value>Room to grow without moving the world.</value>
+  </data>
+  <data name="Plan.WestPoint.Tagline" xml:space="preserve">
+    <value>A long mod list and a population to match.</value>
+  </data>
+  <data name="Plan.Louisville.Tagline" xml:space="preserve">
+    <value>For a community that has stopped being small.</value>
+  </data>
+  <data name="Plan.KnoxCounty.Tagline" xml:space="preserve">
+    <value>The largest tier on the list, before we build you one.</value>
   </data>
 </root>

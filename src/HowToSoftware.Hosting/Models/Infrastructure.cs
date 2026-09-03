@@ -35,6 +35,13 @@ public enum InfrastructureTopic
     Memory,
     Storage,
     Network,
+
+    /// <summary>The panel's own state store, which is neither the web tier nor a game node.</summary>
+    Database,
+
+    /// <summary>How a new version of the panel reaches production.</summary>
+    Deployment,
+
     Allocation,
     Reliability
 }

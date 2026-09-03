@@ -47,25 +47,6 @@
         </div>
 
         <div class="world-figure" data-reveal="right">
-            @*
-                The world this section is about, above the figure that explains what happens to
-                it. The overlay is the state a persistent world has - not a reading from one.
-            *@
-            <ZomboidPlate Slot="ZomboidPhotoSlot.World"
-                          Ratio="16 / 9"
-                          CssClass="world-plate"
-                          Alt="@Text["World.PlateAlt"]">
-                <Overlay>
-                    <div class="plate-state">
-                        <p class="state-key">@Text["World.PlateKey"]</p>
-                        <p class="state-value">
-                            <span class="state-dot" aria-hidden="true"></span>
-                            @Text["World.PlateState"]
-                        </p>
-                    </div>
-                </Overlay>
-            </ZomboidPlate>
-
             <WorldTimeline Events="Content.WorldEvents" />
         </div>
     </div>

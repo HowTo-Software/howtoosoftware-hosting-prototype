@@ -52,20 +52,18 @@
                     <ThemeToggle />
                 </div>
 
-                <a class="header-signin @(IsCurrentPage("/login") ? "is-current" : null)"
-                   href="/login"
-                   aria-current="@(IsCurrentPage("/login") ? "page" : null)"
-                   @onclick="Close">
-                    <Icon Name="IconName.Shield" CssClass="is-sm" />
-                    <span>@Text["Cta.SignIn"]</span>
-                </a>
-
-                <CtaButton Href="/project-zomboid"
+                @*
+                    Leaves the site, so it says so: rel="noopener" because it opens a session
+                    elsewhere, and an external mark rather than the arrow the internal calls to
+                    action use.
+                *@
+                <CtaButton Href="@PanelUrl"
                            Variant="CtaVariant.Primary"
                            Size="CtaSize.Small"
-                           TrailingIcon="IconName.ArrowRight"
+                           Target="_blank"
+                           Rel="noopener noreferrer"
                            OnClick="Close">
-                    @Text["Cta.SeePlans"]
+                    @Text["Cta.Panel"]
                 </CtaButton>
             </div>
         </div>
@@ -73,6 +71,16 @@
 </header>
 
 @code {
+    /// <summary>
+    /// Where the panel button goes.
+    /// </summary>
+    /// <remarks>
+    /// The Pterodactyl panel, which is a different application on a different host. It is not a
+    /// route in this site and must never be written as one - a relative href here would send
+    /// somebody to a 404 on the marketing site instead of to their servers.
+    /// </remarks>
+    private const string PanelUrl = "https://panel.howto.software/auth/login";
+
     private bool _isOpen;
 
     /// <summary>Brand name shown in the header lockup.</summary>

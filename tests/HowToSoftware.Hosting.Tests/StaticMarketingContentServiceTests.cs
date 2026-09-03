@@ -33,17 +33,34 @@ public class StaticMarketingContentServiceTests : IDisposable
         Assert.NotEmpty(_sut.Faqs);
     }
 
-    [Theory]
-    [InlineData("/#world")]
-    [InlineData("/#workshop")]
-    [InlineData("/#provisioning")]
-    [InlineData("/#control-panel")]
-    [InlineData("/project-zomboid")]
-    [InlineData("/#faq")]
-    [InlineData("/infrastructure")]
-    public void PrimaryNavigation_LinksToTheSectionsTheHomepageRenders(string anchor)
+    /// <summary>
+    /// Three entries, and these three.
+    /// </summary>
+    /// <remarks>
+    /// The menu was seven, five of which were anchors into one long page. It is deliberately
+    /// short now, so this asserts the whole list rather than the presence of members - the
+    /// failure worth catching is somebody adding a fourth, not somebody removing one.
+    /// </remarks>
+    [Fact]
+    public void PrimaryNavigation_IsTheThreeQuestionsAVisitorArrivesWith()
     {
-        Assert.Contains(_sut.PrimaryNavigation, link => link.Href == anchor);
+        Assert.Equal(
+            ["/project-zomboid", "/infrastructure", "/project-zomboid#plans"],
+            _sut.PrimaryNavigation.Select(link => link.Href));
+    }
+
+    /// <summary>
+    /// Every entry has to reach a page that exists. An anchor into a page that was deleted, or
+    /// a route that was renamed, fails silently in a menu.
+    /// </summary>
+    [Theory]
+    [InlineData("/project-zomboid")]
+    [InlineData("/infrastructure")]
+    public void PrimaryNavigation_PointsAtRealRoutes(string route)
+    {
+        Assert.Contains(
+            _sut.PrimaryNavigation,
+            link => link.Href.Split('#')[0] == route);
     }
 
     [Fact]

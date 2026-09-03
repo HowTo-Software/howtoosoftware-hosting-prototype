@@ -240,8 +240,8 @@
 
 .node-grid {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: var(--hts-space-5);
+    grid-template-columns: repeat(auto-fit, minmax(min(22rem, 100%), 1fr));
+    gap: clamp(var(--hts-space-5), 4vw, var(--hts-space-8));
 }
 
 .node-panel {

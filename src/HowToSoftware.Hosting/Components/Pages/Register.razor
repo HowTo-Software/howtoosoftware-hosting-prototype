@@ -1,0 +1,189 @@
+@*
+    Account creation.
+
+    "Create one" used to raise a notice next to the sign-in form saying accounts were not live.
+    That is true, and it was also a dead end: somebody who wants an account is told there is
+    nothing here and given nowhere to go.
+
+    This is the page they were looking for, and it is shaped like the flow that will actually
+    run. Name and email, because that is all the panel needs to create the account - the
+    password is never collected here and never travels through us. Pterodactyl creates the user
+    and sends its own message with a link for the person to set their own password, which is why
+    there is no password field on this form and there never will be.
+*@
+
+@page "/register"
+@rendermode InteractiveServer
+@inject IStringLocalizer<LoginText> Text
+@inject IOptions<SiteOptions> Site
+
+<PageTitle>@Text["Register.MetaTitle", Site.Value.Name]</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="@Text["Register.MetaDescription"]" />
+    <link rel="canonical" href="@($"{Site.Value.BaseUrl.TrimEnd('/')}/register")" />
+    <meta name="robots" content="noindex, follow" />
+</HeadContent>
+
+<section class="register-page">
+    <div class="hts-container hts-container--wide register-inner">
+        <div class="register-card" data-spotlight>
+            <p class="register-kicker">
+                <span class="kicker-dot" aria-hidden="true"></span>
+                @Text["Register.Kicker"]
+            </p>
+
+            <h1 class="register-title" id="register-heading">@Text["Register.Title"]</h1>
+            <p class="register-lede">@Text["Register.Lede"]</p>
+
+            <form class="register-form" aria-labelledby="register-heading" @onsubmit="Submit"
+                  @formname="register" method="post">
+                <AntiforgeryToken />
+
+                <div class="field">
+                    <label class="field-label" for="register-name">@Text["Register.Field.Name"]</label>
+                    <input class="field-input @(NameError ? "is-invalid" : null)"
+                           id="register-name"
+                           name="register-name"
+                           type="text"
+                           autocomplete="name"
+                           maxlength="64"
+                           value="@_name"
+                           @oninput="e => _name = e.Value?.ToString() ?? string.Empty"
+                           aria-invalid="@NameError.ToString().ToLowerInvariant()"
+                           aria-describedby="@(NameError ? "register-name-error" : null)" />
+                    @if (NameError)
+                    {
+                        <p class="field-message" id="register-name-error">@Text["Register.Error.Name"]</p>
+                    }
+                </div>
+
+                <div class="field">
+                    <label class="field-label" for="register-email">@Text["Register.Field.Email"]</label>
+                    <input class="field-input @(EmailError ? "is-invalid" : null)"
+                           id="register-email"
+                           name="register-email"
+                           type="email"
+                           autocomplete="email"
+                           inputmode="email"
+                           maxlength="180"
+                           value="@_email"
+                           @oninput="e => _email = e.Value?.ToString() ?? string.Empty"
+                           aria-invalid="@EmailError.ToString().ToLowerInvariant()"
+                           aria-describedby="@(EmailError ? "register-email-error" : "register-email-hint")" />
+                    @if (EmailError)
+                    {
+                        <p class="field-message" id="register-email-error">@Text["Register.Error.Email"]</p>
+                    }
+                    else
+                    {
+                        <p class="field-hint" id="register-email-hint">@Text["Register.Hint.Email"]</p>
+                    }
+                </div>
+
+                @*
+                    No password field, and this says why. The panel sends its own message with a
+                    link for the person to set one, so their password is never typed into our
+                    form, never crosses our server and never sits in our logs.
+                *@
+                <p class="register-password-note">
+                    <span class="note-mark" aria-hidden="true"></span>
+                    @Text["Register.PasswordNote"]
+                </p>
+
+                <CtaButton ButtonType="submit"
+                           Size="CtaSize.Large"
+                           TrailingIcon="IconName.ArrowRight"
+                           CssClass="register-submit">
+                    @Text["Register.Submit"]
+                </CtaButton>
+
+                <div class="notice-slot" role="alert" aria-live="assertive">
+                    @if (_submitted)
+                    {
+                        <p class="notice">
+                            <span class="notice-mark" aria-hidden="true"></span>
+                            <span>@Text["Register.NotLive"]</span>
+                        </p>
+                    }
+                </div>
+            </form>
+
+            <footer class="register-foot">
+                <span>@Text["Register.HaveAccount"]</span>
+                <a class="link-action is-strong" href="/login">@Text["Register.SignIn"]</a>
+            </footer>
+        </div>
+
+        <aside class="register-steps" aria-labelledby="steps-heading">
+            <h2 id="steps-heading" class="steps-title">@Text["Register.StepsTitle"]</h2>
+
+            @*
+                What actually happens, in order. Written out because the missing password field
+                is the first thing anyone will ask about, and the answer is the third step.
+            *@
+            <ol class="steps">
+                @foreach (var (step, index) in Steps.Select((s, i) => (s, i)))
+                {
+                    <li class="step">
+                        <span class="step-index">@((index + 1).ToString("00"))</span>
+                        <span class="step-body">
+                            <span class="step-title">@step.Title</span>
+                            <span class="step-detail">@step.Detail</span>
+                        </span>
+                    </li>
+                }
+            </ol>
+
+            <a class="register-back" href="/">
+                <span class="back-arrow" aria-hidden="true"></span>
+                @Text["Action.BackToWebsite"]
+            </a>
+        </aside>
+    </div>
+</section>
+
+@code {
+    private sealed record Step(string Title, string Detail);
+
+    private string _name = string.Empty;
+    private string _email = string.Empty;
+    private bool _submitted;
+    private bool _attempted;
+
+    private bool NameError => _attempted && string.IsNullOrWhiteSpace(_name);
+
+    // Deliberately shallow. A form cannot tell a real address from a well-formed one, and a
+    // stricter pattern only rejects people with unusual but valid addresses.
+    private bool EmailError => _attempted &&
+        (string.IsNullOrWhiteSpace(_email) || !_email.Contains('@', StringComparison.Ordinal));
+
+    private Step[] Steps =>
+    [
+        new(Text["Register.Step1.Title"], Text["Register.Step1.Detail"]),
+        new(Text["Register.Step2.Title"], Text["Register.Step2.Detail"]),
+        new(Text["Register.Step3.Title"], Text["Register.Step3.Detail"]),
+        new(Text["Register.Step4.Title"], Text["Register.Step4.Detail"]),
+    ];
+
+    private void Submit()
+    {
+        _attempted = true;
+
+        if (NameError || EmailError)
+        {
+            _submitted = false;
+            return;
+        }
+
+        // Nothing is created and nothing is sent. There is no account service behind this yet,
+        // and a form that quietly discarded the details while showing a success message would
+        // be worse than one that says so.
+        _submitted = true;
+    }
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

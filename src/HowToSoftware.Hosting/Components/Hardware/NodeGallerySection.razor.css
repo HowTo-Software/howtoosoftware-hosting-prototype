@@ -11,10 +11,10 @@
     position: absolute;
     top: 22%;
     right: -10%;
-    width: min(52rem, 80vw);
-    height: 32rem;
-    background: radial-gradient(ellipse at center, rgba(61, 92, 224, 0.14) 0%, transparent 68%);
-    filter: blur(60px);
+    width: var(--hts-glow-w);
+    height: var(--hts-glow-h);
+    background: radial-gradient(ellipse at center, var(--hts-glow-brand) 0%, transparent 68%);
+    filter: blur(var(--hts-glow-blur));
     pointer-events: none;
 }
 

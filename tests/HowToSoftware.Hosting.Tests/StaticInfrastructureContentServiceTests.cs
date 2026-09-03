@@ -111,7 +111,13 @@ public class StaticInfrastructureContentServiceTests : IDisposable
     public void ChapterIndicesRunInOrderFromFour()
     {
         // 01 spec sheet, 02 the machines, 03 topology, then the chapters.
-        Assert.Equal(["04", "05", "06", "07", "08", "09"], _sut.Chapters.Select(chapter => chapter.Index));
+        //
+        // Asserted as the rule rather than as a fixed list: the numbering has to be continuous
+        // and start at 04, and adding a chapter should extend it rather than break this test.
+        // A gap or a repeat still fails, which is the thing worth catching.
+        Assert.Equal(
+            Enumerable.Range(4, _sut.Chapters.Count).Select(index => index.ToString("00")),
+            _sut.Chapters.Select(chapter => chapter.Index));
     }
 
     /// <summary>Two machines, because there are two.</summary>

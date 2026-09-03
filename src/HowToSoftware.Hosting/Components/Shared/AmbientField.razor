@@ -1,0 +1,51 @@
+@*
+    The atmosphere behind a hero.
+
+    One component, used by every page that needs one, because the three that came before it each
+    drew their own floor: a 72px graticule here, an 18px rack rhythm there, a wireframe elevation
+    over the top, each masked differently. Individually each was defensible. Together they made
+    the site look like three products, and every one of them put hard geometry behind type.
+
+    What is left is light. Two soft pools placed off-centre so the composition has a direction,
+    and nothing with an edge. Depth comes from the gradient falling off, not from a shape drawn
+    on top of the page.
+
+    Decorative and nothing else, so it is hidden from assistive technology and cannot be hit by
+    a pointer.
+*@
+
+<div class="ambient @Variant" aria-hidden="true">
+    <span class="pool pool--brand"></span>
+    <span class="pool pool--tech"></span>
+</div>
+
+@code {
+    /// <summary>Where the light sits, so two pages in a row do not open identically.</summary>
+    public enum FieldVariant
+    {
+        /// <summary>Light gathered to the right, under a product visual.</summary>
+        Right,
+
+        /// <summary>Light gathered to the left.</summary>
+        Left,
+
+        /// <summary>Light gathered behind the middle, for a centred composition.</summary>
+        Centre,
+    }
+
+    /// <summary>Which arrangement to draw.</summary>
+    [Parameter]
+    public FieldVariant Placement { get; set; } = FieldVariant.Right;
+
+    private string Variant => Placement switch
+    {
+        FieldVariant.Left => "is-left",
+        FieldVariant.Centre => "is-centre",
+        _ => "is-right",
+    };
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

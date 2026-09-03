@@ -171,4 +171,76 @@
   <data name="Form.PasswordVisibility" xml:space="preserve">
     <value>Password visibility</value>
   </data>
+  <data name="Register.MetaTitle" xml:space="preserve">
+    <value>Create an account | {0}</value>
+  </data>
+  <data name="Register.MetaDescription" xml:space="preserve">
+    <value>Create a HowToSoftware account. The panel sends you a link to set your own password.</value>
+  </data>
+  <data name="Register.Kicker" xml:space="preserve">
+    <value>NEW ACCOUNT</value>
+  </data>
+  <data name="Register.Title" xml:space="preserve">
+    <value>Create your account.</value>
+  </data>
+  <data name="Register.Lede" xml:space="preserve">
+    <value>Two fields. We create the account on the panel and it writes to you with a link to set your own password.</value>
+  </data>
+  <data name="Register.Field.Name" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="Register.Field.Email" xml:space="preserve">
+    <value>Email</value>
+  </data>
+  <data name="Register.Hint.Email" xml:space="preserve">
+    <value>Where the panel sends your account details. Use one you can read now.</value>
+  </data>
+  <data name="Register.Error.Name" xml:space="preserve">
+    <value>Tell us what to call you.</value>
+  </data>
+  <data name="Register.Error.Email" xml:space="preserve">
+    <value>That does not look like an email address.</value>
+  </data>
+  <data name="Register.PasswordNote" xml:space="preserve">
+    <value>There is no password field here on purpose. The panel sends you a link and you set your own password there, so it never passes through this form or through us.</value>
+  </data>
+  <data name="Register.Submit" xml:space="preserve">
+    <value>Create account</value>
+  </data>
+  <data name="Register.NotLive" xml:space="preserve">
+    <value>Account creation is not connected yet, so nothing was created and nothing was sent. The form is the one that will run when it is.</value>
+  </data>
+  <data name="Register.HaveAccount" xml:space="preserve">
+    <value>Already have an account?</value>
+  </data>
+  <data name="Register.SignIn" xml:space="preserve">
+    <value>Sign in</value>
+  </data>
+  <data name="Register.StepsTitle" xml:space="preserve">
+    <value>What happens next</value>
+  </data>
+  <data name="Register.Step1.Title" xml:space="preserve">
+    <value>You send your name and email</value>
+  </data>
+  <data name="Register.Step1.Detail" xml:space="preserve">
+    <value>Nothing else is asked for, and nothing else is stored.</value>
+  </data>
+  <data name="Register.Step2.Title" xml:space="preserve">
+    <value>We create the account on the panel</value>
+  </data>
+  <data name="Register.Step2.Detail" xml:space="preserve">
+    <value>The account is created against your email address, under your own identity.</value>
+  </data>
+  <data name="Register.Step3.Title" xml:space="preserve">
+    <value>The panel writes to you</value>
+  </data>
+  <data name="Register.Step3.Detail" xml:space="preserve">
+    <value>Its message carries a link to set a password. We never see the one you choose.</value>
+  </data>
+  <data name="Register.Step4.Title" xml:space="preserve">
+    <value>You sign in and your servers appear</value>
+  </data>
+  <data name="Register.Step4.Detail" xml:space="preserve">
+    <value>Console, files, backups and the mod installer, from the first sign-in.</value>
+  </data>
 </root>

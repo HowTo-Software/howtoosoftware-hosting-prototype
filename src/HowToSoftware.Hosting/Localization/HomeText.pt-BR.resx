@@ -103,25 +103,25 @@
     <value>300 x 300</value>
   </data>
   <data name="Workshop.Kicker" xml:space="preserve">
-    <value>WORKSHOP</value>
+    <value>MODS</value>
   </data>
   <data name="Workshop.Line1" xml:space="preserve">
-    <value>82 mods?</value>
+    <value>Instale um mod</value>
   </data>
   <data name="Workshop.Accent" xml:space="preserve">
-    <value>Ótimo.</value>
+    <value>com um clique.</value>
   </data>
   <data name="Workshop.Body" xml:space="preserve">
-    <value>Uma coleção grande do Workshop não deveria transformar a configuração do servidor em um segundo emprego. Cole uma coleção e a plataforma resolve cada item, escreve as listas de identificadores de mod e do Workshop na ordem certa e mantém tudo em sincronia sempre que você adiciona, remove ou reordena algo.</value>
+    <value>Adicionar um mod a um servidor de Project Zomboid normalmente significa achar ele na Workshop, copiar dois identificadores diferentes da página, colar em duas linhas de configuração diferentes e acertar a ordem. Nosso painel faz essa parte. Você procura, aperta instalar, e o servidor fica configurado no próximo reinício.</value>
   </data>
   <data name="Workshop.Point1" xml:space="preserve">
-    <value>Coleções resolvidas em listas de itens automaticamente</value>
+    <value>Procure e instale de dentro do painel</value>
   </data>
   <data name="Workshop.Point2" xml:space="preserve">
-    <value>Ordem de carregamento editável sem mexer em arquivos de configuração</value>
+    <value>Mod IDs e Workshop IDs escritos por você, na ordem certa</value>
   </data>
   <data name="Workshop.Point3" xml:space="preserve">
-    <value>Atualizações preparadas e aplicadas no próximo reinício</value>
+    <value>Ordem de carregamento editável sem mexer em arquivo de configuração</value>
   </data>
   <data name="Workshop.Collection" xml:space="preserve">
     <value>COLEÇÃO DO WORKSHOP</value>
@@ -1019,5 +1019,41 @@
   </data>
   <data name="Plans.BotNote" xml:space="preserve">
     <value>O HTS server bot é oferecido em todos os planos acima de {0} GB de memória. Os dois planos menores não o têm, e os cards deles não afirmam que têm.</value>
+  </data>
+  <data name="Workshop.Point4" xml:space="preserve">
+    <value>Mudanças preparadas e aplicadas no próximo reinício</value>
+  </data>
+  <data name="Installer.Title" xml:space="preserve">
+    <value>INSTALADOR DE MODS</value>
+  </data>
+  <data name="Installer.Search" xml:space="preserve">
+    <value>Procurar mods de Project Zomboid…</value>
+  </data>
+  <data name="Installer.Install" xml:space="preserve">
+    <value>Instalar</value>
+  </data>
+  <data name="Installer.Installed" xml:space="preserve">
+    <value>INSTALADO</value>
+  </data>
+  <data name="Installer.Staged" xml:space="preserve">
+    <value>PREPARADO</value>
+  </data>
+  <data name="Installer.Applied" xml:space="preserve">
+    <value>Aplicado no próximo reinício</value>
+  </data>
+  <data name="Installer.Note" xml:space="preserve">
+    <value>Prévia da interface. O instalador roda no painel, não nesta página.</value>
+  </data>
+  <data name="Plan.Rosewood.Tagline" xml:space="preserve">
+    <value>Espaço para crescer sem mudar o mundo de lugar.</value>
+  </data>
+  <data name="Plan.WestPoint.Tagline" xml:space="preserve">
+    <value>Uma lista longa de mods e uma população à altura.</value>
+  </data>
+  <data name="Plan.Louisville.Tagline" xml:space="preserve">
+    <value>Para uma comunidade que deixou de ser pequena.</value>
+  </data>
+  <data name="Plan.KnoxCounty.Tagline" xml:space="preserve">
+    <value>O maior plano da lista, antes da gente montar um para você.</value>
   </data>
 </root>

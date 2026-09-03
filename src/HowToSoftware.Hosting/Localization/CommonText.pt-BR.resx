@@ -33,26 +33,8 @@
   <data name="Nav.CloseMenu" xml:space="preserve">
     <value>Fechar menu</value>
   </data>
-  <data name="Nav.World" xml:space="preserve">
-    <value>Mundo</value>
-  </data>
-  <data name="Nav.Workshop" xml:space="preserve">
-    <value>Workshop</value>
-  </data>
-  <data name="Nav.Provisioning" xml:space="preserve">
-    <value>Provisionamento</value>
-  </data>
-  <data name="Nav.ControlPanel" xml:space="preserve">
-    <value>Painel de controle</value>
-  </data>
-  <data name="Nav.Infrastructure" xml:space="preserve">
-    <value>Infraestrutura</value>
-  </data>
   <data name="Nav.Plans" xml:space="preserve">
     <value>Planos</value>
-  </data>
-  <data name="Nav.Faq" xml:space="preserve">
-    <value>FAQ</value>
   </data>
   <data name="Cta.SeePlans" xml:space="preserve">
     <value>Ver planos</value>
@@ -233,5 +215,14 @@
   </data>
   <data name="Status.Stopping" xml:space="preserve">
     <value>PARANDO</value>
+  </data>
+  <data name="Nav.Games" xml:space="preserve">
+    <value>Jogos</value>
+  </data>
+  <data name="Nav.Hardware" xml:space="preserve">
+    <value>Hardware</value>
+  </data>
+  <data name="Cta.Panel" xml:space="preserve">
+    <value>Painel</value>
   </data>
 </root>

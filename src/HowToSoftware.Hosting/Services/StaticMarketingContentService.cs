@@ -44,15 +44,16 @@ public sealed class StaticMarketingContentService : IMarketingContentService
     /// anchors are written as <c>/#section</c> because the header now rides on the sign-in and
     /// infrastructure pages too, where a bare <c>#section</c> would point at nothing.
     /// </remarks>
+    /// <remarks>
+    /// Three entries. It was seven, five of which were anchors into one long page - a menu you
+    /// have to read rather than one you take in. What is left is the three questions a visitor
+    /// actually arrives with: what do you host, what does it run on, and what does it cost.
+    /// </remarks>
     public IReadOnlyList<NavigationLink> PrimaryNavigation =>
     [
-        new(_text["Nav.World"], "/#world"),
-        new(_text["Nav.Workshop"], "/#workshop"),
-        new(_text["Nav.Provisioning"], "/#provisioning"),
-        new(_text["Nav.ControlPanel"], "/#control-panel"),
-        new(_text["Nav.Infrastructure"], "/infrastructure"),
-        new(_text["Nav.Plans"], "/project-zomboid"),
-        new(_text["Nav.Faq"], "/#faq")
+        new(_text["Nav.Games"], "/project-zomboid"),
+        new(_text["Nav.Hardware"], "/infrastructure"),
+        new(_text["Nav.Plans"], "/project-zomboid#plans")
     ];
 
     /// <inheritdoc />

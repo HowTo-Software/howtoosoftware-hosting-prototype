@@ -214,7 +214,7 @@
     <value>Back to the homepage</value>
   </data>
   <data name="Note.Pending" xml:space="preserve">
-    <value>Specifications are read from the running hosts. Figures still to be supplied appear as TEXT ABOUT HERE rather than as an estimate.</value>
+    <value>Specifications are read from the running hosts rather than copied from a datasheet. Where a figure has not been confirmed it is left out rather than estimated.</value>
   </data>
   <data name="Photo.Pending" xml:space="preserve">
     <value>PHOTO PENDING</value>
@@ -314,5 +314,134 @@
   </data>
   <data name="Photo.Caption.DetailBottom" xml:space="preserve">
     <value>LOWER</value>
+  </data>
+  <data name="Physical.Compute.Label" xml:space="preserve">
+    <value>COMPUTE</value>
+  </data>
+  <data name="Physical.Compute.Body" xml:space="preserve">
+    <value>Game workloads run on dedicated compute nodes rather than alongside the website. Our customised Pterodactyl-based platform decides which node a server lands on and manages it there, so a workload can be deployed, moved or restarted on its own.</value>
+  </data>
+  <data name="Physical.Memory.Label" xml:space="preserve">
+    <value>MEMORY</value>
+  </data>
+  <data name="Physical.Memory.Body" xml:space="preserve">
+    <value>Each server gets its own memory allocation from its plan, isolated from the servers beside it. We watch capacity across the nodes so a busy neighbour never eats into what another customer was given.</value>
+  </data>
+  <data name="Physical.Storage.Label" xml:space="preserve">
+    <value>STORAGE</value>
+  </data>
+  <data name="Physical.Storage.Body" xml:space="preserve">
+    <value>World data sits on storage attached to the machine the server runs on, so saves are read and written locally rather than across a network. Infrastructure backups are kept apart from the servers they came from.</value>
+  </data>
+  <data name="Physical.Network.Label" xml:space="preserve">
+    <value>NETWORK</value>
+  </data>
+  <data name="Physical.Network.Body" xml:space="preserve">
+    <value>The public website, the game nodes and the services behind them are separated. The components talk to each other over private paths; customers reach only the services that are meant to be reachable.</value>
+  </data>
+  <data name="Physical.Database.Label" xml:space="preserve">
+    <value>DATABASE</value>
+  </data>
+  <data name="Physical.Database.Body" xml:space="preserve">
+    <value>The panel keeps its state in a central MariaDB service, separate from both the web application and the game nodes. The panel connects to it at deploy time and while it runs, and schema migrations are applied as part of that deployment rather than by hand.</value>
+  </data>
+  <data name="Physical.Deployment.Label" xml:space="preserve">
+    <value>DEPLOYMENT</value>
+  </data>
+  <data name="Physical.Deployment.Body" xml:space="preserve">
+    <value>The panel ships as a container. A new version is built into a new image, the container is recreated from it, and migrations run as it starts. The same steps every time, and nobody editing the running application to make a change.</value>
+  </data>
+  <data name="Physical.Allocation.Label" xml:space="preserve">
+    <value>SERVER ALLOCATION</value>
+  </data>
+  <data name="Physical.Allocation.Body" xml:space="preserve">
+    <value>When a server is created, the panel picks a game node with room and provisions what the plan calls for. The panel is the management layer; the game itself runs on the compute node, not on the web tier.</value>
+  </data>
+  <data name="Physical.Reliability.Label" xml:space="preserve">
+    <value>RELIABILITY</value>
+  </data>
+  <data name="Physical.Reliability.Body" xml:space="preserve">
+    <value>Website, database and game workloads are separate infrastructure roles. Maintenance or an update on one is far less able to take the others with it, and a fault has a smaller place to hide.</value>
+  </data>
+  <data name="Compute.Body" xml:space="preserve">
+    <value>Game workloads run on dedicated compute nodes rather than beside the website. Our customised Pterodactyl platform decides which node a server lands on and manages it there, so a workload can be deployed, moved or restarted on its own.</value>
+  </data>
+  <data name="Memory.Body" xml:space="preserve">
+    <value>Each server gets its own memory allocation from its plan, isolated from the servers beside it. We watch capacity across the nodes so that a busy neighbour never eats into what another customer was given.</value>
+  </data>
+  <data name="Storage.Body" xml:space="preserve">
+    <value>World data sits on storage attached to the machine the server runs on, so saves are read and written locally rather than across a network. Infrastructure backups are kept apart from the servers they came from.</value>
+  </data>
+  <data name="Network.Body" xml:space="preserve">
+    <value>The public website, the game nodes and the services behind them are separated. Those components talk to each other over private paths, and customers reach only the services that are meant to be reachable.</value>
+  </data>
+  <data name="Database.Index" xml:space="preserve">
+    <value>08</value>
+  </data>
+  <data name="Database.Kicker" xml:space="preserve">
+    <value>DATABASE</value>
+  </data>
+  <data name="Database.Title" xml:space="preserve">
+    <value>Database</value>
+  </data>
+  <data name="Database.Body" xml:space="preserve">
+    <value>The panel keeps its state in a central MariaDB service, separate from both the web application and the game nodes. The panel connects to it when it deploys and while it runs, and schema migrations are applied as part of that deployment rather than by hand.</value>
+  </data>
+  <data name="Database.LayerAllocated" xml:space="preserve">
+    <value>PANEL STATE</value>
+  </data>
+  <data name="Deployment.Index" xml:space="preserve">
+    <value>09</value>
+  </data>
+  <data name="Deployment.Kicker" xml:space="preserve">
+    <value>DEPLOYMENT</value>
+  </data>
+  <data name="Deployment.Title" xml:space="preserve">
+    <value>Deployment</value>
+  </data>
+  <data name="Deployment.Body" xml:space="preserve">
+    <value>The panel ships as a container. A new version is built into a new image, the container is recreated from that image, and migrations run as it starts. The same steps every time, and nobody editing a running application to make a change.</value>
+  </data>
+  <data name="Allocation.Body" xml:space="preserve">
+    <value>When a server is created, the panel picks a game node with room and provisions what the plan calls for. The panel is the management layer; the game itself runs on the compute node, not on the web tier.</value>
+  </data>
+  <data name="Reliability.Body" xml:space="preserve">
+    <value>Website, database and game workloads are separate infrastructure roles. Maintenance or an update on one is far less able to take the others with it, and a fault has a smaller place to hide.</value>
+  </data>
+  <data name="Hero.Lede" xml:space="preserve">
+    <value>Two machines in a rack we own, in a room we can walk into. Everything below is what is in it and how it is arranged.</value>
+  </data>
+  <data name="Physical.Lede" xml:space="preserve">
+    <value>The specifications below are read from the running hosts rather than copied from a datasheet. Where a figure has not been confirmed it is left out rather than estimated.</value>
+  </data>
+  <data name="Nodes.Lede" xml:space="preserve">
+    <value>Photographs of the rack these two nodes are mounted in. Both live in the same cabinet, so no picture is captioned as one machine or the other.</value>
+  </data>
+  <data name="Topology.Lede" xml:space="preserve">
+    <value>How a request reaches a world: the panel decides, a node runs it, and the two are deliberately not the same machine.</value>
+  </data>
+  <data name="Closing.Lede" xml:space="preserve">
+    <value>Bring a community, and it lands on this hardware.</value>
+  </data>
+  <data name="Database.LayerHeadroom" xml:space="preserve">
+    <value>MARIADB SERVICE</value>
+  </data>
+  <data name="Database.LayerReserved" xml:space="preserve">
+    <value>MIGRATIONS ON DEPLOY</value>
+  </data>
+  <data name="Deployment.HopEdge" xml:space="preserve">
+    <value>NEW IMAGE</value>
+  </data>
+  <data name="Deployment.HopUplink" xml:space="preserve">
+    <value>CONTAINER RECREATED</value>
+  </data>
+  <data name="Deployment.HopNode" xml:space="preserve">
+    <value>MIGRATIONS RUN</value>
+  </data>
+  <data name="Deployment.HopWorld" xml:space="preserve">
+    <value>PANEL SERVING</value>
+  </data>
+  <data name="Physical.PhotoLabel" xml:space="preserve">
+    <value>THE RACK</value>
   </data>
 </root>

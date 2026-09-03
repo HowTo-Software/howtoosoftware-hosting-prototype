@@ -148,13 +148,10 @@ public sealed class StaticPlanCatalogService : IPlanCatalogService
             backups: 5,
             includes: LargeTierIncludes),
 
-        // The four tiers below are new. Their taglines are deliberately unwritten: positioning
-        // copy is a commercial statement, and inventing four of them would put words on a price
-        // card that nobody agreed to. An empty tagline renders as the site's placeholder.
         Build(
             slug: "zomboid-10gb",
             name: "Rosewood",
-            tagline: string.Empty,
+            tagline: _text["Plan.Rosewood.Tagline"],
             memoryGb: 10,
             cpuPercent: 500,
             diskGb: ExpandedDiskGb,
@@ -164,7 +161,7 @@ public sealed class StaticPlanCatalogService : IPlanCatalogService
         Build(
             slug: "zomboid-12gb",
             name: "West Point",
-            tagline: string.Empty,
+            tagline: _text["Plan.WestPoint.Tagline"],
             memoryGb: 12,
             cpuPercent: 600,
             diskGb: ExpandedDiskGb,
@@ -174,7 +171,7 @@ public sealed class StaticPlanCatalogService : IPlanCatalogService
         Build(
             slug: "zomboid-14gb",
             name: "Louisville",
-            tagline: string.Empty,
+            tagline: _text["Plan.Louisville.Tagline"],
             memoryGb: 14,
             cpuPercent: 600,
             diskGb: ExpandedDiskGb,
@@ -184,7 +181,7 @@ public sealed class StaticPlanCatalogService : IPlanCatalogService
         Build(
             slug: "zomboid-16gb",
             name: "Knox County",
-            tagline: string.Empty,
+            tagline: _text["Plan.KnoxCounty.Tagline"],
             memoryGb: 16,
             cpuPercent: 700,
             diskGb: ExpandedDiskGb,

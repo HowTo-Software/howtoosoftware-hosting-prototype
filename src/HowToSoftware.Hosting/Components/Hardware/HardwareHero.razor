@@ -13,7 +13,7 @@
 @inject IInfrastructureContentService Content
 
 <section class="hw-hero" id="top">
-    <RackFieldBackdrop />
+    <AmbientField Placement="AmbientField.FieldVariant.Left" />
 
     <div class="hts-container hts-container--wide hw-hero-inner">
         <div class="hw-hero-type">
@@ -29,7 +29,7 @@
             </h1>
 
             <p class="hw-lede">
-                <CopySlot Size="CopySlot.SlotSize.Lede" />
+                @Text["Hero.Lede"]
             </p>
         </div>
 

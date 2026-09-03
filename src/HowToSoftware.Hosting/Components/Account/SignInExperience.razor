@@ -154,9 +154,9 @@
 
             <footer class="card-foot">
                 <span class="foot-prompt">@Text["Prompt.NoAccount"]</span>
-                <button type="button" class="link-action is-strong" @onclick="ShowSignUpNotice">
+                <a class="link-action is-strong" href="/register">
                     @Text["Action.CreateAccount"]
-                </button>
+                </a>
             </footer>
         </div>
 
@@ -164,10 +164,6 @@
             <span class="back-arrow" aria-hidden="true"></span>
             @Text["Action.BackToWebsite"]
         </a>
-    </div>
-
-    <div class="signin-aside">
-        <AuthGatewayPanel Phase="Phase" />
     </div>
 </div>
 
@@ -178,8 +174,7 @@
         None,
         Validation,
         Outcome,
-        Recovery,
-        SignUp
+        Recovery
     }
 
     private string _email = string.Empty;
@@ -191,11 +186,6 @@
     private SignInValidation _validation = SignInValidation.Clean;
     private SignInOutcome? _outcome;
     private NoticeKind _notice = NoticeKind.None;
-
-    /// <summary>What the gateway instrument should be depicting right now.</summary>
-    private GatewayPhase Phase => _isBusy
-        ? GatewayPhase.Verifying
-        : _outcome is null ? GatewayPhase.Idle : GatewayPhase.Halted;
 
     private string RevealLabel =>
         _showPassword ? Text["Action.HidePassword"] : Text["Action.ShowPassword"];
@@ -222,7 +212,6 @@
     {
         NoticeKind.Validation => Text["Validation.Summary"],
         NoticeKind.Recovery => Text["Notice.RecoveryUnavailable"],
-        NoticeKind.SignUp => Text["Notice.SignUpUnavailable"],
         NoticeKind.Outcome => _outcome switch
         {
             SignInOutcome.InvalidCredentials => Text["Notice.InvalidCredentials"],
@@ -280,8 +269,6 @@
     }
 
     private void ShowRecoveryNotice() => _notice = NoticeKind.Recovery;
-
-    private void ShowSignUpNotice() => _notice = NoticeKind.SignUp;
 
     private async Task SubmitAsync()
     {

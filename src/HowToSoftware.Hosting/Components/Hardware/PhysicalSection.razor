@@ -24,7 +24,7 @@
             <h2 class="physical-title" id="physical-heading" data-text-effect="rise">@Text["Physical.Title"]</h2>
 
             <p class="physical-lede">
-                <CopySlot Size="CopySlot.SlotSize.Lede" />
+                @Text["Physical.Lede"]
             </p>
 
             <div class="sheet">
@@ -39,58 +39,14 @@
                         </div>
                     }
                 </dl>
-
-                <p class="sheet-note">@Text["Note.Pending"]</p>
             </div>
         </div>
 
         <div class="physical-figure" data-reveal="right">
-            <p class="figure-label">@Text["Physical.RackLabel"]</p>
+            <p class="figure-label">@Text["Physical.PhotoLabel"]</p>
 
-            @*
-                A rack elevation, drawn rather than photographed. Twelve units: three carrying
-                a node, the rest open. The numbers down the side are unit positions, which is
-                the one label on this page that is a fact about a drawing rather than a claim
-                about hardware.
-            *@
-            <div class="rack" data-spotlight aria-hidden="true">
-                <span class="rack-post rack-post--left"></span>
-                <span class="rack-post rack-post--right"></span>
-
-                <ol class="rack-stack">
-                    @for (var unit = 12; unit >= 1; unit--)
-                    {
-                        var node = NodeAt(unit);
-
-                        <li class="rack-u @(node is null ? "is-open" : "is-filled") @(node?.Health is NodeHealth.Reserved ? "is-reserved" : null)">
-                            <span class="u-index">@unit.ToString("00")</span>
-                            @if (node is not null)
-                            {
-                                <span class="u-body">
-                                    <span class="u-name">@Text["Topology.NodeLabel"] / @node.Ordinal</span>
-                                    <span class="u-leds">
-                                        <span class="u-led"></span>
-                                        <span class="u-led"></span>
-                                        <span class="u-led"></span>
-                                    </span>
-                                </span>
-                            }
-                            else
-                            {
-                                <span class="u-body u-body--open"></span>
-                            }
-                        </li>
-                    }
-                </ol>
-            </div>
-
-            @*
-                And the rack itself, so the drawing above is not the only thing the visitor has
-                to go on. The drawing shows unit positions; the photograph shows the cabinet
-                they are in.
-            *@
             <HardwarePhoto Slot="HardwarePhotoSlot.RackElevation"
-                           CssClass="figure-photo"
+                           CssClass="figure-photo is-lead"
                            Alt="@Text["Photo.Alt.RackElevation"]"
                            Caption="@Text["Photo.Caption.Elevation"]" />
         </div>

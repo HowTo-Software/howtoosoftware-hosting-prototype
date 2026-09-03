@@ -2,7 +2,10 @@
     position: relative;
     z-index: var(--hts-z-content);
     display: grid;
-    grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+    /* One column, centred. The aside that used to sit here drew a diagram of an
+       authentication handshake that does not take place. */
+    grid-template-columns: minmax(0, 30rem);
+    justify-content: center;
     /* Stretch, not centre: the instrument beside the form should share its top and bottom
        edge, so the two columns read as one panel rather than two floating boxes. */
     align-items: stretch;

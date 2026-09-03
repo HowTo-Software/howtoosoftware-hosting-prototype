@@ -8,13 +8,12 @@
 .topology::before {
     content: "";
     position: absolute;
-    top: 34%;
-    left: 50%;
-    width: min(70rem, 92vw);
-    height: 34rem;
-    background: radial-gradient(ellipse at center, rgba(139, 50, 224, 0.13) 0%, transparent 66%);
-    filter: blur(50px);
-    transform: translateX(-50%);
+    top: -10%;
+    left: -8%;
+    width: var(--hts-glow-w);
+    height: var(--hts-glow-h);
+    background: radial-gradient(ellipse at center, var(--hts-glow-brand) 0%, transparent 68%);
+    filter: blur(var(--hts-glow-blur));
     pointer-events: none;
 }
 

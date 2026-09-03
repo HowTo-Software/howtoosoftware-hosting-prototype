@@ -1,0 +1,98 @@
+.ambient {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+/*
+    A pool of light, not a shape. The gradient reaches transparent well inside its own box, so
+    the element has no visible edge anywhere - which is the whole difference between this and the
+    panels it replaced.
+
+    Sized in viewport units so the light scales with the composition rather than with the text.
+*/
+.pool {
+    position: absolute;
+    display: block;
+    border-radius: 50%;
+    filter: blur(90px);
+}
+
+.pool--brand {
+    width: min(52rem, 78vw);
+    height: min(34rem, 52vh);
+    background: radial-gradient(ellipse at center, rgba(176, 105, 255, 0.17) 0%, transparent 68%);
+}
+
+.pool--tech {
+    width: min(44rem, 66vw);
+    height: min(28rem, 44vh);
+    background: radial-gradient(ellipse at center, rgba(61, 92, 224, 0.15) 0%, transparent 70%);
+}
+
+/* ── Placements ────────────────────────────────────────────────────────── */
+
+/*
+    The two pools are always offset from each other. Overlapping them concentrically would make
+    one round glow in the middle, which is the generic thing this is meant to avoid.
+*/
+.ambient.is-right .pool--brand {
+    top: -14%;
+    right: -8%;
+}
+
+.ambient.is-right .pool--tech {
+    bottom: -20%;
+    left: 6%;
+}
+
+.ambient.is-left .pool--brand {
+    top: -12%;
+    left: -10%;
+}
+
+.ambient.is-left .pool--tech {
+    bottom: -18%;
+    right: 4%;
+}
+
+.ambient.is-centre .pool--brand {
+    top: -18%;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.ambient.is-centre .pool--tech {
+    bottom: -22%;
+    left: 22%;
+}
+
+/* ── Light theme ───────────────────────────────────────────────────────── */
+
+/*
+    The same light, weaker. On a pale ground these read as tint rather than as glow, and at the
+    dark theme's strength they would look like a stain.
+*/
+:global(html[data-theme="light"]) .pool--brand {
+    background: radial-gradient(ellipse at center, rgba(176, 105, 255, 0.10) 0%, transparent 70%);
+}
+
+:global(html[data-theme="light"]) .pool--tech {
+    background: radial-gradient(ellipse at center, rgba(61, 92, 224, 0.09) 0%, transparent 72%);
+}
+
+/* ── Small screens ─────────────────────────────────────────────────────── */
+
+@media (max-width: 720px) {
+    /* A 90px blur across a full-width layer is the most expensive thing on a phone's first
+       paint, and the light is barely visible at that width anyway. */
+    .pool {
+        filter: blur(60px);
+    }
+
+    .pool--tech {
+        display: none;
+    }
+}
