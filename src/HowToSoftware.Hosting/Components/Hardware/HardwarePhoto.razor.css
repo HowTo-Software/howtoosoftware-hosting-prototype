@@ -104,7 +104,7 @@
 .pending-badge {
     padding: 0.16rem 0.55rem;
     border: 1px solid var(--hts-border-blue);
-    border-radius: var(--hts-radius-pill);
+    border-radius: var(--ht-radius-xs);
     color: var(--hts-blue-300);
     font-family: var(--hts-font-mono);
     font-size: 0.5rem;

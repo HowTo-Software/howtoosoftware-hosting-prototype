@@ -18,34 +18,24 @@
     align-items: center;
     gap: 0.75rem;
     margin-bottom: var(--hts-space-6);
-    color: var(--hts-blue-300);
+    color: var(--ht-ink-muted);
     font-family: var(--hts-font-mono);
     font-size: 0.6875rem;
     font-weight: 600;
     letter-spacing: 0.2em;
 }
 
-.kicker-index {
-    display: grid;
-    place-items: center;
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: var(--hts-radius-xs);
-    background: var(--hts-purple-600);
-    color: var(--hts-white);
-    font-size: 0.6875rem;
-    letter-spacing: 0.02em;
-}
-
 .plans-title {
     font-size: clamp(2.2rem, 1.3rem + 3.2vw, 3.6rem);
-    font-weight: 660;
+    font-weight: 460;
     line-height: 1.04;
     letter-spacing: -0.03em;
 }
 
+/* Emphasis by weight, not by colour. A purple word in a headline is decoration; it
+   also spends the one hue that means "running" everywhere else on the site. */
 .plans-accent {
-    color: var(--hts-purple-400);
+    font-weight: 800;
 }
 
 .plans-lede {
@@ -70,7 +60,7 @@
     padding: 0.2rem 0.55rem;
     border-radius: var(--hts-radius-xs);
     background: var(--hts-purple-600);
-    color: var(--hts-white);
+    color: #ffffff;  /* literal: the fill under it stays dark in both themes */
     font-family: var(--hts-font-mono);
     font-size: 0.5625rem;
     font-weight: 700;
@@ -100,7 +90,7 @@
     display: inline-flex;
     padding: 3px;
     border: 1px solid var(--hts-border-strong);
-    border-radius: var(--hts-radius-pill);
+    border-radius: var(--ht-radius-sm);
     background: var(--hts-surface);
 }
 
@@ -109,7 +99,7 @@
     align-items: center;
     gap: 0.45rem;
     padding: 0.55rem 1.1rem;
-    border-radius: var(--hts-radius-pill);
+    border-radius: var(--ht-radius-sm);
     color: var(--hts-ink-muted);
     font-size: var(--hts-text-base);
     font-weight: 560;
@@ -124,8 +114,8 @@
 
 .switch-item.is-active {
     background: var(--hts-purple-600);
-    color: var(--hts-white);
-    box-shadow: 0 10px 26px -14px rgba(176, 105, 255, 0.95);
+    color: #ffffff;  /* literal: the fill under it stays dark in both themes */
+    box-shadow: var(--ht-shadow-3);
 }
 
 .switch-save {
@@ -202,7 +192,7 @@
     border: 1px solid var(--hts-purple-400);
     border-radius: var(--hts-radius-xs);
     background: var(--hts-purple-600);
-    color: var(--hts-white);
+    color: #ffffff;  /* literal: the fill under it stays dark in both themes */
     font-family: var(--hts-font-mono);
     font-size: 0.625rem;
     font-weight: 700;
@@ -274,7 +264,7 @@
 .plan.is-featured {
     border-color: var(--hts-purple-400);
     background: linear-gradient(180deg, rgba(176, 105, 255, 0.10), transparent 46%), var(--hts-surface);
-    box-shadow: var(--hts-rim), 0 0 60px -28px rgba(176, 105, 255, 0.95);
+    box-shadow: var(--hts-rim), var(--ht-shadow-3);
 }
 
 .plan-flag {
@@ -284,7 +274,7 @@
     padding: 0.2rem 0.6rem;
     border-radius: var(--hts-radius-xs);
     background: var(--hts-purple-600);
-    color: var(--hts-white);
+    color: #ffffff;  /* literal: the fill under it stays dark in both themes */
     font-family: var(--hts-font-mono);
     font-size: 0.5rem;
     font-weight: 700;
@@ -507,7 +497,7 @@
     flex: none;
     border-radius: 50%;
     background: var(--hts-purple-300);
-    box-shadow: 0 0 8px 1px rgba(176, 105, 255, 0.85);
+    box-shadow: var(--hts-rim);
 }
 
 .bot-name {
@@ -591,5 +581,51 @@
 
     .coupon {
         min-width: 0;
+    }
+}
+
+/*
+    The narrowest phones.
+
+    Three billing periods will not sit in a row at full padding on a 360px screen - the row was
+    running 15px off the side. They take equal thirds of the width instead, and the discount
+    badge moves under its label rather than beside it, which is what actually buys the space
+    back: each key then only needs to be as wide as its longest single word.
+*/
+@media (max-width: 480px) {
+    .switch {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: 100%;
+    }
+
+    .switch-item {
+        flex-direction: column;
+        gap: 0.15rem;
+        justify-content: center;
+        padding-inline: 0.4rem;
+        text-align: center;
+    }
+
+    /* The coupon field carried a 19rem floor and sized itself to the input default on top of
+       that, so it set the width of the whole row. Here it takes the row instead of defining
+       it, and the input shrinks inside it. */
+    .coupon {
+        min-width: 0;
+        width: 100%;
+    }
+
+    /*
+        min-width:auto on the row is what actually pinned the width: a flex container will not
+        shrink under its own min-content, and an <input> brings a browser-default intrinsic
+        size of about twenty characters with it. Releasing the row and letting the input take
+        the remaining width is what lets the field become as narrow as the phone.
+    */
+    .coupon-row {
+        min-width: 0;
+    }
+
+    .coupon-input {
+        width: 100%;
     }
 }

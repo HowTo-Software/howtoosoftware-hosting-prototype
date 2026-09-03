@@ -15,7 +15,7 @@
 
 .zomboid-kicker {
     margin-bottom: var(--hts-space-5);
-    color: var(--hts-purple-300);
+    color: var(--ht-ink-muted);
     font-family: var(--hts-font-mono);
     font-size: 0.6875rem;
     font-weight: 600;
@@ -24,16 +24,15 @@
 
 .zomboid-title {
     font-size: clamp(2.4rem, 1.4rem + 3.6vw, 4.2rem);
-    font-weight: 680;
+    font-weight: 460;
     line-height: 1.02;
     letter-spacing: -0.035em;
 }
 
+/* Emphasis by weight, not by colour. A purple word in a headline is decoration; it
+   also spends the one hue that means "running" everywhere else on the site. */
 .zomboid-accent {
-    background: linear-gradient(100deg, var(--hts-blue-300) 0%, var(--hts-purple-300) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    font-weight: 800;
 }
 
 .zomboid-lede {

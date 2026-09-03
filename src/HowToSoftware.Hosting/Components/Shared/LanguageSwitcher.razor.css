@@ -1,58 +1,48 @@
+/*
+    Two keys, one of them pressed.
+
+    The pressed key used to take a purple wash and a purple rim. Which language you are reading
+    is not a running state, so it does not get the colour that means running - it gets the
+    treatment a pressed key gets, which is to sit lower and lighter than the one beside it.
+
+    No media query here; the header owns the breakpoint. See SiteHeader.razor.css.
+*/
+
 .lang {
     display: inline-flex;
     align-items: center;
     gap: 1px;
     flex: none;
     padding: 2px;
-    border: 1px solid var(--hts-border-strong);
-    border-radius: var(--hts-radius-pill);
-    background: var(--hts-surface-raised);
-    box-shadow: var(--hts-rim);
-    font-family: var(--hts-font-mono);
-    font-size: 0.5625rem;
+    border: 1px solid var(--ht-edge-strong);
+    border-radius: var(--ht-radius-sm);
+    background: var(--ht-surface-2);
+    box-shadow: var(--ht-rim);
+    font-family: var(--ht-font-mono);
+    font-size: var(--ht-text-2xs);
     font-weight: 600;
-    letter-spacing: 0.14em;
+    letter-spacing: var(--ht-track-label);
 }
 
 .lang-option {
     padding: 0.3rem 0.5rem;
-    border-radius: var(--hts-radius-pill);
-    color: var(--hts-ink-muted);
+    border-radius: var(--ht-radius-xs);
+    color: var(--ht-ink-muted);
     text-decoration: none;
     white-space: nowrap;
     transition:
-        background-color var(--hts-duration-fast) var(--hts-ease),
-        color var(--hts-duration-fast) var(--hts-ease);
+        background-color var(--ht-dur-2) var(--ht-ease-lock),
+        color var(--ht-dur-2) var(--ht-ease-lock);
 }
 
 .lang-option:hover {
-    color: var(--hts-ink);
+    color: var(--ht-ink);
     background: var(--hts-tint-hover);
 }
 
-/* The active language reads as a pressed key, using the same purple wash the theme
-   toggle uses for its "on" state so the two utility controls stay a pair. */
-.lang-option.is-active {
-    background: var(--hts-state-busy-bg);
-    box-shadow: inset 0 0 0 1px var(--hts-border-brand);
-    color: var(--hts-ink);
-}
-
+.lang-option.is-active,
 .lang-option.is-active:hover {
-    color: var(--hts-ink);
-}
-
-@media (max-width: 1240px) {
-    .lang {
-        justify-content: center;
-        width: 100%;
-        padding-block: 0.3rem;
-        font-size: var(--hts-text-xs);
-    }
-
-    .lang-option {
-        flex: 1;
-        padding-block: 0.5rem;
-        text-align: center;
-    }
+    background: var(--ht-surface-inset);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+    color: var(--ht-ink);
 }

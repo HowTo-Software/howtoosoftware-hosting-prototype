@@ -13,34 +13,24 @@
     align-items: center;
     gap: 0.75rem;
     margin-bottom: var(--hts-space-6);
-    color: var(--hts-blue-300);
+    color: var(--ht-ink-muted);
     font-family: var(--hts-font-mono);
     font-size: 0.6875rem;
     font-weight: 600;
     letter-spacing: 0.2em;
 }
 
-.kicker-index {
-    display: grid;
-    place-items: center;
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: var(--hts-radius-xs);
-    background: var(--hts-purple-600);
-    color: var(--hts-white);
-    font-size: 0.6875rem;
-    letter-spacing: 0.02em;
-}
-
 .provision-title {
     font-size: clamp(2.4rem, 1.3rem + 3.6vw, 4rem);
-    font-weight: 660;
+    font-weight: 460;
     line-height: 1.02;
     letter-spacing: -0.032em;
 }
 
+/* Emphasis by weight, not by colour. A purple word in a headline is decoration; it
+   also spends the one hue that means "running" everywhere else on the site. */
 .provision-accent {
-    color: var(--hts-purple-400);
+    font-weight: 800;
 }
 
 .provision-lede {
@@ -146,8 +136,8 @@
 .stage.is-live .stage-code {
     border-color: var(--hts-purple-400);
     background: var(--hts-purple-600);
-    color: var(--hts-white);
-    box-shadow: 0 0 34px -8px rgba(176, 105, 255, 0.95);
+    color: #ffffff;  /* literal: the fill under it is dark in both themes */
+    box-shadow: var(--ht-shadow-3);
 }
 
 .stage.is-live .stage-text h3 {

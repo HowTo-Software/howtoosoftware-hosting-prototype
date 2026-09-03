@@ -17,7 +17,7 @@
     background:
         radial-gradient(120% 120% at 30% 0%, rgba(131, 168, 243, 0.16) 0%, transparent 62%),
         var(--hts-surface-raised);
-    box-shadow: var(--hts-rim), 0 8px 22px -14px rgba(139, 50, 224, 0.9);
+    box-shadow: var(--hts-rim), var(--ht-shadow-3);
 }
 
 .brand-mark svg {

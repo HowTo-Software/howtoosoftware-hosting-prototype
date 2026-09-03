@@ -14,7 +14,9 @@
     z-index: var(--hts-z-content);
     flex: 1;
     display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+    /* The plate is capped at 26rem, so it takes what it needs and the type gets the rest.
+       A fractional split gave the headline a column narrower than the headline. */
+    grid-template-columns: minmax(0, 1fr) auto;
     align-items: center;
     gap: clamp(2rem, 5vw, 4.5rem);
     padding-block: clamp(2.5rem, 6vw, 5rem);
@@ -39,7 +41,7 @@
     align-items: center;
     gap: 0.75rem;
     margin-bottom: var(--hts-space-6);
-    color: var(--hts-blue-300);
+    color: var(--ht-ink-muted);
     font-family: var(--hts-font-mono);
     font-size: 0.6875rem;
     font-weight: 600;
@@ -50,15 +52,25 @@
     width: 2.5rem;
     height: 1px;
     flex: none;
-    background: linear-gradient(90deg, var(--hts-purple-400), var(--hts-blue-400));
+    background: var(--ht-edge-strong);
 }
 
-/* Three lines, tightly leaded, with the middle one carrying the brand purple - the homepage
-   headline's construction, one line longer. */
+/*
+    Three lines, tightly leaded - the homepage headline's construction beside a photograph.
+
+    Sized so the longest line ("mundos persistentes", nineteen characters, longer than the
+    English) clears the column at every width. It did not: at 1440 the type was 80px wide-cut
+    and the column was 739px, so the last line ran under the rack photo. nowrap is deliberate -
+    the three lines are composed, not wrapped - which means the size has to be the thing that
+    yields.
+*/
 .hw-title {
-    max-width: 15ch;
-    font-size: clamp(2.6rem, 1.2rem + 5vw, 5rem);
-    font-weight: 680;
+    /* Wide enough for the longest line. It was 15ch while "mundos persistentes." is twenty
+       characters, so the measure - not the type size and not the column - was what pushed the
+       last line under the photograph. */
+    max-width: 20ch;
+    font-size: clamp(2rem, 0.85rem + 3.1vw, 3.75rem);
+    font-weight: 460;
     line-height: 0.96;
     letter-spacing: -0.035em;
     text-wrap: nowrap;
@@ -68,9 +80,11 @@
     display: block;
 }
 
+/* Emphasis by weight, not by colour. A purple word in a headline is decoration; it
+   also spends the one hue that means "running" everywhere else on the site. */
 .title-line--accent {
     margin-left: clamp(0rem, 3vw, 2.75rem);
-    color: var(--hts-purple-400);
+    font-weight: 800;
 }
 
 .hw-lede {

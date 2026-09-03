@@ -1,43 +1,59 @@
 @*
-    Immersive hero.
+    The hero.
 
-    Three stacked layers - the infrastructure field, the typography, and the connected UI
-    cluster - rather than a text/card split. Entry motion is a CSS stagger driven by
-    animation-delay, so nothing depends on JavaScript to become visible.
+    Restructured rather than restyled. It used to be a text column beside a product column,
+    which is the arrangement every hosting company on the internet has, and which forced the
+    headline into roughly half the page - at display sizes that meant the type ran into the
+    panel next to it.
+
+    Here the headline takes the full measure and everything else sits underneath it: the lede
+    and the actions on the left, one rack unit on the right. The headline gets to be as large
+    as it deserves, the two columns below it are short enough that neither crowds the other,
+    and the page reads top to bottom the way an editorial spread does rather than left to
+    right the way a template does.
+
+    No ambient field behind it any more. Light comes from one source, declared once on the
+    page ground - see the body::before note in app.css.
 *@
 
 @inject IStringLocalizer<HomeText> Text
 
 <section class="hero" id="top" data-stage>
-    <AmbientField Placement="AmbientField.FieldVariant.Right" />
-
     <div class="hts-container hts-container--wide hero-inner">
-        <div class="hero-type">
-            <p class="hero-kicker" data-text-effect="flicker">
-                <span class="kicker-rule"></span>
-                @Text["Hero.Kicker"]
-            </p>
+        <p class="hero-kicker" data-text-effect="flicker">
+            <span class="kicker-rule"></span>
+            @Text["Hero.Kicker"]
+        </p>
 
-            <h1 class="hero-title" data-text-effect="rise">
-                <span class="title-line">@Text["Hero.Line1"]</span>
-                <span class="title-line title-line--accent">@Text["Hero.Line2"]</span>
-                <span class="title-line">@Text["Hero.Line3"]</span>
-            </h1>
+        @*
+            All three lines are white. The emphasis is weight, not colour: 460 against 800 in
+            the same family is a strong enough contrast to carry a headline on its own, and it
+            leaves purple free to mean what it means everywhere else on the site - running, or
+            the one thing this page wants you to press.
+        *@
+        <h1 class="hero-title" data-text-effect="rise">
+            <span class="title-line">@Text["Hero.Line1"]</span>
+            <span class="title-line title-line--accent">@Text["Hero.Line2"]</span>
+            <span class="title-line">@Text["Hero.Line3"]</span>
+        </h1>
 
-            <p class="hero-copy">@Text["Hero.Copy"]</p>
+        <div class="hero-body">
+            <div class="hero-copy-col">
+                <p class="hero-copy">@Text["Hero.Copy"]</p>
 
-            <div class="hero-actions">
-                <CtaButton Href="/project-zomboid" Size="CtaSize.Large" TrailingIcon="IconName.ArrowRight">
-                    @Text["Hero.CtaPrimary"]
-                </CtaButton>
-                <CtaButton Href="#control-panel" Variant="CtaVariant.Secondary" Size="CtaSize.Large">
-                    @Text["Hero.CtaSecondary"]
-                </CtaButton>
+                <div class="hero-actions">
+                    <CtaButton Href="/project-zomboid" Size="CtaSize.Large" TrailingIcon="IconName.ArrowRight">
+                        @Text["Hero.CtaPrimary"]
+                    </CtaButton>
+                    <CtaButton Href="#control-panel" Variant="CtaVariant.Secondary" Size="CtaSize.Large">
+                        @Text["Hero.CtaSecondary"]
+                    </CtaButton>
+                </div>
             </div>
-        </div>
 
-        <div class="hero-product">
-            <HeroNodeCluster />
+            <div class="hero-panel-col">
+                <HeroPanel />
+            </div>
         </div>
     </div>
 
@@ -50,3 +66,8 @@
         <span class="foot-alloc">@Text["Hero.FootAllocation"]</span>
     </div>
 </section>
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

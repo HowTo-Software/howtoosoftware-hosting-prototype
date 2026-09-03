@@ -1,3 +1,5 @@
+using System.Globalization;
+
 namespace HowToSoftware.Hosting.Models;
 
 /// <summary>
@@ -22,7 +24,45 @@ public enum SignalTone
 /// <param name="Value">The reading itself.</param>
 /// <param name="Tone">Colour role for the value.</param>
 /// <param name="ShowPulse">Renders a pulsing indicator before the label.</param>
-public sealed record TelemetrySignal(string Label, string Value, SignalTone Tone, bool ShowPulse = false);
+public sealed record TelemetrySignal(string Label, string Value, SignalTone Tone, bool ShowPulse = false)
+{
+    /// <summary>
+    /// The reading as a fraction between 0 and 1 when <see cref="Value"/> is a ratio of the
+    /// form <c>27 / 64</c>; otherwise <see langword="null"/>.
+    /// </summary>
+    /// <remarks>
+    /// Derived from the published value rather than supplied next to it, so a meter can never
+    /// disagree with the number printed beside it.
+    ///
+    /// Anything that is not two whole numbers over a slash - a duration, a state word, a build
+    /// number - returns null and is rendered without a meter. That is the intended answer, not
+    /// a fallback: drawing a bar for <c>06D 14H</c> would mean inventing a full scale for it.
+    /// </remarks>
+    public double? Ratio
+    {
+        get
+        {
+            var slash = Value.IndexOf('/', StringComparison.Ordinal);
+            if (slash < 0)
+            {
+                return null;
+            }
+
+            var doneText = Value.AsSpan(0, slash).Trim();
+            var totalText = Value.AsSpan(slash + 1).Trim();
+
+            if (!int.TryParse(doneText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var done)
+                || !int.TryParse(totalText, NumberStyles.Integer, CultureInfo.InvariantCulture, out var total)
+                || total <= 0
+                || done < 0)
+            {
+                return null;
+            }
+
+            return Math.Min(done / (double)total, 1d);
+        }
+    }
+}
 
 /// <summary>
 /// Synchronisation state of a Workshop item.

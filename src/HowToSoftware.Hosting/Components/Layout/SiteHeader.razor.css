@@ -1,23 +1,27 @@
 .site-header {
     position: sticky;
     top: 0;
-    z-index: var(--hts-z-header);
+    z-index: var(--ht-z-header);
     background: transparent;
     transition:
-        background-color var(--hts-duration-base) var(--hts-ease),
-        backdrop-filter var(--hts-duration-base) var(--hts-ease);
+        background-color var(--ht-dur-3) var(--ht-ease-lock),
+        backdrop-filter var(--ht-dur-3) var(--ht-ease-lock);
 }
 
-/* `hts-scrolled` is toggled on <html> by wwwroot/js/site.js. The header only
-   frosts once the page has moved, so the hero reads edge to edge on load. */
+/*
+    `hts-scrolled` is toggled on <html> by wwwroot/js/site.js. The header stays clear until the
+    page has moved, so the hero reads edge to edge on load.
+
+    A blur, but not a glassy one: the old rule pushed saturation to 160%, which turns whatever
+    is behind it into colour and is most of what people mean by glassmorphism. Graphite at high
+    opacity with a light blur keeps the type legible without the header becoming an effect.
+*/
 html.hts-scrolled .site-header {
-    background: var(--hts-surface-frost);
-    backdrop-filter: saturate(160%) blur(16px);
-    -webkit-backdrop-filter: saturate(160%) blur(16px);
+    background: color-mix(in srgb, var(--ht-ground) 88%, transparent);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
 
-/* The bottom edge is a brand hairline rather than a flat border, so the header
-   separates from the page with light instead of a line. */
 .site-header::after {
     content: "";
     position: absolute;
@@ -25,34 +29,34 @@ html.hts-scrolled .site-header {
     bottom: 0;
     left: 0;
     height: 1px;
-    background: var(--hts-gradient-hairline);
+    background: var(--ht-edge-strong);
     opacity: 0;
-    transition: opacity var(--hts-duration-base) var(--hts-ease);
+    transition: opacity var(--ht-dur-3) var(--ht-ease-lock);
     pointer-events: none;
 }
 
 html.hts-scrolled .site-header::after {
-    opacity: 0.85;
+    opacity: 1;
 }
 
 .header-inner {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--hts-space-5);
-    min-height: var(--hts-header-height);
+    gap: var(--ht-space-5);
+    min-height: var(--ht-header-h);
 }
 
 .header-brand {
     text-decoration: none;
-    border-radius: var(--hts-radius-md);
+    border-radius: var(--ht-radius-sm);
     flex: none;
 }
 
 .header-panel {
     display: flex;
     align-items: center;
-    gap: var(--hts-space-5);
+    gap: var(--ht-space-5);
 }
 
 .header-nav ul {
@@ -64,127 +68,97 @@ html.hts-scrolled .site-header::after {
 .header-nav a {
     position: relative;
     display: block;
-    padding: 0.5rem 0.6rem;
-    border-radius: var(--hts-radius-sm);
-    color: var(--hts-ink-soft);
-    font-size: var(--hts-text-sm);
-    font-weight: 520;
+    padding: 0.5rem 0.65rem;
+    border-radius: var(--ht-radius-xs);
+    color: var(--ht-ink-muted);
+    font-size: var(--ht-text-sm);
+    font-weight: 540;
     text-decoration: none;
     white-space: nowrap;
-    transition: color var(--hts-duration-fast) var(--hts-ease);
+    transition: color var(--ht-dur-2) var(--ht-ease-lock);
 }
 
-/* Gradient underline that wipes in from the left on hover. */
+/*
+    A rule under the label rather than a glowing gradient bar. Two states, and the difference
+    between them is the whole colour rule in miniature: hovering is neutral, because hovering
+    is not a state the system is in - being on this page is, and that one gets live purple.
+*/
 .header-nav a::after {
     content: "";
     position: absolute;
-    right: 0.6rem;
-    bottom: 0.24rem;
-    left: 0.6rem;
-    height: 2px;
-    border-radius: 2px;
-    background-image: var(--hts-gradient-brand);
-    box-shadow: 0 0 10px rgba(176, 105, 255, 0.6);
+    right: 0.65rem;
+    bottom: 0.22rem;
+    left: 0.65rem;
+    height: 1px;
+    background: var(--ht-edge-strong);
     transform: scaleX(0);
     transform-origin: left center;
-    transition: transform var(--hts-duration-base) var(--hts-ease-out);
+    transition: transform var(--ht-dur-2) var(--ht-ease-lock);
 }
 
 .header-nav a:hover {
-    color: var(--hts-ink);
+    color: var(--ht-ink);
 }
 
 .header-nav a:hover::after {
     transform: scaleX(1);
 }
 
-/* The page you are on keeps the underline lit rather than gaining a different treatment. */
 .header-nav a.is-current {
-    color: var(--hts-ink);
+    color: var(--ht-ink);
 }
 
 .header-nav a.is-current::after {
+    height: 2px;
+    background: var(--ht-live-500);
     transform: scaleX(1);
 }
 
 .header-actions {
     display: flex;
     align-items: center;
-    gap: var(--hts-space-3);
+    gap: var(--ht-space-3);
 }
 
-/* Language and theme are settings, not navigation. Grouping them tightly and separating
-   them with a rule keeps the right-hand side from reading as four equal buttons. */
+/* Language and theme are settings, not navigation. Grouping them behind a rule keeps the
+   right-hand side from reading as three equal buttons. */
 .header-utility {
     display: flex;
     align-items: center;
-    gap: var(--hts-space-2);
-    padding-right: var(--hts-space-3);
-    border-right: 1px solid var(--hts-border);
-}
-
-.header-signin {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.45rem 0.7rem;
-    border-radius: var(--hts-radius-pill);
-    color: var(--hts-ink-soft);
-    font-size: var(--hts-text-sm);
-    font-weight: 560;
-    text-decoration: none;
-    white-space: nowrap;
-    transition:
-        background-color var(--hts-duration-fast) var(--hts-ease),
-        color var(--hts-duration-fast) var(--hts-ease);
-}
-
-.header-signin ::deep .hts-icon {
-    color: var(--hts-blue-400);
-    transition: color var(--hts-duration-fast) var(--hts-ease);
-}
-
-.header-signin:hover {
-    background: var(--hts-tint-hover);
-    color: var(--hts-ink);
-}
-
-.header-signin:hover ::deep .hts-icon {
-    color: var(--hts-purple-300);
-}
-
-.header-signin.is-current {
-    background: var(--hts-state-busy-bg);
-    box-shadow: inset 0 0 0 1px var(--hts-border-brand);
-    color: var(--hts-ink);
+    gap: var(--ht-space-2);
+    padding-right: var(--ht-space-3);
+    border-right: 1px solid var(--ht-edge);
 }
 
 .header-toggle {
     display: none;
     place-items: center;
-    width: 2.6rem;
-    height: 2.6rem;
-    border: 1px solid var(--hts-border-strong);
-    border-radius: var(--hts-radius-md);
-    background: var(--hts-surface-raised);
-    box-shadow: var(--hts-rim);
-    color: var(--hts-ink);
+    width: 2.5rem;
+    height: 2.5rem;
+    border: 1px solid var(--ht-edge-strong);
+    border-radius: var(--ht-radius-sm);
+    background: var(--ht-surface-2);
+    box-shadow: var(--ht-rim);
+    color: var(--ht-ink);
     transition:
-        border-color var(--hts-duration-fast) var(--hts-ease),
-        color var(--hts-duration-fast) var(--hts-ease);
+        border-color var(--ht-dur-2) var(--ht-ease-lock),
+        color var(--ht-dur-2) var(--ht-ease-lock);
 }
 
 .header-toggle:hover {
-    border-color: var(--hts-border-brand);
-    color: var(--hts-purple-300);
+    border-color: var(--ht-ink-faint);
 }
 
-/* ── Below the full-nav width: collapse into a drop-down panel ──────────────
-   The breakpoint sits where the seven section links, the two utility controls,
-   the sign-in link and the primary action stop fitting on one line - a 1280
-   laptop still gets the full bar. */
+/*
+    Below this width the bar collapses into a panel.
 
-@media (max-width: 1240px) {
+    It used to be 1240px, sized for seven section links plus a sign-in link plus a call to
+    action. The navigation is three items now and the sign-in link is gone, so the bar fits
+    narrower than that - but not as narrow as 900, which is where it was first set: at 1024 the
+    language and theme controls were being squeezed 95px under their own content. Measured, not
+    guessed.
+*/
+@media (max-width: 1100px) {
     .header-toggle {
         display: grid;
     }
@@ -195,21 +169,21 @@ html.hts-scrolled .site-header::after {
         right: 0;
         left: 0;
         display: grid;
-        gap: var(--hts-space-5);
-        padding: var(--hts-space-5) var(--hts-gutter) var(--hts-space-8);
-        border-top: 1px solid var(--hts-border);
-        border-bottom: 1px solid var(--hts-border);
-        background: var(--hts-surface-frost);
-        backdrop-filter: saturate(160%) blur(20px);
-        -webkit-backdrop-filter: saturate(160%) blur(20px);
-        box-shadow: var(--hts-shadow-lg);
+        gap: var(--ht-space-5);
+        padding: var(--ht-space-5) var(--ht-container-pad) var(--ht-space-8);
+        border-top: 1px solid var(--ht-edge);
+        border-bottom: 1px solid var(--ht-edge);
+        background: color-mix(in srgb, var(--ht-ground) 94%, transparent);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        box-shadow: var(--ht-shadow-4);
         opacity: 0;
         visibility: hidden;
-        transform: translateY(-10px);
+        transform: translateY(-8px);
         transition:
-            opacity var(--hts-duration-base) var(--hts-ease-out),
-            transform var(--hts-duration-base) var(--hts-ease-out),
-            visibility var(--hts-duration-base) linear;
+            opacity var(--ht-dur-3) var(--ht-ease-lock),
+            transform var(--ht-dur-3) var(--ht-ease-lock),
+            visibility var(--ht-dur-3) linear;
     }
 
     .header-panel.is-open {
@@ -225,50 +199,93 @@ html.hts-scrolled .site-header::after {
     }
 
     .header-nav a {
-        padding: 0.85rem 1rem;
-        border-radius: var(--hts-radius-md);
-        color: var(--hts-ink);
-        font-size: var(--hts-text-lg);
+        padding: 0.8rem 0.9rem;
+        border-radius: var(--ht-radius-sm);
+        color: var(--ht-ink);
+        font-size: var(--ht-text-md);
         font-weight: 560;
     }
 
     .header-nav a:hover {
-        background: var(--hts-surface-raised);
+        background: var(--hts-tint-hover);
     }
 
-    .header-nav a.is-current {
-        background: var(--hts-state-busy-bg);
-        box-shadow: inset 0 0 0 1px var(--hts-border-brand);
-    }
-
+    /* No room for an underline in a stacked list, so the current page is marked on its leading
+       edge instead - same colour, same meaning. */
     .header-nav a::after {
-        display: none;
+        top: 0.55rem;
+        right: auto;
+        bottom: 0.55rem;
+        left: 0;
+        width: 2px;
+        height: auto;
+        transform: scaleY(0);
+        transform-origin: center top;
+        transition: transform var(--ht-dur-2) var(--ht-ease-lock);
+    }
+
+    .header-nav a:hover::after {
+        transform: scaleY(1);
+    }
+
+    .header-nav a.is-current::after {
+        width: 2px;
+        height: auto;
+        transform: scaleY(1);
     }
 
     .header-actions {
         display: grid;
-        gap: var(--hts-space-3);
-        padding-top: var(--hts-space-4);
-        border-top: 1px solid var(--hts-border);
+        gap: var(--ht-space-3);
+        padding-top: var(--ht-space-4);
+        border-top: 1px solid var(--ht-edge);
     }
 
     .header-utility {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: var(--hts-space-3);
+        gap: var(--ht-space-3);
         padding-right: 0;
         border-right: 0;
     }
 
-    .header-signin {
+    /*
+        The language and theme controls stretch to fill their halves of the panel.
+
+        These rules live here, not in the two components, because the only reason either of
+        them changes shape is that THIS element collapsed. When each owned its own copy of the
+        breakpoint they drifted: the switcher was still keyed to 1240 and the toggle to 960
+        while the bar collapsed at 1100, so between 1100 and 1240 the switcher went full width
+        inside a bar that had not collapsed yet.
+    */
+    .header-utility ::deep .lang,
+    .header-utility ::deep .theme-toggle {
         justify-content: center;
-        padding-block: 0.75rem;
-        border: 1px solid var(--hts-border-strong);
-        background: var(--hts-surface-raised);
-        font-size: var(--hts-text-md);
+        width: 100%;
+    }
+
+    .header-utility ::deep .lang {
+        padding-block: 0.3rem;
+        font-size: var(--ht-text-xs);
+    }
+
+    .header-utility ::deep .lang-option {
+        flex: 1;
+        padding-block: 0.5rem;
+        text-align: center;
+    }
+
+    .header-utility ::deep .theme-toggle {
+        padding-block: 0.6rem;
     }
 
     .header-actions ::deep .cta {
         width: 100%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .header-nav a::after {
+        transition: none;
     }
 }

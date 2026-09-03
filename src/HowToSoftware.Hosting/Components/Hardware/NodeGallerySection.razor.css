@@ -29,29 +29,16 @@
     align-items: center;
     gap: 0.75rem;
     margin-bottom: var(--hts-space-5);
-    color: var(--hts-purple-300);
+    color: var(--ht-ink-muted);
     font-family: var(--hts-font-mono);
     font-size: 0.6875rem;
     font-weight: 600;
     letter-spacing: 0.2em;
 }
 
-.kicker-index {
-    display: grid;
-    place-items: center;
-    width: 1.75rem;
-    height: 1.75rem;
-    flex: none;
-    border-radius: var(--hts-radius-xs);
-    background: var(--hts-blue-700);
-    color: var(--hts-white);
-    font-size: 0.6875rem;
-    letter-spacing: 0.02em;
-}
-
 .gallery-title {
     font-size: clamp(2rem, 1.25rem + 2.6vw, 3.1rem);
-    font-weight: 660;
+    font-weight: 460;
     line-height: 1.04;
     letter-spacing: -0.03em;
 }
@@ -131,7 +118,7 @@
 }
 
 .readout-status.is-healthy .status-dot {
-    box-shadow: 0 0 8px 1px rgba(131, 168, 243, 0.85);
+    box-shadow: var(--ht-lamp-data);
     animation: status-breathe 3.2s var(--hts-ease) infinite;
 }
 

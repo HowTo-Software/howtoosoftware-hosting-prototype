@@ -28,31 +28,21 @@
     align-items: center;
     gap: 0.75rem;
     margin-bottom: var(--hts-space-5);
-    color: var(--hts-purple-300);
+    color: var(--ht-ink-muted);
     font-family: var(--hts-font-mono);
     font-size: 0.6875rem;
     font-weight: 600;
     letter-spacing: 0.2em;
 }
 
-.kicker-index {
-    display: grid;
-    place-items: center;
-    width: 1.75rem;
-    height: 1.75rem;
-    flex: none;
-    border-radius: var(--hts-radius-xs);
-    background: var(--hts-blue-700);
-    color: var(--hts-white);
-    font-size: 0.6875rem;
-    letter-spacing: 0.02em;
-}
-
 /* The topic word is the display type. It is the one thing on this page that is definitely
    true, so it carries the size the finished headline will eventually take. */
 .chapter-title {
-    font-size: clamp(2.4rem, 1.2rem + 3.8vw, 4.4rem);
-    font-weight: 670;
+    /* Sized to the narrow column this sits in. The longest chapter title is a single
+       unbreakable word, so nothing wraps it out of trouble - at the old maximum it ran 121px
+       past its own column. */
+    font-size: clamp(1.9rem, 1rem + 2.5vw, 3.4rem);
+    font-weight: 460;
     line-height: 0.98;
     letter-spacing: -0.035em;
 }
@@ -134,7 +124,7 @@
 .die-cell.is-lit {
     border-color: var(--hts-blue-500);
     background: rgba(131, 168, 243, 0.42);
-    box-shadow: 0 0 12px -1px rgba(131, 168, 243, 0.8);
+    box-shadow: var(--ht-lamp-data);
     animation: die-pulse 4.4s var(--hts-ease) infinite;
 }
 
@@ -146,7 +136,7 @@
     animation-delay: -2.7s;
     background: rgba(176, 105, 255, 0.45);
     border-color: var(--hts-purple-500);
-    box-shadow: 0 0 12px -1px rgba(176, 105, 255, 0.8);
+    box-shadow: var(--ht-lamp-live);
 }
 
 @keyframes die-pulse {
@@ -237,7 +227,7 @@
     bottom: 1.4rem;
     left: 0.42rem;
     width: 1px;
-    background: linear-gradient(180deg, rgba(131, 168, 243, 0.5), rgba(176, 105, 255, 0.3));
+    background: linear-gradient(180deg, rgba(131, 168, 243, 0.5), rgba(131, 168, 243, 0.3));
 }
 
 .plate {
@@ -278,7 +268,7 @@
 
 .plate:first-child .plate-mark {
     background: var(--hts-blue-400);
-    box-shadow: 0 0 9px 1px rgba(131, 168, 243, 0.7);
+    box-shadow: var(--ht-lamp-data);
 }
 
 .plate-label {
@@ -343,7 +333,7 @@
 .hop:first-child .hop-mark,
 .hop:last-child .hop-mark {
     background: var(--hts-blue-400);
-    box-shadow: 0 0 9px 1px rgba(131, 168, 243, 0.7);
+    box-shadow: var(--ht-lamp-data);
 }
 
 .hop-label {
@@ -363,7 +353,7 @@
     height: 3px;
     border-radius: 2px;
     background: linear-gradient(90deg, transparent, var(--hts-purple-300), transparent);
-    box-shadow: 0 0 10px 1px rgba(176, 105, 255, 0.7);
+    box-shadow: var(--ht-lamp-live);
     animation: flow-beam 3.6s var(--hts-ease) infinite;
 }
 
@@ -486,7 +476,7 @@
     left: 0.5rem;
     width: 1px;
     background: linear-gradient(180deg,
-        rgba(176, 105, 255, 0.5),
+        rgba(131, 168, 243, 0.5),
         rgba(131, 168, 243, 0.35) 60%,
         transparent);
 }
@@ -514,7 +504,7 @@
     width: 0.65rem;
     height: 1px;
     background: var(--hts-blue-400);
-    box-shadow: 0 0 8px 1px rgba(131, 168, 243, 0.55);
+    box-shadow: var(--ht-lamp-data);
 }
 
 .op-label {

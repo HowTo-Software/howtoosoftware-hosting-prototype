@@ -29,7 +29,7 @@
     align-items: center;
     gap: 0.75rem;
     margin-bottom: var(--hts-space-5);
-    color: var(--hts-blue-300);
+    color: var(--ht-ink-muted);
     font-family: var(--hts-font-mono);
     font-size: 0.6875rem;
     font-weight: 600;
@@ -40,14 +40,14 @@
     width: 2.5rem;
     height: 1px;
     flex: none;
-    background: linear-gradient(90deg, var(--hts-purple-400), var(--hts-blue-400));
+    background: var(--ht-edge-strong);
 }
 
 /* Same construction as the homepage hero: stacked lines, second one carrying the brand
    purple, so arriving here reads as the same product rather than a different template. */
 .signin-title {
     font-size: clamp(2rem, 1.25rem + 2.4vw, 2.95rem);
-    font-weight: 680;
+    font-weight: 460;
     line-height: 1.02;
     letter-spacing: -0.032em;
 }
@@ -56,8 +56,10 @@
     display: block;
 }
 
+/* Emphasis by weight, not by colour. A purple word in a headline is decoration; it
+   also spends the one hue that means "running" everywhere else on the site. */
 .title-line--accent {
-    color: var(--hts-purple-400);
+    font-weight: 800;
 }
 
 .signin-lede {
@@ -102,7 +104,7 @@
     border: 1px solid var(--hts-border-blue);
     border-radius: var(--hts-radius-md);
     background: var(--hts-state-online-bg);
-    color: var(--hts-ink-muted);
+    color: var(--ht-ink-soft);
     font-size: var(--hts-text-xs);
     line-height: 1.5;
 }
@@ -112,7 +114,7 @@
     margin-top: 0.05rem;
     padding: 0.12rem 0.45rem;
     border: 1px solid var(--hts-border-blue);
-    border-radius: var(--hts-radius-pill);
+    border-radius: var(--ht-radius-xs);
     color: var(--hts-blue-300);
     font-family: var(--hts-font-mono);
     font-size: 0.5rem;
@@ -157,7 +159,7 @@
 /* The lit border is on the shell, not the input, so the reveal button lights with it. */
 .field-shell:focus-within {
     border-color: var(--hts-purple-400);
-    box-shadow: var(--hts-rim), 0 0 0 3px rgba(176, 105, 255, 0.22);
+    box-shadow: var(--hts-rim), var(--ht-shadow-3);
 }
 
 .field.has-error .field-shell {
@@ -367,7 +369,7 @@
     margin-top: 0.5rem;
     border-radius: 50%;
     background: var(--hts-blue-300);
-    box-shadow: 0 0 8px 1px rgba(131, 168, 243, 0.7);
+    box-shadow: var(--hts-rim), var(--ht-ring);
 }
 
 .notice--warning {
@@ -377,7 +379,7 @@
 
 .notice--warning .notice-mark {
     background: var(--hts-purple-300);
-    box-shadow: 0 0 8px 1px rgba(176, 105, 255, 0.7);
+    box-shadow: var(--ht-lamp-data);
 }
 
 /* ── Card foot and back link ───────────────────────────────────────────── */

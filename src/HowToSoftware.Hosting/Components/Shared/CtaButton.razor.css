@@ -1,199 +1,165 @@
+/*
+    The action primitive.
+
+    What changed and why:
+
+      - No pill. A 999px radius on a call to action is the single most common tell of a
+        consumer software template. Hardware has small corners, so this has small corners.
+      - No gradient fill. One flat hue, which is what makes it read as a switch rather than as
+        an advertisement.
+      - No lift on hover. Buttons that rise off the page are the default everywhere; a mounted
+        control does not move when you point at it. What changes instead is the rim, the edge
+        and the arrow - the button acknowledges the pointer without leaving its seat.
+      - No light sweeping across it. That effect existed because it could.
+
+    The fill stays at one lightness in every state on purpose: white on it measures 5.3:1, and
+    a hover that brightened the fill would drop that under the AA floor exactly when somebody
+    is about to press it.
+*/
+
 .cta {
     position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--hts-space-2);
+    gap: var(--ht-space-2);
     border: 1px solid transparent;
-    border-radius: var(--hts-radius-pill);
-    font-weight: 600;
+    border-radius: var(--ht-radius-sm);
+    font-weight: 620;
     letter-spacing: -0.005em;
     text-align: center;
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
     transition:
-        transform var(--hts-duration-base) var(--hts-ease-spring),
-        box-shadow var(--hts-duration-base) var(--hts-ease),
-        background-color var(--hts-duration-fast) var(--hts-ease),
-        background-position var(--hts-duration-slow) var(--hts-ease),
-        border-color var(--hts-duration-fast) var(--hts-ease),
-        color var(--hts-duration-fast) var(--hts-ease);
-}
-
-.cta:hover {
-    transform: translateY(-2px);
-}
-
-.cta:active {
-    transform: translateY(0);
+        background-color var(--ht-dur-2) var(--ht-ease-lock),
+        border-color var(--ht-dur-2) var(--ht-ease-lock),
+        box-shadow var(--ht-dur-2) var(--ht-ease-lock),
+        color var(--ht-dur-2) var(--ht-ease-lock);
 }
 
 .cta:disabled {
     opacity: 0.42;
     cursor: not-allowed;
-    transform: none;
     box-shadow: none;
 }
 
-/* ── Sizes ─────────────────────────────────────────────────────────────── */
+/* -- Sizes ------------------------------------------------------------------------------- */
 
 .cta--sm {
-    padding: 0.5rem 1rem;
-    font-size: var(--hts-text-base);
+    padding: 0.5rem 0.95rem;
+    font-size: var(--ht-text-base);
 }
 
 .cta--md {
-    padding: 0.72rem 1.4rem;
-    font-size: var(--hts-text-md);
+    padding: 0.7rem 1.3rem;
+    font-size: var(--ht-text-base);
 }
 
 .cta--lg {
-    padding: 0.95rem 1.9rem;
-    font-size: var(--hts-text-lg);
+    padding: 0.9rem 1.7rem;
+    font-size: var(--ht-text-md);
 }
 
-/* ── Primary: the one gradient fill in the system ──────────────────────── */
+/* -- Primary ------------------------------------------------------------------------------
+   Live purple, and the only place on a given view it is allowed to be used as a fill. */
 
 .cta--primary {
-    background-image: var(--hts-gradient-cta);
-    background-size: 190% 100%;
-    background-position: 0% 50%;
-    color: var(--hts-white);
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.22),
-        0 20px 44px -22px rgba(139, 50, 224, 0.95);
+    background-color: var(--ht-live-600);
+    color: #ffffff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .cta--primary:hover {
-    background-position: 100% 50%;
-    color: var(--hts-white);
+    color: #ffffff;
     box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.26),
-        0 26px 56px -22px rgba(176, 105, 255, 0.95);
+        inset 0 1px 0 rgba(255, 255, 255, 0.3),
+        0 0 0 1px var(--ht-live-400);
 }
 
-/* ── Secondary: rim-lit surface, no fill ───────────────────────────────── */
+.cta--primary:active {
+    background-color: var(--ht-live-700);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+/* -- Secondary ----------------------------------------------------------------------------
+   Deliberately colourless. If the secondary action also carried brand colour, the primary one
+   would stop being the answer to the question "what does this page want me to do". */
 
 .cta--secondary {
-    background-color: var(--hts-surface-raised);
-    border-color: var(--hts-border-strong);
-    color: var(--hts-ink);
-    box-shadow: var(--hts-rim);
+    background-color: transparent;
+    border-color: var(--ht-edge-strong);
+    color: var(--ht-ink);
 }
 
 .cta--secondary:hover {
-    border-color: var(--hts-border-brand);
-    background-color: var(--hts-surface-inset);
-    color: var(--hts-ink);
-    box-shadow: var(--hts-rim), 0 18px 40px -26px rgba(176, 105, 255, 0.8);
+    border-color: var(--ht-ink-faint);
+    background-color: var(--hts-tint-hover);
+    color: var(--ht-ink);
 }
 
-/* ── Ghost: inline text action ─────────────────────────────────────────── */
+.cta--secondary:active {
+    background-color: transparent;
+}
+
+/* -- Ghost: an inline text action --------------------------------------------------------- */
 
 .cta--ghost {
-    padding-inline: 0.35rem;
-    color: var(--hts-primary);
+    padding-inline: 0.3rem;
+    color: var(--ht-live-400);
 }
 
 .cta--ghost:hover {
-    color: var(--hts-primary-strong);
-    transform: none;
+    color: var(--ht-live-300);
 }
 
-/* ── Inverse: white fill, for use on top of a saturated panel ──────────── */
+/* -- Inverse: for the rare panel that is itself light ------------------------------------- */
 
 .cta--inverse {
-    background-color: var(--hts-white);
-    color: var(--hts-navy-950);
-    box-shadow: 0 18px 40px -22px rgba(0, 0, 0, 0.9);
+    background-color: var(--ht-graphite-100);
+    color: var(--ht-graphite-1000);
 }
 
 .cta--inverse:hover {
-    background-color: var(--hts-blue-100);
-    color: var(--hts-navy-950);
-    box-shadow: 0 24px 52px -22px rgba(131, 168, 243, 0.6);
+    background-color: #ffffff;
+    color: var(--ht-graphite-1000);
 }
-
-/* ── Outline inverse: outlined white action on a saturated panel ───────── */
 
 .cta--outline-inverse {
     background-color: transparent;
-    border-color: rgba(255, 255, 255, 0.32);
-    color: var(--hts-white);
+    border-color: var(--ht-ink-faint);
+    color: #ffffff;
 }
 
 .cta--outline-inverse:hover {
-    border-color: rgba(255, 255, 255, 0.62);
-    background-color: rgba(255, 255, 255, 0.08);
-    color: var(--hts-white);
+    border-color: var(--ht-ink-muted);
+    background-color: var(--ht-ink-faint);
+    color: #ffffff;
 }
 
-/* ── Trailing icon ─────────────────────────────────────────────────────── */
+/* -- Trailing icon ------------------------------------------------------------------------
+   The one thing that moves. Short, and it locks rather than easing out for a third of a
+   second - the difference between a mechanism and a decoration. */
 
 .cta ::deep .hts-icon {
-    width: 1.05em;
-    height: 1.05em;
-    transition: transform var(--hts-duration-base) var(--hts-ease-spring);
+    width: 1em;
+    height: 1em;
+    transition: transform var(--ht-dur-2) var(--ht-ease-lock);
 }
 
 .cta:hover ::deep .hts-icon {
-    transform: translateX(4px);
+    transform: translateX(3px);
 }
 
-/*
-    A light that crosses the button once on hover.
-
-    A gradient stop moved with a transform rather than a repainted background, so it stays on
-    the compositor; masked to the button's own shape; and pointer-events:none so it can never
-    intercept the click. It runs on hover only - a permanent shimmer on a call to action is the
-    kind of movement that exists because it can.
-*/
-.cta--primary::after,
-.cta--inverse::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background: linear-gradient(
-        110deg,
-        transparent 38%,
-        rgba(255, 255, 255, 0.22) 50%,
-        transparent 62%);
-    opacity: 0;
-    transform: translateX(-60%);
-    pointer-events: none;
-}
-
-.cta--primary:hover::after,
-.cta--inverse:hover::after {
-    opacity: 1;
-    transform: translateX(60%);
-    transition:
-        transform 0.62s var(--hts-ease-out),
-        opacity 0.2s linear;
-}
-
-/* The rim brightens under the pointer on the outlined variants, which have no fill to move. */
 .cta--secondary:focus-visible,
 .cta--outline-inverse:focus-visible {
-    outline: 2px solid var(--hts-blue-400);
+    outline: 2px solid var(--ht-data-400);
     outline-offset: 2px;
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .cta:hover {
-        transform: none;
-    }
-
     .cta:hover ::deep .hts-icon {
         transform: none;
-    }
-
-    .cta--primary:hover::after,
-    .cta--inverse:hover::after {
-        opacity: 0;
-        transition: none;
     }
 }
 
@@ -204,11 +170,11 @@
     }
 }
 
-/* ── Busy state ────────────────────────────────────────────────────────── */
+/* -- Busy ---------------------------------------------------------------------------------- */
 
 .cta-spinner {
-    width: 0.95em;
-    height: 0.95em;
+    width: 0.9em;
+    height: 0.9em;
     flex: none;
     border: 2px solid currentColor;
     border-top-color: transparent;
@@ -223,7 +189,7 @@
     }
 }
 
-/* A spinner that cannot spin is just a ring; a pulse still reads as "working". */
+/* A spinner that cannot spin is just a ring; a pulse still reads as working. */
 @media (prefers-reduced-motion: reduce) {
     .cta-spinner {
         animation: cta-pulse 1.4s steps(2, jump-none) infinite;

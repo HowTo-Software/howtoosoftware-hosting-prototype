@@ -61,7 +61,7 @@
     gap: var(--hts-space-2);
     padding: 0.55rem 1rem;
     border: 1px solid var(--hts-border-strong);
-    border-radius: var(--hts-radius-pill);
+    border-radius: var(--ht-radius-sm);
     background: var(--hts-surface-raised);
     box-shadow: var(--hts-rim);
     color: var(--hts-ink);
@@ -75,21 +75,22 @@
 }
 
 .footer-mail:hover {
-    border-color: var(--hts-border-brand);
-    color: var(--hts-purple-300);
-    box-shadow: var(--hts-rim), 0 16px 34px -22px rgba(176, 105, 255, 0.8);
+    border-color: rgba(255, 255, 255, 0.28);
+    color: var(--ht-ink);
+    box-shadow: var(--hts-rim), var(--ht-shadow-2);
 }
 
 .footer-mail ::deep .hts-icon {
-    color: var(--hts-blue-400);
+    color: var(--ht-ink-muted);
 }
 
 .footer-title {
     margin-bottom: var(--hts-space-4);
-    color: var(--hts-blue-400);
-    font-size: var(--hts-text-sm);
-    font-weight: 620;
-    letter-spacing: var(--hts-tracking-wide);
+    color: var(--ht-ink-muted);
+    font-family: var(--ht-font-mono);
+    font-size: var(--ht-text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ht-track-label);
     text-transform: uppercase;
 }
 
@@ -108,7 +109,7 @@
 .footer-column a:hover {
     color: var(--hts-ink);
     text-decoration: underline;
-    text-decoration-color: var(--hts-purple-400);
+    text-decoration-color: var(--ht-edge-strong);
 }
 
 .footer-placeholder {
@@ -121,14 +122,17 @@
 
 .footer-chip {
     padding: 0.1rem 0.45rem;
-    border: 1px solid var(--hts-border-brand);
-    border-radius: var(--hts-radius-pill);
-    background: rgba(176, 105, 255, 0.10);
-    color: var(--hts-purple-300);
-    font-size: 0.625rem;
-    font-weight: 620;
-    letter-spacing: var(--hts-tracking-wide);
+    border: 1px solid color-mix(in srgb, var(--ht-warn-500) 34%, transparent);
+    border-radius: var(--ht-radius-xs);
+    background: color-mix(in srgb, var(--ht-warn-500) 10%, transparent);
+    color: var(--ht-warn-500);
+    font-family: var(--ht-font-mono);
+    font-size: var(--ht-text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ht-track-label);
     text-transform: uppercase;
+    /* One of these labels sits beside a two-line link and was breaking across lines itself. */
+    white-space: nowrap;
 }
 
 .footer-base {

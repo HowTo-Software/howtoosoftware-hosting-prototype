@@ -20,7 +20,7 @@
 .closed-badge {
     padding: 0.2rem 0.6rem;
     border: 1px solid var(--hts-border-strong);
-    border-radius: var(--hts-radius-pill);
+    border-radius: var(--ht-radius-xs);
     color: var(--hts-ink-muted);
     font-family: var(--hts-font-mono);
     font-size: 0.5625rem;
@@ -51,7 +51,7 @@
     margin-bottom: var(--hts-space-4);
     /* Purple rather than blue: this page is not part of the product, and it should not look like
        it is. */
-    color: var(--hts-purple-300);
+    color: var(--ht-ink-muted);
     font-family: var(--hts-font-mono);
     font-size: 0.625rem;
     font-weight: 600;
@@ -62,7 +62,7 @@
     width: 2.5rem;
     height: 1px;
     flex: none;
-    background: linear-gradient(90deg, var(--hts-purple-400), var(--hts-blue-400));
+    background: var(--ht-edge-strong);
 }
 
 .lab-title {
@@ -263,7 +263,7 @@
 .field-input:focus-visible {
     outline: none;
     border-color: var(--hts-purple-400);
-    box-shadow: 0 0 0 3px rgba(176, 105, 255, 0.22);
+    box-shadow: var(--ht-ring);
 }
 
 /* The exact numbers that will cross the wire, in the panel's units. */

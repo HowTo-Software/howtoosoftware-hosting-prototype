@@ -24,34 +24,27 @@
     align-items: center;
     gap: 0.75rem;
     margin-bottom: var(--hts-space-6);
-    color: var(--hts-purple-300);
+    color: var(--ht-ink-muted);
     font-family: var(--hts-font-mono);
     font-size: 0.6875rem;
     font-weight: 600;
     letter-spacing: 0.2em;
 }
 
-.kicker-index {
-    display: grid;
-    place-items: center;
-    width: 1.75rem;
-    height: 1.75rem;
-    border-radius: var(--hts-radius-xs);
-    background: var(--hts-blue-700);
-    color: var(--hts-white);
-    font-size: 0.6875rem;
-    letter-spacing: 0.02em;
-}
-
+/* Sized for the pinch point rather than for the wide case: just above the width where this
+   two-column layout stacks, the aside is at its narrowest and the headline was 15px wider than
+   the column it sits in. */
 .faq-title {
-    font-size: clamp(2rem, 1.3rem + 2.4vw, 3rem);
-    font-weight: 660;
+    font-size: clamp(1.85rem, 1.15rem + 2.2vw, 3rem);
+    font-weight: 460;
     line-height: 1.05;
     letter-spacing: -0.03em;
 }
 
+/* Emphasis by weight, not by colour. A purple word in a headline is decoration; it
+   also spends the one hue that means "running" everywhere else on the site. */
 .faq-accent {
-    color: var(--hts-blue-400);
+    font-weight: 800;
 }
 
 .faq-note {

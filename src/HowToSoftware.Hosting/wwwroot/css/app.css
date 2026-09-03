@@ -21,24 +21,63 @@
 html {
     -webkit-text-size-adjust: 100%;
     scroll-behavior: smooth;
-    scroll-padding-top: calc(var(--hts-header-height) + var(--hts-space-6));
+    scroll-padding-top: calc(var(--ht-header-h) + var(--ht-space-6));
     -webkit-tap-highlight-color: transparent;
-    background-color: var(--hts-canvas);
+    background-color: var(--ht-ground);
+}
+
+/* Smooth scrolling is a preference, not a default. */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
 }
 
 body {
     position: relative;
     min-height: 100dvh;
-    background-color: var(--hts-canvas);
-    color: var(--hts-ink-soft);
-    font-family: var(--hts-font-sans);
-    font-size: var(--hts-text-md);
-    line-height: var(--hts-leading-normal);
+    background-color: var(--ht-ground);
+    color: var(--ht-ink-soft);
+    font-family: var(--ht-font-sans);
+    font-size: var(--ht-text-md);
+    line-height: var(--ht-leading-normal);
     font-synthesis-weight: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow-x: hidden;
+}
+
+/*
+    The ground the whole site is drawn on, and the reason no section needs a backdrop of its
+    own any more. Two layers, both fixed, both free:
+
+      1. ONE light. A single soft wash from above left, white rather than tinted, standing in
+         for the room the racks are in. The old design gave nine separate sections their own
+         coloured radial blur, which is why the backgrounds never agreed with each other and
+         why the page read as decorated rather than lit.
+
+      2. ONE grid. Drafting paper at roughly two per cent, fading out over the first screen
+         and a half. Continuous across the page rather than a rectangle parked behind a few
+         cards - a grid you notice is a grid that has become an ornament.
+
+    Both are anchored to the document, not to the viewport. Fixed layers would sit still while
+    opaque sections scrolled over them, so the grid would appear, vanish and reappear on the
+    way down. Anchored, it is simply where the page begins.
+*/
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1400px;
+    z-index: 0;
+    pointer-events: none;
+    background-image:
+        radial-gradient(120% 62% at 22% -6%, rgba(255, 255, 255, 0.05) 0%, transparent 64%),
+        repeating-linear-gradient(90deg, var(--ht-grid-ink) 0 1px, transparent 1px var(--ht-grid-cell)),
+        repeating-linear-gradient(180deg, var(--ht-grid-ink) 0 1px, transparent 1px var(--ht-grid-cell));
+    mask-image: linear-gradient(180deg, #000 0%, rgba(0, 0, 0, 0.5) 46%, transparent 100%);
 }
 
 /* Fine grain over the whole page. Large flat dark areas band badly on cheap
@@ -47,8 +86,8 @@ body::after {
     content: "";
     position: fixed;
     inset: 0;
-    z-index: 9999;
-    opacity: var(--hts-grain-opacity);
+    z-index: 1;
+    opacity: var(--ht-noise-opacity);
     pointer-events: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
@@ -92,8 +131,55 @@ a:hover {
 }
 
 ::selection {
-    background-color: rgba(176, 105, 255, 0.35);
-    color: var(--hts-ink);
+    background-color: color-mix(in srgb, var(--ht-live-500) 34%, transparent);
+    color: var(--ht-ink);
+}
+
+/*
+    Machine voice. Anything that is a number, a unit, an identifier, a state or a designation
+    is set in mono; prose is not. The distinction is load-bearing across the whole site, so it
+    gets one class rather than being restated in every component.
+*/
+.hts-mono {
+    font-family: var(--ht-font-mono);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--ht-track-mono);
+}
+
+/*
+    A section number.
+
+    This rule existed fourteen times, once per section, in four slightly different versions -
+    some filled purple, some filled blue, one of them missing flex:none. That is what happens
+    when a component owns a value the system should own, and it is why the numbers down the
+    page never quite matched each other.
+
+    Unfilled now. A solid brand-coloured square beside every heading spent the palette on
+    counting, and the count is not the important thing on any of those screens.
+*/
+.kicker-index {
+    display: grid;
+    place-items: center;
+    width: 1.75rem;
+    height: 1.75rem;
+    flex: none;
+    border: 1px solid var(--ht-edge-strong);
+    border-radius: var(--ht-radius-xs);
+    color: var(--ht-ink-soft);
+    font-family: var(--ht-font-mono);
+    font-size: var(--ht-text-2xs);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0;
+}
+
+/* A label stamped on a panel: small, wide-tracked, upper case. */
+.hts-label {
+    font-family: var(--ht-font-mono);
+    font-size: var(--ht-text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ht-track-label);
+    text-transform: uppercase;
 }
 
 /* ── Typography ────────────────────────────────────────────────────────── */
@@ -102,20 +188,41 @@ h1,
 h2,
 h3,
 h4 {
-    color: var(--hts-ink);
+    color: var(--ht-ink);
     font-weight: 620;
-    letter-spacing: var(--hts-tracking-tight);
-    line-height: var(--hts-leading-tight);
+    letter-spacing: var(--ht-track-tight);
+    line-height: var(--ht-leading-tight);
     text-wrap: balance;
 }
 
+/*
+    The display voice.
+
+    Archivo carries a width axis, and this is where it earns its place: the headline is the
+    body face pushed wider, not a second family bolted on. Equipment is labelled exactly that
+    way - the same letterforms stamped broad across the panel and narrow in the manual - so
+    the page reads as one object rather than as a pairing somebody chose.
+
+    font-stretch rather than font-variation-settings, because font-stretch composes with
+    font-weight; setting the axes directly would override every weight the components ask for.
+    Only h1 and h2 take it. Stretching everything would flatten the distinction it exists to
+    make.
+*/
+h1,
+h2 {
+    font-stretch: 116%;
+    letter-spacing: var(--ht-track-display);
+    line-height: var(--ht-leading-tight);
+}
+
 h1 {
-    font-size: var(--hts-text-5xl);
-    font-weight: 660;
+    font-size: var(--ht-text-5xl);
+    font-weight: 700;
 }
 
 h2 {
-    font-size: var(--hts-text-4xl);
+    font-size: var(--ht-text-4xl);
+    font-weight: 680;
 }
 
 h3 {
@@ -142,7 +249,7 @@ samp {
 /* ── Focus ─────────────────────────────────────────────────────────────── */
 
 :focus-visible {
-    outline: 2px solid var(--hts-purple-300);
+    outline: 2px solid var(--ht-live-400);
     outline-offset: 3px;
     border-radius: var(--hts-radius-xs);
 }
@@ -181,6 +288,8 @@ h1:focus-visible {
 /* ── Layout primitives ─────────────────────────────────────────────────── */
 
 .hts-container {
+    position: relative;
+    z-index: 2;
     width: 100%;
     max-width: var(--hts-container);
     margin-inline: auto;

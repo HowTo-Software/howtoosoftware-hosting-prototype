@@ -1,0 +1,212 @@
+/*
+    One face, divided by hairlines. Not a stack of cards.
+
+    The only two colours in here are the lamp and the meter, and each of them is carrying its
+    meaning rather than decorating: purple says the thing is running, blue says the thing was
+    measured. Everything else is graphite and mono.
+*/
+
+.panel {
+    position: relative;
+    display: grid;
+    margin: 0;
+    border: 1px solid var(--ht-edge-strong);
+    border-radius: var(--ht-radius-md);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.028) 0%, transparent 34%),
+        var(--ht-surface-2);
+    box-shadow: var(--ht-rim), var(--ht-shadow-3);
+    overflow: hidden;
+}
+
+/* -- Head ---------------------------------------------------------------------------------- */
+
+.panel-head {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--ht-space-3);
+    padding: var(--ht-space-4) var(--ht-space-5);
+    border-bottom: 1px solid var(--ht-edge);
+    background: var(--ht-surface-inset);
+}
+
+/*
+    The lamp. The one continuously animated thing in the hero, and it earns it: a status light
+    that does not move does not read as a status light. It breathes rather than blinks, because
+    blinking means a fault everywhere else in the building.
+*/
+.panel-lamp {
+    width: 7px;
+    height: 7px;
+    flex: none;
+    border-radius: 50%;
+    background: var(--ht-live-500);
+    box-shadow: var(--ht-lamp-live);
+    animation: panel-breathe 3.6s var(--ht-ease-in-out) infinite;
+}
+
+@keyframes panel-breathe {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    52% {
+        opacity: 0.42;
+    }
+}
+
+.panel-id {
+    color: var(--ht-ink);
+    font-family: var(--ht-font-mono);
+    font-size: var(--ht-text-sm);
+    font-weight: 600;
+    letter-spacing: var(--ht-track-mono);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.panel-state {
+    color: var(--ht-live-400);
+    font-family: var(--ht-font-mono);
+    font-size: var(--ht-text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ht-track-label);
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+/* -- Rows ---------------------------------------------------------------------------------- */
+
+.panel-rows {
+    display: grid;
+    margin: 0;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: minmax(6.5rem, 0.85fr) minmax(0, 1.5fr) auto;
+    align-items: center;
+    gap: var(--ht-space-4);
+    padding: var(--ht-space-4) var(--ht-space-5);
+    min-width: 0;
+}
+
+.row + .row {
+    border-top: 1px solid var(--ht-edge);
+}
+
+.row-key {
+    color: var(--ht-ink-muted);
+    font-family: var(--ht-font-mono);
+    font-size: var(--ht-text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ht-track-label);
+    text-transform: uppercase;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.row-value {
+    margin: 0;
+    color: var(--ht-ink);
+    font-family: var(--ht-font-mono);
+    font-size: var(--ht-text-sm);
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: var(--ht-track-mono);
+    text-align: right;
+    white-space: nowrap;
+}
+
+.row-meter {
+    height: 3px;
+    border-radius: 1px;
+    background: var(--ht-surface-inset);
+    box-shadow: inset 0 0 0 1px var(--ht-edge);
+    overflow: hidden;
+}
+
+.row-fill {
+    display: block;
+    width: var(--fill);
+    height: 100%;
+    border-radius: inherit;
+    background: var(--ht-data-500);
+    transform-origin: left center;
+}
+
+/* Where a reading has no denominator, the column holds a rule instead of a bar. The row keeps
+   its rhythm and nothing pretends to have been measured against a scale. */
+.row-rule {
+    height: 1px;
+    background: var(--ht-edge);
+}
+
+/* -- Foot ---------------------------------------------------------------------------------- */
+
+.panel-foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ht-space-4);
+    padding: var(--ht-space-3) var(--ht-space-5);
+    border-top: 1px solid var(--ht-edge);
+    background: var(--ht-surface-inset);
+    color: var(--ht-ink-muted);
+    font-family: var(--ht-font-mono);
+    font-size: var(--ht-text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ht-track-label);
+    text-transform: uppercase;
+}
+
+.foot-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.foot-build {
+    color: var(--ht-ink-soft);
+    white-space: nowrap;
+}
+
+/* -- Entrance -----------------------------------------------------------------------------
+   The meter runs out to its value once, on arrival, and then stops. A transform rather than a
+   width so it stays on the compositor, and a transition off a class rather than a loop so it
+   is an event rather than an ornament. */
+
+html.hts-js .panel[data-reveal] .row-fill {
+    transform: scaleX(0);
+    transition: transform var(--ht-dur-5) var(--ht-ease-lock) 260ms;
+}
+
+html.hts-js .panel[data-reveal].is-revealed .row-fill {
+    transform: scaleX(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .panel-lamp {
+        animation: none;
+    }
+
+    html.hts-js .panel[data-reveal] .row-fill {
+        transform: scaleX(1);
+        transition: none;
+    }
+}
+
+@media (max-width: 560px) {
+    /* The bar is the first thing to go: the label and the figure carry the meaning without it. */
+    .row {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .row-meter,
+    .row-rule {
+        display: none;
+    }
+}

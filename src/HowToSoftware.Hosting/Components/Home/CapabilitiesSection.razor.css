@@ -50,8 +50,10 @@
     gap: var(--hts-space-3);
 }
 
+/* A counter, not a state. The readouts on the other side of the row are measurements and keep
+   their colour; the number that says which section this is does not. */
 .cap-number {
-    color: var(--hts-purple-400);
+    color: var(--ht-ink-muted);
     font-family: var(--hts-font-mono);
     font-size: clamp(2rem, 1.4rem + 1.8vw, 3rem);
     font-weight: 700;
@@ -69,10 +71,6 @@
     background: linear-gradient(270deg, var(--hts-blue-400), transparent);
 }
 
-.cap.is-flipped .cap-number {
-    color: var(--hts-blue-400);
-}
-
 .cap-kicker {
     color: var(--hts-ink-muted);
     font-family: var(--hts-font-mono);
@@ -84,7 +82,7 @@
 
 .cap-headline {
     font-size: clamp(1.9rem, 1.2rem + 2.4vw, 3rem);
-    font-weight: 660;
+    font-weight: 460;
     line-height: 1.04;
     letter-spacing: -0.032em;
     text-wrap: balance;

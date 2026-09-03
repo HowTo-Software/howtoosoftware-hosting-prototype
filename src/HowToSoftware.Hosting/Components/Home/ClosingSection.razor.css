@@ -68,7 +68,7 @@
     align-items: center;
     gap: 0.6rem;
     margin-bottom: var(--hts-space-6);
-    color: var(--hts-blue-300);
+    color: var(--ht-ink-muted);
     font-family: var(--hts-font-mono);
     font-size: 0.6875rem;
     font-weight: 600;
@@ -80,18 +80,20 @@
     height: 0.4rem;
     border-radius: 50%;
     background: var(--hts-purple-400);
-    box-shadow: 0 0 10px 1px rgba(176, 105, 255, 0.9);
+    box-shadow: var(--ht-lamp-live);
 }
 
 .closing-title {
     font-size: clamp(2.4rem, 1.3rem + 4vw, 4.4rem);
-    font-weight: 680;
+    font-weight: 460;
     line-height: 1;
     letter-spacing: -0.035em;
 }
 
+/* Emphasis by weight, not by colour. A purple word in a headline is decoration; it
+   also spends the one hue that means "running" everywhere else on the site. */
 .closing-accent {
-    color: var(--hts-purple-400);
+    font-weight: 800;
 }
 
 .closing-lede {

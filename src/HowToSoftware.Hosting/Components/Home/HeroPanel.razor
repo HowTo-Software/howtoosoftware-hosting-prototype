@@ -1,0 +1,78 @@
+@*
+    The front face of a rack unit.
+
+    This replaces a cluster of six small boxes joined by drawn connectors. Boxes wired together
+    with lines is a diagram of a system; one continuous face divided by hairlines is a piece of
+    equipment, and equipment is what this company actually owns. It also removes six floating
+    rectangles from a page that had rather a lot of them.
+
+    Everything printed here is machine voice - mono, tabular figures, upper case. The only
+    colour is one live lamp and one data meter, which is the whole rule of the palette stated
+    in a single component.
+
+    Decorative: it illustrates one example world rather than reporting a live one, so it is
+    hidden from assistive technology and the surrounding copy carries the meaning.
+*@
+
+@using System.Globalization
+@inject IMarketingContentService Content
+@inject IStringLocalizer<HomeText> Text
+@inject IStringLocalizer<CommonText> Common
+
+<figure class="panel" data-reveal aria-hidden="true">
+    <div class="panel-head">
+        <span class="panel-lamp"></span>
+        <span class="panel-id">knox-county-01</span>
+        <span class="panel-state">@Common["Status.Online"]</span>
+    </div>
+
+    <dl class="panel-rows">
+        @foreach (var signal in Content.HeroSignals)
+        {
+            <div class="row">
+                <dt class="row-key">@signal.Label</dt>
+
+                @*
+                    A meter appears only where the value is genuinely a ratio. Two of these three
+                    readings are not - a duration and a mod count have no denominator - and
+                    drawing a bar for them would mean inventing the scale it was measured against.
+                *@
+                @if (signal.Ratio is { } ratio)
+                {
+                    <div class="row-meter">
+                        <span class="row-fill" style="--fill: @Percent(ratio)"></span>
+                    </div>
+                }
+                else
+                {
+                    <div class="row-rule"></div>
+                }
+
+                <dd class="row-value">@signal.Value</dd>
+            </div>
+        }
+    </dl>
+
+    <div class="panel-foot">
+        <span class="foot-title">@Text["Cluster.Node"] @("US CENTRAL / 01")</span>
+        <span class="foot-build">@Text["Cluster.Build"]</span>
+    </div>
+</figure>
+
+@code {
+    /// <summary>
+    /// Formats a fraction as a CSS percentage, invariantly.
+    /// </summary>
+    /// <remarks>
+    /// Invariant on purpose. Under pt-BR the default formatter writes <c>42,2%</c>, and a comma
+    /// in a CSS value silently kills the declaration - the meter would render empty in one
+    /// language and full in the other.
+    /// </remarks>
+    private static string Percent(double ratio) =>
+        string.Create(CultureInfo.InvariantCulture, $"{ratio * 100d:0.##}%");
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@
