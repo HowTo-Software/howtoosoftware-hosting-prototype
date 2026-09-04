@@ -51,9 +51,9 @@ public sealed class StaticMarketingContentService : IMarketingContentService
     /// </remarks>
     public IReadOnlyList<NavigationLink> PrimaryNavigation =>
     [
-        new(_text["Nav.Games"], "/project-zomboid"),
+        new(_text["Nav.Games"], SiteRoutes.GameHosting),
         new(_text["Nav.Hardware"], "/infrastructure"),
-        new(_text["Nav.Plans"], "/project-zomboid#plans")
+        new(_text["Nav.Plans"], SiteRoutes.ProjectZomboidPlans)
     ];
 
     /// <inheritdoc />
@@ -64,7 +64,7 @@ public sealed class StaticMarketingContentService : IMarketingContentService
         new(_text["Product.ProvisioningPipeline"], "/#provisioning"),
         new(_text["Product.ControlPanel"], "/#control-panel"),
         new(_text["Product.Infrastructure"], "/infrastructure"),
-        new(_text["Product.Plans"], "/project-zomboid")
+        new(_text["Product.Plans"], SiteRoutes.ProjectZomboid)
     ];
 
     /// <inheritdoc />

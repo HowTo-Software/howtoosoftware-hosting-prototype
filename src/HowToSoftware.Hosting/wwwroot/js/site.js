@@ -252,6 +252,103 @@
         }
     };
 
+    // ── 3b. Order status ─────────────────────────────────────────────────────
+    // The payment success page renders the order's state on the server and marks
+    // its timeline with data-order-watch. This polls the status endpoint it names
+    // and moves the marker; the server decides the state, this only draws it.
+    // Nothing here touches Blazor - the page is static and the endpoint is JSON.
+    var orderWatches = new Map();
+
+    function paintTimeline(timeline, current, failed) {
+        var steps = timeline.querySelectorAll("[data-index]");
+        var last = steps.length - 1;
+
+        steps.forEach(function (step) {
+            var index = parseInt(step.getAttribute("data-index"), 10);
+            step.classList.remove("is-done", "is-live", "is-idle", "is-fault");
+
+            if (current < 0) {
+                step.classList.add("is-idle");
+            } else if (index < current) {
+                step.classList.add("is-done");
+            } else if (index === current) {
+                step.classList.add(failed ? "is-fault" : (index === last ? "is-done" : "is-live"));
+            } else {
+                step.classList.add("is-idle");
+            }
+        });
+
+        timeline.classList.toggle("is-waiting", current < 0);
+        timeline.classList.toggle("is-failed", !!failed);
+        timeline.setAttribute("data-current", String(current));
+    }
+
+    function watchOrders(scope) {
+        scope.querySelectorAll("[data-order-watch]").forEach(function (timeline) {
+            var url = timeline.getAttribute("data-order-watch");
+            if (!url || orderWatches.has(timeline) || timeline.getAttribute("data-terminal") === "true") {
+                return;
+            }
+
+            var lastStatus = null;
+            var delay = 4000;
+
+            function tick() {
+                fetch(url, { headers: { "Accept": "application/json" }, cache: "no-store" })
+                    .then(function (response) { return response.ok ? response.json() : null; })
+                    .then(function (state) {
+                        if (!state) {
+                            return schedule();
+                        }
+
+                        paintTimeline(timeline, state.stageIndex, state.status === "Failed");
+
+                        // The headline copy is rendered by the server for the state it saw. Once
+                        // the state has moved on, one reload brings the copy in line with it.
+                        if (lastStatus !== null && state.status !== lastStatus) {
+                            stopWatching(timeline);
+                            window.location.reload();
+                            return;
+                        }
+
+                        lastStatus = state.status;
+
+                        if (state.isTerminal) {
+                            stopWatching(timeline);
+                            return;
+                        }
+
+                        schedule();
+                    })
+                    .catch(schedule);
+            }
+
+            function schedule() {
+                if (!orderWatches.has(timeline)) {
+                    return;
+                }
+
+                orderWatches.set(timeline, window.setTimeout(tick, delay));
+                delay = Math.min(delay + 1000, 15000);
+            }
+
+            orderWatches.set(timeline, window.setTimeout(tick, delay));
+        });
+    }
+
+    function stopWatching(timeline) {
+        var handle = orderWatches.get(timeline);
+        if (handle) {
+            window.clearTimeout(handle);
+        }
+        orderWatches.delete(timeline);
+    }
+
+    function stopAllWatches() {
+        orderWatches.forEach(function (handle) { window.clearTimeout(handle); });
+        orderWatches.clear();
+    }
+
     // ── 4. Theme ────────────────────────────────────────────────────────────
     // Storage and the html attribute only. Which theme is active, and the button
     // that changes it, are owned by the ThemeToggle Blazor component.
@@ -506,11 +603,13 @@
     }
 
     function onEnhancedLoad() {
+        stopAllWatches();
         restoreRootState();
         finishProgress();
         clearSpotlight();
         splitScope(document.body);
         scan(document.body);
+        watchOrders(document.body);
         replayPageEnter();
     }
 
@@ -519,6 +618,7 @@
         watchRootState();
         splitScope(document.body);
         scan(document.body);
+        watchOrders(document.body);
         applyScrollState();
     }
 

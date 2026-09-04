@@ -1,25 +1,6 @@
 namespace HowToSoftware.Hosting.Models;
 
 /// <summary>
-/// Billing cadence a visitor can preview in the plan catalogue.
-/// </summary>
-public enum BillingPeriod
-{
-    Monthly,
-    Quarterly,
-    Annual
-}
-
-/// <summary>
-/// A selectable billing cadence with its placeholder discount.
-/// </summary>
-/// <param name="Period">The cadence.</param>
-/// <param name="Label">Short label shown on the switch.</param>
-/// <param name="Months">Number of months billed at once.</param>
-/// <param name="DiscountPercent">Placeholder discount applied to the headline rate.</param>
-public sealed record BillingOption(BillingPeriod Period, string Label, int Months, int DiscountPercent);
-
-/// <summary>
 /// A single labelled specification line on a plan or node panel.
 /// </summary>
 /// <param name="Label">Specification name, e.g. <c>MEMORY</c>.</param>
@@ -99,8 +80,16 @@ public sealed record HostingPlan
     /// </remarks>
     public int? PlayerSlots { get; init; }
 
-    /// <summary>What the plan includes, rendered as a terse technical list.</summary>
-    public required IReadOnlyList<string> Includes { get; init; }
+    /// <summary>
+    /// Who the plan is for, in one or two plain sentences, shown at the review step before
+    /// payment.
+    /// </summary>
+    /// <remarks>
+    /// Qualitative on purpose - "a medium-sized server with mods and regular activity" - because
+    /// a player count is a server-configuration value this catalogue does not set, and a figure
+    /// printed here would read as a promise.
+    /// </remarks>
+    public required string Audience { get; init; }
 
     /// <summary>Marks the plan the catalogue highlights by default.</summary>
     public bool IsRecommended { get; init; }
@@ -146,32 +135,6 @@ public readonly record struct ServerResourceLimits(int MemoryMib, int CpuPercent
 /// <param name="Allocations">Ports the server may hold.</param>
 /// <param name="Backups">Backups the customer may keep.</param>
 public readonly record struct ServerFeatureLimits(int Databases, int Allocations, int Backups);
-
-/// <summary>
-/// Outcome of checking a promotional code.
-/// </summary>
-/// <param name="Status">Whether the code was recognised.</param>
-/// <param name="Code">The normalised code that was checked.</param>
-/// <param name="PercentOff">Discount to preview, 0 when not applied.</param>
-/// <param name="Message">Human-readable result shown under the field.</param>
-public sealed record CouponResult(CouponStatus Status, string Code, int PercentOff, string Message)
-{
-    /// <summary>Nothing has been entered yet.</summary>
-    public static readonly CouponResult None = new(CouponStatus.None, string.Empty, 0, string.Empty);
-
-    /// <summary>Whether a discount should be applied to displayed totals.</summary>
-    public bool IsApplied => Status is CouponStatus.Applied;
-}
-
-/// <summary>
-/// State of the promotional code field.
-/// </summary>
-public enum CouponStatus
-{
-    None,
-    Applied,
-    Rejected
-}
 
 // =============================================================
 // © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.

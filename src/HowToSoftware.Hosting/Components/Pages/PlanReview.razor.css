@@ -1,0 +1,192 @@
+.review {
+    position: relative;
+    padding-block: clamp(4rem, 8vw, 7rem) var(--ht-unit-pad);
+}
+
+.review-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 0.9fr);
+    align-items: start;
+    gap: clamp(2.5rem, 6vw, 5rem);
+}
+
+.review--empty .hts-container {
+    display: grid;
+    justify-items: start;
+    gap: var(--ht-space-5);
+}
+
+/* -- Copy ---------------------------------------------------------------------------------- */
+
+.review-crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--ht-space-3);
+    margin-bottom: var(--ht-space-5);
+    color: var(--ht-ink-muted);
+    font-family: var(--ht-font-mono);
+    font-size: var(--ht-text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ht-track-label);
+    text-transform: uppercase;
+}
+
+.review-crumbs a {
+    color: var(--ht-ink-muted);
+    text-decoration: none;
+}
+
+.review-crumbs a:hover {
+    color: var(--ht-ink);
+}
+
+.crumb-sep {
+    color: var(--ht-ink-faint);
+}
+
+.crumb-here {
+    color: var(--ht-live-400);
+}
+
+.review-title {
+    font-size: var(--ht-text-5xl);
+}
+
+.review-lede {
+    max-width: 32rem;
+    margin-top: var(--ht-space-5);
+    color: var(--ht-ink-soft);
+    font-size: var(--ht-text-lg);
+    line-height: var(--ht-leading-normal);
+}
+
+/* -- Period links -------------------------------------------------------------------------- */
+
+.review-periods {
+    display: grid;
+    gap: var(--ht-space-3);
+    margin-top: var(--ht-space-7);
+    padding-top: var(--ht-space-5);
+    border-top: 1px solid var(--ht-edge);
+}
+
+.periods-label {
+    color: var(--ht-ink-muted);
+}
+
+.period-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ht-space-2);
+}
+
+.period-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ht-space-2);
+    padding: 0.45rem 0.9rem;
+    border: 1px solid var(--ht-edge-strong);
+    border-radius: var(--ht-radius-sm);
+    color: var(--ht-ink-soft);
+    font-size: var(--ht-text-sm);
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+        border-color var(--ht-dur-2) var(--ht-ease-lock),
+        color var(--ht-dur-2) var(--ht-ease-lock),
+        background-color var(--ht-dur-2) var(--ht-ease-lock);
+}
+
+.period-link:hover {
+    border-color: var(--ht-ink-faint);
+    color: var(--ht-ink);
+}
+
+.period-link.is-current {
+    border-color: var(--ht-live-500);
+    background: color-mix(in srgb, var(--ht-live-600) 16%, transparent);
+    color: var(--ht-ink);
+}
+
+.period-save {
+    color: var(--ht-data-400);
+    font-size: var(--ht-text-2xs);
+    letter-spacing: 0.06em;
+}
+
+.review-change {
+    justify-self: start;
+    color: var(--ht-ink-muted);
+    font-size: var(--ht-text-sm);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
+.review-change:hover {
+    color: var(--ht-ink);
+}
+
+/* -- Form ---------------------------------------------------------------------------------- */
+
+.review-form {
+    display: grid;
+    justify-items: start;
+    gap: var(--ht-space-3);
+    margin-top: var(--ht-space-7);
+}
+
+.review-form ::deep .review-cta {
+    min-width: 16rem;
+}
+
+.review-note {
+    max-width: 30rem;
+    color: var(--ht-ink-muted);
+    font-size: var(--ht-text-sm);
+    line-height: var(--ht-leading-normal);
+}
+
+.review-note.is-warn {
+    padding: var(--ht-space-3) var(--ht-space-4);
+    border: 1px solid rgba(240, 160, 60, 0.35);
+    border-radius: var(--ht-radius-sm);
+    color: var(--ht-warn-300);
+}
+
+.review-contact {
+    color: var(--ht-live-400);
+    font-size: var(--ht-text-sm);
+}
+
+.review-error {
+    padding: var(--ht-space-3) var(--ht-space-4);
+    border: 1px solid rgba(242, 99, 92, 0.4);
+    border-radius: var(--ht-radius-sm);
+    color: var(--ht-fault-300);
+    font-size: var(--ht-text-sm);
+}
+
+/* -- Panel --------------------------------------------------------------------------------- */
+
+.review-panel {
+    position: sticky;
+    top: calc(var(--ht-header-h) + var(--ht-space-5));
+    min-width: 0;
+}
+
+@media (max-width: 960px) {
+    .review-inner {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    /* The summary comes first on one column: what you are buying, then the button. */
+    .review-panel {
+        position: static;
+        order: -1;
+    }
+
+    .review-form ::deep .review-cta {
+        width: 100%;
+    }
+}

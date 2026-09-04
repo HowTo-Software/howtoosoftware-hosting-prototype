@@ -153,6 +153,12 @@ public sealed class HostingPlanPricingOptions
     public string CurrencySymbol { get; set; } = "$";
 
     /// <summary>
+    /// ISO 4217 currency code, lower case, as the payment provider wants it. Must describe the
+    /// same currency as <see cref="CurrencySymbol"/>; nothing converts between them.
+    /// </summary>
+    public string CurrencyCode { get; set; } = "usd";
+
+    /// <summary>
     /// Whether a computed price is snapped to the nearest <c>x.99</c>.
     /// </summary>
     /// <remarks>
@@ -161,12 +167,6 @@ public sealed class HostingPlanPricingOptions
     /// <see cref="Prices"/> is a decision somebody already made and is used exactly as written.
     /// </remarks>
     public bool CharmPricing { get; set; } = true;
-
-    /// <summary>
-    /// Percentage taken off every month after the first.
-    /// </summary>
-    /// <remarks>Zero switches the renewal line off rather than printing "0% off".</remarks>
-    public decimal RenewalDiscountPercent { get; set; } = 5m;
 
     /// <summary>
     /// Snaps a price to the nearest <c>x.99</c>.
@@ -189,28 +189,6 @@ public sealed class HostingPlanPricingOptions
         var snapped = cents >= 0.5m ? unit + 0.99m : unit - 0.01m;
 
         return Math.Max(snapped, 0.99m);
-    }
-
-    /// <summary>
-    /// What a month costs after the first one.
-    /// </summary>
-    /// <param name="firstMonth">The rate charged for the first month.</param>
-    /// <returns>
-    /// The reduced rate, or <see langword="null"/> when no renewal discount is configured.
-    /// </returns>
-    /// <remarks>
-    /// Deliberately not charm-rounded. The site states this as a percentage off the first
-    /// month, and a figure that had been nudged to x.99 afterwards would not be that percentage.
-    /// </remarks>
-    public decimal? GetRenewalRate(decimal firstMonth)
-    {
-        if (RenewalDiscountPercent <= 0m || RenewalDiscountPercent >= 100m)
-        {
-            return null;
-        }
-
-        return Math.Round(
-            firstMonth * (100m - RenewalDiscountPercent) / 100m, 2, MidpointRounding.AwayFromZero);
     }
 
     /// <summary>Per-unit monthly rates the plan prices are derived from.</summary>

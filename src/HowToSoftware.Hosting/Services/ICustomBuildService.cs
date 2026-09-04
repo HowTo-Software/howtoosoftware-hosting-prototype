@@ -17,9 +17,6 @@ public interface ICustomBuildService
     /// </remarks>
     bool CanEstimate { get; }
 
-    /// <summary>The percentage taken off every month after the first.</summary>
-    decimal RenewalDiscountPercent { get; }
-
     /// <summary>A request with the bounds' starting values already filled in.</summary>
     CustomBuildRequest CreateDefault();
 

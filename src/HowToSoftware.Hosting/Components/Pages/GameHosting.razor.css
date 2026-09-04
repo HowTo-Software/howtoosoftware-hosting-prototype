@@ -1,0 +1,342 @@
+/*
+    The catalogue. One wide tile for the product, a narrow column for what is planned and what
+    can be asked for. Hairline tiles on graphite; the only colour is the lamp on the game that
+    is actually on sale and the one primary button that leads to its plans.
+*/
+
+.catalog {
+    position: relative;
+    padding-block: clamp(4rem, 8vw, 7rem) var(--ht-unit-pad);
+}
+
+/* -- Head -------------------------------------------------------------------------------- */
+
+.catalog-head {
+    max-width: 56rem;
+    margin-bottom: clamp(2.5rem, 5vw, 4rem);
+}
+
+.catalog-kicker {
+    display: flex;
+    align-items: center;
+    gap: var(--ht-space-3);
+    margin-bottom: var(--ht-space-5);
+    color: var(--ht-ink-muted);
+}
+
+.catalog-title {
+    max-width: 14ch;
+    font-size: var(--ht-text-5xl);
+}
+
+.catalog-lede {
+    max-width: 40rem;
+    margin-top: var(--ht-space-5);
+    color: var(--ht-ink-soft);
+    font-size: var(--ht-text-lg);
+    line-height: var(--ht-leading-normal);
+}
+
+/* -- Tiles ------------------------------------------------------------------------------- */
+
+.games {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-auto-rows: auto;
+    gap: var(--ht-space-4);
+}
+
+.game {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    border: 1px solid var(--ht-edge);
+    border-radius: var(--ht-radius-lg);
+    background: var(--ht-surface-2);
+    box-shadow: var(--ht-rim);
+    overflow: hidden;
+    transition: border-color var(--ht-dur-2) var(--ht-ease-lock);
+}
+
+.game:hover {
+    border-color: var(--ht-edge-strong);
+}
+
+/* The product: two columns wide, cover on the left, and the one tile with a lit edge. */
+.game.is-primary {
+    grid-column: span 2;
+    grid-row: span 2;
+    display: grid;
+    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+    border-color: var(--ht-edge-live);
+    box-shadow: var(--ht-rim), var(--ht-shadow-3);
+}
+
+.game.is-planned {
+    background: var(--ht-surface-1);
+}
+
+.game ::deep .game-cover {
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    aspect-ratio: 16 / 10;
+}
+
+.game.is-primary ::deep .game-cover {
+    aspect-ratio: auto;
+    height: 100%;
+    min-height: 22rem;
+    border-right: 1px solid var(--ht-edge);
+}
+
+.game.is-planned ::deep .game-cover {
+    aspect-ratio: 16 / 8;
+    border-bottom: 1px solid var(--ht-edge);
+}
+
+.game-body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ht-space-3);
+    padding: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.game.is-primary .game-body {
+    padding: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.game-status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ht-space-2);
+    color: var(--ht-ink-muted);
+}
+
+.is-primary .game-status {
+    color: var(--ht-live-400);
+}
+
+.status-lamp {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ht-live-500);
+    box-shadow: var(--ht-lamp-live);
+}
+
+.game-name {
+    font-size: var(--ht-text-3xl);
+}
+
+.is-planned .game-name {
+    font-size: var(--ht-text-xl);
+    font-stretch: 100%;
+    letter-spacing: var(--ht-track-tight);
+}
+
+.game-tagline {
+    color: var(--ht-ink);
+    font-size: var(--ht-text-md);
+    font-weight: 560;
+}
+
+.game-summary {
+    color: var(--ht-ink-soft);
+    font-size: var(--ht-text-base);
+    line-height: var(--ht-leading-normal);
+}
+
+.is-planned .game-summary {
+    color: var(--ht-ink-muted);
+    font-size: var(--ht-text-sm);
+}
+
+.game-highlights {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.4rem var(--ht-space-4);
+    margin-top: var(--ht-space-2);
+}
+
+.game-highlights li {
+    position: relative;
+    padding-left: 1rem;
+    color: var(--ht-ink-soft);
+    font-size: var(--ht-text-sm);
+    line-height: var(--ht-leading-snug);
+}
+
+/* A tick mark drawn as a hairline square, the way the rest of the site draws "included". */
+.game-highlights li::before {
+    content: "";
+    position: absolute;
+    top: 0.42em;
+    left: 0;
+    width: 0.4rem;
+    height: 0.4rem;
+    border: 1px solid var(--ht-data-500);
+    border-radius: 1px;
+}
+
+.game-foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--ht-space-4);
+    margin-top: auto;
+    padding-top: var(--ht-space-4);
+    border-top: 1px solid var(--ht-edge);
+}
+
+.game-price {
+    display: grid;
+    gap: 0.15rem;
+}
+
+.price-from {
+    color: var(--ht-ink-muted);
+}
+
+.price-figure {
+    display: flex;
+    align-items: baseline;
+    gap: 0.35rem;
+    color: var(--ht-ink);
+}
+
+.price-symbol {
+    color: var(--ht-ink-muted);
+    font-size: var(--ht-text-md);
+    font-weight: 600;
+}
+
+.price-amount {
+    font-size: 1.9rem;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.price-unit {
+    color: var(--ht-ink-muted);
+    font-size: var(--ht-text-sm);
+}
+
+.price-range,
+.price-pending {
+    color: var(--ht-data-400);
+    font-size: var(--ht-text-2xs);
+    letter-spacing: 0.06em;
+}
+
+.price-pending {
+    color: var(--ht-ink-muted);
+}
+
+/* -- Request tile ------------------------------------------------------------------------ */
+
+.game--request {
+    justify-content: center;
+    border-style: dashed;
+    background: transparent;
+    box-shadow: none;
+}
+
+.request {
+    display: grid;
+    gap: var(--ht-space-3);
+    padding: clamp(1.25rem, 2.5vw, 2rem);
+}
+
+.request-kicker {
+    color: var(--ht-ink-muted);
+}
+
+.request-title {
+    font-size: var(--ht-text-xl);
+    font-stretch: 100%;
+    letter-spacing: var(--ht-track-tight);
+}
+
+.request-body {
+    color: var(--ht-ink-muted);
+    font-size: var(--ht-text-sm);
+    line-height: var(--ht-leading-normal);
+}
+
+/* -- How --------------------------------------------------------------------------------- */
+
+.how {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--ht-space-4);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+    padding-top: var(--ht-space-6);
+    border-top: 1px solid var(--ht-edge);
+}
+
+.how li {
+    display: grid;
+    gap: var(--ht-space-2);
+    color: var(--ht-ink-soft);
+    font-size: var(--ht-text-sm);
+    line-height: var(--ht-leading-snug);
+}
+
+.how-index {
+    color: var(--ht-ink-faint);
+    font-size: var(--ht-text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ht-track-label);
+}
+
+/* -- Responsive -------------------------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+    .games {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .game.is-primary {
+        grid-column: span 2;
+        grid-row: auto;
+    }
+
+    .how {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 760px) {
+    .games {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .game.is-primary {
+        grid-column: auto;
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .game.is-primary ::deep .game-cover {
+        min-height: 0;
+        aspect-ratio: 16 / 9;
+        border-right: 0;
+        border-bottom: 1px solid var(--ht-edge);
+    }
+
+    .game-highlights {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .game-foot {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .game ::deep .game-cta {
+        width: 100%;
+    }
+}

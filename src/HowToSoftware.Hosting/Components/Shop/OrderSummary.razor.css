@@ -1,0 +1,206 @@
+/*
+    One face, divided by hairlines. The lamp is the only purple; the discount and the
+    equivalent-per-month line are the only blue, because those two are the measured figures.
+*/
+
+.summary {
+    display: grid;
+    border: 1px solid var(--ht-edge-strong);
+    border-radius: var(--ht-radius-md);
+    background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.028) 0%, transparent 34%),
+        var(--ht-surface-2);
+    box-shadow: var(--ht-rim), var(--ht-shadow-3);
+    overflow: hidden;
+}
+
+.summary-head {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: var(--ht-space-3);
+    padding: var(--ht-space-4) var(--ht-space-5);
+    border-bottom: 1px solid var(--ht-edge);
+    background: var(--ht-surface-inset);
+}
+
+.summary-lamp {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--ht-live-500);
+    box-shadow: var(--ht-lamp-live);
+}
+
+.summary-id {
+    color: var(--ht-ink);
+    font-size: var(--ht-text-sm);
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.summary-state {
+    color: var(--ht-live-400);
+}
+
+.rows {
+    display: grid;
+    margin: 0;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: minmax(6rem, 0.6fr) minmax(0, 1.8fr);
+    align-items: baseline;
+    gap: var(--ht-space-4);
+    padding: var(--ht-space-4) var(--ht-space-5);
+    border-bottom: 1px solid var(--ht-edge);
+}
+
+.row:last-child {
+    border-bottom: 0;
+}
+
+.row dt {
+    color: var(--ht-ink-muted);
+}
+
+.row dd {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.7rem;
+    margin: 0;
+    color: var(--ht-ink);
+    font-size: var(--ht-text-md);
+    font-weight: 560;
+}
+
+.row dd.is-data {
+    color: var(--ht-data-400);
+}
+
+.row-strong {
+    color: var(--ht-ink);
+}
+
+.row-dim {
+    color: var(--ht-ink-muted);
+    font-size: var(--ht-text-sm);
+    font-weight: 400;
+}
+
+/* -- Resources ----------------------------------------------------------------------------- */
+
+.resources {
+    display: grid;
+    width: 100%;
+    gap: 0.35rem;
+}
+
+.resources li {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--ht-space-3);
+    font-size: var(--ht-text-sm);
+    font-weight: 400;
+    color: var(--ht-ink-soft);
+}
+
+.resources b {
+    color: var(--ht-ink);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+/* -- Price ----------------------------------------------------------------------------- */
+
+.row--price {
+    background: var(--ht-surface-inset);
+}
+
+.row--price dd {
+    display: grid;
+    gap: var(--ht-space-2);
+}
+
+.price {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.price th {
+    padding: 0.3rem 0;
+    color: var(--ht-ink-soft);
+    font-size: var(--ht-text-sm);
+    font-weight: 400;
+    text-align: left;
+}
+
+.price th .row-dim {
+    display: block;
+    font-size: var(--ht-text-xs);
+}
+
+.price td {
+    padding: 0.3rem 0;
+    color: var(--ht-ink);
+    font-size: var(--ht-text-sm);
+    font-weight: 600;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.price tr.is-data td,
+.price tr.is-data th {
+    color: var(--ht-data-400);
+}
+
+.price-total th,
+.price-total td {
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--ht-edge-strong);
+    color: var(--ht-ink);
+}
+
+.price-total th {
+    font-weight: 600;
+}
+
+.price-total td {
+    font-size: var(--ht-text-xl);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.price-equivalent {
+    color: var(--ht-data-400);
+    font-size: var(--ht-text-2xs);
+    letter-spacing: 0.04em;
+    text-align: right;
+}
+
+/* -- Audience --------------------------------------------------------------------------- */
+
+.summary-audience {
+    display: grid;
+    gap: var(--ht-space-2);
+    padding: var(--ht-space-4) var(--ht-space-5);
+    border-top: 1px solid var(--ht-edge);
+    color: var(--ht-ink-soft);
+    font-size: var(--ht-text-sm);
+    line-height: var(--ht-leading-normal);
+}
+
+.summary-audience .hts-label {
+    color: var(--ht-ink-muted);
+}
+
+@media (max-width: 480px) {
+    .row {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--ht-space-2);
+    }
+}

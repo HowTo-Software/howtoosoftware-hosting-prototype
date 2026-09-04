@@ -39,9 +39,6 @@ public sealed class RateCardBuildService : ICustomBuildService
     public bool CanEstimate => _pricing.Rates.IsConfigured;
 
     /// <inheritdoc />
-    public decimal RenewalDiscountPercent => _pricing.RenewalDiscountPercent;
-
-    /// <inheritdoc />
     public CustomBuildBounds Bounds
     {
         get
@@ -126,7 +123,6 @@ public sealed class RateCardBuildService : ICustomBuildService
             disk,
             monthly - subtotal,
             monthly,
-            _pricing.GetRenewalRate(monthly),
             _pricing.CurrencySymbol,
             Largest);
     }

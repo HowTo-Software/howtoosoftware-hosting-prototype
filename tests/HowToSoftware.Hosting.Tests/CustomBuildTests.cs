@@ -141,18 +141,6 @@ public class CustomBuildTests : IDisposable
         Assert.NotEqual(0m, estimate.Rounding);
     }
 
-    [Fact]
-    public void AQuoteRenewsFivePercentLower()
-    {
-        var estimate = Build(ShippedRates)
-            .Estimate(new CustomBuildRequest(24, 800, 60, null, null));
-
-        Assert.NotNull(estimate);
-        Assert.Equal(
-            Math.Round(estimate.MonthlyTotal * 0.95m, 2, MidpointRounding.AwayFromZero),
-            estimate.RenewalTotal);
-    }
-
     /// <summary>
     /// The CPU ceiling is the whole processor the infrastructure page already names: 36 threads,
     /// and Pterodactyl counts 100% as one thread.

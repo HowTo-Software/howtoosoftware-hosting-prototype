@@ -26,11 +26,7 @@ public sealed record CustomBuildRequest(
 /// What snapping the subtotal to the nearest <c>x.99</c> added or took off. Zero when charm
 /// pricing is switched off.
 /// </param>
-/// <param name="MonthlyTotal">What the first month costs.</param>
-/// <param name="RenewalTotal">
-/// What every month after the first costs, or <see langword="null"/> when no renewal discount
-/// is configured.
-/// </param>
+/// <param name="MonthlyTotal">What a month costs.</param>
 /// <param name="CurrencySymbol">Symbol to display the figures with.</param>
 /// <param name="ComparedTo">The largest standard plan, for context.</param>
 /// <remarks>
@@ -46,7 +42,6 @@ public sealed record CustomBuildEstimate(
     decimal DiskCost,
     decimal Rounding,
     decimal MonthlyTotal,
-    decimal? RenewalTotal,
     string CurrencySymbol,
     HostingPlan? ComparedTo)
 {

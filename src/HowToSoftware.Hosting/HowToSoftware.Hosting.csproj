@@ -5,7 +5,19 @@
     <!-- Ensure Blazor framework JS (blazor.web.js) is included during Docker restore
          when .razor files aren't yet present in the restore layer -->
     <RequiresAspNetWebAssets>true</RequiresAspNetWebAssets>
+    <!-- Development secrets (Stripe keys, the panel API key) go through `dotnet user-secrets`
+         under this id, never into appsettings.json. -->
+    <UserSecretsId>hts-hosting-00fc02b4-69b3-401c-bf45-04d0dd7f37f6</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Stripe.net" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
 
   <ItemGroup>
     <!-- The culture matcher, the redirect guard and the gateway's simulated latency are

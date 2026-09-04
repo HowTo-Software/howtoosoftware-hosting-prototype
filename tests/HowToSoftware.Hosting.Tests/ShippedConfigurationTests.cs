@@ -83,6 +83,57 @@ public class ShippedConfigurationTests : IDisposable
         Assert.DoesNotContain("ApiKey", raw, StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// The Stripe secret key and webhook secret arrive from the environment or user-secrets. The
+    /// committed file must not even have the property names, so nobody is invited to fill them in.
+    /// </summary>
+    [Fact]
+    public void TheShippedConfigurationCarriesNoStripeSecret()
+    {
+        var raw = File.ReadAllText(LocateAppSettings());
+
+        Assert.DoesNotContain("sk_live", raw, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("sk_test", raw, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("whsec_", raw, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("SecretKey", raw, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("WebhookSecret", raw, StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public void TheShippedCurrencyIsUsableByStripe()
+    {
+        var pricing = ShippedPricing();
+
+        Assert.Equal(3, pricing.CurrencyCode.Length);
+        Assert.Equal(pricing.CurrencyCode.ToLowerInvariant(), pricing.CurrencyCode);
+    }
+
+    [Fact]
+    public void TheEnvironmentTemplateCarriesOnlyPlaceholders()
+    {
+        var template = Path.Combine(Path.GetDirectoryName(LocateAppSettings())!, "..", "..", ".env.example");
+
+        Assert.True(File.Exists(template), ".env.example is missing from the repository root.");
+
+        foreach (var line in File.ReadAllLines(template))
+        {
+            if (line.StartsWith('#') || !line.Contains('=', StringComparison.Ordinal))
+            {
+                continue;
+            }
+
+            var value = line[(line.IndexOf('=') + 1)..];
+
+            if (value.StartsWith("sk_", StringComparison.Ordinal)
+                || value.StartsWith("pk_", StringComparison.Ordinal)
+                || value.StartsWith("whsec_", StringComparison.Ordinal)
+                || value.StartsWith("ptla_", StringComparison.Ordinal))
+            {
+                Assert.Contains("REPLACE_ME", value, StringComparison.Ordinal);
+            }
+        }
+    }
+
     private static string LocateAppSettings()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

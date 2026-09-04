@@ -1,0 +1,392 @@
+/*
+    Eight tiers on one grid. Cards, because a plan is genuinely a thing you pick up - but hairline
+    cards on graphite, all the same size, with one recommended tier marked by its edge rather
+    than by being bigger. Colour appears in exactly three places: the checked period, the
+    recommended tier's edge and primary button, and the bot lamp on the tiers that carry it.
+*/
+
+.picker {
+    position: relative;
+    padding-block: var(--ht-unit-pad);
+    border-top: 1px solid var(--ht-edge);
+}
+
+/* -- Head -------------------------------------------------------------------------------- */
+
+.picker-head {
+    max-width: 52rem;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+}
+
+.picker-kicker {
+    display: flex;
+    align-items: center;
+    gap: var(--ht-space-3);
+    margin-bottom: var(--ht-space-5);
+    color: var(--ht-ink-muted);
+}
+
+.picker-title {
+    font-size: var(--ht-text-4xl);
+}
+
+.picker-lede {
+    max-width: 40rem;
+    margin-top: var(--ht-space-4);
+    color: var(--ht-ink-soft);
+    font-size: var(--ht-text-lg);
+    line-height: var(--ht-leading-normal);
+}
+
+/* -- Periods ----------------------------------------------------------------------------- */
+
+/*
+    Three radios drawn as one segmented control. The inputs are visually hidden but stay in the
+    tab order: arrow keys move between them, the label's ring follows focus, and the checked one
+    is the one with the live fill.
+*/
+.periods {
+    margin: 0 0 var(--ht-space-7);
+    padding: 0;
+    border: 0;
+    min-width: 0;
+}
+
+.periods-legend {
+    margin-bottom: var(--ht-space-3);
+    padding: 0;
+    color: var(--ht-ink-muted);
+}
+
+.periods-track {
+    display: inline-grid;
+    grid-template-columns: repeat(3, auto);
+    gap: 2px;
+    padding: 3px;
+    border: 1px solid var(--ht-edge-strong);
+    border-radius: var(--ht-radius-md);
+    background: var(--ht-surface-1);
+    box-shadow: var(--ht-rim);
+}
+
+.period-input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+.period {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ht-space-3);
+    padding: 0.6rem 1.1rem;
+    border-radius: var(--ht-radius-sm);
+    color: var(--ht-ink-muted);
+    font-size: var(--ht-text-base);
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    cursor: pointer;
+    transition:
+        background-color var(--ht-dur-2) var(--ht-ease-lock),
+        color var(--ht-dur-2) var(--ht-ease-lock),
+        box-shadow var(--ht-dur-2) var(--ht-ease-lock);
+}
+
+.period:hover {
+    color: var(--ht-ink);
+}
+
+.period-input:checked + .period {
+    background: var(--ht-live-600);
+    color: #ffffff;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.period-input:focus-visible + .period {
+    box-shadow: var(--ht-ring);
+}
+
+/* The saving, in the data voice: it is a measured percentage, not a promotion badge. */
+.period-save {
+    padding: 0.1rem 0.45rem;
+    border: 1px solid var(--ht-edge-data);
+    border-radius: var(--ht-radius-xs);
+    color: var(--ht-data-400);
+    font-size: var(--ht-text-2xs);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.period-input:checked + .period .period-save {
+    border-color: rgba(255, 255, 255, 0.35);
+    color: #ffffff;
+}
+
+/* -- Plans ------------------------------------------------------------------------------- */
+
+.plans {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--ht-space-4);
+}
+
+.plan {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--ht-space-4);
+    padding: var(--ht-space-5);
+    border: 1px solid var(--ht-edge);
+    border-radius: var(--ht-radius-md);
+    background: var(--ht-surface-2);
+    box-shadow: var(--ht-rim);
+    transition: border-color var(--ht-dur-2) var(--ht-ease-lock);
+}
+
+.plan:hover {
+    border-color: var(--ht-edge-strong);
+}
+
+.plan.is-recommended {
+    border-color: var(--ht-edge-live);
+}
+
+.plan-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--ht-space-3);
+}
+
+.plan-name {
+    font-size: var(--ht-text-xl);
+    font-weight: 660;
+    letter-spacing: -0.02em;
+}
+
+.plan-flag {
+    padding: 0.15rem 0.45rem;
+    border: 1px solid var(--ht-edge-live);
+    border-radius: var(--ht-radius-xs);
+    color: var(--ht-live-400);
+    white-space: nowrap;
+}
+
+/* One line, clamped. The cards are read across, so every figure below has to sit at the same
+   height on every card. */
+.plan-tagline {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    min-height: calc(var(--ht-leading-snug) * var(--ht-text-sm) * 2);
+    margin-top: var(--ht-space-1);
+    overflow: hidden;
+    color: var(--ht-ink-muted);
+    font-size: var(--ht-text-sm);
+    line-height: var(--ht-leading-snug);
+}
+
+/* The headline figure. RAM is what differs between tiers and what a community shops on. */
+.plan-memory {
+    display: flex;
+    align-items: baseline;
+    gap: var(--ht-space-2);
+    padding: var(--ht-space-3) var(--ht-space-4);
+    border: 1px solid var(--ht-edge);
+    border-radius: var(--ht-radius-sm);
+    background: var(--ht-surface-inset);
+}
+
+.memory-value {
+    color: var(--ht-ink);
+    font-size: 1.9rem;
+    font-weight: 620;
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.memory-unit {
+    color: var(--ht-data-400);
+}
+
+.plan-specs {
+    display: grid;
+    gap: 0.45rem;
+    margin: 0;
+}
+
+.plan-specs > div {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--ht-space-3);
+    padding-bottom: 0.45rem;
+    border-bottom: 1px solid var(--ht-edge);
+}
+
+.plan-specs dt {
+    color: var(--ht-ink-muted);
+    font-size: var(--ht-text-sm);
+}
+
+.plan-specs dd {
+    margin: 0;
+    color: var(--ht-ink);
+    font-size: var(--ht-text-sm);
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.spec-bot dd {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--ht-live-400);
+    font-family: var(--ht-font-mono);
+    font-size: var(--ht-text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ht-track-label);
+    text-transform: uppercase;
+}
+
+.bot-lamp {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ht-live-500);
+    box-shadow: var(--ht-lamp-live);
+}
+
+/* -- Prices ------------------------------------------------------------------------------ */
+
+/*
+    Three price blocks per card; one shown. The picker's own radio state decides which, through
+    :has() on the section, so the eight cards switch together and nothing crosses to the server.
+*/
+.plan-price {
+    display: none;
+    flex-direction: column;
+    gap: var(--ht-space-3);
+    margin-top: auto;
+    padding-top: var(--ht-space-4);
+    border-top: 1px solid var(--ht-edge);
+}
+
+.picker:has(#period-monthly:checked) .plan-price[data-period="monthly"],
+.picker:has(#period-quarterly:checked) .plan-price[data-period="quarterly"],
+.picker:has(#period-annual:checked) .plan-price[data-period="annual"],
+.plan-price.is-pending {
+    display: flex;
+}
+
+/* A browser without :has() shows the monthly price and never switches. Nothing is hidden that
+   matters; the review step re-states the period anyway. */
+@supports not selector(:has(a)) {
+    .plan-price[data-period="monthly"] {
+        display: flex;
+    }
+}
+
+.price-figure {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.1rem 0.4rem;
+    color: var(--ht-ink);
+}
+
+.price-symbol {
+    color: var(--ht-ink-muted);
+    font-family: var(--ht-font-mono);
+    font-size: var(--ht-text-md);
+    font-weight: 600;
+}
+
+.price-amount {
+    font-size: clamp(1.7rem, 1.3rem + 1vw, 2.1rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.03em;
+}
+
+.price-unit {
+    color: var(--ht-ink-muted);
+    font-size: var(--ht-text-sm);
+}
+
+.price-line {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2rem 0.6rem;
+    color: var(--ht-ink-muted);
+    font-size: var(--ht-text-2xs);
+    letter-spacing: 0.04em;
+}
+
+.price-was {
+    text-decoration: line-through;
+    text-decoration-color: var(--ht-ink-faint);
+}
+
+.price-equivalent {
+    color: var(--ht-data-400);
+}
+
+.price-pending {
+    color: var(--ht-ink-muted);
+    font-size: var(--ht-text-sm);
+    letter-spacing: 0.06em;
+}
+
+.plan ::deep .plan-cta {
+    width: 100%;
+    margin-top: var(--ht-space-1);
+}
+
+/* -- Note -------------------------------------------------------------------------------- */
+
+.picker-note {
+    max-width: 46rem;
+    margin-top: clamp(2rem, 3.5vw, 3rem);
+    padding-top: var(--ht-space-5);
+    border-top: 1px solid var(--ht-edge);
+    color: var(--ht-ink-muted);
+    font-size: var(--ht-text-sm);
+    line-height: var(--ht-leading-normal);
+}
+
+/* -- Responsive -------------------------------------------------------------------------- */
+
+@media (max-width: 1180px) {
+    .plans {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 620px) {
+    .plans {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .periods-track {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        width: 100%;
+    }
+
+    .period {
+        flex-direction: column;
+        gap: 0.2rem;
+        justify-content: center;
+        padding: 0.55rem 0.4rem;
+        text-align: center;
+        font-size: var(--ht-text-sm);
+    }
+}

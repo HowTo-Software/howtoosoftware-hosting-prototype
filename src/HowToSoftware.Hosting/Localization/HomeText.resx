@@ -321,60 +321,6 @@
   <data name="Caps.Heading" xml:space="preserve">
     <value>What the platform does</value>
   </data>
-  <data name="Plans.Kicker" xml:space="preserve">
-    <value>PLANS</value>
-  </data>
-  <data name="Plans.Line1" xml:space="preserve">
-    <value>Pick a world size,</value>
-  </data>
-  <data name="Plans.Accent" xml:space="preserve">
-    <value>not a support tier.</value>
-  </data>
-  <data name="Plans.Lede" xml:space="preserve">
-    <value>Every plan gets the same platform: Workshop sync, backups, full console and automated deployment. The only thing that changes is how much world you are running.</value>
-  </data>
-  <data name="Plans.FlagTag" xml:space="preserve">
-    <value>TEST DATA</value>
-  </data>
-  <data name="Plans.FlagBody" xml:space="preserve">
-    <value>This catalogue exists to review the interface. Prices, discounts and promotional codes are placeholders, nothing here is a commercial offer, and no checkout is connected.</value>
-  </data>
-  <data name="Plans.BillingLabel" xml:space="preserve">
-    <value>Billing period</value>
-  </data>
-  <data name="Plans.CouponLabel" xml:space="preserve">
-    <value>PROMOTIONAL CODE</value>
-  </data>
-  <data name="Plans.CouponPlaceholder" xml:space="preserve">
-    <value>TRY SURVIVOR10</value>
-  </data>
-  <data name="Plans.CouponApply" xml:space="preserve">
-    <value>Apply</value>
-  </data>
-  <data name="Plans.CouponRemove" xml:space="preserve">
-    <value>Remove</value>
-  </data>
-  <data name="Plans.CouponHint" xml:space="preserve">
-    <value>Demo codes only. Nothing is charged.</value>
-  </data>
-  <data name="Plans.MostChosen" xml:space="preserve">
-    <value>MOST CHOSEN</value>
-  </data>
-  <data name="Plans.PriceUnit" xml:space="preserve">
-    <value>/ MONTH</value>
-  </data>
-  <data name="Plans.CycleMulti" xml:space="preserve">
-    <value>{0} billed every {1} months</value>
-  </data>
-  <data name="Plans.CycleMonthly" xml:space="preserve">
-    <value>Billed monthly</value>
-  </data>
-  <data name="Plans.Slots" xml:space="preserve">
-    <value>PLAYER SLOTS</value>
-  </data>
-  <data name="Plans.Deploy" xml:space="preserve">
-    <value>Deploy {0}</value>
-  </data>
   <data name="Faq.Kicker" xml:space="preserve">
     <value>FAQ</value>
   </data>
@@ -654,12 +600,6 @@
   <data name="Billing.Annual" xml:space="preserve">
     <value>Annual</value>
   </data>
-  <data name="Coupon.Applied" xml:space="preserve">
-    <value>Demo code applied - {0}% off the preview.</value>
-  </data>
-  <data name="Coupon.Rejected" xml:space="preserve">
-    <value>Not a recognised demo code.</value>
-  </data>
   <data name="Plan.Outpost.Tagline" xml:space="preserve">
     <value>A small group riding out the first month.</value>
   </data>
@@ -670,34 +610,7 @@
     <value>Heavy mod lists and a population that keeps growing.</value>
   </data>
   <data name="Plan.KnoxCell.Tagline" xml:space="preserve">
-    <value>A whole community, on dedicated allocation.</value>
-  </data>
-  <data name="Include.WorkshopSync" xml:space="preserve">
-    <value>Workshop mod sync</value>
-  </data>
-  <data name="Include.DailyBackups" xml:space="preserve">
-    <value>Daily backups</value>
-  </data>
-  <data name="Include.TwiceDailyBackups" xml:space="preserve">
-    <value>Twice-daily backups</value>
-  </data>
-  <data name="Include.HourlyBackups" xml:space="preserve">
-    <value>Hourly backups</value>
-  </data>
-  <data name="Include.FullConsole" xml:space="preserve">
-    <value>Full console access</value>
-  </data>
-  <data name="Include.ScheduledRestarts" xml:space="preserve">
-    <value>Scheduled restarts</value>
-  </data>
-  <data name="Include.PriorityPlacement" xml:space="preserve">
-    <value>Priority placement</value>
-  </data>
-  <data name="Include.DedicatedAllocation" xml:space="preserve">
-    <value>Dedicated allocation</value>
-  </data>
-  <data name="Plans.FlagBodyUnpriced" xml:space="preserve">
-    <value>The resource allocations here are final. Prices are not set yet, so the cards show the hardware each plan is provisioned with and leave the figure blank rather than guessing one.</value>
+    <value>A whole community, with room to grow into.</value>
   </data>
   <data name="Plans.MemoryLabel" xml:space="preserve">
     <value>RAM</value>
@@ -711,29 +624,14 @@
   <data name="Plans.SpecStorage" xml:space="preserve">
     <value>STORAGE</value>
   </data>
-  <data name="Plans.SpecBackups" xml:space="preserve">
-    <value>BACKUPS</value>
-  </data>
   <data name="Plans.CpuValue" xml:space="preserve">
     <value>{0}% allocation</value>
   </data>
   <data name="Plans.StorageValue" xml:space="preserve">
     <value>{0} GB NVMe</value>
   </data>
-  <data name="Plans.PricePending" xml:space="preserve">
-    <value>PRICE PENDING</value>
-  </data>
-  <data name="Plans.PricePendingNote" xml:space="preserve">
-    <value>Pricing not set</value>
-  </data>
-  <data name="Plans.CpuNote" xml:space="preserve">
-    <value>CPU allocation is a share of a node’s threads, not pinned cores: 100% is the equivalent of one thread, so 300% lets a server burst across three. Every plan runs on the same hardware; storage steps up from 25 GB to 40 GB at the 8 GB tier.</value>
-  </data>
-  <data name="Plans.FlagTagUnpriced" xml:space="preserve">
-    <value>PRICING PENDING</value>
-  </data>
   <data name="CustomBuild.Index" xml:space="preserve">
-    <value>09</value>
+    <value>03</value>
   </data>
   <data name="CustomBuild.Kicker" xml:space="preserve">
     <value>BUILD TO ORDER</value>
@@ -809,51 +707,6 @@
   </data>
   <data name="CustomBuild.MailIntro" xml:space="preserve">
     <value>I would like a quote for a Project Zomboid server with the following:</value>
-  </data>
-  <data name="Zomboid.MetaTitle" xml:space="preserve">
-    <value>Project Zomboid Plans</value>
-  </data>
-  <data name="Zomboid.MetaDescription" xml:space="preserve">
-    <value>Project Zomboid server plans from 4 GB to 16 GB, priced from a published rate card, with a build-to-order option for communities the ladder does not reach.</value>
-  </data>
-  <data name="Zomboid.Kicker" xml:space="preserve">
-    <value>PROJECT ZOMBOID / PLANS</value>
-  </data>
-  <data name="Zomboid.Line1" xml:space="preserve">
-    <value>Pick the world</value>
-  </data>
-  <data name="Zomboid.Accent" xml:space="preserve">
-    <value>your group can hold.</value>
-  </data>
-  <data name="Zomboid.Lede" xml:space="preserve">
-    <value>Eight tiers, one rate card and no surprises at the bottom of the invoice. Every figure on this page is what the server is provisioned with, not a marketing round number.</value>
-  </data>
-  <data name="Zomboid.Cta1" xml:space="preserve">
-    <value>See the plans</value>
-  </data>
-  <data name="Zomboid.Cta2" xml:space="preserve">
-    <value>Build to order</value>
-  </data>
-  <data name="Zomboid.PointRates" xml:space="preserve">
-    <value>Priced from published rates</value>
-  </data>
-  <data name="Zomboid.PointRatesBody" xml:space="preserve">
-    <value>CPU, memory and storage each carry a rate. A plan is those rates applied to what it ships, which is why no tier costs more than it contains.</value>
-  </data>
-  <data name="Zomboid.PointResources" xml:space="preserve">
-    <value>The figures are the provisioning</value>
-  </data>
-  <data name="Zomboid.PointResourcesBody" xml:space="preserve">
-    <value>The memory, CPU allocation and storage on each card are the exact values sent to the game panel when the server is created. There is no second set of numbers.</value>
-  </data>
-  <data name="Zomboid.PointCustom" xml:space="preserve">
-    <value>The ladder is not the limit</value>
-  </data>
-  <data name="Zomboid.PointCustomBody" xml:space="preserve">
-    <value>A community that needs more than the largest tier can specify it and get an estimate from the same rates, rather than being told to enquire.</value>
-  </data>
-  <data name="Zomboid.BackToMain" xml:space="preserve">
-    <value>Back to the main site</value>
   </data>
   <data name="PlansTeaser.Index" xml:space="preserve">
     <value>08</value>
@@ -933,15 +786,6 @@
   <data name="Event.Rebuild.Detail" xml:space="preserve">
     <value>The container underneath is rebuilt from scratch. The world volume outlives it.</value>
   </data>
-  <data name="Plans.RenewalLine" xml:space="preserve">
-    <value>After the first month, {0}/mo</value>
-  </data>
-  <data name="Plans.RenewalNote" xml:space="preserve">
-    <value>The figure on each card is the first month. The rate charged from the second month onwards is printed under it.</value>
-  </data>
-  <data name="CustomBuild.RenewalLine" xml:space="preserve">
-    <value>After the first month, {0} a month.</value>
-  </data>
   <data name="Zomboid.Photo.Pending" xml:space="preserve">
     <value>IMAGE PENDING</value>
   </data>
@@ -1011,15 +855,6 @@
   <data name="Bot.State.Managed" xml:space="preserve">
     <value>MANAGED</value>
   </data>
-  <data name="Plans.BotBadge" xml:space="preserve">
-    <value>HTS SERVER BOT</value>
-  </data>
-  <data name="Plans.BotIncluded" xml:space="preserve">
-    <value>INCLUDED</value>
-  </data>
-  <data name="Plans.BotNote" xml:space="preserve">
-    <value>The HTS server bot is offered on every tier above {0} GB of memory. The two smallest tiers do not carry it, and their cards do not claim it.</value>
-  </data>
   <data name="Workshop.Point4" xml:space="preserve">
     <value>Changes staged, then applied on your next restart</value>
   </data>
@@ -1055,5 +890,29 @@
   </data>
   <data name="Plan.KnoxCounty.Tagline" xml:space="preserve">
     <value>The largest tier on the list, before we build you one.</value>
+  </data>
+  <data name="Plan.Outpost.Audience" xml:space="preserve">
+    <value>A small group of friends on a mostly vanilla world, with room for a handful of light mods.</value>
+  </data>
+  <data name="Plan.Settlement.Audience" xml:space="preserve">
+    <value>A small community with a modest mod list and regular play sessions.</value>
+  </data>
+  <data name="Plan.Stronghold.Audience" xml:space="preserve">
+    <value>A small community running a heavier mod list, with the HTS server bot watching performance.</value>
+  </data>
+  <data name="Plan.KnoxCell.Audience" xml:space="preserve">
+    <value>A medium-sized server with mods and regular player activity.</value>
+  </data>
+  <data name="Plan.Rosewood.Audience" xml:space="preserve">
+    <value>A medium-sized community with a large mod list, or one that expects to grow.</value>
+  </data>
+  <data name="Plan.WestPoint.Audience" xml:space="preserve">
+    <value>A large modded community with players online through most of the day.</value>
+  </data>
+  <data name="Plan.Louisville.Audience" xml:space="preserve">
+    <value>A large community with an extensive mod list and a long-lived world.</value>
+  </data>
+  <data name="Plan.KnoxCounty.Audience" xml:space="preserve">
+    <value>The largest standard tier: a big, heavily modded community on a world you intend to keep for a long time.</value>
   </data>
 </root>

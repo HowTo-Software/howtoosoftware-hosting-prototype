@@ -1,0 +1,74 @@
+@*
+    The six steps between a confirmed payment and a running server, as a rail.
+
+    Rendered from the order's state on the server. When scripting is available,
+    wwwroot/js/site.js polls the status endpoint named in data-order-watch and moves the marker
+    without a page load; without it, the refresh link on the page does the same thing by hand.
+    Nothing here decides anything - the webhook and the fulfilment worker decide, and this shows
+    what they decided.
+*@
+
+<ol class="timeline @(IsFailed ? "is-failed" : null) @(CurrentIndex < 0 ? "is-waiting" : null)"
+    data-order-watch="@StatusUrl"
+    data-current="@CurrentIndex"
+    data-terminal="@(IsTerminal ? "true" : "false")"
+    aria-live="polite">
+    @foreach (var (label, index) in Steps.Select((s, i) => (s, i)))
+    {
+        <li class="step @StateOf(index)" data-index="@index">
+            <span class="step-mark" aria-hidden="true">
+                <span class="step-lamp"></span>
+            </span>
+            <span class="step-index hts-mono">@((index + 1).ToString("00"))</span>
+            <span class="step-label">@label</span>
+        </li>
+    }
+</ol>
+
+@code {
+    /// <summary>Step labels, in order.</summary>
+    [Parameter, EditorRequired]
+    public IReadOnlyList<string> Steps { get; set; } = [];
+
+    /// <summary>Index of the step in progress; -1 while payment is not yet confirmed.</summary>
+    [Parameter]
+    public int CurrentIndex { get; set; } = -1;
+
+    /// <summary>Whether provisioning stopped with an error at the current step.</summary>
+    [Parameter]
+    public bool IsFailed { get; set; }
+
+    /// <summary>Whether the order can change no further, so polling can stop.</summary>
+    [Parameter]
+    public bool IsTerminal { get; set; }
+
+    /// <summary>The status endpoint to poll, or <see langword="null"/> to render statically.</summary>
+    [Parameter]
+    public string? StatusUrl { get; set; }
+
+    private string StateOf(int index)
+    {
+        if (CurrentIndex < 0)
+        {
+            return "is-idle";
+        }
+
+        if (index < CurrentIndex)
+        {
+            return "is-done";
+        }
+
+        if (index == CurrentIndex)
+        {
+            // The last step is "online": reaching it is completion, not work in progress.
+            return IsFailed ? "is-fault" : index == Steps.Count - 1 ? "is-done" : "is-live";
+        }
+
+        return "is-idle";
+    }
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

@@ -70,102 +70,48 @@ public class StaticPlanCatalogServiceTests : IDisposable
     }
 
     [Fact]
-    public void LongerCommitment_LowersTheMonthlyRate()
+    public void LongerCommitment_LowersTheEffectiveMonthlyRate()
     {
-        var monthly = _sut.GetMonthlyRate(FirstPlan, BillingPeriod.Monthly, CouponResult.None);
-        var quarterly = _sut.GetMonthlyRate(FirstPlan, BillingPeriod.Quarterly, CouponResult.None);
-        var annual = _sut.GetMonthlyRate(FirstPlan, BillingPeriod.Annual, CouponResult.None);
+        var monthly = _sut.Quote(FirstPlan, BillingPeriod.Monthly)!;
+        var quarterly = _sut.Quote(FirstPlan, BillingPeriod.Quarterly)!;
+        var annual = _sut.Quote(FirstPlan, BillingPeriod.Annual)!;
 
-        Assert.Equal(FirstPlan.PriceMonthly, monthly);
-        Assert.True(quarterly < monthly, $"Quarterly {quarterly} should be below monthly {monthly}.");
-        Assert.True(annual < quarterly, $"Annual {annual} should be below quarterly {quarterly}.");
+        Assert.Equal(FirstPlan.PriceMonthly, monthly.FinalAmount);
+        Assert.True(quarterly.EffectiveMonthly < monthly.EffectiveMonthly);
+        Assert.True(annual.EffectiveMonthly < quarterly.EffectiveMonthly);
     }
 
     [Fact]
-    public void CycleTotal_IsTheMonthlyRateTimesTheNumberOfMonths()
+    public void BillingOptions_CarryThePolicyFiguresAndNothingElse()
     {
-        foreach (var option in _sut.BillingOptions)
-        {
-            var monthly = _sut.GetMonthlyRate(FirstPlan, option.Period, CouponResult.None);
-            var total = _sut.GetCycleTotal(FirstPlan, option.Period, CouponResult.None);
-
-            Assert.Equal(monthly * option.Months, total);
-        }
-    }
-
-    [Theory]
-    [InlineData("SURVIVOR10", 10)]
-    [InlineData("survivor10", 10)]
-    [InlineData("  KNOX25  ", 25)]
-    [InlineData("HTS2026", 15)]
-    public void KnownDemoCodes_AreAccepted(string input, int expectedPercent)
-    {
-        var result = _sut.CheckCoupon(input);
-
-        Assert.Equal(CouponStatus.Applied, result.Status);
-        Assert.True(result.IsApplied);
-        Assert.Equal(expectedPercent, result.PercentOff);
-        Assert.Equal(input.Trim().ToUpperInvariant(), result.Code);
-    }
-
-    [Theory]
-    [InlineData("NOPE")]
-    [InlineData("SURVIVOR")]
-    [InlineData("12345")]
-    public void UnknownCodes_AreRejectedWithoutDiscount(string input)
-    {
-        var result = _sut.CheckCoupon(input);
-
-        Assert.Equal(CouponStatus.Rejected, result.Status);
-        Assert.False(result.IsApplied);
-        Assert.Equal(0, result.PercentOff);
-    }
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("   ")]
-    public void EmptyInput_LeavesTheFieldUndecided(string? input)
-    {
-        var result = _sut.CheckCoupon(input);
-
-        Assert.Equal(CouponStatus.None, result.Status);
-        Assert.False(result.IsApplied);
-        Assert.Empty(result.Message);
+        Assert.Collection(
+            _sut.BillingOptions,
+            option => { Assert.Equal(BillingPeriod.Monthly, option.Period); Assert.Equal(1, option.Months); Assert.Equal(0, option.DiscountPercent); },
+            option => { Assert.Equal(BillingPeriod.Quarterly, option.Period); Assert.Equal(3, option.Months); Assert.Equal(5, option.DiscountPercent); },
+            option => { Assert.Equal(BillingPeriod.Annual, option.Period); Assert.Equal(12, option.Months); Assert.Equal(15, option.DiscountPercent); });
     }
 
     [Fact]
-    public void AppliedCoupon_StacksOnTopOfThePeriodDiscount()
+    public void EveryPlan_CarriesAnAudienceLineForTheReviewStep()
     {
-        var coupon = _sut.CheckCoupon("KNOX25");
-
-        var withoutCoupon = _sut.GetMonthlyRate(FirstPlan, BillingPeriod.Annual, CouponResult.None);
-        var withCoupon = _sut.GetMonthlyRate(FirstPlan, BillingPeriod.Annual, coupon);
-
-        // Annual is 20% off, the code adds 25%, so the rate lands at 55% of the headline.
-        Assert.Equal(
-            Math.Round(FirstPlan.PriceMonthly!.Value * 0.55m, 2, MidpointRounding.AwayFromZero),
-            withCoupon);
-        Assert.True(withCoupon < withoutCoupon);
-    }
-
-    [Fact]
-    public void RejectedCoupon_DoesNotChangeThePrice()
-    {
-        var rejected = _sut.CheckCoupon("NOPE");
-
-        Assert.Equal(
-            _sut.GetMonthlyRate(FirstPlan, BillingPeriod.Monthly, CouponResult.None),
-            _sut.GetMonthlyRate(FirstPlan, BillingPeriod.Monthly, rejected));
-    }
-
-    [Fact]
-    public void Pricing_NeverGoesNegative()
-    {
-        var extreme = new CouponResult(CouponStatus.Applied, "EXTREME", 500, "test");
-
         Assert.All(_sut.Plans, plan =>
-            Assert.True(_sut.GetMonthlyRate(plan, BillingPeriod.Annual, extreme) > 0));
+        {
+            Assert.False(string.IsNullOrWhiteSpace(plan.Audience), $"{plan.Slug} has no audience line");
+            Assert.DoesNotContain("Plan.", plan.Audience, StringComparison.Ordinal);
+        });
+    }
+
+    [Fact]
+    public void Quotes_NeverGoNegative_AndNeverExceedTheListTotal()
+    {
+        Assert.All(_sut.Plans, plan =>
+            Assert.All(_sut.BillingOptions, option =>
+            {
+                var quote = _sut.Quote(plan, option.Period)!;
+
+                Assert.True(quote.FinalAmount > 0);
+                Assert.True(quote.FinalAmount <= quote.BaseAmount);
+            }));
     }
 }
 

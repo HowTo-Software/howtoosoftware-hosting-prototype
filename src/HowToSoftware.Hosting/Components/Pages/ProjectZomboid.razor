@@ -1,79 +1,162 @@
 @*
-    The Project Zomboid plans, on a page of their own.
+    The Project Zomboid hosting page: a short statement of what every server gets, then the
+    plan picker, then the build-to-order panel for anyone the ladder does not reach.
 
-    Separate from the home page on purpose. The home page sells the platform - what the worlds
-    do, how provisioning works, what the hardware is. This page sells one game's plans, and a
-    visitor who arrives here from a search for "project zomboid server hosting" should land on
-    the ladder rather than scroll past eight sections to reach it.
+    Deliberately short above the plans. A visitor who arrived from the catalogue has already
+    chosen the game; what they need now is what the server does and what it costs, in that
+    order and without a marketing article in between.
 
-    The two pages share components but not their job: the home page carries a teaser that links
-    here, and this page carries the full grid, the build-to-order panel and the plan questions.
+    Every plan figure is read from the catalogue - the same records the provisioner sends to
+    Pterodactyl - and the picker links to the review step with the plan and the period only.
+    The price is worked out again on the server at every step after this one.
 *@
 
-@page "/project-zomboid"
+@page "/game-hosting/project-zomboid"
+@using System.Globalization
+@inject IGameCatalogService Games
+@inject IPlanCatalogService Catalog
 @inject IOptions<SiteOptions> Site
-@inject IStringLocalizer<HomeText> Text
+@inject IStringLocalizer<CheckoutText> Text
 
 <PageTitle>@Text["Zomboid.MetaTitle"] | @Site.Value.Name</PageTitle>
 
 <HeadContent>
     <meta name="description" content="@Text["Zomboid.MetaDescription"]" />
-    <link rel="canonical" href="@($"{Site.Value.BaseUrl.TrimEnd('/')}/project-zomboid")" />
+    <link rel="canonical" href="@($"{Site.Value.BaseUrl.TrimEnd('/')}{SiteRoutes.ProjectZomboid}")" />
 </HeadContent>
 
 <section class="zomboid-hero" aria-labelledby="zomboid-heading">
+    <div class="hts-container hts-container--wide hero-inner">
+        <div class="hero-copy" data-reveal>
+            <nav class="hero-crumbs" aria-label="@Text["Zomboid.CrumbLabel"]">
+                <a href="@SiteRoutes.GameHosting">@Text["Zomboid.Crumb"]</a>
+                <span class="crumb-sep" aria-hidden="true">/</span>
+                <span class="crumb-here">@Game.Name</span>
+            </nav>
 
-    <div class="hts-container hts-container--wide zomboid-hero-inner">
-        <div class="zomboid-copy" data-reveal>
-            <p class="zomboid-kicker" data-text-effect="flicker">@Text["Zomboid.Kicker"]</p>
+            <h1 id="zomboid-heading" class="hero-title" data-text-effect="rise">@Text["Zomboid.Title"]</h1>
+            <p class="hero-lede">@Text["Zomboid.Lede"]</p>
 
-            <h1 id="zomboid-heading" class="zomboid-title" data-text-effect="rise">
-                @Text["Zomboid.Line1"]<br />
-                <span class="zomboid-accent">@Text["Zomboid.Accent"]</span>
-            </h1>
-
-            <p class="zomboid-lede">@Text["Zomboid.Lede"]</p>
-
-            <div class="zomboid-actions">
+            <div class="hero-actions">
                 <CtaButton Href="#plans" Variant="CtaVariant.Primary" TrailingIcon="IconName.ArrowRight">
-                    @Text["Zomboid.Cta1"]
+                    @Text["Zomboid.CtaPlans"]
                 </CtaButton>
                 <CtaButton Href="#custom-build" Variant="CtaVariant.Secondary">
-                    @Text["Zomboid.Cta2"]
+                    @Text["Zomboid.CtaCustom"]
                 </CtaButton>
             </div>
+
+            <dl class="hero-facts">
+                @if (From is { } from)
+                {
+                    <div>
+                        <dt class="hts-label">@Text["Zomboid.FactFrom"]</dt>
+                        <dd class="hts-mono">@Catalog.CurrencySymbol@from.ToString("0.00", Invariant)<span class="fact-unit">@Text["GameHosting.PerMonth"]</span></dd>
+                    </div>
+                }
+                @if (Plans.Count > 0)
+                {
+                    <div>
+                        <dt class="hts-label">@Text["Zomboid.FactPlans"]</dt>
+                        <dd class="hts-mono">@Plans.Count</dd>
+                    </div>
+                    <div>
+                        <dt class="hts-label">@Text["Zomboid.FactMemory"]</dt>
+                        <dd class="hts-mono">@Plans[0].MemoryGb–@Plans[^1].MemoryGb GB</dd>
+                    </div>
+                }
+            </dl>
         </div>
 
-        <ul class="zomboid-points" data-reveal="right">
-            <li data-spotlight>
-                <h2>@Text["Zomboid.PointRates"]</h2>
-                <p>@Text["Zomboid.PointRatesBody"]</p>
-            </li>
-            <li data-spotlight>
-                <h2>@Text["Zomboid.PointResources"]</h2>
-                <p>@Text["Zomboid.PointResourcesBody"]</p>
-            </li>
-            <li data-spotlight>
-                <h2>@Text["Zomboid.PointCustom"]</h2>
-                <p>@Text["Zomboid.PointCustomBody"]</p>
-            </li>
+        @*
+            The product, not a mock-up of it: a capture of the HTS panel's Workshop Manager,
+            cropped to the panel's own chrome. See wwwroot/images/panel/README.md.
+        *@
+        <figure class="hero-figure" data-reveal="right">
+            <div class="figure-frame">
+                <picture>
+                    <source srcset="images/panel/workshop-manager.webp" type="image/webp" />
+                    <img src="images/panel/workshop-manager.png"
+                         alt="@Text["Zomboid.PanelFigureAlt"]"
+                         width="1482"
+                         height="340"
+                         decoding="async" />
+                </picture>
+            </div>
+            <figcaption class="figure-caption">
+                <span class="caption-lamp" aria-hidden="true"></span>
+                <span>@Text["Zomboid.PanelFigureCaption"]</span>
+            </figcaption>
+        </figure>
+    </div>
+</section>
+
+<section class="features" aria-labelledby="features-heading">
+    <div class="hts-container hts-container--wide">
+        <header class="features-head" data-reveal>
+            <p class="features-kicker">
+                <span class="kicker-index">01</span>
+                <span class="hts-label">@Text["Zomboid.FeatureKicker"]</span>
+            </p>
+            <h2 id="features-heading" class="features-title">@Text["Zomboid.FeatureTitle"]</h2>
+        </header>
+
+        <ul class="feature-grid">
+            @foreach (var (feature, index) in Features.Select((f, i) => (f, i)))
+            {
+                <li data-reveal style="--hts-reveal-delay: @(index * 50)ms">
+                    <span class="feature-index hts-mono">@((index + 1).ToString("00"))</span>
+                    <h3 class="feature-name">@feature.Label</h3>
+                    <p class="feature-detail">@feature.Detail</p>
+                </li>
+            }
         </ul>
     </div>
 </section>
 
-<PlansSection />
-<BotSection />
+<PlanPicker Game="Game" Plans="Plans" Index="02" />
+
 <CustomBuildSection />
-<FaqSection />
+
+<FaqSection Index="04" />
 
 <section class="zomboid-back">
     <div class="hts-container hts-container--wide">
-        <a class="back-link" href="/">
+        <a class="back-link" href="@SiteRoutes.GameHosting">
             <Icon Name="IconName.ArrowRight" CssClass="is-sm" />
-            <span>@Text["Zomboid.BackToMain"]</span>
+            <span>@Text["Zomboid.BackToCatalog"]</span>
         </a>
     </div>
 </section>
+
+@code {
+    private static readonly CultureInfo Invariant = CultureInfo.InvariantCulture;
+
+    private sealed record Feature(string Label, string Detail);
+
+    private HostedGame Game => Games.Primary;
+
+    private IReadOnlyList<HostingPlan> Plans => Games.PlansFor(Game);
+
+    private decimal? From => Games.StartingPrice(Game);
+
+    /// <summary>
+    /// What every server gets. Nine lines, each a thing the panel or the platform actually does;
+    /// nothing here is a figure, because none of these is measured.
+    /// </summary>
+    private Feature[] Features =>
+    [
+        new(Text["Zomboid.Feature.Build42"], Text["Zomboid.Feature.Build42Detail"]),
+        new(Text["Zomboid.Feature.Workshop"], Text["Zomboid.Feature.WorkshopDetail"]),
+        new(Text["Zomboid.Feature.Manager"], Text["Zomboid.Feature.ManagerDetail"]),
+        new(Text["Zomboid.Feature.Backups"], Text["Zomboid.Feature.BackupsDetail"]),
+        new(Text["Zomboid.Feature.Console"], Text["Zomboid.Feature.ConsoleDetail"]),
+        new(Text["Zomboid.Feature.Files"], Text["Zomboid.Feature.FilesDetail"]),
+        new(Text["Zomboid.Feature.Resources"], Text["Zomboid.Feature.ResourcesDetail"]),
+        new(Text["Zomboid.Feature.Panel"], Text["Zomboid.Feature.PanelDetail"]),
+        new(Text["Zomboid.Feature.Deploy"], Text["Zomboid.Feature.DeployDetail"])
+    ];
+}
 
 @*
     © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.

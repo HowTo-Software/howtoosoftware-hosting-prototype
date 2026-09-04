@@ -45,7 +45,7 @@ public class StaticMarketingContentServiceTests : IDisposable
     public void PrimaryNavigation_IsTheThreeQuestionsAVisitorArrivesWith()
     {
         Assert.Equal(
-            ["/project-zomboid", "/infrastructure", "/project-zomboid#plans"],
+            [SiteRoutes.GameHosting, "/infrastructure", SiteRoutes.ProjectZomboidPlans],
             _sut.PrimaryNavigation.Select(link => link.Href));
     }
 
@@ -54,8 +54,9 @@ public class StaticMarketingContentServiceTests : IDisposable
     /// a route that was renamed, fails silently in a menu.
     /// </summary>
     [Theory]
-    [InlineData("/project-zomboid")]
+    [InlineData(SiteRoutes.GameHosting)]
     [InlineData("/infrastructure")]
+    [InlineData(SiteRoutes.ProjectZomboid)]
     public void PrimaryNavigation_PointsAtRealRoutes(string route)
     {
         Assert.Contains(

@@ -15,7 +15,7 @@
     <div class="hts-container hts-container--wide faq-inner">
         <header class="faq-aside" data-reveal="left">
             <p class="faq-kicker" data-text-effect="flicker">
-                <span class="kicker-index">07</span>
+                <span class="kicker-index">@Index</span>
                 @Text["Faq.Kicker"]
             </p>
             <h2 id="faq-heading" class="faq-title" data-text-effect="rise">
@@ -61,6 +61,10 @@
 </section>
 
 @code {
+    /// <summary>The section number in the kicker; the home page is the seventh, other pages differ.</summary>
+    [Parameter]
+    public string Index { get; set; } = "07";
+
     private string? _openId;
 
     private void Toggle(string id) => _openId = _openId == id ? null : id;

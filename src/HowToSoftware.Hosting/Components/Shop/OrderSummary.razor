@@ -1,0 +1,153 @@
+@*
+    The configuration the customer is about to pay for, as the front face of a unit.
+
+    Same construction as the hero panel: one plate divided by hairlines, machine values in mono,
+    prose in the text face. GAME, PLAN, RESOURCES, BILLING, DISCOUNT and PRICE, in that order,
+    because that is the order the decisions were made in.
+
+    Every figure is the catalogue's and BillingPolicy's. The component formats; it does not
+    compute.
+*@
+
+@using System.Globalization
+@inject IStringLocalizer<CheckoutText> Text
+
+<div class="summary @CssClass">
+    <div class="summary-head">
+        <span class="summary-lamp" aria-hidden="true"></span>
+        <span class="summary-id hts-mono">@Plan.Slug</span>
+        <span class="summary-state hts-label">@Text["Review.Kicker"]</span>
+    </div>
+
+    <dl class="rows">
+        <div class="row">
+            <dt class="hts-label">@Text["Review.Game"]</dt>
+            <dd>@Game.Name</dd>
+        </div>
+
+        <div class="row">
+            <dt class="hts-label">@Text["Review.Plan"]</dt>
+            <dd>
+                <span class="row-strong">@Plan.Name</span>
+                <span class="row-dim">@Plan.Tagline</span>
+            </dd>
+        </div>
+
+        <div class="row row--list">
+            <dt class="hts-label">@Text["Review.Resources"]</dt>
+            <dd>
+                <ul class="resources">
+                    <li><span>@Text["Review.Memory"]</span><b class="hts-mono">@Plan.MemoryGb GB</b></li>
+                    <li><span>@Text["Review.Cpu"]</span><b class="hts-mono">@Plan.CpuPercent%</b></li>
+                    <li><span>@Text["Review.Storage"]</span><b class="hts-mono">@Plan.DiskGb GB NVMe</b></li>
+                    <li><span>@Text["Review.Backups"]</span><b class="hts-mono">@Plan.BackupLimit</b></li>
+                    <li><span>@Text["Review.Ports"]</span><b class="hts-mono">@Plan.AllocationLimit</b></li>
+                </ul>
+            </dd>
+        </div>
+
+        <div class="row">
+            <dt class="hts-label">@Text["Review.Billing"]</dt>
+            <dd>
+                <span class="row-strong">@PeriodLabel</span>
+                <span class="row-dim">
+                    @(Quote.Months == 1 ? Text["Review.RenewsMonthly"] : Text["Review.Renews", Quote.Months])
+                </span>
+            </dd>
+        </div>
+
+        <div class="row">
+            <dt class="hts-label">@Text["Review.Discount"]</dt>
+            <dd class="hts-mono @(Quote.IsDiscounted ? "is-data" : null)">
+                @Quote.DiscountPercent%
+                @if (!Quote.IsDiscounted)
+                {
+                    <span class="row-dim">@Text["Review.NoDiscount"]</span>
+                }
+            </dd>
+        </div>
+
+        <div class="row row--price">
+            <dt class="hts-label">@Text["Review.Price"]</dt>
+            <dd>
+                <table class="price">
+                    <tbody>
+                        <tr>
+                            <th scope="row">
+                                @Text["Review.ListPrice"]
+                                <span class="row-dim">
+                                    @(Quote.Months == 1
+                                        ? Text["Review.BaseLineMonthly"]
+                                        : Text["Review.BaseLine", $"{CurrencySymbol}{Money(Quote.MonthlyPrice)}", Quote.Months])
+                                </span>
+                            </th>
+                            <td class="hts-mono">@CurrencySymbol@Money(Quote.BaseAmount)</td>
+                        </tr>
+                        @if (Quote.IsDiscounted)
+                        {
+                            <tr class="is-data">
+                                <th scope="row">@Text["Review.DiscountLine", Quote.DiscountPercent]</th>
+                                <td class="hts-mono">-@CurrencySymbol@Money(Quote.DiscountAmount)</td>
+                            </tr>
+                        }
+                        <tr class="price-total">
+                            <th scope="row">@Text["Review.Total"]</th>
+                            <td class="hts-mono">@CurrencySymbol@Money(Quote.FinalAmount)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                @if (Quote.IsDiscounted)
+                {
+                    <p class="price-equivalent hts-mono">@Text["Picker.Equivalent", $"{CurrencySymbol}{Money(Quote.EffectiveMonthly)}"]</p>
+                }
+            </dd>
+        </div>
+    </dl>
+
+    @if (ShowAudience)
+    {
+        <p class="summary-audience">
+            <span class="hts-label">@Text["Review.AudienceKicker"]</span>
+            <span>@Plan.Audience</span>
+        </p>
+    }
+</div>
+
+@code {
+    private static readonly CultureInfo Invariant = CultureInfo.InvariantCulture;
+
+    /// <summary>The game.</summary>
+    [Parameter, EditorRequired]
+    public HostedGame Game { get; set; } = default!;
+
+    /// <summary>The plan.</summary>
+    [Parameter, EditorRequired]
+    public HostingPlan Plan { get; set; } = default!;
+
+    /// <summary>What the chosen period costs.</summary>
+    [Parameter, EditorRequired]
+    public BillingQuote Quote { get; set; } = default!;
+
+    /// <summary>The period's localised label.</summary>
+    [Parameter, EditorRequired]
+    public string PeriodLabel { get; set; } = string.Empty;
+
+    /// <summary>Currency symbol to print.</summary>
+    [Parameter, EditorRequired]
+    public string CurrencySymbol { get; set; } = string.Empty;
+
+    /// <summary>Whether to print the plan's "suitable for" line under the figures.</summary>
+    [Parameter]
+    public bool ShowAudience { get; set; } = true;
+
+    /// <summary>Optional additional classes on the root.</summary>
+    [Parameter]
+    public string? CssClass { get; set; }
+
+    private static string Money(decimal value) => value.ToString("0.00", Invariant);
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

@@ -1,0 +1,161 @@
+/*
+    A rail with six stations. Done stations are filled graphite, the live one carries the lamp,
+    idle ones are outlines. Purple means running - the one live lamp is the only colour until
+    the last station lights, and amber means a station that needs somebody.
+*/
+
+.timeline {
+    position: relative;
+    display: grid;
+    gap: 0;
+    padding-left: 0;
+}
+
+.step {
+    position: relative;
+    display: grid;
+    grid-template-columns: 1.6rem auto minmax(0, 1fr);
+    align-items: center;
+    gap: var(--ht-space-4);
+    min-height: 3.1rem;
+    padding: var(--ht-space-3) 0;
+    color: var(--ht-ink-muted);
+    transition: color var(--ht-dur-3) var(--ht-ease-lock);
+}
+
+/* The rail itself, drawn once per step so it can change colour as the work passes. */
+.step::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: calc(0.8rem - 1px);
+    width: 2px;
+    background: var(--ht-edge-strong);
+}
+
+.step:first-child::before {
+    top: 50%;
+}
+
+.step:last-child::before {
+    bottom: 50%;
+}
+
+.step.is-done::before {
+    background: var(--ht-graphite-500);
+}
+
+.step-mark {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 1.6rem;
+    height: 1.6rem;
+    border: 1px solid var(--ht-edge-strong);
+    border-radius: 50%;
+    background: var(--ht-surface-2);
+    transition:
+        border-color var(--ht-dur-3) var(--ht-ease-lock),
+        background-color var(--ht-dur-3) var(--ht-ease-lock);
+}
+
+.step-lamp {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: transparent;
+    transition: background-color var(--ht-dur-3) var(--ht-ease-lock), box-shadow var(--ht-dur-3) var(--ht-ease-lock);
+}
+
+.step.is-done .step-mark {
+    border-color: var(--ht-graphite-500);
+    background: var(--ht-graphite-700);
+}
+
+.step.is-done .step-lamp {
+    background: var(--ht-ink);
+}
+
+.step.is-live {
+    color: var(--ht-ink);
+}
+
+.step.is-live .step-mark {
+    border-color: var(--ht-live-500);
+}
+
+.step.is-live .step-lamp {
+    background: var(--ht-live-500);
+    box-shadow: var(--ht-lamp-live);
+    animation: step-breathe 2.4s var(--ht-ease-in-out) infinite;
+}
+
+.step.is-fault {
+    color: var(--ht-warn-300);
+}
+
+.step.is-fault .step-mark {
+    border-color: var(--ht-warn-500);
+}
+
+.step.is-fault .step-lamp {
+    background: var(--ht-warn-500);
+    box-shadow: 0 0 0 1px rgba(240, 160, 60, 0.4), 0 0 10px 1px rgba(240, 160, 60, 0.5);
+}
+
+/* Every station finished: the whole rail is lit, quietly. */
+.step:last-child.is-done {
+    color: var(--ht-ink);
+}
+
+.step:last-child.is-done .step-mark {
+    border-color: var(--ht-live-500);
+    background: var(--ht-live-700);
+}
+
+.step:last-child.is-done .step-lamp {
+    background: var(--ht-live-300);
+    box-shadow: var(--ht-lamp-live);
+}
+
+/* Waiting for the webhook: the first station holds a dim lamp rather than none. */
+.timeline.is-waiting .step:first-child .step-lamp {
+    background: var(--ht-graphite-500);
+    animation: step-breathe 2.4s var(--ht-ease-in-out) infinite;
+}
+
+.step-index {
+    color: var(--ht-ink-faint);
+    font-size: var(--ht-text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ht-track-label);
+}
+
+.step.is-live .step-index,
+.step.is-done .step-index {
+    color: var(--ht-ink-muted);
+}
+
+.step-label {
+    font-size: var(--ht-text-md);
+    font-weight: 560;
+    letter-spacing: -0.01em;
+}
+
+@keyframes step-breathe {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.35;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .step-lamp {
+        animation: none !important;
+    }
+}

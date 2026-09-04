@@ -1,0 +1,102 @@
+.cancel {
+    position: relative;
+    padding-block: clamp(4rem, 8vw, 7rem) var(--ht-unit-pad);
+}
+
+.cancel-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(20rem, 0.9fr);
+    align-items: start;
+    gap: clamp(2.5rem, 6vw, 5rem);
+}
+
+.cancel-kicker {
+    display: flex;
+    align-items: center;
+    gap: var(--ht-space-3);
+    margin-bottom: var(--ht-space-5);
+    color: var(--ht-ink-muted);
+}
+
+.cancel-title {
+    max-width: 16ch;
+    font-size: var(--ht-text-5xl);
+}
+
+.cancel-lede {
+    max-width: 32rem;
+    margin-top: var(--ht-space-5);
+    color: var(--ht-ink-soft);
+    font-size: var(--ht-text-lg);
+    line-height: var(--ht-leading-normal);
+}
+
+.cancel-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ht-space-3);
+    margin-top: var(--ht-space-7);
+}
+
+.cancel-periods {
+    display: grid;
+    gap: var(--ht-space-3);
+    margin-top: var(--ht-space-7);
+    padding-top: var(--ht-space-5);
+    border-top: 1px solid var(--ht-edge);
+}
+
+.periods-label {
+    color: var(--ht-ink-muted);
+}
+
+.period-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ht-space-2);
+}
+
+.period-link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--ht-space-2);
+    padding: 0.45rem 0.9rem;
+    border: 1px solid var(--ht-edge-strong);
+    border-radius: var(--ht-radius-sm);
+    color: var(--ht-ink-soft);
+    font-size: var(--ht-text-sm);
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+        border-color var(--ht-dur-2) var(--ht-ease-lock),
+        color var(--ht-dur-2) var(--ht-ease-lock);
+}
+
+.period-link:hover {
+    border-color: var(--ht-ink-faint);
+    color: var(--ht-ink);
+}
+
+.period-save {
+    color: var(--ht-data-400);
+    font-size: var(--ht-text-2xs);
+    letter-spacing: 0.06em;
+}
+
+.cancel-panel {
+    min-width: 0;
+}
+
+@media (max-width: 960px) {
+    .cancel-inner {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .cancel-panel {
+        order: -1;
+    }
+
+    .cancel-actions ::deep .cta {
+        width: 100%;
+    }
+}

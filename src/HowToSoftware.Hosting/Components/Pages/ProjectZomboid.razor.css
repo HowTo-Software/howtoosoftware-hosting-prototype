@@ -1,126 +1,247 @@
+/* -- Hero ---------------------------------------------------------------------------------- */
+
 .zomboid-hero {
     position: relative;
-    padding-block: clamp(5rem, 10vw, 9rem) clamp(4rem, 7vw, 7rem);
-    overflow: hidden;
+    padding-block: clamp(4rem, 8vw, 7rem) clamp(3rem, 6vw, 5rem);
 }
 
-.zomboid-hero-inner {
-    position: relative;
-    z-index: 1;
+.hero-inner {
     display: grid;
-    grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: center;
     gap: clamp(2.5rem, 6vw, 5rem);
 }
 
-.zomboid-kicker {
-    margin-bottom: var(--hts-space-5);
-    color: var(--ht-ink-muted);
-    font-family: var(--hts-font-mono);
-    font-size: 0.6875rem;
+.hero-crumbs {
+    display: flex;
+    align-items: center;
+    gap: var(--ht-space-3);
+    margin-bottom: var(--ht-space-5);
+    font-family: var(--ht-font-mono);
+    font-size: var(--ht-text-2xs);
     font-weight: 600;
-    letter-spacing: 0.22em;
+    letter-spacing: var(--ht-track-label);
+    text-transform: uppercase;
 }
 
-.zomboid-title {
-    font-size: clamp(2.4rem, 1.4rem + 3.6vw, 4.2rem);
-    font-weight: 460;
-    line-height: 1.02;
-    letter-spacing: -0.035em;
+.hero-crumbs a {
+    color: var(--ht-ink-muted);
+    text-decoration: none;
 }
 
-/* Emphasis by weight, not by colour. A purple word in a headline is decoration; it
-   also spends the one hue that means "running" everywhere else on the site. */
-.zomboid-accent {
-    font-weight: 800;
+.hero-crumbs a:hover {
+    color: var(--ht-ink);
 }
 
-.zomboid-lede {
+.crumb-sep {
+    color: var(--ht-ink-faint);
+}
+
+.crumb-here {
+    color: var(--ht-live-400);
+}
+
+.hero-title {
+    max-width: 18ch;
+    font-size: var(--ht-text-4xl);
+}
+
+.hero-lede {
     max-width: 34rem;
-    margin-top: var(--hts-space-6);
-    color: var(--hts-ink-soft);
-    font-size: var(--hts-text-lg);
-    line-height: var(--hts-leading-relaxed);
+    margin-top: var(--ht-space-5);
+    color: var(--ht-ink-soft);
+    font-size: var(--ht-text-lg);
+    line-height: var(--ht-leading-normal);
 }
 
-.zomboid-actions {
+.hero-actions {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--hts-space-4);
-    margin-top: var(--hts-space-7);
+    gap: var(--ht-space-3);
+    margin-top: var(--ht-space-7);
 }
 
-/* ── Points ────────────────────────────────────────────────────────────── */
+/* Three facts, read from the catalogue. Mono because they are figures. */
+.hero-facts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ht-space-6);
+    margin: var(--ht-space-7) 0 0;
+    padding-top: var(--ht-space-5);
+    border-top: 1px solid var(--ht-edge);
+}
 
-.zomboid-points {
+.hero-facts div {
     display: grid;
-    gap: var(--hts-space-4);
+    gap: 0.3rem;
+}
+
+.hero-facts dt {
+    color: var(--ht-ink-muted);
+}
+
+.hero-facts dd {
+    margin: 0;
+    color: var(--ht-ink);
+    font-size: var(--ht-text-xl);
+    font-weight: 620;
+    letter-spacing: -0.02em;
+}
+
+.fact-unit {
+    margin-left: 0.25rem;
+    color: var(--ht-ink-muted);
+    font-size: var(--ht-text-sm);
+    font-weight: 400;
+    letter-spacing: 0;
+}
+
+/* -- Figure ------------------------------------------------------------------------------ */
+
+.hero-figure {
+    margin: 0;
     min-width: 0;
 }
 
-.zomboid-points li {
-    padding: var(--hts-space-5);
-    border: 1px solid var(--hts-border);
-    border-radius: var(--hts-radius-md);
-    background: var(--hts-surface);
-    box-shadow: var(--hts-rim);
+.figure-frame {
+    border: 1px solid var(--ht-edge-strong);
+    border-radius: var(--ht-radius-md);
+    background: var(--ht-surface-inset);
+    box-shadow: var(--ht-rim), var(--ht-shadow-3);
+    overflow: hidden;
 }
 
-.zomboid-points h2 {
-    margin-bottom: 0.45rem;
-    color: var(--hts-ink);
-    font-size: var(--hts-text-md);
+.figure-frame img {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.figure-caption {
+    display: flex;
+    align-items: center;
+    gap: var(--ht-space-2);
+    margin-top: var(--ht-space-3);
+    color: var(--ht-ink-muted);
+    font-family: var(--ht-font-mono);
+    font-size: var(--ht-text-2xs);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.caption-lamp {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--ht-live-500);
+    box-shadow: var(--ht-lamp-live);
+}
+
+/* -- Features ---------------------------------------------------------------------------- */
+
+.features {
+    padding-block: clamp(3rem, 6vw, 5rem);
+    border-top: 1px solid var(--ht-edge);
+}
+
+.features-head {
+    margin-bottom: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+.features-kicker {
+    display: flex;
+    align-items: center;
+    gap: var(--ht-space-3);
+    margin-bottom: var(--ht-space-4);
+    color: var(--ht-ink-muted);
+}
+
+.features-title {
+    font-size: var(--ht-text-3xl);
+}
+
+/* Nine facts on a hairline grid. Not cards: the lines between them are the structure. */
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    border-top: 1px solid var(--ht-edge);
+    border-left: 1px solid var(--ht-edge);
+}
+
+.feature-grid li {
+    display: grid;
+    gap: var(--ht-space-2);
+    padding: var(--ht-space-5);
+    border-right: 1px solid var(--ht-edge);
+    border-bottom: 1px solid var(--ht-edge);
+}
+
+.feature-index {
+    color: var(--ht-ink-faint);
+    font-size: var(--ht-text-2xs);
     font-weight: 600;
+    letter-spacing: var(--ht-track-label);
+}
+
+.feature-name {
+    font-size: var(--ht-text-md);
+    font-weight: 620;
     letter-spacing: -0.012em;
 }
 
-.zomboid-points p {
-    color: var(--hts-ink-muted);
-    font-size: var(--hts-text-sm);
-    line-height: var(--hts-leading-normal);
+.feature-detail {
+    color: var(--ht-ink-muted);
+    font-size: var(--ht-text-sm);
+    line-height: var(--ht-leading-normal);
 }
 
-/* ── Back ──────────────────────────────────────────────────────────────── */
+/* -- Back -------------------------------------------------------------------------------- */
 
 .zomboid-back {
-    padding-block: clamp(2.5rem, 5vw, 4rem);
-    border-top: 1px solid var(--hts-border);
+    padding-block: clamp(2rem, 4vw, 3rem);
+    border-top: 1px solid var(--ht-edge);
 }
 
 .back-link {
     display: inline-flex;
     align-items: center;
     gap: 0.55rem;
-    color: var(--hts-ink-muted);
-    font-family: var(--hts-font-mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.16em;
+    color: var(--ht-ink-muted);
+    font-family: var(--ht-font-mono);
+    font-size: var(--ht-text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ht-track-label);
+    text-decoration: none;
     text-transform: uppercase;
-    transition: color var(--hts-duration-fast) var(--hts-ease);
+    transition: color var(--ht-dur-2) var(--ht-ease-lock);
 }
 
-/* The arrow points back where the link goes. */
 .back-link ::deep svg {
     transform: rotate(180deg);
-    transition: transform var(--hts-duration-base) var(--hts-ease-out);
 }
 
 .back-link:hover {
-    color: var(--hts-blue-300);
+    color: var(--ht-ink);
 }
 
-.back-link:hover ::deep svg {
-    transform: rotate(180deg) translateX(3px);
-}
+/* -- Responsive -------------------------------------------------------------------------- */
 
 @media (max-width: 1024px) {
-    .zomboid-hero-inner {
+    .hero-inner {
         grid-template-columns: minmax(0, 1fr);
+    }
+
+    .feature-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .back-link:hover ::deep svg {
-        transform: rotate(180deg);
+@media (max-width: 620px) {
+    .feature-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .hero-actions ::deep .cta {
+        width: 100%;
     }
 }

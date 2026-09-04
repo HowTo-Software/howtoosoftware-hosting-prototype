@@ -1,0 +1,191 @@
+@*
+    Billing period, then plans.
+
+    Static on purpose. The old plan section was an interactive island so a button could re-price
+    eight cards over the circuit; here the three periods are radio inputs and every card carries
+    all three of its prices in the markup, with a `:has()` rule showing the one that matches the
+    checked radio. Switching period is instant, works before Blazor has connected, works with
+    scripting off, and never sends a round trip to change a number the browser already has.
+
+    Every figure comes from IPlanCatalogService and BillingPolicy. Nothing here restates a
+    resource, a price or a percentage of its own - the card is a projection of the catalogue, and
+    the review step and the Stripe line item are projections of the same catalogue.
+
+    The link on each price carries the plan and the period, and only those. The server prices
+    the order again when it is reviewed and again when Stripe reports it paid.
+*@
+
+@using System.Globalization
+@inject IPlanCatalogService Catalog
+@inject IStringLocalizer<CheckoutText> Text
+
+<section class="picker" id="plans" aria-labelledby="picker-heading">
+    <div class="hts-container hts-container--wide">
+        <header class="picker-head" data-reveal>
+            <p class="picker-kicker">
+                <span class="kicker-index">@Index</span>
+                <span class="hts-label">@Text["Picker.Kicker"]</span>
+            </p>
+            <h2 id="picker-heading" class="picker-title">@Text["Picker.Title"]</h2>
+            @if (Smallest is { } small && Largest is { } large)
+            {
+                <p class="picker-lede">@Text["Picker.Lede", small.MemoryGb, large.MemoryGb, Plans.Count]</p>
+            }
+        </header>
+
+        @if (Catalog.HasPricing)
+        {
+            <fieldset class="periods" data-reveal>
+                <legend class="periods-legend hts-label">@Text["Picker.PeriodLegend"]</legend>
+
+                <div class="periods-track">
+                    @foreach (var option in Catalog.BillingOptions)
+                    {
+                        <input type="radio"
+                               class="period-input"
+                               name="period"
+                               id="period-@option.Slug"
+                               value="@option.Slug"
+                               checked="@(option.Period == BillingPeriod.Monthly)" />
+                        <label class="period" for="period-@option.Slug">
+                            <span class="period-name">@option.Label</span>
+                            @if (option.DiscountPercent > 0)
+                            {
+                                <span class="period-save hts-mono">@Text["Picker.Save", option.DiscountPercent]</span>
+                            }
+                        </label>
+                    }
+                </div>
+            </fieldset>
+        }
+
+        <ul class="plans">
+            @foreach (var (plan, index) in Plans.Select((p, i) => (p, i)))
+            {
+                <li class="plan @(plan.IsRecommended ? "is-recommended" : null)"
+                    data-reveal
+                    data-spotlight
+                    style="--hts-reveal-delay: @(index * 60)ms">
+
+                    <header class="plan-head">
+                        <div class="plan-title">
+                            <h3 class="plan-name">@plan.Name</h3>
+                            @if (plan.IsRecommended)
+                            {
+                                <span class="plan-flag hts-label">@Text["Picker.Recommended"]</span>
+                            }
+                        </div>
+                        <p class="plan-tagline">@plan.Tagline</p>
+                    </header>
+
+                    <div class="plan-memory">
+                        <span class="memory-value hts-mono">@plan.MemoryGb</span>
+                        <span class="memory-unit hts-label">@Text["Picker.Memory"]</span>
+                    </div>
+
+                    <dl class="plan-specs">
+                        <div>
+                            <dt>@Text["Picker.Cpu"]</dt>
+                            <dd class="hts-mono">@Text["Picker.CpuValue", plan.CpuPercent]</dd>
+                        </div>
+                        <div>
+                            <dt>@Text["Picker.Storage"]</dt>
+                            <dd class="hts-mono">@Text["Picker.StorageValue", plan.DiskGb]</dd>
+                        </div>
+                        <div>
+                            <dt>@Text["Picker.Backups"]</dt>
+                            <dd class="hts-mono">@plan.BackupLimit</dd>
+                        </div>
+                        @if (plan.HasServerBot)
+                        {
+                            @* Read from the tier's own memory, never from a flag somebody could
+                               tick on the wrong row. *@
+                            <div class="spec-bot">
+                                <dt>@Text["Picker.Bot"]</dt>
+                                <dd><span class="bot-lamp" aria-hidden="true"></span>@Text["Picker.BotIncluded"]</dd>
+                            </div>
+                        }
+                    </dl>
+
+                    @if (plan.IsPriced)
+                    {
+                        @foreach (var option in Catalog.BillingOptions)
+                        {
+                            var quote = Catalog.Quote(plan, option.Period)!;
+
+                            <div class="plan-price" data-period="@option.Slug">
+                                <p class="price-figure">
+                                    <span class="price-symbol">@Catalog.CurrencySymbol</span><span class="price-amount hts-mono">@Money(quote.FinalAmount)</span>
+                                    <span class="price-unit">@UnitFor(option)</span>
+                                </p>
+
+                                @if (quote.IsDiscounted)
+                                {
+                                    <p class="price-line hts-mono">
+                                        <span class="price-was">@Catalog.CurrencySymbol@Money(quote.BaseAmount)</span>
+                                        <span class="price-equivalent">@Text["Picker.Equivalent", $"{Catalog.CurrencySymbol}{Money(quote.EffectiveMonthly)}"]</span>
+                                    </p>
+                                }
+                                else
+                                {
+                                    <p class="price-line hts-mono">@Text["Picker.MonthlyNote"]</p>
+                                }
+
+                                <CtaButton Href="@SiteRoutes.Review(Game.Slug, plan.Slug, option.Period)"
+                                           Variant="@(plan.IsRecommended ? CtaVariant.Primary : CtaVariant.Secondary)"
+                                           TrailingIcon="IconName.ArrowRight"
+                                           CssClass="plan-cta">
+                                    @Text["Picker.Choose", plan.Name]
+                                </CtaButton>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="plan-price is-pending">
+                            <p class="price-pending hts-mono">@Text["Picker.Unpriced"]</p>
+                        </div>
+                    }
+                </li>
+            }
+        </ul>
+
+        @* Said once, under the grid, rather than on eight cards. The one technical footnote the
+           interface keeps: it stops "300% CPU" being read as three cores. *@
+        <p class="picker-note">@Text["Picker.CpuNote"]</p>
+    </div>
+</section>
+
+@code {
+    private static readonly CultureInfo Invariant = CultureInfo.InvariantCulture;
+
+    /// <summary>The game the plans are sold for; its slug goes into every review link.</summary>
+    [Parameter, EditorRequired]
+    public HostedGame Game { get; set; } = default!;
+
+    /// <summary>The plans to show, smallest first.</summary>
+    [Parameter, EditorRequired]
+    public IReadOnlyList<HostingPlan> Plans { get; set; } = [];
+
+    /// <summary>The section number printed in the kicker.</summary>
+    [Parameter]
+    public string Index { get; set; } = "02";
+
+    private HostingPlan? Smallest => Plans.Count == 0 ? null : Plans[0];
+
+    private HostingPlan? Largest => Plans.Count == 0 ? null : Plans[^1];
+
+    private static string Money(decimal value) => value.ToString("0.00", Invariant);
+
+    private string UnitFor(BillingOption option) => option.Period switch
+    {
+        BillingPeriod.Monthly => Text["Picker.PerMonth"],
+        BillingPeriod.Quarterly => Text["Picker.PerQuarter"],
+        _ => Text["Picker.PerYear"]
+    };
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

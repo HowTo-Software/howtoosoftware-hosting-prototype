@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="GameHosting.MetaTitle" xml:space="preserve">
+    <value>Hospedagem de jogos</value>
+  </data>
+  <data name="GameHosting.MetaDescription" xml:space="preserve">
+    <value>Escolha o jogo, depois o plano. Servidores de Project Zomboid em hardware próprio da HowToSoftware, com Workshop Manager para mods e deploy automático do pagamento até o mundo rodando.</value>
+  </data>
+  <data name="GameHosting.Kicker" xml:space="preserve">
+    <value>Hospedagem de jogos</value>
+  </data>
+  <data name="GameHosting.Title" xml:space="preserve">
+    <value>Escolha o jogo. A infraestrutura já está aqui.</value>
+  </data>
+  <data name="GameHosting.Lede" xml:space="preserve">
+    <value>Todo servidor roda em máquinas nossas, administradas por nós. Escolha o jogo, escolha um plano e um período, pague, e a plataforma monta o servidor.</value>
+  </data>
+  <data name="GameHosting.CoverTagAvailable" xml:space="preserve">
+    <value>Disponível / US Central</value>
+  </data>
+  <data name="GameHosting.CoverTagPlanned" xml:space="preserve">
+    <value>Roadmap</value>
+  </data>
+  <data name="GameHosting.Primary" xml:space="preserve">
+    <value>Produto principal</value>
+  </data>
+  <data name="GameHosting.Available" xml:space="preserve">
+    <value>Disponível</value>
+  </data>
+  <data name="GameHosting.Planned" xml:space="preserve">
+    <value>Planejado</value>
+  </data>
+  <data name="GameHosting.From" xml:space="preserve">
+    <value>A partir de</value>
+  </data>
+  <data name="GameHosting.PerMonth" xml:space="preserve">
+    <value>/ mês</value>
+  </data>
+  <data name="GameHosting.Unpriced" xml:space="preserve">
+    <value>Preço não publicado</value>
+  </data>
+  <data name="GameHosting.PlansCount" xml:space="preserve">
+    <value>{0} planos · {1}–{2} GB de RAM</value>
+  </data>
+  <data name="GameHosting.ViewPlans" xml:space="preserve">
+    <value>Ver planos</value>
+  </data>
+  <data name="GameHosting.NotifyMe" xml:space="preserve">
+    <value>Me avise quando abrir</value>
+  </data>
+  <data name="GameHosting.NotifySubject" xml:space="preserve">
+    <value>Hospedagem de {0} - me avisem</value>
+  </data>
+  <data name="GameHosting.RequestKicker" xml:space="preserve">
+    <value>Outro jogo</value>
+  </data>
+  <data name="GameHosting.RequestTitle" xml:space="preserve">
+    <value>Não está na lista? Peça.</value>
+  </data>
+  <data name="GameHosting.RequestBody" xml:space="preserve">
+    <value>Se tem servidor dedicado e roda em contêiner, a gente avalia. Escreva com o jogo e o número de jogadores que você espera.</value>
+  </data>
+  <data name="GameHosting.RequestCta" xml:space="preserve">
+    <value>Escreva pra gente</value>
+  </data>
+  <data name="GameHosting.RequestSubject" xml:space="preserve">
+    <value>Pedido de hospedagem de jogo</value>
+  </data>
+  <data name="GameHosting.HowKicker" xml:space="preserve">
+    <value>Como funciona</value>
+  </data>
+  <data name="GameHosting.Step1" xml:space="preserve">
+    <value>Escolha o jogo.</value>
+  </data>
+  <data name="GameHosting.Step2" xml:space="preserve">
+    <value>Escolha o plano e o período de cobrança.</value>
+  </data>
+  <data name="GameHosting.Step3" xml:space="preserve">
+    <value>Revise a configuração e pague com o Stripe.</value>
+  </data>
+  <data name="GameHosting.Step4" xml:space="preserve">
+    <value>A plataforma monta o servidor e entrega o painel.</value>
+  </data>
+  <data name="Game.Zomboid.Tagline" xml:space="preserve">
+    <value>Mundos persistentes, mods do Workshop, hardware nosso.</value>
+  </data>
+  <data name="Game.Zomboid.Summary" xml:space="preserve">
+    <value>Servidores dedicados de Project Zomboid com Build 41 e 42, um Workshop Manager que resolve os IDs dos mods por você, backups, acesso ao console e aos arquivos, e um deploy que vai do pagamento ao mundo rodando sem abrir chamado.</value>
+  </data>
+  <data name="Game.Zomboid.Highlight.Build42" xml:space="preserve">
+    <value>Build 41 e Build 42</value>
+  </data>
+  <data name="Game.Zomboid.Highlight.Workshop" xml:space="preserve">
+    <value>Workshop Manager da Steam</value>
+  </data>
+  <data name="Game.Zomboid.Highlight.Panel" xml:space="preserve">
+    <value>Console, arquivos e backups no painel HTS</value>
+  </data>
+  <data name="Game.Zomboid.Highlight.Deploy" xml:space="preserve">
+    <value>Deploy automático após o pagamento</value>
+  </data>
+  <data name="Game.Minecraft.Tagline" xml:space="preserve">
+    <value>Planejado: Java e Bedrock, com modpacks do CurseForge.</value>
+  </data>
+  <data name="Game.Minecraft.Summary" xml:space="preserve">
+    <value>O próximo jogo da plataforma. A ferramenta de mods do painel está sendo estendida para o CurseForge. Ainda sem planos ou preços - peça para ser avisado quando abrir.</value>
+  </data>
+  <data name="Zomboid.MetaTitle" xml:space="preserve">
+    <value>Hospedagem de servidor Project Zomboid</value>
+  </data>
+  <data name="Zomboid.MetaDescription" xml:space="preserve">
+    <value>Servidores de Project Zomboid de 4 a 16 GB em hardware próprio. Workshop Manager, backups, console, arquivos e deploy automático. Cobrança mensal, trimestral ou anual.</value>
+  </data>
+  <data name="Zomboid.CrumbLabel" xml:space="preserve">
+    <value>Você está aqui</value>
+  </data>
+  <data name="Zomboid.Crumb" xml:space="preserve">
+    <value>Hospedagem de jogos</value>
+  </data>
+  <data name="Zomboid.Title" xml:space="preserve">
+    <value>Um servidor de Project Zomboid, montado no momento em que você paga.</value>
+  </data>
+  <data name="Zomboid.Lede" xml:space="preserve">
+    <value>Escolha a memória que a sua comunidade precisa. Todo o resto - mods do Workshop, backups, console, arquivos, o painel - é igual em todos os planos.</value>
+  </data>
+  <data name="Zomboid.CtaPlans" xml:space="preserve">
+    <value>Ver planos</value>
+  </data>
+  <data name="Zomboid.CtaCustom" xml:space="preserve">
+    <value>Precisa de mais? Sob medida</value>
+  </data>
+  <data name="Zomboid.FactFrom" xml:space="preserve">
+    <value>A partir de</value>
+  </data>
+  <data name="Zomboid.FactPlans" xml:space="preserve">
+    <value>Planos</value>
+  </data>
+  <data name="Zomboid.FactMemory" xml:space="preserve">
+    <value>Memória</value>
+  </data>
+  <data name="Zomboid.PanelFigureAlt" xml:space="preserve">
+    <value>O painel HTS, mostrando o Workshop Manager de Project Zomboid de um servidor.</value>
+  </data>
+  <data name="Zomboid.PanelFigureCaption" xml:space="preserve">
+    <value>O Workshop Manager no painel HTS. Captura real.</value>
+  </data>
+  <data name="Zomboid.FeatureKicker" xml:space="preserve">
+    <value>O que todo servidor tem</value>
+  </data>
+  <data name="Zomboid.FeatureTitle" xml:space="preserve">
+    <value>A mesma plataforma em todos os planos.</value>
+  </data>
+  <data name="Zomboid.Feature.Build42" xml:space="preserve">
+    <value>Build 41 e 42</value>
+  </data>
+  <data name="Zomboid.Feature.Build42Detail" xml:space="preserve">
+    <value>Troque a build pelo painel. O mundo fica onde está.</value>
+  </data>
+  <data name="Zomboid.Feature.Workshop" xml:space="preserve">
+    <value>Steam Workshop</value>
+  </data>
+  <data name="Zomboid.Feature.WorkshopDetail" xml:space="preserve">
+    <value>Busque no Workshop pelo painel ou adicione por ID; os IDs dos mods são resolvidos por você.</value>
+  </data>
+  <data name="Zomboid.Feature.Manager" xml:space="preserve">
+    <value>Workshop Manager</value>
+  </data>
+  <data name="Zomboid.Feature.ManagerDetail" xml:space="preserve">
+    <value>Adicione, ordene e remova mods sem editar o ini na mão.</value>
+  </data>
+  <data name="Zomboid.Feature.Backups" xml:space="preserve">
+    <value>Backups</value>
+  </data>
+  <data name="Zomboid.Feature.BackupsDetail" xml:space="preserve">
+    <value>Snapshots que você guarda - a quantidade é por plano - e restaura pelo painel.</value>
+  </data>
+  <data name="Zomboid.Feature.Console" xml:space="preserve">
+    <value>Console</value>
+  </data>
+  <data name="Zomboid.Feature.ConsoleDetail" xml:space="preserve">
+    <value>O console do servidor ao vivo, com acesso a comandos.</value>
+  </data>
+  <data name="Zomboid.Feature.Files" xml:space="preserve">
+    <value>Gerenciador de arquivos</value>
+  </data>
+  <data name="Zomboid.Feature.FilesDetail" xml:space="preserve">
+    <value>Edite a configuração e leia os logs no navegador, ou por SFTP.</value>
+  </data>
+  <data name="Zomboid.Feature.Resources" xml:space="preserve">
+    <value>Recursos configuráveis</value>
+  </data>
+  <data name="Zomboid.Feature.ResourcesDetail" xml:space="preserve">
+    <value>Memória, alocação de CPU e armazenamento são o plano. Suba quando o mundo crescer.</value>
+  </data>
+  <data name="Zomboid.Feature.Panel" xml:space="preserve">
+    <value>Painel HTS</value>
+  </data>
+  <data name="Zomboid.Feature.PanelDetail" xml:space="preserve">
+    <value>Iniciar, parar, reiniciar, agendar e ver o uso de recursos - um painel para o servidor.</value>
+  </data>
+  <data name="Zomboid.Feature.Deploy" xml:space="preserve">
+    <value>Deploy rápido</value>
+  </data>
+  <data name="Zomboid.Feature.DeployDetail" xml:space="preserve">
+    <value>Do pagamento ao online sem chamado: a plataforma provisiona o servidor sozinha.</value>
+  </data>
+  <data name="Zomboid.BackToCatalog" xml:space="preserve">
+    <value>Voltar para hospedagem de jogos</value>
+  </data>
+  <data name="Picker.Kicker" xml:space="preserve">
+    <value>Planos</value>
+  </data>
+  <data name="Picker.Title" xml:space="preserve">
+    <value>Escolha a memória. Escolha como paga.</value>
+  </data>
+  <data name="Picker.Lede" xml:space="preserve">
+    <value>{2} planos de {0} a {1} GB, todos calculados pela mesma tabela. Os únicos descontos são por pagar trimestral ou anual.</value>
+  </data>
+  <data name="Picker.PeriodLegend" xml:space="preserve">
+    <value>Período de cobrança</value>
+  </data>
+  <data name="Picker.Save" xml:space="preserve">
+    <value>Economize {0}%</value>
+  </data>
+  <data name="Picker.Recommended" xml:space="preserve">
+    <value>Recomendado</value>
+  </data>
+  <data name="Picker.Memory" xml:space="preserve">
+    <value>GB RAM</value>
+  </data>
+  <data name="Picker.Cpu" xml:space="preserve">
+    <value>Alocação de CPU</value>
+  </data>
+  <data name="Picker.CpuValue" xml:space="preserve">
+    <value>{0}%</value>
+  </data>
+  <data name="Picker.Storage" xml:space="preserve">
+    <value>Armazenamento NVMe</value>
+  </data>
+  <data name="Picker.StorageValue" xml:space="preserve">
+    <value>{0} GB</value>
+  </data>
+  <data name="Picker.Backups" xml:space="preserve">
+    <value>Backups</value>
+  </data>
+  <data name="Picker.Bot" xml:space="preserve">
+    <value>Bot de servidor HTS</value>
+  </data>
+  <data name="Picker.BotIncluded" xml:space="preserve">
+    <value>Incluído</value>
+  </data>
+  <data name="Picker.PerMonth" xml:space="preserve">
+    <value>/ mês</value>
+  </data>
+  <data name="Picker.PerQuarter" xml:space="preserve">
+    <value>a cada 3 meses</value>
+  </data>
+  <data name="Picker.PerYear" xml:space="preserve">
+    <value>por ano</value>
+  </data>
+  <data name="Picker.Equivalent" xml:space="preserve">
+    <value>equivale a {0}/mês</value>
+  </data>
+  <data name="Picker.MonthlyNote" xml:space="preserve">
+    <value>Cobrado todo mês</value>
+  </data>
+  <data name="Picker.Choose" xml:space="preserve">
+    <value>Escolher {0}</value>
+  </data>
+  <data name="Picker.Unpriced" xml:space="preserve">
+    <value>Preço não publicado</value>
+  </data>
+  <data name="Picker.CpuNote" xml:space="preserve">
+    <value>CPU é uma alocação em um pool compartilhado: 100% equivale a uma thread lógica, e 300% deixa o servidor usar até três. Nada aqui é núcleo dedicado.</value>
+  </data>
+  <data name="Review.MetaTitle" xml:space="preserve">
+    <value>Revise seu servidor</value>
+  </data>
+  <data name="Review.Kicker" xml:space="preserve">
+    <value>Revisão</value>
+  </data>
+  <data name="Review.Title" xml:space="preserve">
+    <value>Seu servidor</value>
+  </data>
+  <data name="Review.Lede" xml:space="preserve">
+    <value>Confira a configuração e o total. O pagamento é o próximo passo, no Stripe.</value>
+  </data>
+  <data name="Review.Game" xml:space="preserve">
+    <value>Jogo</value>
+  </data>
+  <data name="Review.Plan" xml:space="preserve">
+    <value>Plano</value>
+  </data>
+  <data name="Review.Resources" xml:space="preserve">
+    <value>Recursos</value>
+  </data>
+  <data name="Review.Memory" xml:space="preserve">
+    <value>Memória</value>
+  </data>
+  <data name="Review.Cpu" xml:space="preserve">
+    <value>Alocação de CPU</value>
+  </data>
+  <data name="Review.Storage" xml:space="preserve">
+    <value>Armazenamento</value>
+  </data>
+  <data name="Review.Backups" xml:space="preserve">
+    <value>Backups</value>
+  </data>
+  <data name="Review.Ports" xml:space="preserve">
+    <value>Portas</value>
+  </data>
+  <data name="Review.Billing" xml:space="preserve">
+    <value>Cobrança</value>
+  </data>
+  <data name="Review.RenewsMonthly" xml:space="preserve">
+    <value>Renova todo mês pelo mesmo valor.</value>
+  </data>
+  <data name="Review.Renews" xml:space="preserve">
+    <value>Renova a cada {0} meses pelo mesmo valor.</value>
+  </data>
+  <data name="Review.Discount" xml:space="preserve">
+    <value>Desconto</value>
+  </data>
+  <data name="Review.NoDiscount" xml:space="preserve">
+    <value>A cobrança mensal não tem desconto.</value>
+  </data>
+  <data name="Review.Price" xml:space="preserve">
+    <value>Preço</value>
+  </data>
+  <data name="Review.ListPrice" xml:space="preserve">
+    <value>Preço de tabela</value>
+  </data>
+  <data name="Review.BaseLineMonthly" xml:space="preserve">
+    <value>1 mês</value>
+  </data>
+  <data name="Review.BaseLine" xml:space="preserve">
+    <value>{0} × {1} meses</value>
+  </data>
+  <data name="Review.DiscountLine" xml:space="preserve">
+    <value>Desconto ({0}%)</value>
+  </data>
+  <data name="Review.Total" xml:space="preserve">
+    <value>Total do período</value>
+  </data>
+  <data name="Review.AudienceKicker" xml:space="preserve">
+    <value>Indicado para</value>
+  </data>
+  <data name="Review.ChangePeriod" xml:space="preserve">
+    <value>Período de cobrança</value>
+  </data>
+  <data name="Review.ChangePlan" xml:space="preserve">
+    <value>Trocar de plano</value>
+  </data>
+  <data name="Review.Continue" xml:space="preserve">
+    <value>Continuar para o pagamento</value>
+  </data>
+  <data name="Review.StripeNote" xml:space="preserve">
+    <value>O pagamento é feito pelo Stripe em uma página segura própria. O total acima é o valor que o servidor envia ao Stripe.</value>
+  </data>
+  <data name="Review.NotConfigured" xml:space="preserve">
+    <value>Os pagamentos ainda não estão ativos neste ambiente. Sua configuração está nesta página - escreva pra gente e montamos o servidor manualmente.</value>
+  </data>
+  <data name="Review.Contact" xml:space="preserve">
+    <value>Escreva pra gente</value>
+  </data>
+  <data name="Review.ContactSubject" xml:space="preserve">
+    <value>Servidor Project Zomboid - {0}</value>
+  </data>
+  <data name="Review.Failed" xml:space="preserve">
+    <value>O Stripe não conseguiu iniciar o pagamento. Nada foi cobrado. Tente de novo em instantes.</value>
+  </data>
+  <data name="Review.Rejected" xml:space="preserve">
+    <value>Esse plano e período não puderam ser calculados. Escolha de novo nos planos.</value>
+  </data>
+  <data name="Review.NotFound.Title" xml:space="preserve">
+    <value>Nada para revisar</value>
+  </data>
+  <data name="Review.NotFound.Body" xml:space="preserve">
+    <value>O link está sem plano, ou o plano não está à venda. Escolha um plano e tente de novo.</value>
+  </data>
+  <data name="Review.BackToPlans" xml:space="preserve">
+    <value>Voltar aos planos</value>
+  </data>
+  <data name="Success.MetaTitle" xml:space="preserve">
+    <value>Pagamento confirmado</value>
+  </data>
+  <data name="Success.Kicker" xml:space="preserve">
+    <value>Pedido</value>
+  </data>
+  <data name="Success.OrderRef" xml:space="preserve">
+    <value>Pedido</value>
+  </data>
+  <data name="Success.Server" xml:space="preserve">
+    <value>Servidor</value>
+  </data>
+  <data name="Success.TitleWaiting" xml:space="preserve">
+    <value>Confirmando seu pagamento</value>
+  </data>
+  <data name="Success.TitlePaid" xml:space="preserve">
+    <value>Pagamento confirmado. Montando seu servidor.</value>
+  </data>
+  <data name="Success.TitleActive" xml:space="preserve">
+    <value>Seu servidor está online.</value>
+  </data>
+  <data name="Success.TitleFailed" xml:space="preserve">
+    <value>Algo precisa de atenção.</value>
+  </data>
+  <data name="Success.TitleUnknown" xml:space="preserve">
+    <value>Nenhum pedido para este link</value>
+  </data>
+  <data name="Success.LedeWaiting" xml:space="preserve">
+    <value>O Stripe está nos avisando do seu pagamento. Esta página se atualiza sozinha; normalmente leva alguns segundos.</value>
+  </data>
+  <data name="Success.LedePaid" xml:space="preserve">
+    <value>A plataforma está criando o servidor em um dos nossos nodes. Mantenha esta página aberta ou volte depois; a referência do pedido abaixo é sua.</value>
+  </data>
+  <data name="Success.LedeActive" xml:space="preserve">
+    <value>Entre no painel para abrir o console, adicionar mods e compartilhar o endereço com os jogadores.</value>
+  </data>
+  <data name="Success.LedeFailed" xml:space="preserve">
+    <value>O pagamento foi aprovado, mas o provisionamento não terminou sozinho. Temos o pedido e vamos montar o servidor manualmente. Escreva pra gente se quiser adiantar.</value>
+  </data>
+  <data name="Success.LedeUnknown" xml:space="preserve">
+    <value>Não encontramos um pedido para esta sessão. Se você foi cobrado, escreva pra gente com o horário do pagamento.</value>
+  </data>
+  <data name="Success.State.Confirming" xml:space="preserve">
+    <value>Confirmando</value>
+  </data>
+  <data name="Success.State.Building" xml:space="preserve">
+    <value>Montando</value>
+  </data>
+  <data name="Success.State.Online" xml:space="preserve">
+    <value>Online</value>
+  </data>
+  <data name="Success.State.Attention" xml:space="preserve">
+    <value>Atenção</value>
+  </data>
+  <data name="Success.State.Unknown" xml:space="preserve">
+    <value>Desconhecido</value>
+  </data>
+  <data name="Success.Stage.Payment" xml:space="preserve">
+    <value>Pagamento confirmado</value>
+  </data>
+  <data name="Success.Stage.Preparing" xml:space="preserve">
+    <value>Preparando o servidor</value>
+  </data>
+  <data name="Success.Stage.Node" xml:space="preserve">
+    <value>Selecionando o node</value>
+  </data>
+  <data name="Success.Stage.Resources" xml:space="preserve">
+    <value>Alocando recursos</value>
+  </data>
+  <data name="Success.Stage.Install" xml:space="preserve">
+    <value>Instalando o jogo</value>
+  </data>
+  <data name="Success.Stage.Online" xml:space="preserve">
+    <value>Servidor online</value>
+  </data>
+  <data name="Success.OpenPanel" xml:space="preserve">
+    <value>Abrir o painel</value>
+  </data>
+  <data name="Success.Refresh" xml:space="preserve">
+    <value>Atualizar status</value>
+  </data>
+  <data name="Success.ContactSubject" xml:space="preserve">
+    <value>Pedido {0}</value>
+  </data>
+  <data name="Cancel.MetaTitle" xml:space="preserve">
+    <value>Pagamento cancelado</value>
+  </data>
+  <data name="Cancel.Kicker" xml:space="preserve">
+    <value>Checkout</value>
+  </data>
+  <data name="Cancel.Title" xml:space="preserve">
+    <value>Pagamento cancelado.</value>
+  </data>
+  <data name="Cancel.Lede" xml:space="preserve">
+    <value>Nada foi cobrado. Sua configuração está guardada nesta página - retome de onde parou, ou mude o período de cobrança.</value>
+  </data>
+  <data name="Cancel.TryAgain" xml:space="preserve">
+    <value>Tentar pagar de novo</value>
+  </data>
+  <data name="Cancel.Return" xml:space="preserve">
+    <value>Voltar aos planos</value>
+  </data>
+  <data name="Cancel.ChangePeriod" xml:space="preserve">
+    <value>Ou mude o período de cobrança</value>
+  </data>
+  <data name="Cancel.NotFound" xml:space="preserve">
+    <value>Não encontramos esse pedido. Escolha um plano para recomeçar.</value>
+  </data>
+</root>

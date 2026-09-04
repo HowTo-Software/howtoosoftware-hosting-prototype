@@ -249,7 +249,7 @@ public class LocalizationResourceTests
     /// <summary>Placeholders for values a format string will fill in, e.g. <c>{0}</c>.</summary>
     private static readonly Regex FormatSlot = new(@"\{\d+\}", RegexOptions.CultureInvariant);
 
-    public static TheoryData<string> ResourceSets => new() { "Common", "Home", "Login", "Hardware" };
+    public static TheoryData<string> ResourceSets => new() { "Common", "Home", "Login", "Hardware", "Checkout" };
 
     [Theory]
     [MemberData(nameof(ResourceSets))]
@@ -345,6 +345,7 @@ public class LocalizationResourceTests
             "Common" => TestLocalizer.For<CommonText>(),
             "Home" => TestLocalizer.For<HomeText>(),
             "Login" => TestLocalizer.For<LoginText>(),
+            "Checkout" => TestLocalizer.For<CheckoutText>(),
             _ => TestLocalizer.For<HardwareText>()
         };
 

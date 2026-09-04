@@ -147,13 +147,22 @@
                             <li>@Text["CustomBuild.LineDisk", estimate.Request.DiskGb]</li>
                         </ul>
 
-                        @if (estimate.RenewalTotal is { } renewal)
-                        {
-                            <p class="quote-renewal">
-                                @Text["CustomBuild.RenewalLine",
-                                      $"{estimate.CurrencySymbol}{Money(renewal)}"]
-                            </p>
-                        }
+                        @*
+                            The two longer periods, priced by the same policy as the plans. A
+                            custom build is not a special case for billing: it is a monthly
+                            figure, and the quarterly and annual totals follow from it.
+                        *@
+                        <ul class="quote-periods">
+                            @foreach (var period in BillingPolicy.Periods.Where(p => p != BillingPeriod.Monthly))
+                            {
+                                var quote = BillingPolicy.Quote(estimate.MonthlyTotal, period);
+                                <li>
+                                    <span class="period-name">@Text[$"Billing.{period}"]</span>
+                                    <span class="period-save">-@quote.DiscountPercent%</span>
+                                    <span class="period-total">@estimate.CurrencySymbol@Money(quote.FinalAmount)</span>
+                                </li>
+                            }
+                        </ul>
 
                         @if (estimate.ComparedTo is { IsPriced: true } largest)
                         {
@@ -297,10 +306,10 @@
                 $"{Text["CustomBuild.EstimateLabel"]}: " +
                 $"{priced.CurrencySymbol}{Money(priced.MonthlyTotal)} {Text["CustomBuild.PerMonth"]}");
 
-            if (priced.RenewalTotal is { } renewal)
+            foreach (var period in BillingPolicy.Periods.Where(p => p != BillingPeriod.Monthly))
             {
-                lines.Add(Text["CustomBuild.RenewalLine",
-                               $"{priced.CurrencySymbol}{Money(renewal)}"].Value);
+                var quote = BillingPolicy.Quote(priced.MonthlyTotal, period);
+                lines.Add($"{Text[$"Billing.{period}"].Value}: {priced.CurrencySymbol}{Money(quote.FinalAmount)} (-{quote.DiscountPercent}%)");
             }
         }
 

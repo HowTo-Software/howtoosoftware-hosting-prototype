@@ -1,0 +1,124 @@
+@*
+    Where Stripe sends the customer if they back out of Checkout.
+
+    The order is not deleted and nothing is charged. The configuration is shown again from the
+    order record, priced again from the catalogue, and every way back is a link: the same plan
+    and period, a different period, or the plans.
+*@
+
+@page "/payment/cancel"
+@inject IOrderStore Orders
+@inject IPlanCatalogService Catalog
+@inject IOrderPricingService Pricing
+@inject IOptions<SiteOptions> Site
+@inject IStringLocalizer<CheckoutText> Text
+
+<PageTitle>@Text["Cancel.MetaTitle"] | @Site.Value.Name</PageTitle>
+
+<HeadContent>
+    <meta name="robots" content="noindex" />
+</HeadContent>
+
+<section class="cancel" aria-labelledby="cancel-heading">
+    <div class="hts-container hts-container--wide cancel-inner">
+        <div class="cancel-copy" data-reveal>
+            <p class="cancel-kicker">
+                <span class="kicker-index">—</span>
+                <span class="hts-label">@Text["Cancel.Kicker"]</span>
+            </p>
+
+            <h1 id="cancel-heading" class="cancel-title" data-text-effect="rise">@Text["Cancel.Title"]</h1>
+
+            @if (_priced is { } priced)
+            {
+                <p class="cancel-lede">@Text["Cancel.Lede"]</p>
+
+                <div class="cancel-actions">
+                    <CtaButton Href="@SiteRoutes.Review(priced.Game.Slug, priced.Plan.Slug, priced.Quote.Period)"
+                               Variant="CtaVariant.Primary"
+                               TrailingIcon="IconName.ArrowRight">
+                        @Text["Cancel.TryAgain"]
+                    </CtaButton>
+                    <CtaButton Href="@(priced.Game.PageHref is { } page ? page + "#plans" : SiteRoutes.GameHosting)"
+                               Variant="CtaVariant.Secondary">
+                        @Text["Cancel.Return"]
+                    </CtaButton>
+                </div>
+
+                <div class="cancel-periods">
+                    <p class="hts-label periods-label">@Text["Cancel.ChangePeriod"]</p>
+                    <ul class="period-links">
+                        @foreach (var other in Catalog.BillingOptions.Where(o => o.Period != priced.Quote.Period))
+                        {
+                            <li>
+                                <a class="period-link" href="@SiteRoutes.Review(priced.Game.Slug, priced.Plan.Slug, other.Period)">
+                                    <span>@other.Label</span>
+                                    @if (other.DiscountPercent > 0)
+                                    {
+                                        <span class="period-save hts-mono">-@other.DiscountPercent%</span>
+                                    }
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            }
+            else
+            {
+                <p class="cancel-lede">@Text["Cancel.NotFound"]</p>
+
+                <div class="cancel-actions">
+                    <CtaButton Href="@SiteRoutes.ProjectZomboidPlans" Variant="CtaVariant.Primary" TrailingIcon="IconName.ArrowRight">
+                        @Text["Review.BackToPlans"]
+                    </CtaButton>
+                </div>
+            }
+        </div>
+
+        @if (_priced is { } summary)
+        {
+            <div class="cancel-panel" data-reveal="right">
+                <OrderSummary Game="summary.Game"
+                              Plan="summary.Plan"
+                              Quote="summary.Quote"
+                              PeriodLabel="@Catalog.GetOption(summary.Quote.Period).Label"
+                              CurrencySymbol="@Catalog.CurrencySymbol"
+                              ShowAudience="false" />
+            </div>
+        }
+    </div>
+</section>
+
+@code {
+    private PricedPlan? _priced;
+
+    /// <summary>The order id the cancel URL was built with.</summary>
+    [SupplyParameterFromQuery(Name = "order")]
+    public string? OrderQuery { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _priced = null;
+
+        if (!Guid.TryParse(OrderQuery, out var orderId))
+        {
+            return;
+        }
+
+        var order = await Orders.FindAsync(orderId);
+
+        if (order is null)
+        {
+            return;
+        }
+
+        // Priced again from the catalogue rather than from the order's snapshot, so the page
+        // offers today's price for a retry - the retry creates a new order anyway.
+        _priced = Pricing.Price(order.GameId, order.PlanId, order.BillingPeriod);
+    }
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

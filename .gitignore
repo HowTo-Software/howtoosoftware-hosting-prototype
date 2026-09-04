@@ -421,3 +421,11 @@ hts-db-data/
 
 # Sensitive data exports — raw dumps with live credentials and member PII
 docs/ghost_*_dump.sql
+
+# Local secrets and the local order database
+.env
+.env.*
+!.env.example
+*.db
+*.db-shm
+*.db-wal

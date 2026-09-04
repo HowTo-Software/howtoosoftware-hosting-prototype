@@ -1,0 +1,159 @@
+@*
+    The game catalogue: the first step of buying a server.
+
+    A visitor chooses the game before they see a price, because that is the decision they
+    arrived with. Project Zomboid is the product and takes the wide tile; the planned game and
+    the "ask for another" tile take the narrow column, so the hierarchy on the page is the
+    hierarchy of the business.
+
+    Nothing here is priced by the page. The "from" figure is the cheapest priced plan in the
+    catalogue for that game, read at render time.
+*@
+
+@page "/game-hosting"
+@using System.Globalization
+@inject IGameCatalogService Games
+@inject IPlanCatalogService Catalog
+@inject IOptions<SiteOptions> Site
+@inject IStringLocalizer<CheckoutText> Text
+
+<PageTitle>@Text["GameHosting.MetaTitle"] | @Site.Value.Name</PageTitle>
+
+<HeadContent>
+    <meta name="description" content="@Text["GameHosting.MetaDescription"]" />
+    <link rel="canonical" href="@($"{Site.Value.BaseUrl.TrimEnd('/')}{SiteRoutes.GameHosting}")" />
+</HeadContent>
+
+<section class="catalog" aria-labelledby="catalog-heading">
+    <div class="hts-container hts-container--wide">
+        <header class="catalog-head" data-reveal>
+            <p class="catalog-kicker">
+                <span class="kicker-index">01</span>
+                <span class="hts-label">@Text["GameHosting.Kicker"]</span>
+            </p>
+            <h1 id="catalog-heading" class="catalog-title" data-text-effect="rise">@Text["GameHosting.Title"]</h1>
+            <p class="catalog-lede">@Text["GameHosting.Lede"]</p>
+        </header>
+
+        <ul class="games">
+            @foreach (var (game, index) in Games.Games.Select((g, i) => (g, i)))
+            {
+                var isPrimary = string.Equals(game.Slug, Games.Primary.Slug, StringComparison.Ordinal);
+                var plans = Games.PlansFor(game);
+                var from = Games.StartingPrice(game);
+
+                <li class="game @(isPrimary ? "is-primary" : null) @(game.IsAvailable ? "is-available" : "is-planned")"
+                    data-reveal
+                    data-spotlight
+                    style="--hts-reveal-delay: @(index * 90)ms">
+
+                    <GameCover Game="game"
+                               PhotoSlot="@(isPrimary ? ZomboidPhotoSlot.HeroWorld : (ZomboidPhotoSlot?)null)"
+                               Tag="@(game.IsAvailable ? Text["GameHosting.CoverTagAvailable"] : Text["GameHosting.CoverTagPlanned"])"
+                               CssClass="game-cover" />
+
+                    <div class="game-body">
+                        <p class="game-status hts-label">
+                            @if (game.IsAvailable)
+                            {
+                                <span class="status-lamp" aria-hidden="true"></span>
+                            }
+                            @(isPrimary ? Text["GameHosting.Primary"] : game.IsAvailable ? Text["GameHosting.Available"] : Text["GameHosting.Planned"])
+                        </p>
+
+                        <h2 class="game-name">@game.Name</h2>
+                        <p class="game-tagline">@game.Tagline</p>
+                        <p class="game-summary">@game.Summary</p>
+
+                        @if (game.Highlights.Count > 0)
+                        {
+                            <ul class="game-highlights">
+                                @foreach (var highlight in game.Highlights)
+                                {
+                                    <li>@highlight</li>
+                                }
+                            </ul>
+                        }
+
+                        <div class="game-foot">
+                            @if (game.IsAvailable)
+                            {
+                                <div class="game-price">
+                                    @if (from is { } price)
+                                    {
+                                        <span class="price-from hts-label">@Text["GameHosting.From"]</span>
+                                        <span class="price-figure">
+                                            <span class="price-symbol hts-mono">@Catalog.CurrencySymbol</span><span class="price-amount hts-mono">@price.ToString("0.00", Invariant)</span>
+                                            <span class="price-unit">@Text["GameHosting.PerMonth"]</span>
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="price-pending hts-mono">@Text["GameHosting.Unpriced"]</span>
+                                    }
+
+                                    @if (plans.Count > 0)
+                                    {
+                                        <span class="price-range hts-mono">@Text["GameHosting.PlansCount", plans.Count, plans[0].MemoryGb, plans[^1].MemoryGb]</span>
+                                    }
+                                </div>
+
+                                <CtaButton Href="@game.PageHref"
+                                           Variant="CtaVariant.Primary"
+                                           TrailingIcon="IconName.ArrowRight"
+                                           CssClass="game-cta">
+                                    @Text["GameHosting.ViewPlans"]
+                                </CtaButton>
+                            }
+                            else
+                            {
+                                <CtaButton Href="@NotifyHref(game)"
+                                           Variant="CtaVariant.Secondary"
+                                           TrailingIcon="IconName.Mail"
+                                           CssClass="game-cta">
+                                    @Text["GameHosting.NotifyMe"]
+                                </CtaButton>
+                            }
+                        </div>
+                    </div>
+                </li>
+            }
+
+            <li class="game game--request" data-reveal style="--hts-reveal-delay: @(Games.Games.Count * 90)ms">
+                <div class="request">
+                    <p class="hts-label request-kicker">@Text["GameHosting.RequestKicker"]</p>
+                    <h2 class="request-title">@Text["GameHosting.RequestTitle"]</h2>
+                    <p class="request-body">@Text["GameHosting.RequestBody"]</p>
+                    <CtaButton Href="@RequestHref"
+                               Variant="CtaVariant.Secondary"
+                               TrailingIcon="IconName.Mail">
+                        @Text["GameHosting.RequestCta"]
+                    </CtaButton>
+                </div>
+            </li>
+        </ul>
+
+        @* The four steps, stated once so nobody has to guess where the button goes. *@
+        <ol class="how" data-reveal aria-label="@Text["GameHosting.HowKicker"]">
+            <li><span class="how-index hts-mono">01</span><span>@Text["GameHosting.Step1"]</span></li>
+            <li><span class="how-index hts-mono">02</span><span>@Text["GameHosting.Step2"]</span></li>
+            <li><span class="how-index hts-mono">03</span><span>@Text["GameHosting.Step3"]</span></li>
+            <li><span class="how-index hts-mono">04</span><span>@Text["GameHosting.Step4"]</span></li>
+        </ol>
+    </div>
+</section>
+
+@code {
+    private static readonly CultureInfo Invariant = CultureInfo.InvariantCulture;
+
+    private string RequestHref =>
+        $"mailto:{Site.Value.ContactEmail}?subject={Uri.EscapeDataString(Text["GameHosting.RequestSubject"].Value)}";
+
+    private string NotifyHref(HostedGame game) =>
+        $"mailto:{Site.Value.ContactEmail}?subject={Uri.EscapeDataString(Text["GameHosting.NotifySubject", game.Name].Value)}";
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

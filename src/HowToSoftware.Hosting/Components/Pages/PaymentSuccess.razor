@@ -1,0 +1,165 @@
+@*
+    Where Stripe sends the customer after paying.
+
+    Presentation only. This page never marks anything paid: it looks the order up by the session
+    id in the URL and shows whatever state the webhook and the fulfilment worker have put it in.
+    A visitor arriving here before the webhook sees "confirming", and the page polls the status
+    endpoint until the order settles.
+*@
+
+@page "/payment/success"
+@inject IOrderStore Orders
+@inject IOptions<SiteOptions> Site
+@inject IStringLocalizer<CheckoutText> Text
+
+<PageTitle>@Text["Success.MetaTitle"] | @Site.Value.Name</PageTitle>
+
+<HeadContent>
+    <meta name="robots" content="noindex" />
+</HeadContent>
+
+<section class="result" aria-labelledby="result-heading">
+    <div class="hts-container hts-container--wide result-inner">
+        <div class="result-copy" data-reveal>
+            <p class="result-kicker">
+                <span class="kicker-index">@StageCode</span>
+                <span class="hts-label">@Text["Success.Kicker"]</span>
+            </p>
+
+            <h1 id="result-heading" class="result-title" data-text-effect="rise">@Title</h1>
+            <p class="result-lede">@Lede</p>
+
+            @if (_order is { } order)
+            {
+                <dl class="result-facts">
+                    <div>
+                        <dt class="hts-label">@Text["Success.OrderRef"]</dt>
+                        <dd class="hts-mono">@order.Id.ToString("N")[..8].ToUpperInvariant()</dd>
+                    </div>
+                    <div>
+                        <dt class="hts-label">@Text["Review.Plan"]</dt>
+                        <dd>@order.PlanName</dd>
+                    </div>
+                    @if (order.ServerIdentifier is { } server)
+                    {
+                        <div>
+                            <dt class="hts-label">@Text["Success.Server"]</dt>
+                            <dd class="hts-mono">@server</dd>
+                        </div>
+                    }
+                </dl>
+
+                <div class="result-actions">
+                    @if (order.Status is OrderStatus.Active)
+                    {
+                        <CtaButton Href="@SiteRoutes.PanelLogin"
+                                   Variant="CtaVariant.Primary"
+                                   Target="_blank"
+                                   Rel="noopener noreferrer"
+                                   TrailingIcon="IconName.ArrowRight">
+                            @Text["Success.OpenPanel"]
+                        </CtaButton>
+                    }
+                    else if (!order.IsTerminal)
+                    {
+                        <a class="result-refresh" href="@SiteRoutes.PaymentSuccessFor(SessionId ?? string.Empty)">@Text["Success.Refresh"]</a>
+                    }
+
+                    <a class="result-contact" href="mailto:@Site.Value.ContactEmail?subject=@Uri.EscapeDataString(Text["Success.ContactSubject", order.Id.ToString("N")[..8].ToUpperInvariant()].Value)">
+                        @Text["Review.Contact"]
+                    </a>
+                </div>
+            }
+            else
+            {
+                <div class="result-actions">
+                    <a class="result-contact" href="mailto:@Site.Value.ContactEmail">@Text["Review.Contact"]</a>
+                    <a class="result-refresh" href="@SiteRoutes.GameHosting">@Text["Zomboid.Crumb"]</a>
+                </div>
+            }
+        </div>
+
+        <div class="result-panel" data-reveal="right">
+            <div class="panel-head">
+                <span class="panel-lamp @(LampClass)" aria-hidden="true"></span>
+                <span class="panel-id hts-mono">@(_order?.PlanId ?? "order")</span>
+                <span class="panel-state hts-label">@StateWord</span>
+            </div>
+
+            <ProvisioningTimeline Steps="Steps"
+                                  CurrentIndex="StageIndex"
+                                  IsFailed="_order?.Status is OrderStatus.Failed"
+                                  IsTerminal="_order?.IsTerminal ?? true"
+                                  StatusUrl="@(_order is null ? null : $"{SiteRoutes.OrderStatus}?session_id={Uri.EscapeDataString(SessionId ?? string.Empty)}")" />
+        </div>
+    </div>
+</section>
+
+@code {
+    private Order? _order;
+
+    /// <summary>The Checkout session Stripe substituted into the return URL.</summary>
+    [SupplyParameterFromQuery(Name = "session_id")]
+    public string? SessionId { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        _order = string.IsNullOrWhiteSpace(SessionId) || SessionId.Length > 128
+            ? null
+            : await Orders.FindByCheckoutSessionAsync(SessionId.Trim());
+    }
+
+    private IReadOnlyList<string> Steps =>
+    [
+        Text["Success.Stage.Payment"],
+        Text["Success.Stage.Preparing"],
+        Text["Success.Stage.Node"],
+        Text["Success.Stage.Resources"],
+        Text["Success.Stage.Install"],
+        Text["Success.Stage.Online"]
+    ];
+
+    private int StageIndex => _order is { } order ? OrderStatusResponse.StageIndexFor(order) : -1;
+
+    private string StageCode => (Math.Max(StageIndex, 0) + 1).ToString("00");
+
+    private string Title => _order?.Status switch
+    {
+        null => Text["Success.TitleUnknown"],
+        OrderStatus.Active => Text["Success.TitleActive"],
+        OrderStatus.Failed => Text["Success.TitleFailed"],
+        OrderStatus.Paid or OrderStatus.Provisioning => Text["Success.TitlePaid"],
+        _ => Text["Success.TitleWaiting"]
+    };
+
+    private string Lede => _order?.Status switch
+    {
+        null => Text["Success.LedeUnknown"],
+        OrderStatus.Active => Text["Success.LedeActive"],
+        OrderStatus.Failed => Text["Success.LedeFailed"],
+        OrderStatus.Paid or OrderStatus.Provisioning => Text["Success.LedePaid"],
+        _ => Text["Success.LedeWaiting"]
+    };
+
+    private string StateWord => _order?.Status switch
+    {
+        null => Text["Success.State.Unknown"],
+        OrderStatus.Active => Text["Success.State.Online"],
+        OrderStatus.Failed => Text["Success.State.Attention"],
+        OrderStatus.Paid or OrderStatus.Provisioning => Text["Success.State.Building"],
+        _ => Text["Success.State.Confirming"]
+    };
+
+    private string LampClass => _order?.Status switch
+    {
+        OrderStatus.Active => "is-live",
+        OrderStatus.Failed => "is-warn",
+        OrderStatus.Paid or OrderStatus.Provisioning => "is-live is-breathing",
+        _ => "is-idle"
+    };
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

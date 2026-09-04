@@ -316,64 +316,6 @@ public class HostingPlanMappingTests : IDisposable
             plan => Assert.Equal(0.99m, plan.PriceMonthly!.Value % 1m));
     }
 
-    // -- Renewal ----------------------------------------------------------
-
-    [Fact]
-    public void EveryMonthAfterTheFirstIsFivePercentLower()
-    {
-        var catalog = Build(rates: ShippedRates);
-        var plan = catalog.FindBySlug("zomboid-4gb")!;
-
-        // 7.99 less 5% is 7.5905, which rounds to 7.59.
-        Assert.Equal(7.59m, catalog.GetRenewalRate(plan.PriceMonthly!.Value));
-    }
-
-    [Fact]
-    public void TheRenewalRateIsAlwaysBelowTheFirstMonth()
-    {
-        var catalog = Build(rates: ShippedRates);
-
-        Assert.All(catalog.Plans, plan =>
-        {
-            var first = plan.PriceMonthly!.Value;
-            var renewal = catalog.GetRenewalRate(first);
-
-            Assert.NotNull(renewal);
-            Assert.True(renewal < first, $"{plan.Slug} renews at {renewal}, not below {first}");
-        });
-    }
-
-    /// <summary>
-    /// The renewal figure is not charm-rounded. The site states it as a percentage off the first
-    /// month, and a number nudged to x.99 afterwards would not be that percentage.
-    /// </summary>
-    [Fact]
-    public void TheRenewalRateIsNotCharmRounded()
-    {
-        var catalog = Build(rates: ShippedRates);
-        var plan = catalog.FindBySlug("zomboid-16gb")!;
-        var renewal = catalog.GetRenewalRate(plan.PriceMonthly!.Value)!.Value;
-
-        Assert.Equal(
-            Math.Round(plan.PriceMonthly.Value * 0.95m, 2, MidpointRounding.AwayFromZero),
-            renewal);
-    }
-
-    [Theory]
-    [InlineData(0)]
-    [InlineData(100)]
-    [InlineData(-5)]
-    public void AnImpossibleRenewalDiscountSwitchesTheLineOff(decimal percent)
-    {
-        var pricing = new HostingPlanPricingOptions
-        {
-            Rates = ShippedRates,
-            RenewalDiscountPercent = percent
-        };
-
-        Assert.Null(pricing.GetRenewalRate(20m));
-    }
-
     /// <summary>
     /// Storage is prorated, not billed in whole blocks. Rounding 25 GB up to two blocks would
     /// charge the 6 GB tier the same for storage as the 16 GB tier.
@@ -402,8 +344,8 @@ public class HostingPlanMappingTests : IDisposable
         {
             Assert.False(plan.IsPriced);
             Assert.Null(plan.PriceMonthly);
-            Assert.Null(_sut.GetMonthlyRate(plan, BillingPeriod.Monthly, CouponResult.None));
-            Assert.Null(_sut.GetCycleTotal(plan, BillingPeriod.Annual, CouponResult.None));
+            Assert.Null(_sut.Quote(plan, BillingPeriod.Monthly));
+            Assert.Null(_sut.Quote(plan, BillingPeriod.Annual));
         });
     }
 
@@ -558,9 +500,13 @@ public class HostingPlanMappingTests : IDisposable
 
         var plan = catalog.FindBySlug("zomboid-4gb")!;
 
-        // Annual carries 20% off; the cycle total is twelve of those.
-        Assert.Equal(8.00m, catalog.GetMonthlyRate(plan, BillingPeriod.Annual, CouponResult.None));
-        Assert.Equal(96.00m, catalog.GetCycleTotal(plan, BillingPeriod.Annual, CouponResult.None));
+        // Annual takes 15% off twelve months: 10.00 x 12 x 0.85.
+        var annual = catalog.Quote(plan, BillingPeriod.Annual);
+
+        Assert.NotNull(annual);
+        Assert.Equal(120.00m, annual.BaseAmount);
+        Assert.Equal(102.00m, annual.FinalAmount);
+        Assert.Equal(8.50m, annual.EffectiveMonthly);
     }
 
     [Fact]

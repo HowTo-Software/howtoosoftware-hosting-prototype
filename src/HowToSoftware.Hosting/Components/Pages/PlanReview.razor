@@ -1,0 +1,209 @@
+@*
+    The review step: everything the customer is about to buy, on one screen, before Stripe.
+
+    Static SSR with a plain POST form. No enhancement on the form, on purpose: the response to a
+    successful submit is a redirect to Stripe's own origin, and a full-page form post follows
+    that redirect with no help. The form carries the plan and the period and nothing else - the
+    server prices the order again when it creates the Checkout session, and again when Stripe
+    reports it paid.
+*@
+
+@page "/game-hosting/{GameSlug}/review"
+@using System.Globalization
+@inject IPlanCatalogService Catalog
+@inject IOrderPricingService Pricing
+@inject IStripeCheckoutService Checkout
+@inject NavigationManager Navigation
+@inject IOptions<SiteOptions> Site
+@inject IStringLocalizer<CheckoutText> Text
+
+<PageTitle>@Text["Review.MetaTitle"] | @Site.Value.Name</PageTitle>
+
+<HeadContent>
+    <meta name="robots" content="noindex" />
+</HeadContent>
+
+@if (_priced is not { } priced)
+{
+    <section class="review review--empty" aria-labelledby="review-heading">
+        <div class="hts-container hts-container--narrow">
+            <p class="review-crumbs hts-label">@Text["Review.Kicker"]</p>
+            <h1 id="review-heading" class="review-title">@Text["Review.NotFound.Title"]</h1>
+            <p class="review-lede">@Text["Review.NotFound.Body"]</p>
+            <CtaButton Href="@SiteRoutes.ProjectZomboidPlans" Variant="CtaVariant.Primary" TrailingIcon="IconName.ArrowRight">
+                @Text["Review.BackToPlans"]
+            </CtaButton>
+        </div>
+    </section>
+}
+else
+{
+    var option = Catalog.GetOption(priced.Quote.Period);
+
+    <section class="review" aria-labelledby="review-heading">
+        <div class="hts-container hts-container--wide review-inner">
+            <div class="review-copy" data-reveal>
+                <nav class="review-crumbs" aria-label="@Text["Zomboid.CrumbLabel"]">
+                    <a href="@SiteRoutes.GameHosting">@Text["Zomboid.Crumb"]</a>
+                    <span class="crumb-sep" aria-hidden="true">/</span>
+                    <a href="@(priced.Game.PageHref ?? SiteRoutes.GameHosting)">@priced.Game.Name</a>
+                    <span class="crumb-sep" aria-hidden="true">/</span>
+                    <span class="crumb-here">@Text["Review.Kicker"]</span>
+                </nav>
+
+                <h1 id="review-heading" class="review-title" data-text-effect="rise">@Text["Review.Title"]</h1>
+                <p class="review-lede">@Text["Review.Lede"]</p>
+
+                <div class="review-periods">
+                    <p class="hts-label periods-label">@Text["Review.ChangePeriod"]</p>
+                    <ul class="period-links">
+                        @foreach (var other in Catalog.BillingOptions)
+                        {
+                            var isCurrent = other.Period == priced.Quote.Period;
+
+                            <li>
+                                <a class="period-link @(isCurrent ? "is-current" : null)"
+                                   href="@SiteRoutes.Review(priced.Game.Slug, priced.Plan.Slug, other.Period)"
+                                   aria-current="@(isCurrent ? "true" : null)">
+                                    <span>@other.Label</span>
+                                    @if (other.DiscountPercent > 0)
+                                    {
+                                        <span class="period-save hts-mono">-@other.DiscountPercent%</span>
+                                    }
+                                </a>
+                            </li>
+                        }
+                    </ul>
+                    <a class="review-change" href="@(priced.Game.PageHref is { } page ? page + "#plans" : SiteRoutes.GameHosting)">@Text["Review.ChangePlan"]</a>
+                </div>
+
+                <form method="post" class="review-form" @formname="checkout" @onsubmit="StartCheckoutAsync">
+                    <AntiforgeryToken />
+                    <input type="hidden" name="PlanSlug" value="@priced.Plan.Slug" />
+                    <input type="hidden" name="Period" value="@BillingPolicy.Slug(priced.Quote.Period)" />
+
+                    @if (Checkout.IsConfigured)
+                    {
+                        <CtaButton ButtonType="submit"
+                                   Variant="CtaVariant.Primary"
+                                   Size="CtaSize.Large"
+                                   TrailingIcon="IconName.ArrowRight"
+                                   IsBusy="_submitting"
+                                   CssClass="review-cta">
+                            @Text["Review.Continue"]
+                        </CtaButton>
+                        <p class="review-note">@Text["Review.StripeNote"]</p>
+                    }
+                    else
+                    {
+                        @* No secret key on this host. The button is present and says why it is off,
+                           rather than a form that posts into an error. *@
+                        <CtaButton Disabled="true"
+                                   Variant="CtaVariant.Primary"
+                                   Size="CtaSize.Large"
+                                   CssClass="review-cta">
+                            @Text["Review.Continue"]
+                        </CtaButton>
+                        <p class="review-note is-warn">@Text["Review.NotConfigured"]</p>
+                        <a class="review-contact" href="mailto:@Site.Value.ContactEmail?subject=@Uri.EscapeDataString(Text["Review.ContactSubject", priced.Plan.Name].Value)">
+                            @Text["Review.Contact"]
+                        </a>
+                    }
+
+                    @if (_error is { } error)
+                    {
+                        <p class="review-error" role="alert">@error</p>
+                    }
+                </form>
+            </div>
+
+            <div class="review-panel" data-reveal="right">
+                <OrderSummary Game="priced.Game"
+                              Plan="priced.Plan"
+                              Quote="priced.Quote"
+                              PeriodLabel="@option.Label"
+                              CurrencySymbol="@Catalog.CurrencySymbol" />
+            </div>
+        </div>
+    </section>
+}
+
+@code {
+    private PricedPlan? _priced;
+    private string? _error;
+    private bool _submitting;
+
+    /// <summary>The game, from the route.</summary>
+    [Parameter]
+    public string GameSlug { get; set; } = string.Empty;
+
+    /// <summary>The plan, from the link on the picker.</summary>
+    [SupplyParameterFromQuery(Name = "plan")]
+    public string? PlanQuery { get; set; }
+
+    /// <summary>The period, from the link on the picker.</summary>
+    [SupplyParameterFromQuery(Name = "period")]
+    public string? PeriodQuery { get; set; }
+
+    /// <summary>The plan, as posted by the form.</summary>
+    [SupplyParameterFromForm(FormName = "checkout", Name = "PlanSlug")]
+    public string? PlanForm { get; set; }
+
+    /// <summary>The period, as posted by the form.</summary>
+    [SupplyParameterFromForm(FormName = "checkout", Name = "Period")]
+    public string? PeriodForm { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        var planSlug = PlanForm ?? PlanQuery;
+        var periodSlug = PeriodForm ?? PeriodQuery;
+
+        // A missing or mangled period is read as monthly - the list price - rather than as an
+        // error. It is the one value here a customer could plausibly hand-edit in the address
+        // bar, and monthly is the answer that costs them nothing they did not expect.
+        var period = BillingPolicy.TryParse(periodSlug, out var parsed) ? parsed : BillingPeriod.Monthly;
+
+        _priced = Pricing.Price(GameSlug, planSlug, period);
+    }
+
+    private async Task StartCheckoutAsync()
+    {
+        if (_priced is not { } priced)
+        {
+            return;
+        }
+
+        _submitting = true;
+
+        var request = new CheckoutRequest(
+            priced.Game.Slug,
+            priced.Plan.Slug,
+            priced.Quote.Period,
+            ReturnOrigin: Navigation.BaseUri.TrimEnd('/'),
+            UserId: null,
+            Locale: CultureInfo.CurrentUICulture.Name);
+
+        var result = await Checkout.CreateCheckoutSessionAsync(request);
+
+        if (result.IsRedirect)
+        {
+            // Off to Stripe's hosted page. Static SSR turns this into an HTTP redirect on the
+            // response to the form post.
+            Navigation.NavigateTo(result.RedirectUrl!);
+            return;
+        }
+
+        _submitting = false;
+        _error = result.Outcome switch
+        {
+            CheckoutOutcome.NotConfigured => Text["Review.NotConfigured"],
+            CheckoutOutcome.Rejected => Text["Review.Rejected"],
+            _ => Text["Review.Failed"]
+        };
+    }
+}
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@
