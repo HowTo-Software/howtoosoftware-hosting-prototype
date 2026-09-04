@@ -90,9 +90,11 @@ public static class SecurityServiceExtensions
         options.Cookie.IsEssential = true;
         options.Cookie.Path = "/";
         options.Cookie.SameSite = SameSiteMode.Strict;
-        options.Cookie.SecurePolicy = environment.IsDevelopment()
-            ? CookieSecurePolicy.SameAsRequest
-            : CookieSecurePolicy.Always;
+        // SameAsRequest is transport-aware: HTTPS (including a trusted forwarded HTTPS request)
+        // still receives a Secure cookie, while direct HTTP development/LAN rendering does not
+        // throw before the page can load. Production HTTP is redirected before tokens are issued
+        // whenever an HTTPS endpoint is configured.
+        options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
         options.Cookie.Name = environment.IsDevelopment()
             ? "HTS.Antiforgery.v2"
             : "__Host-HTS-Antiforgery.v1";
@@ -169,7 +171,7 @@ public sealed class SecurityHeadersMiddleware
         // avoids adding hundreds of header bytes to every immutable static asset.
         if (context.Response.ContentType?.StartsWith("text/html", StringComparison.OrdinalIgnoreCase) is true)
         {
-            headers["Content-Security-Policy"] = BuildContentSecurityPolicy(nonce);
+            headers["Content-Security-Policy"] = BuildContentSecurityPolicy(context, nonce);
         }
 
         if (IsPaymentPath(context.Request.Path))
@@ -184,20 +186,33 @@ public sealed class SecurityHeadersMiddleware
     public static string? GetNonce(HttpContext? context) =>
         context?.Items.TryGetValue(NonceKey, out var value) is true ? value as string : null;
 
-    private string BuildContentSecurityPolicy(string nonce)
+    private string BuildContentSecurityPolicy(HttpContext context, string nonce)
     {
         var connectSource = "'self'";
 
-        if (_environment.IsDevelopment())
+        // Firefox does not consistently treat an HTTP(S) 'self' source as authorising the
+        // equivalent WebSocket scheme. Add only this request's exact authority so Blazor Server
+        // can connect on localhost, a LAN IP, or the public host without a wildcard policy.
+        if (context.Request.Host.HasValue)
         {
-            connectSource += " ws://localhost:* wss://localhost:* ws://127.0.0.1:* wss://127.0.0.1:*";
-        }
-        else if (Uri.TryCreate(_site.BaseUrl, UriKind.Absolute, out var siteUri))
-        {
-            connectSource += $" wss://{siteUri.IdnHost}";
+            var webSocketScheme = context.Request.IsHttps ? "wss" : "ws";
+            connectSource += $" {webSocketScheme}://{context.Request.Host.ToUriComponent()}";
         }
 
-        var upgrade = _environment.IsDevelopment() ? string.Empty : " upgrade-insecure-requests;";
+        if (!_environment.IsDevelopment()
+            && Uri.TryCreate(_site.BaseUrl, UriKind.Absolute, out var siteUri))
+        {
+            var publicWebSocketOrigin = $"wss://{siteUri.Authority}";
+            if (!connectSource.Contains(publicWebSocketOrigin, StringComparison.OrdinalIgnoreCase))
+            {
+                connectSource += $" {publicWebSocketOrigin}";
+            }
+        }
+
+        // The directive rewrites every HTTP subresource URL to HTTPS in the browser. It is safe
+        // only when the document itself arrived over HTTPS. Request.IsHttps already reflects a
+        // trusted X-Forwarded-Proto because UseForwardedHeaders runs before this middleware.
+        var upgrade = context.Request.IsHttps ? " upgrade-insecure-requests;" : string.Empty;
 
         return "default-src 'self'; "
             + "base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; "
