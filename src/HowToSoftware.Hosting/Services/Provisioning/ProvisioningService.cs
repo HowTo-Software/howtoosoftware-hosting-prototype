@@ -233,23 +233,32 @@ public sealed class ProvisioningService : IProvisioningService
                 ? Describe(ProvisioningOutcome.AlreadyProvisioned, request, plan, raced, raced.User,
                     userWasReused: true,
                     "A concurrent request had already provisioned this server; it was returned unchanged.")
-                : Fail(request, exception.Failure, exception.Message);
+                : Fail(request, exception.Failure, PublicFailureMessage(exception.Failure));
         }
         catch (PterodactylApiException exception)
         {
             _logger.LogError(
-                "Provisioning failed for request {RequestId} with {Failure}: {Detail}",
+                "Provisioning failed for request {RequestId} with {Failure}.",
                 request.RequestId,
-                exception.Failure,
-                exception.DescribeErrors());
+                exception.Failure);
 
-            return Fail(request, exception.Failure, exception.Message);
+            return Fail(request, exception.Failure, PublicFailureMessage(exception.Failure));
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
             throw;
         }
     }
+
+    private static string PublicFailureMessage(PterodactylFailure failure) => failure switch
+    {
+        PterodactylFailure.NotConfigured => "Server provisioning is not configured.",
+        PterodactylFailure.NoCapacity => "No server capacity is currently available.",
+        PterodactylFailure.RateLimited => "The server panel is temporarily rate-limiting requests.",
+        PterodactylFailure.Timeout or PterodactylFailure.Unreachable =>
+            "The server panel is temporarily unavailable.",
+        _ => "The server panel could not complete the provisioning request."
+    };
 
     /// <inheritdoc />
     public async Task<ProvisioningResult> DeleteTestServerAsync(

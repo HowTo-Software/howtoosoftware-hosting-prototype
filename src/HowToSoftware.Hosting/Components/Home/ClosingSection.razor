@@ -8,7 +8,7 @@
 @inject IOptions<SiteOptions> Site
 @inject IStringLocalizer<HomeText> Text
 
-<section class="closing" id="get-started" aria-labelledby="closing-heading">
+<section class="closing" id="get-started" aria-labelledby="closing-heading" data-motion="scene" data-scene>
     <div class="closing-field" aria-hidden="true">
         <span class="closing-spine"></span>
         <span class="closing-glow"></span>
@@ -16,17 +16,17 @@
 
     <div class="hts-container hts-container--wide closing-inner">
         <div class="closing-copy" data-reveal="left">
-            <p class="closing-kicker" data-text-effect="flicker">
+            <p class="closing-kicker" data-text-effect="flicker" data-motion-step="label">
                 <span class="kicker-dot"></span>
                 @Text["Closing.Kicker"]
             </p>
 
-            <h2 id="closing-heading" class="closing-title" data-text-effect="rise">
+            <h2 id="closing-heading" class="closing-title" data-text-effect="rise" data-motion-step="headline">
                 @Text["Closing.Line1"]<br />
                 <span class="closing-accent">@Text["Closing.Accent"]</span>
             </h2>
 
-            <p class="closing-lede">@Text["Closing.Lede"]</p>
+            <p class="closing-lede" data-motion-step="copy">@Text["Closing.Lede"]</p>
 
             <div class="closing-actions">
                 <CtaButton Href="/project-zomboid" Size="CtaSize.Large" TrailingIcon="IconName.ArrowRight">
@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <aside class="closing-contact" id="contact" aria-labelledby="contact-heading" data-reveal="right">
+        <aside class="closing-contact" id="contact" aria-labelledby="contact-heading" data-reveal="right" data-motion-step="visual">
             <p class="contact-key">@Text["Closing.ContactKey"]</p>
             <h3 id="contact-heading" class="contact-title">@Text["Closing.ContactTitle"]</h3>
             <p class="contact-copy">@Text["Closing.ContactCopy"]</p>

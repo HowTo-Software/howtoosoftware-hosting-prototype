@@ -382,11 +382,13 @@ public sealed class PterodactylClient : IPterodactylClient
             ? $"{summary} {string.Join(" · ", errors.Select(Describe))}"
             : summary;
 
+        // Panel details can echo submitted fields (including customer data). Keep them in the
+        // typed exception for the Development-only lab, but never send them to shared logs.
         _logger.LogWarning(
-            "Pterodactyl call failed with {Failure} (HTTP {Status}): {Detail}",
+            "Pterodactyl call failed with {Failure} (HTTP {Status}, {ErrorCount} panel errors).",
             failure,
             status,
-            detail);
+            errors.Count);
 
         return new PterodactylApiException(failure, detail, status, errors);
     }

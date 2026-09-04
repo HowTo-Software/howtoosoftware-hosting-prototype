@@ -276,9 +276,6 @@
   <data name="Picker.Unpriced" xml:space="preserve">
     <value>Price not published</value>
   </data>
-  <data name="Picker.CpuNote" xml:space="preserve">
-    <value>CPU is an allocation on a shared pool: 100% is the equivalent of one logical thread, and 300% lets a server burst across three. Nothing here is a dedicated core.</value>
-  </data>
   <data name="Review.MetaTitle" xml:space="preserve">
     <value>Review your server</value>
   </data>

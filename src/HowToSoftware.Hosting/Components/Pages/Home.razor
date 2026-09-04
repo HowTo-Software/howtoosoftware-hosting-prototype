@@ -1,5 +1,6 @@
 @page "/"
 @inject IOptions<SiteOptions> Site
+@inject IHttpContextAccessor HttpContextAccessor
 
 <PageTitle>Project Zomboid Server Hosting | @Site.Value.Name</PageTitle>
 
@@ -16,7 +17,7 @@
     <meta name="twitter:title" content="Project Zomboid Server Infrastructure" />
     <meta name="twitter:description" content="Persistent worlds, Workshop mod sync and automated provisioning for Project Zomboid communities." />
 
-    <script type="application/ld+json">
+    <script type="application/ld+json" nonce="@CspNonce">
         {
             "@@context": "https://schema.org",
             "@@type": "Service",
@@ -47,6 +48,10 @@
 <PlansTeaser />
 <FaqSection />
 <ClosingSection />
+
+@code {
+    private string? CspNonce => SecurityHeadersMiddleware.GetNonce(HttpContextAccessor.HttpContext);
+}
 
 @*
     © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.

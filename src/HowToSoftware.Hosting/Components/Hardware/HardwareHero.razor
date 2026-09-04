@@ -12,28 +12,28 @@
 @inject IStringLocalizer<HardwareText> Text
 @inject IInfrastructureContentService Content
 
-<section class="hw-hero" id="top">
+<section class="hw-hero" id="top" data-motion="scene" data-scene>
 
     <div class="hts-container hts-container--wide hw-hero-inner">
         <div class="hw-hero-type">
-            <p class="hw-kicker" data-text-effect="flicker">
-                <span class="kicker-rule" aria-hidden="true"></span>
+            <p class="hw-kicker" data-text-effect="flicker" data-motion-step="label">
+                <span class="kicker-rule" data-motion-draw aria-hidden="true"></span>
                 @Text["Hero.Eyebrow"]
             </p>
 
-            <h1 class="hw-title" data-text-effect="rise">
+            <h1 class="hw-title" data-text-effect="rise" data-motion-step="headline">
                 <span class="title-line">@Text["Hero.Line1"]</span>
                 <span class="title-line title-line--accent">@Text["Hero.Line2"]</span>
                 <span class="title-line">@Text["Hero.Line3"]</span>
             </h1>
 
-            <p class="hw-lede">
+            <p class="hw-lede" data-motion-step="copy">
                 @Text["Hero.Lede"]
             </p>
         </div>
 
         @* The establishing shot. Above the fold, so it is fetched eagerly rather than lazily. *@
-        <div class="hw-hero-plate">
+        <div class="hw-hero-plate" data-motion-step="visual">
             <HardwarePhoto Slot="HardwarePhotoSlot.RackFront"
                            Alt="@Text["Photo.Alt.Rack"]"
                            Caption="@Text["Photo.Caption.Rack"]"
@@ -41,7 +41,7 @@
         </div>
     </div>
 
-    <div class="hts-container hts-container--wide hw-hero-foot">
+    <div class="hts-container hts-container--wide hw-hero-foot" data-scene-exit>
         <span class="foot-item">
             <span class="foot-label">@Text["Hero.Rail.Platform"]</span>
             <span class="foot-value">@SiteName</span>

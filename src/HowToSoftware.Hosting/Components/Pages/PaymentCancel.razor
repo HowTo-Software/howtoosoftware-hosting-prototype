@@ -7,7 +7,6 @@
 *@
 
 @page "/payment/cancel"
-@inject IOrderStore Orders
 @inject IPlanCatalogService Catalog
 @inject IOrderPricingService Pricing
 @inject IOptions<SiteOptions> Site
@@ -92,29 +91,24 @@
 @code {
     private PricedPlan? _priced;
 
-    /// <summary>The order id the cancel URL was built with.</summary>
-    [SupplyParameterFromQuery(Name = "order")]
-    public string? OrderQuery { get; set; }
+    [SupplyParameterFromQuery(Name = "game")]
+    public string? GameQuery { get; set; }
 
-    protected override async Task OnParametersSetAsync()
+    [SupplyParameterFromQuery(Name = "plan")]
+    public string? PlanQuery { get; set; }
+
+    [SupplyParameterFromQuery(Name = "period")]
+    public string? PeriodQuery { get; set; }
+
+    protected override void OnParametersSet()
     {
-        _priced = null;
+        var period = BillingPolicy.TryParse(PeriodQuery, out var parsed)
+            ? parsed
+            : BillingPeriod.Monthly;
 
-        if (!Guid.TryParse(OrderQuery, out var orderId))
-        {
-            return;
-        }
-
-        var order = await Orders.FindAsync(orderId);
-
-        if (order is null)
-        {
-            return;
-        }
-
-        // Priced again from the catalogue rather than from the order's snapshot, so the page
-        // offers today's price for a retry - the retry creates a new order anyway.
-        _priced = Pricing.Price(order.GameId, order.PlanId, order.BillingPeriod);
+        // These values select public catalogue entries only. The server recalculates the quote;
+        // no amount or internal order identifier arrives from the browser.
+        _priced = Pricing.Price(GameQuery, PlanQuery, period);
     }
 }
 

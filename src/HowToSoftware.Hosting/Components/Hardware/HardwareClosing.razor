@@ -8,20 +8,20 @@
 
 @inject IStringLocalizer<HardwareText> Text
 
-<section class="hw-closing" id="get-started">
+<section class="hw-closing" id="get-started" data-motion="scene" data-scene>
     <div class="closing-glow" aria-hidden="true"></div>
 
     <div class="hts-container hts-container--wide closing-inner" data-reveal="rise">
-        <p class="closing-kicker" data-text-effect="flicker">
-            <span class="kicker-rule" aria-hidden="true"></span>
+        <p class="closing-kicker" data-text-effect="flicker" data-motion-step="label">
+            <span class="kicker-rule" data-motion-draw aria-hidden="true"></span>
             @Text["Hero.Eyebrow"]
         </p>
 
-        <p class="closing-heading">
+        <p class="closing-heading" data-motion-step="headline">
             @Text["Closing.Lede"]
         </p>
 
-        <div class="closing-actions">
+        <div class="closing-actions" data-motion-step="details">
             <CtaButton Href="/project-zomboid" Size="CtaSize.Large" TrailingIcon="IconName.ArrowRight">
                 @Text["Closing.Cta"]
             </CtaButton>

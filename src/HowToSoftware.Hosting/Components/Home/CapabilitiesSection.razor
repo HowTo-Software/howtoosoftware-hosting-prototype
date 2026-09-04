@@ -8,14 +8,14 @@
 @inject IMarketingContentService Content
 @inject IStringLocalizer<HomeText> Text
 
-<section class="caps" id="capabilities" aria-labelledby="caps-heading">
+<section class="caps" id="capabilities" aria-labelledby="caps-heading" data-motion="section">
     <div class="hts-container hts-container--wide">
         <h2 id="caps-heading" class="visually-hidden">@Text["Caps.Heading"]</h2>
 
-        <ul class="cap-list">
+        <ul class="cap-list" data-motion-stagger>
             @foreach (var (item, index) in Content.Capabilities.Select((c, i) => (c, i)))
             {
-                <li class="cap @(index % 2 == 1 ? "is-flipped" : null)" data-reveal>
+                <li class="cap @(index % 2 == 1 ? "is-flipped" : null)" data-reveal data-motion-step="card">
                     <div class="cap-index" aria-hidden="true">
                         <span class="cap-number">@item.Index</span>
                         <span class="cap-rule"></span>

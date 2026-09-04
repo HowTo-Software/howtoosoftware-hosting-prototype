@@ -14,23 +14,24 @@
 @inject IStringLocalizer<CommonText> Common
 @inject IStringLocalizer<HomeText> Text
 
-<section class="nodes" id="nodes" aria-labelledby="nodes-heading">
+<section class="nodes" id="nodes" aria-labelledby="nodes-heading" data-motion="section">
     <div class="hts-container hts-container--wide">
         <header class="nodes-head" data-reveal="rise">
-            <p class="nodes-kicker" data-text-effect="flicker">
+            <p class="nodes-kicker" data-text-effect="flicker" data-motion-step="label">
                 <span class="kicker-index">05</span>
                 @Text["Nodes.Kicker"]
             </p>
-            <h2 id="nodes-heading" class="nodes-title" data-text-effect="rise">
+            <h2 id="nodes-heading" class="nodes-title" data-text-effect="rise" data-motion-step="headline">
                 @Text["Nodes.Line1"] <span class="nodes-accent">@Text["Nodes.Accent"]</span>
             </h2>
-            <p class="nodes-lede">@Text["Nodes.Lede"]</p>
+            <p class="nodes-lede" data-motion-step="copy">@Text["Nodes.Lede"]</p>
         </header>
 
         @*
             Wide crop of a portrait photograph, anchored at 40% so the crop takes the mounted
             machines rather than the ceiling or the floor.
         *@
+        <div data-motion-step="visual">
         <RackPlate Slot="HardwarePhotoSlot.RackOpen"
                    Ratio="21 / 9"
                    Position="center 40%"
@@ -52,6 +53,7 @@
                 </div>
             </Overlay>
         </RackPlate>
+        </div>
 
         <div class="bus" aria-hidden="true">
             <span class="bus-line"></span>
@@ -59,10 +61,10 @@
             <span class="bus-line"></span>
         </div>
 
-        <ul class="node-grid">
+        <ul class="node-grid" data-motion-stagger>
             @foreach (var (node, index) in Content.Nodes.Select((n, i) => (n, i)))
             {
-                <li class="node-panel @HealthClass(node.Health)" data-reveal data-spotlight
+                <li class="node-panel @HealthClass(node.Health)" data-reveal data-spotlight data-motion-step="card"
                     style="--hts-reveal-delay: @(index * 90)ms">
                     <span class="node-drop" aria-hidden="true"></span>
 
@@ -93,7 +95,7 @@
                         <div class="node-load">
                             <div class="load-head">
                                 <span>@Text["Nodes.Allocation"]</span>
-                                <span class="load-value">@load%</span>
+                                <span class="load-value" data-count="@load" data-count-suffix="%">@load%</span>
                             </div>
                             <div class="load-track">
                                 <span class="load-fill" style="--target: @(load)%"></span>

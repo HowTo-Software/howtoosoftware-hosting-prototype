@@ -233,6 +233,7 @@ public class PterodactylOptionsValidatorTests
 
     [Theory]
     [InlineData("panel.example.com")]
+    [InlineData("http://panel.example.com")]
     [InlineData("ftp://panel.example.com")]
     [InlineData("not a url")]
     public void ABaseUrlThatIsNotAnHttpUrlIsRejected(string baseUrl)
@@ -366,6 +367,17 @@ public class ProvisioningLabGuardTests
 
         Assert.True(guard.IsAvailable);
         guard.EnsureAvailable();
+    }
+
+    [Theory]
+    [InlineData("Production")]
+    [InlineData("Staging")]
+    public void TheFlagCannotOpenTheLabOutsideDevelopment(string environmentName)
+    {
+        var guard = Build(environmentName, enabled: true);
+
+        Assert.False(guard.IsAvailable);
+        Assert.Throws<InvalidOperationException>(guard.EnsureAvailable);
     }
 
     [Fact]

@@ -40,10 +40,10 @@ else
 {
     var option = Catalog.GetOption(priced.Quote.Period);
 
-    <section class="review" aria-labelledby="review-heading">
+    <section class="review" aria-labelledby="review-heading" data-motion="scene" data-scene>
         <div class="hts-container hts-container--wide review-inner">
             <div class="review-copy" data-reveal>
-                <nav class="review-crumbs" aria-label="@Text["Zomboid.CrumbLabel"]">
+                <nav class="review-crumbs" data-motion-step="label" aria-label="@Text["Zomboid.CrumbLabel"]">
                     <a href="@SiteRoutes.GameHosting">@Text["Zomboid.Crumb"]</a>
                     <span class="crumb-sep" aria-hidden="true">/</span>
                     <a href="@(priced.Game.PageHref ?? SiteRoutes.GameHosting)">@priced.Game.Name</a>
@@ -51,10 +51,10 @@ else
                     <span class="crumb-here">@Text["Review.Kicker"]</span>
                 </nav>
 
-                <h1 id="review-heading" class="review-title" data-text-effect="rise">@Text["Review.Title"]</h1>
-                <p class="review-lede">@Text["Review.Lede"]</p>
+                <h1 id="review-heading" class="review-title" data-text-effect="rise" data-motion-step="headline">@Text["Review.Title"]</h1>
+                <p class="review-lede" data-motion-step="copy">@Text["Review.Lede"]</p>
 
-                <div class="review-periods">
+                <div class="review-periods" data-motion-step="details">
                     <p class="hts-label periods-label">@Text["Review.ChangePeriod"]</p>
                     <ul class="period-links">
                         @foreach (var other in Catalog.BillingOptions)
@@ -117,7 +117,7 @@ else
                 </form>
             </div>
 
-            <div class="review-panel" data-reveal="right">
+            <div class="review-panel" data-reveal="right" data-motion-step="visual">
                 <OrderSummary Game="priced.Game"
                               Plan="priced.Plan"
                               Quote="priced.Quote"
@@ -179,7 +179,8 @@ else
             priced.Game.Slug,
             priced.Plan.Slug,
             priced.Quote.Period,
-            ReturnOrigin: Navigation.BaseUri.TrimEnd('/'),
+            // The browser-controlled Host header is never used to build a Stripe redirect.
+            ReturnOrigin: Site.Value.BaseUrl.TrimEnd('/'),
             UserId: null,
             Locale: CultureInfo.CurrentUICulture.Name);
 

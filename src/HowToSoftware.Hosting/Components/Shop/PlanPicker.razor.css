@@ -286,6 +286,29 @@
     display: flex;
 }
 
+/* A billing switch is a new commercial state, not a number teleported into place. The incoming
+   price lifts through a short mask while the old block leaves with the normal display swap.
+   Amounts themselves never count upward: money must remain immediately legible. */
+.picker:has(#period-monthly:checked) .plan-price[data-period="monthly"],
+.picker:has(#period-quarterly:checked) .plan-price[data-period="quarterly"],
+.picker:has(#period-annual:checked) .plan-price[data-period="annual"] {
+    animation: price-period-enter 360ms var(--hts-ease-out) both;
+}
+
+@keyframes price-period-enter {
+    from {
+        opacity: 0;
+        clip-path: inset(0 0 34% 0);
+        transform: translate3d(0, 10px, 0);
+    }
+
+    to {
+        opacity: 1;
+        clip-path: inset(0 0 0 0);
+        transform: none;
+    }
+}
+
 /* A browser without :has() shows the monthly price and never switches. Nothing is hidden that
    matters; the review step re-states the period anyway. */
 @supports not selector(:has(a)) {
@@ -388,5 +411,13 @@
         padding: 0.55rem 0.4rem;
         text-align: center;
         font-size: var(--ht-text-sm);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .picker:has(#period-monthly:checked) .plan-price[data-period="monthly"],
+    .picker:has(#period-quarterly:checked) .plan-price[data-period="quarterly"],
+    .picker:has(#period-annual:checked) .plan-price[data-period="annual"] {
+        animation: none;
     }
 }

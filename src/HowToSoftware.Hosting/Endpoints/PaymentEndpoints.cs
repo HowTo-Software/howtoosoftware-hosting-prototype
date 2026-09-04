@@ -1,5 +1,6 @@
 using System.Text;
 using global::Stripe;
+using HowToSoftware.Hosting.Infrastructure.Security;
 using HowToSoftware.Hosting.Infrastructure.Stripe;
 using HowToSoftware.Hosting.Models;
 using HowToSoftware.Hosting.Models.Orders;
@@ -24,9 +25,11 @@ public static class PaymentEndpoints
         // itself with the signature header instead - which is checked before anything else.
         app.MapPost(SiteRoutes.StripeWebhook, ReceiveWebhookAsync)
             .DisableAntiforgery()
+            .RequireRateLimiting(SecurityRateLimitPolicies.StripeWebhook)
             .WithName("StripeWebhook");
 
         app.MapGet(SiteRoutes.OrderStatus, ReadStatusAsync)
+            .RequireRateLimiting(SecurityRateLimitPolicies.PaymentStatus)
             .WithName("OrderStatus");
 
         return app;
@@ -71,10 +74,10 @@ public static class PaymentEndpoints
         {
             stripeEvent = stripe.ConstructEvent(json, signature.ToString());
         }
-        catch (StripeException exception)
+        catch (StripeException)
         {
             // The body is never logged: a forged delivery is attacker-controlled text.
-            logger.LogWarning("Webhook signature rejected: {Reason}", exception.Message);
+            logger.LogWarning("Webhook signature rejected.");
             return Results.BadRequest();
         }
 
@@ -85,7 +88,11 @@ public static class PaymentEndpoints
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
             // A 5xx makes Stripe retry, which is what we want for a transient failure on our side.
-            logger.LogError(exception, "Handling Stripe event {EventId} ({Type}) failed.", stripeEvent.Id, stripeEvent.Type);
+            logger.LogError(
+                "Handling Stripe event {EventId} ({Type}) failed with {FailureType}.",
+                stripeEvent.Id,
+                stripeEvent.Type,
+                exception.GetType().Name);
             return Results.StatusCode(StatusCodes.Status500InternalServerError);
         }
 
@@ -112,29 +119,20 @@ public static class PaymentEndpoints
         // Only what the status page renders. No amounts, no email, no Stripe ids: the session
         // id in the URL is a capability to watch progress, not to read the order.
         return Results.Ok(new OrderStatusResponse(
-            order.Id,
             order.Status.ToString(),
-            order.ProvisioningStage.ToString(),
             OrderStatusResponse.StageIndexFor(order),
-            order.IsTerminal,
-            order.ServerIdentifier));
+            order.IsTerminal));
     }
 }
 
 /// <summary>What the success page polls.</summary>
-/// <param name="OrderId">The order.</param>
 /// <param name="Status">The <see cref="OrderStatus"/> name.</param>
-/// <param name="Stage">The <see cref="FulfilmentStage"/> name.</param>
 /// <param name="StageIndex">Which of the page's timeline steps is current.</param>
 /// <param name="IsTerminal">Whether polling can stop.</param>
-/// <param name="ServerIdentifier">The panel's short server id, once there is one.</param>
 public sealed record OrderStatusResponse(
-    Guid OrderId,
     string Status,
-    string Stage,
     int StageIndex,
-    bool IsTerminal,
-    string? ServerIdentifier)
+    bool IsTerminal)
 {
     /// <summary>
     /// Projects an order onto the six-step timeline the success page draws:

@@ -85,7 +85,9 @@ public sealed class SupabaseOptions
                     Database = Uri.UnescapeDataString(uri.AbsolutePath.TrimStart('/')),
                     Username = Uri.UnescapeDataString(credentials[0]),
                     Password = Uri.UnescapeDataString(credentials[1]),
-                    SslMode = SslMode.Require,
+                    // Encryption without certificate validation still permits a machine-in-the-
+                    // middle. Supabase uses publicly trusted certificates, so verify the host.
+                    SslMode = SslMode.VerifyFull,
                     Timeout = 15,
                     CommandTimeout = 30,
                     ApplicationName = "HowToSoftware.Hosting"
@@ -103,10 +105,7 @@ public sealed class SupabaseOptions
                 return false;
             }
 
-            if (parsed.SslMode is SslMode.Disable)
-            {
-                parsed.SslMode = SslMode.Require;
-            }
+            parsed.SslMode = SslMode.VerifyFull;
 
             parsed.ApplicationName = "HowToSoftware.Hosting";
             connectionString = parsed.ConnectionString;

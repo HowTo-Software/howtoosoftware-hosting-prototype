@@ -16,8 +16,8 @@ namespace HowToSoftware.Hosting.Services.Payments;
 /// <param name="PlanSlug">The plan.</param>
 /// <param name="Period">The billing period.</param>
 /// <param name="ReturnOrigin">
-/// Scheme and host of the site as the customer reached it (e.g. <c>https://howtoosoftware.com</c>),
-/// used to build the return URLs when none are configured.
+/// Server-configured public origin (e.g. <c>https://howtoosoftware.com</c>), used to build the
+/// return URLs when none are configured. It must never be copied from a request Host header.
 /// </param>
 /// <param name="UserId">The authenticated user, when there is one.</param>
 /// <param name="Locale">The customer's culture, so Checkout speaks the same language as the site.</param>
@@ -171,6 +171,14 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
             return new CheckoutStart(CheckoutOutcome.Rejected, null, null);
         }
 
+        if (!TryNormaliseReturnOrigin(request.ReturnOrigin, out var returnOrigin))
+        {
+            _logger.LogWarning("Checkout rejected because the configured public origin is not a secure origin.");
+            return new CheckoutStart(CheckoutOutcome.Rejected, null, null);
+        }
+
+        request = request with { ReturnOrigin = returnOrigin };
+
         var now = _clock.GetUtcNow();
         var existingStripeCustomerId = string.IsNullOrWhiteSpace(request.UserId)
             ? null
@@ -246,7 +254,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
         }
         catch (StripeException exception)
         {
-            _logger.LogWarning(exception, "Checkout session lookup failed (code {Code}).", exception.StripeError?.Code);
+            _logger.LogWarning("Checkout session lookup failed (code {Code}).", exception.StripeError?.Code);
             return null;
         }
     }
@@ -487,9 +495,11 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
             : options.SuccessUrl;
 
         var cancelUrl = (string.IsNullOrWhiteSpace(options.CancelUrl)
-            ? $"{request.ReturnOrigin.TrimEnd('/')}{SiteRoutes.PaymentCancel}?order={{ORDER_ID}}"
+            ? $"{request.ReturnOrigin.TrimEnd('/')}{SiteRoutes.PaymentCancel}?game={{GAME_SLUG}}&plan={{PLAN_SLUG}}&period={{BILLING_PERIOD}}"
             : options.CancelUrl)
-            .Replace("{ORDER_ID}", order.Id.ToString("D"), StringComparison.Ordinal);
+            .Replace("{GAME_SLUG}", Uri.EscapeDataString(order.GameId), StringComparison.Ordinal)
+            .Replace("{PLAN_SLUG}", Uri.EscapeDataString(order.PlanId), StringComparison.Ordinal)
+            .Replace("{BILLING_PERIOD}", Uri.EscapeDataString(periodSlug), StringComparison.Ordinal);
 
         return new SessionCreateOptions
         {
@@ -503,6 +513,22 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
             SubscriptionData = new SessionSubscriptionDataOptions { Metadata = metadata },
             Locale = ToStripeLocale(request.Locale)
         };
+    }
+
+    private static bool TryNormaliseReturnOrigin(string value, out string origin)
+    {
+        origin = string.Empty;
+
+        if (!Uri.TryCreate(value, UriKind.Absolute, out var uri)
+            || !string.IsNullOrEmpty(uri.UserInfo)
+            || (uri.Scheme != Uri.UriSchemeHttps
+                && !(uri.Scheme == Uri.UriSchemeHttp && uri.IsLoopback)))
+        {
+            return false;
+        }
+
+        origin = uri.GetLeftPart(UriPartial.Authority);
+        return true;
     }
 
     private static string DescribePlan(PricedPlan priced)

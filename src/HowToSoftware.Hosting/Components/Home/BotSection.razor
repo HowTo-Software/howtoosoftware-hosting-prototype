@@ -16,21 +16,21 @@
 
 @inject IStringLocalizer<HomeText> Text
 
-<section class="bot" id="server-bot" aria-labelledby="bot-heading">
+<section class="bot" id="server-bot" aria-labelledby="bot-heading" data-motion="section">
     <div class="hts-container hts-container--wide bot-inner">
         <header class="bot-copy" data-reveal="left">
-            <p class="bot-kicker" data-text-effect="flicker">
+            <p class="bot-kicker" data-text-effect="flicker" data-motion-step="label">
                 <span class="kicker-index">@Text["Bot.Index"]</span>
                 @Text["Bot.Kicker"]
             </p>
 
-            <h2 id="bot-heading" class="bot-title" data-text-effect="rise">
+            <h2 id="bot-heading" class="bot-title" data-text-effect="rise" data-motion-step="headline">
                 @Text["Bot.Title"]
             </h2>
 
-            <p class="bot-lede">@Text["Bot.Lede"]</p>
+            <p class="bot-lede" data-motion-step="copy">@Text["Bot.Lede"]</p>
 
-            <p class="bot-threshold">
+            <p class="bot-threshold" data-motion-step="details">
                 <span class="threshold-mark" aria-hidden="true"></span>
                 @Text["Bot.Threshold", ServerBot.MinimumMemoryGb]
             </p>
@@ -38,7 +38,7 @@
             <p class="bot-caveat">@Text["Bot.Caveat"]</p>
         </header>
 
-        <div class="bot-system" data-reveal="right" data-spotlight>
+        <div class="bot-system" data-reveal="right" data-spotlight data-motion-step="visual">
             <div class="system-head">
                 <span class="system-name">@Text["Bot.SystemName"]</span>
                 <span class="system-state">

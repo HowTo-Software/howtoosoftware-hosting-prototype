@@ -12,21 +12,21 @@
 @inject IPlanCatalogService Catalog
 @inject IStringLocalizer<HomeText> Text
 
-<section class="teaser" id="plans" aria-labelledby="teaser-heading">
+<section class="teaser" id="plans" aria-labelledby="teaser-heading" data-motion="section">
     <div class="hts-container hts-container--wide teaser-inner" data-reveal>
         <div class="teaser-copy">
-            <p class="teaser-kicker" data-text-effect="flicker">
+            <p class="teaser-kicker" data-text-effect="flicker" data-motion-step="label">
                 <span class="kicker-index">@Text["PlansTeaser.Index"]</span>
                 @Text["PlansTeaser.Kicker"]
             </p>
 
-            <h2 id="teaser-heading" class="teaser-title" data-text-effect="rise">
+            <h2 id="teaser-heading" class="teaser-title" data-text-effect="rise" data-motion-step="headline">
                 @Text["PlansTeaser.Title"]
             </h2>
 
-            <p class="teaser-lede">@Text["PlansTeaser.Lede"]</p>
+            <p class="teaser-lede" data-motion-step="copy">@Text["PlansTeaser.Lede"]</p>
 
-            <ul class="teaser-points">
+            <ul class="teaser-points" data-motion-step="details">
                 @if (Smallest is { } small && Largest is { } large)
                 {
                     <li>@Text["PlansTeaser.Range", small.MemoryGb, large.MemoryGb, Catalog.Plans.Count]</li>
@@ -35,7 +35,7 @@
                 <li>@Text["PlansTeaser.Custom"]</li>
             </ul>
 
-            <CtaButton Href="@SiteRoutes.ProjectZomboid"
+            <CtaButton Href="@SiteRoutes.GameHosting"
                        Variant="CtaVariant.Primary"
                        TrailingIcon="IconName.ArrowRight"
                        CssClass="teaser-cta">
@@ -43,7 +43,7 @@
             </CtaButton>
         </div>
 
-        <div class="teaser-price" data-spotlight>
+        <div class="teaser-price" data-spotlight data-motion-step="visual">
             @if (EntryPrice is { } price)
             {
                 <p class="price-label">@Text["PlansTeaser.From"]</p>

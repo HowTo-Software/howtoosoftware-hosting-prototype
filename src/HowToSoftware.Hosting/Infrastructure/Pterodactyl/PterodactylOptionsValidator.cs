@@ -46,10 +46,11 @@ public sealed class PterodactylOptionsValidator : IValidateOptions<PterodactylOp
             failures.Add("Pterodactyl:ApiKey is set but Pterodactyl:BaseUrl is not.");
         }
         else if (!Uri.TryCreate(options.BaseUrl, UriKind.Absolute, out var uri)
-            || uri.Scheme is not ("http" or "https"))
+            || uri.Scheme != Uri.UriSchemeHttps
+            || !string.IsNullOrEmpty(uri.UserInfo))
         {
             failures.Add(
-                "Pterodactyl:BaseUrl must be an absolute http(s) URL pointing at the panel root, "
+                "Pterodactyl:BaseUrl must be an absolute HTTPS URL without embedded credentials, "
                     + "e.g. https://panel.example.com - without the /api/application suffix.");
         }
         else if (uri.AbsolutePath.Contains("/api", StringComparison.OrdinalIgnoreCase))

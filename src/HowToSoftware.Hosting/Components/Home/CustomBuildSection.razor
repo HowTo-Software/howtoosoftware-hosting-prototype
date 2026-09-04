@@ -19,19 +19,19 @@
 @inject IStringLocalizer<HomeText> Text
 @inject IOptions<SiteOptions> Site
 
-<section class="build" id="custom-build" aria-labelledby="build-heading">
+<section class="build" id="custom-build" aria-labelledby="build-heading" data-motion="section">
     <div class="hts-container hts-container--wide build-inner">
         <header class="build-copy" data-reveal="left">
-            <p class="build-kicker" data-text-effect="flicker">
+            <p class="build-kicker" data-text-effect="flicker" data-motion-step="label">
                 <span class="kicker-index">@Text["CustomBuild.Index"]</span>
                 @Text["CustomBuild.Kicker"]
             </p>
 
-            <h2 id="build-heading" class="build-title" data-text-effect="rise">
+            <h2 id="build-heading" class="build-title" data-text-effect="rise" data-motion-step="headline">
                 @Text["CustomBuild.Title"]
             </h2>
 
-            <p class="build-lede">@Text["CustomBuild.Lede"]</p>
+            <p class="build-lede" data-motion-step="copy">@Text["CustomBuild.Lede"]</p>
 
             @if (_bounds is { } bounds)
             {
@@ -42,7 +42,7 @@
             }
         </header>
 
-        <div class="build-panel" data-reveal="right" data-spotlight>
+        <div class="build-panel" data-reveal="right" data-spotlight data-motion-step="visual">
             @if (_bounds is { } range)
             {
                 <div class="build-fields">

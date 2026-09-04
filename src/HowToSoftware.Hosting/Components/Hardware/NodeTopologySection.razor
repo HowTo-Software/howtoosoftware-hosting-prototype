@@ -16,20 +16,20 @@
 @inject IStringLocalizer<CommonText> Common
 @inject IInfrastructureContentService Content
 
-<section class="topology" id="topology" aria-labelledby="topology-heading">
+<section class="topology" id="topology" aria-labelledby="topology-heading" data-motion="scene" data-scene>
     <div class="hts-container hts-container--wide">
         <header class="topology-head" data-reveal="rise">
-            <p class="chapter-kicker" data-text-effect="flicker">
+            <p class="chapter-kicker" data-text-effect="flicker" data-motion-step="label">
                 <span class="kicker-index">@Text["Topology.Index"]</span>
                 @Text["Topology.Kicker"]
             </p>
-            <h2 class="topology-title" id="topology-heading" data-text-effect="rise">@Text["Topology.Title"]</h2>
-            <p class="topology-lede">
+            <h2 class="topology-title" id="topology-heading" data-text-effect="rise" data-motion-step="headline">@Text["Topology.Title"]</h2>
+            <p class="topology-lede" data-motion-step="copy">
                 @Text["Topology.Lede"]
             </p>
         </header>
 
-        <div class="diagram" data-reveal="scale">
+        <div class="diagram" data-reveal="scale" data-motion-step="visual">
             @* ── Crown: the platform every placement decision comes from ─────────── *@
             <div class="crown">
                 <span class="crown-plate">
@@ -42,7 +42,7 @@
             @* ── Bus ─────────────────────────────────────────────────────────────── *@
             <div class="bus" aria-hidden="true">
                 <span class="bus-label">@Text["Topology.Bus"]</span>
-                <span class="bus-line"></span>
+                <span class="bus-line" data-motion-draw></span>
                 <span class="bus-junction"></span>
                 <span class="bus-line"></span>
             </div>
@@ -51,7 +51,7 @@
             <ul class="node-row">
                 @foreach (var (node, index) in Content.Nodes.Select((node, index) => (node, index)))
                 {
-                    <li class="node @HealthClass(node.Health)" data-reveal data-spotlight
+                    <li class="node @HealthClass(node.Health)" data-reveal data-spotlight data-motion-step="card"
                         style="--hts-reveal-delay: @(index * 90)ms">
                         <span class="node-drop" aria-hidden="true"></span>
 
@@ -105,9 +105,9 @@
 
             @* ── Collector: back down to the servers the worlds run on ────────────── *@
             <div class="collector" aria-hidden="true">
-                <span class="bus-line"></span>
+                <span class="bus-line" data-motion-draw></span>
                 <span class="collector-dot"></span>
-                <span class="bus-line"></span>
+                <span class="bus-line" data-motion-draw></span>
             </div>
 
             <div class="outcome">

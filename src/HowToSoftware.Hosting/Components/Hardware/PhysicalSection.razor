@@ -13,21 +13,21 @@
 @inject IStringLocalizer<HardwareText> Text
 @inject IInfrastructureContentService Content
 
-<section class="physical hts-section--soft" id="physical" aria-labelledby="physical-heading">
+<section class="physical hts-section--soft" id="physical" aria-labelledby="physical-heading" data-motion="section">
     <div class="hts-container hts-container--wide physical-inner">
         <div class="physical-copy" data-reveal="left">
-            <p class="chapter-kicker" data-text-effect="flicker">
+            <p class="chapter-kicker" data-text-effect="flicker" data-motion-step="label">
                 <span class="kicker-index">@Text["Physical.Index"]</span>
                 @Text["Physical.Kicker"]
             </p>
 
-            <h2 class="physical-title" id="physical-heading" data-text-effect="rise">@Text["Physical.Title"]</h2>
+            <h2 class="physical-title" id="physical-heading" data-text-effect="rise" data-motion-step="headline">@Text["Physical.Title"]</h2>
 
-            <p class="physical-lede">
+            <p class="physical-lede" data-motion-step="copy">
                 @Text["Physical.Lede"]
             </p>
 
-            <div class="sheet">
+            <div class="sheet" data-motion-step="details">
                 <p class="sheet-label">@Text["Physical.SheetLabel"]</p>
 
                 <dl class="ledger">
@@ -42,7 +42,7 @@
             </div>
         </div>
 
-        <div class="physical-figure" data-reveal="right">
+        <div class="physical-figure" data-reveal="right" data-motion-step="visual" data-parallax="10">
             <p class="figure-label">@Text["Physical.PhotoLabel"]</p>
 
             <HardwarePhoto Slot="HardwarePhotoSlot.RackElevation"

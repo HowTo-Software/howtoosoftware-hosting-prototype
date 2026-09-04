@@ -56,6 +56,28 @@ forma explícita. Para validar alterações, rode `dotnet build` e `dotnet test`
 Os estilos isolados (`Arquivo.razor.css`) pertencem ao componente de mesmo nome. Prefira-os para
 ajustes de uma página; use `wwwroot` apenas para estilos/recursos realmente compartilhados.
 
+### Sistema de movimento
+
+Para manter o efeito visual sem pesar no navegador, o scroll mede apenas cenas próximas ao
+viewport, mutações de DOM são agrupadas em um único frame e o efeito `rise` cria um nó por
+palavra. Somente `flicker`/`sweep`, que dependem disso visualmente, criam um nó por letra.
+
+O sistema global está em `wwwroot/js/site.js` e `wwwroot/css/app.css`. Ele é declarativo e não
+depende de uma biblioteca pesada:
+
+- `data-motion="section"` monta uma seção na ordem label → título → texto → visual → detalhes.
+- `data-motion="scene" data-scene` também permite que marcadores técnicos cedam espaço quando a
+  próxima cena se aproxima.
+- `data-motion-step`, `data-motion-draw`, `data-motion-stagger` e `data-text-effect` descrevem
+  os papéis de cada elemento; o JavaScript só observa e aplica estados.
+- `data-parallax` desloca seletivamente mídia/diagramas próximos ao viewport; `data-count`
+  anima métricas não monetárias.
+
+O ticker da Home, do Project Zomboid e do rodapé usa trilhas duplicadas e `transform` linear para
+um loop contínuo sem salto. Toda essa camada é progressiva: sem JavaScript o conteúdo continua
+visível; com `prefers-reduced-motion`, revelações, scroll-linked motion e loops decorativos são
+reduzidos ou desligados.
+
 ## Catálogo, planos e preços
 
 - `Services/StaticGameCatalogService.cs`: jogos disponíveis e seus caminhos de compra.
@@ -136,6 +158,8 @@ Em produção, prefira variáveis do host ou um cofre de segredos. Não use `SUP
 - [`SUPABASE-SETUP.md`](SUPABASE-SETUP.md): conexão do PostgreSQL, migrations e segurança.
 - [`stripe-testing.md`](stripe-testing.md): Checkout, Stripe CLI e teste de webhooks.
 - [`PTERODACTYL-SETUP.md`](PTERODACTYL-SETUP.md): painel, egg e laboratório de provisionamento.
+- [`SECURITY-HARDENING.md`](SECURITY-HARDENING.md): fronteiras do backend, headers, TLS, WAF,
+  DDoS, banco, segredos e checklist de produção.
 
 ## Ordem segura para ligar produção
 

@@ -14,20 +14,20 @@
 @inject IStringLocalizer<HomeText> Text
 @inject IStringLocalizer<CommonText> Common
 
-<section class="cp" id="control-panel" aria-labelledby="control-panel-heading">
+<section class="cp" id="control-panel" aria-labelledby="control-panel-heading" data-motion="scene" data-scene>
     <div class="hts-container hts-container--wide cp-head" data-reveal>
-        <p class="cp-kicker" data-text-effect="flicker">
+        <p class="cp-kicker" data-text-effect="flicker" data-motion-step="label">
             <span class="kicker-index">04</span>
             @Text["Cp.Kicker"]
         </p>
-        <h2 id="control-panel-heading" class="cp-title" data-text-effect="rise">
+        <h2 id="control-panel-heading" class="cp-title" data-text-effect="rise" data-motion-step="headline">
             @Text["Cp.Line1"]<br />
             <span class="cp-accent">@Text["Cp.Accent"]</span>
         </h2>
-        <p class="cp-lede">@Text["Cp.Lede"]</p>
+        <p class="cp-lede" data-motion-step="copy">@Text["Cp.Lede"]</p>
     </div>
 
-    <div class="cp-stage" data-reveal="scale">
+    <div class="cp-stage" data-reveal="scale" data-motion-step="visual">
         <div class="app">
             <div class="app-chrome">
                 <span class="chrome-dots"><i></i><i></i><i></i></span>

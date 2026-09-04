@@ -391,7 +391,6 @@ html.hts-js [data-reveal] {
         opacity var(--hts-duration-slow) var(--hts-ease-out),
         transform var(--hts-duration-slow) var(--hts-ease-out);
     transition-delay: var(--hts-reveal-delay, 0ms);
-    will-change: opacity, transform;
 }
 
 html.hts-js [data-reveal].is-revealed {
@@ -441,6 +440,119 @@ body {
     html.hts-js [data-reveal="right"] {
         transform: translate3d(0, 18px, 0);
     }
+}
+
+/* ── Motion sections ─────────────────────────────────────────────────────
+   A scene is not a larger fade-in. It is a small assembly sequence: the technical
+   label establishes the coordinate, the rule is drawn, the title opens through a mask,
+   then copy, visual and secondary details arrive. `site.js` only applies
+   `.is-motion-active`; pages choose their roles with data attributes. That makes the
+   vocabulary reusable without hiding content when scripting is unavailable. */
+
+html.hts-js [data-motion]:not(.is-motion-active) [data-motion-step="label"] {
+    opacity: 0;
+    transform: translate3d(0, 8px, 0);
+    letter-spacing: calc(var(--ht-track-label) + 0.12em);
+}
+
+html.hts-js [data-motion]:not(.is-motion-active) [data-motion-step="headline"] {
+    clip-path: inset(0 0 105% 0);
+    transform: translate3d(0, 0.55em, 0);
+}
+
+html.hts-js [data-motion]:not(.is-motion-active) [data-motion-step="copy"],
+html.hts-js [data-motion]:not(.is-motion-active) [data-motion-step="details"],
+html.hts-js [data-motion]:not(.is-motion-active) [data-motion-step="card"] {
+    opacity: 0;
+    transform: translate3d(0, 18px, 0);
+}
+
+html.hts-js [data-motion]:not(.is-motion-active) [data-motion-step="visual"] {
+    opacity: 0;
+    clip-path: inset(0 0 8% 0);
+    transform: scale(0.97);
+}
+
+html.hts-js [data-motion] [data-motion-step="label"] {
+    transition: opacity 320ms var(--hts-ease-out), transform 420ms var(--hts-ease-out), letter-spacing 460ms var(--hts-ease-out);
+    transition-delay: var(--motion-delay, 0ms);
+}
+
+html.hts-js [data-motion] [data-motion-step="headline"] {
+    transition: clip-path 660ms var(--hts-ease-out), transform 660ms var(--hts-ease-out);
+    transition-delay: var(--motion-delay, 80ms);
+}
+
+html.hts-js [data-motion] [data-motion-step="copy"] {
+    transition: opacity 440ms var(--hts-ease-out), transform 520ms var(--hts-ease-out);
+    transition-delay: var(--motion-delay, 180ms);
+}
+
+html.hts-js [data-motion] [data-motion-step="visual"] {
+    transition: opacity 500ms var(--hts-ease-out), transform 720ms var(--hts-ease-out), clip-path 720ms var(--hts-ease-out);
+    transition-delay: var(--motion-delay, 250ms);
+}
+
+html.hts-js [data-motion] [data-motion-step="details"],
+html.hts-js [data-motion] [data-motion-step="card"] {
+    transition: opacity 400ms var(--hts-ease-out), transform 480ms var(--hts-ease-out);
+    transition-delay: calc(var(--motion-delay, 340ms) + var(--hts-reveal-delay, 0ms));
+}
+
+html.hts-js [data-motion].is-motion-active [data-motion-step] {
+    opacity: 1;
+    clip-path: inset(0 0 0 0);
+    transform: none;
+    letter-spacing: inherit;
+    will-change: auto;
+}
+
+/* Structural rules and topology connections draw after the label, before the detail. */
+html.hts-js [data-motion]:not(.is-motion-active) [data-motion-draw] {
+    transform: scaleX(0);
+}
+
+html.hts-js [data-motion] [data-motion-draw] {
+    transform-origin: left center;
+    transition: transform 620ms var(--hts-ease-out) 70ms;
+}
+
+html.hts-js [data-motion].is-motion-active [data-motion-draw] {
+    transform: scaleX(1);
+}
+
+/* The scene observer continuously writes only this transform variable. It is reserved for
+   selected media/diagrams, never for body copy or controls, so scrolling keeps its normal
+   weight and text remains easy to read. */
+html.hts-js [data-parallax] {
+    --motion-parallax-y: 0px;
+}
+
+html.hts-js [data-parallax].is-revealed,
+html.hts-js [data-motion].is-motion-active [data-parallax] {
+    transform: translate3d(0, var(--motion-parallax-y), 0);
+}
+
+/* Promote only a parallax layer close enough to move. Keeping every off-screen layer promoted
+   retains large textures in GPU memory on long pages. */
+html.hts-js [data-parallax].is-motion-near {
+    will-change: transform;
+}
+
+/* A departing scene does not vanish. Only explicitly marked technical garnish yields a little
+   room to the next chapter, which creates continuity without taking readable content away. */
+html.hts-js [data-scene].is-scene-leaving [data-scene-exit] {
+    opacity: 0.42;
+    transform: translate3d(0, -14px, 0);
+}
+
+html.hts-js [data-scene] [data-scene-exit] {
+    transition: opacity 340ms var(--hts-ease-out), transform 460ms var(--hts-ease-out);
+}
+
+[data-count] {
+    display: inline-block;
+    font-variant-numeric: tabular-nums;
 }
 
 /* ── Photo plates ─────────────────────────────────────────────────────── */
@@ -599,8 +711,8 @@ html.hts-js [data-reveal="plate"].is-revealed .hts-plate-image {
 /* ── Text effects ────────────────────────────────────────────────────────── */
 
 /*
-    `wwwroot/js/site.js` wraps each character of a `[data-text-effect]` element in a
-    `.char` span carrying its index. Everything below decides what that is worth.
+    `wwwroot/js/site.js` wraps rise text by word and reserves per-character spans for the
+    flicker/sweep effects that actually need them. Each animation unit carries its index.
 
     All of it is additive: without scripting there are no spans, the selectors match
     nothing, and the heading is simply a heading. The stagger runs off the character
@@ -626,7 +738,7 @@ html.hts-js [data-reveal="plate"].is-revealed .hts-plate-image {
     display: inline-block;
 }
 
-/* --- rise: characters lift into focus, one after another ---------------- */
+/* --- rise: words lift into focus, one after another --------------------- */
 
 html.hts-js [data-text-effect="rise"] .char {
     opacity: 0;
@@ -898,6 +1010,24 @@ html.hts-js main[data-page-enter] > *:first-child {
     html.hts-js [data-reveal] {
         opacity: 1;
         transform: none;
+    }
+
+    html.hts-js [data-motion] [data-motion-step] {
+        opacity: 1 !important;
+        clip-path: none !important;
+        transform: none !important;
+        letter-spacing: inherit !important;
+        transition: none !important;
+    }
+
+    html.hts-js [data-motion] [data-motion-draw] {
+        transform: scaleX(1) !important;
+        transition: none !important;
+    }
+
+    html.hts-js [data-parallax] {
+        transform: none !important;
+        transition: none !important;
     }
 
     html.hts-js main[data-page-enter],

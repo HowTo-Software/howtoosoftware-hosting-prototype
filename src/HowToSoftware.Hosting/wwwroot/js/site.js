@@ -7,7 +7,7 @@
  *   1. Reveal elements the first time they scroll into view.
  *   2. Flag the header once the page has scrolled past the top.
  *   3. Report which provisioning stage is centred in the viewport.
- *   4. Split headline text into characters so CSS can animate them.
+ *   4. Split headline text into animation units so CSS can animate them.
  *
  * Note the split of responsibilities in (3): JavaScript observes, Blazor
  * decides. The observer calls [JSInvokable] SetActiveStage and every visual
@@ -73,19 +73,186 @@
         }
     }
 
+    // ── 1c. Section choreography ──────────────────────────────────────────
+    //
+    // `data-reveal` is intentionally a small, individual entrance. Larger parts of the site
+    // need a different grammar: label, line, title, copy, visual and then details assemble in
+    // that order. Keeping that contract in one observer means pages declare *what* a piece is
+    // instead of each page inventing a slightly different animation.
+    //
+    // No JavaScript, no hidden content: the hts-js gate remains the only start state.
+    var motionObserver = null;
+    var motionVisibilityObserver = null;
+    var activeScenes = new Set();
+    var activeParallax = new Set();
+    var sceneQueued = false;
+
+    if (root.classList.contains("hts-js")) {
+        motionObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                if (!entry.isIntersecting) {
+                    return;
+                }
+
+                var section = entry.target;
+                section.classList.add("is-motion-active");
+                section.querySelectorAll("[data-count]").forEach(startCount);
+                motionObserver.unobserve(section);
+            });
+        }, { rootMargin: "0px 0px -14% 0px", threshold: 0.08 });
+
+        // Only sections near the viewport participate in continuous scroll work. This keeps
+        // the finished motion identical while avoiding layout reads for the rest of the page.
+        motionVisibilityObserver = new IntersectionObserver(function (entries) {
+            entries.forEach(function (entry) {
+                var node = entry.target;
+                node.classList.toggle("is-motion-near", entry.isIntersecting);
+
+                if (node.hasAttribute("data-scene")) {
+                    if (entry.isIntersecting) {
+                        activeScenes.add(node);
+                    } else {
+                        activeScenes.delete(node);
+                    }
+                }
+
+                if (node.hasAttribute("data-parallax")) {
+                    if (entry.isIntersecting) {
+                        activeParallax.add(node);
+                    } else {
+                        activeParallax.delete(node);
+                    }
+                }
+            });
+
+            scheduleScenes();
+        }, { rootMargin: "30% 0px 30% 0px", threshold: 0 });
+    }
+
+    function startCount(node) {
+        if (node.dataset.counted === "true" || prefersReducedMotion.matches) {
+            return;
+        }
+
+        var target = Number(node.getAttribute("data-count"));
+        if (!isFinite(target)) {
+            return;
+        }
+
+        node.dataset.counted = "true";
+
+        var decimals = Math.max(0, Math.min(2, Number(node.getAttribute("data-count-decimals")) || 0));
+        var prefix = node.getAttribute("data-count-prefix") || "";
+        var suffix = node.getAttribute("data-count-suffix") || "";
+        var duration = 560;
+        var started = null;
+
+        function paint(timestamp) {
+            if (started === null) {
+                started = timestamp;
+            }
+
+            var progress = Math.min(1, (timestamp - started) / duration);
+            // Fast at the start, then settles without a bounce.
+            var eased = 1 - Math.pow(1 - progress, 4);
+            node.textContent = prefix + (target * eased).toFixed(decimals) + suffix;
+
+            if (progress < 1) {
+                window.requestAnimationFrame(paint);
+            }
+        }
+
+        window.requestAnimationFrame(paint);
+    }
+
+    function observeMotion(node) {
+        if (!motionObserver || !node || node.dataset.motionObserved === "true") {
+            return;
+        }
+
+        node.dataset.motionObserved = "true";
+        motionObserver.observe(node);
+
+        if (node.hasAttribute("data-scene") && node.dataset.sceneObserved !== "true") {
+            node.dataset.sceneObserved = "true";
+            motionVisibilityObserver.observe(node);
+        }
+
+        node.querySelectorAll("[data-parallax]").forEach(function (parallax) {
+            if (parallax.dataset.parallaxObserved !== "true") {
+                parallax.dataset.parallaxObserved = "true";
+                motionVisibilityObserver.observe(parallax);
+            }
+        });
+    }
+
+    function scanMotion(scope) {
+        if (!motionObserver || !scope) {
+            return;
+        }
+
+        if (scope.matches && scope.matches("[data-motion]")) {
+            observeMotion(scope);
+        }
+
+        if (scope.querySelectorAll) {
+            scope.querySelectorAll("[data-motion]").forEach(observeMotion);
+        }
+    }
+
+    function paintScenes() {
+        sceneQueued = false;
+        var viewport = window.innerHeight || 1;
+
+        activeScenes.forEach(function (scene) {
+            if (!scene.isConnected) {
+                activeScenes.delete(scene);
+                return;
+            }
+
+            var rect = scene.getBoundingClientRect();
+            var progress = Math.max(0, Math.min(1, (viewport - rect.top) / (viewport + rect.height)));
+            scene.style.setProperty("--motion-scene-progress", progress.toFixed(3));
+            // Only technical garnish marked data-scene-exit leaves. Copy remains readable.
+            scene.classList.toggle("is-scene-leaving", rect.bottom < viewport * 0.48 && rect.bottom > 0);
+        });
+
+        activeParallax.forEach(function (parallax) {
+            if (!parallax.isConnected) {
+                activeParallax.delete(parallax);
+                return;
+            }
+
+            var rect = parallax.getBoundingClientRect();
+            var intensity = Number(parallax.getAttribute("data-parallax")) || 12;
+            var centerDistance = (rect.top + rect.height / 2 - viewport / 2) / viewport;
+            var shift = Math.max(-intensity, Math.min(intensity, -centerDistance * intensity));
+            parallax.style.setProperty("--motion-parallax-y", shift.toFixed(2) + "px");
+        });
+    }
+
+    function scheduleScenes() {
+        if (sceneQueued || prefersReducedMotion.matches
+            || (activeScenes.size === 0 && activeParallax.size === 0)) {
+            return;
+        }
+
+        sceneQueued = true;
+        window.requestAnimationFrame(paintScenes);
+    }
+
     // ── 1b. Character split ───────────────────────────────────────────────
     //
-    // CSS can animate an element. It cannot animate the letters inside one, because
-    // there is nothing in the DOM to address. This wraps each character in a span
-    // carrying its index, and the stylesheet does the rest - what the animation
-    // looks like is not decided here.
+    // CSS can animate an element, not the text inside it. Rise effects use one span per word;
+    // only the explicitly character-driven flicker and sweep effects pay for one span per
+    // letter. That cuts the typical headline DOM expansion substantially.
     //
     // Accessibility: the original string is put on the element as aria-label and the
     // split spans are hidden from assistive technology, so a screen reader reads one
     // sentence rather than a stream of single letters.
     var SPLIT_LIMIT = 220;
 
-    function splitTextNode(textNode, offset) {
+    function splitTextNode(textNode, offset, splitCharacters) {
         var words = textNode.nodeValue.split(/\s+/).filter(Boolean);
 
         if (!words.length) {
@@ -120,13 +287,22 @@
             var word = document.createElement("span");
             word.className = "word";
 
-            for (var i = 0; i < words[w].length; i += 1) {
-                var span = document.createElement("span");
-                span.className = "char";
-                span.style.setProperty("--char-index", index);
-                span.textContent = words[w].charAt(i);
-                word.appendChild(span);
+            if (!splitCharacters) {
+                word.classList.add("char");
+                word.style.setProperty("--char-index", index);
+                word.textContent = words[w];
                 index += 1;
+            } else {
+                // Character effects keep their word wrapper so wrapping never cuts a word in
+                // half, even though each letter is its own compositor animation unit.
+                for (var i = 0; i < words[w].length; i += 1) {
+                    var span = document.createElement("span");
+                    span.className = "char";
+                    span.style.setProperty("--char-index", index);
+                    span.textContent = words[w].charAt(i);
+                    word.appendChild(span);
+                    index += 1;
+                }
             }
 
             wrapper.appendChild(word);
@@ -136,6 +312,7 @@
             wrapper.appendChild(document.createTextNode(" "));
         }
 
+        wrapper.setAttribute("aria-hidden", "true");
         textNode.parentNode.replaceChild(wrapper, textNode);
         return index;
     }
@@ -169,9 +346,10 @@
         }
 
         var index = 0;
+        var splitCharacters = node.getAttribute("data-text-effect") !== "rise";
 
         for (var i = 0; i < pending.length; i += 1) {
-            index = splitTextNode(pending[i], index);
+            index = splitTextNode(pending[i], index, splitCharacters);
         }
 
         if (!index) {
@@ -183,11 +361,17 @@
     }
 
     function splitScope(scope) {
-        if (!root.classList.contains("hts-js") || !scope.querySelectorAll) {
+        if (!root.classList.contains("hts-js") || !scope) {
             return;
         }
 
-        scope.querySelectorAll("[data-text-effect]").forEach(splitText);
+        if (scope.matches && scope.matches("[data-text-effect]")) {
+            splitText(scope);
+        }
+
+        if (scope.querySelectorAll) {
+            scope.querySelectorAll("[data-text-effect]").forEach(splitText);
+        }
     }
 
     // ── 2. Header scroll state ──────────────────────────────────────────────
@@ -200,11 +384,13 @@
 
     function onScroll() {
         if (scrollQueued) {
+            scheduleScenes();
             return;
         }
 
         scrollQueued = true;
         window.requestAnimationFrame(applyScrollState);
+        scheduleScenes();
     }
 
     // ── 3. Provisioning stage reporter ──────────────────────────────────────
@@ -607,8 +793,20 @@
         restoreRootState();
         finishProgress();
         clearSpotlight();
+        activeScenes.forEach(function (node) {
+            if (!node.isConnected) {
+                activeScenes.delete(node);
+            }
+        });
+        activeParallax.forEach(function (node) {
+            if (!node.isConnected) {
+                activeParallax.delete(node);
+            }
+        });
         splitScope(document.body);
         scan(document.body);
+        scanMotion(document.body);
+        scheduleScenes();
         watchOrders(document.body);
         replayPageEnter();
     }
@@ -618,6 +816,8 @@
         watchRootState();
         splitScope(document.body);
         scan(document.body);
+        scanMotion(document.body);
+        scheduleScenes();
         watchOrders(document.body);
         applyScrollState();
     }
@@ -650,15 +850,39 @@
     // Blazor renders interactive islands after the initial paint, so pick up any
     // `[data-reveal]` nodes those components add to the DOM.
     if ("MutationObserver" in window) {
+        var mutationRoots = new Set();
+        var mutationScanQueued = false;
+
+        function flushMutationScan() {
+            mutationScanQueued = false;
+
+            mutationRoots.forEach(function (node) {
+                if (!node.isConnected) {
+                    return;
+                }
+
+                splitScope(node);
+                scan(node);
+                scanMotion(node);
+            });
+
+            mutationRoots.clear();
+            scheduleScenes();
+        }
+
         new MutationObserver(function (mutations) {
             mutations.forEach(function (mutation) {
                 mutation.addedNodes.forEach(function (node) {
                     if (node.nodeType === 1) {
-                        splitScope(node);
-                        scan(node);
+                        mutationRoots.add(node);
                     }
                 });
             });
+
+            if (mutationRoots.size > 0 && !mutationScanQueued) {
+                mutationScanQueued = true;
+                window.requestAnimationFrame(flushMutationScan);
+            }
         }).observe(document.documentElement, { childList: true, subtree: true });
     }
 })();

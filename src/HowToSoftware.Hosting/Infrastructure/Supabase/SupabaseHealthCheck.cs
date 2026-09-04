@@ -12,7 +12,9 @@ public sealed class SupabaseHealthCheck(SupabaseOptions options) : IHealthCheck
     {
         if (!options.IsDatabaseConfigured)
         {
-            return HealthCheckResult.Degraded("Supabase not configured");
+            // The application deliberately supports a local SQLite store when Supabase is
+            // absent. That is a healthy operating mode, not a degraded remote dependency.
+            return HealthCheckResult.Healthy("Local database fallback active");
         }
 
         try

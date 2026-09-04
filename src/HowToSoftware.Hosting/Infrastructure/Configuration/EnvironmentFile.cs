@@ -1,8 +1,9 @@
 namespace HowToSoftware.Hosting.Infrastructure.Configuration;
 
 /// <summary>
-/// Loads a repository-local <c>.env</c> file for development without overriding variables that
-/// the process, container or secret store already supplied.
+/// Loads a repository-local <c>.env</c> file when present without overriding variables that the
+/// process, container or secret store already supplied. Production should inject its secrets and
+/// should not deploy this local file.
 /// </summary>
 public static class EnvironmentFile
 {
@@ -26,6 +27,7 @@ public static class EnvironmentFile
             ["PTERODACTYL_TIMEOUT_SECONDS"] = "Pterodactyl__TimeoutSeconds",
             ["PTERODACTYL_DEPLOY_TESTS_ENABLED"] = "ProvisioningTest__Enabled",
             ["APP_BASE_URL"] = "Site__BaseUrl",
+            ["APP_ALLOWED_HOSTS"] = "AllowedHosts",
             ["APP_ENVIRONMENT"] = "ASPNETCORE_ENVIRONMENT"
         };
 

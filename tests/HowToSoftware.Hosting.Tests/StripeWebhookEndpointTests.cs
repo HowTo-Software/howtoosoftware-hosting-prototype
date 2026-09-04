@@ -213,6 +213,8 @@ public sealed class StripeWebhookEndpointTests : IDisposable
         Assert.Contains("\"status\":\"Paid\"", body.Replace(" ", string.Empty), StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("22.77", body, StringComparison.Ordinal);
         Assert.DoesNotContain("survivor@example.com", body, StringComparison.Ordinal);
+        Assert.DoesNotContain(order.Id.ToString(), body, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("serverIdentifier", body, StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact]

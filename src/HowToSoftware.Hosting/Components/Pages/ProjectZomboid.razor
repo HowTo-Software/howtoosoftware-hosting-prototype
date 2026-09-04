@@ -25,19 +25,19 @@
     <link rel="canonical" href="@($"{Site.Value.BaseUrl.TrimEnd('/')}{SiteRoutes.ProjectZomboid}")" />
 </HeadContent>
 
-<section class="zomboid-hero" aria-labelledby="zomboid-heading">
+<section class="zomboid-hero" aria-labelledby="zomboid-heading" data-motion="scene" data-scene>
     <div class="hts-container hts-container--wide">
         <div class="hero-copy" data-reveal>
-            <nav class="hero-crumbs" aria-label="@Text["Zomboid.CrumbLabel"]">
+            <nav class="hero-crumbs" data-motion-step="label" aria-label="@Text["Zomboid.CrumbLabel"]">
                 <a href="@SiteRoutes.GameHosting">@Text["Zomboid.Crumb"]</a>
                 <span class="crumb-sep" aria-hidden="true">/</span>
                 <span class="crumb-here">@Game.Name</span>
             </nav>
 
-            <h1 id="zomboid-heading" class="hero-title" data-text-effect="rise">@Text["Zomboid.Title"]</h1>
-            <p class="hero-lede">@Text["Zomboid.Lede"]</p>
+            <h1 id="zomboid-heading" class="hero-title" data-text-effect="rise" data-motion-step="headline">@Text["Zomboid.Title"]</h1>
+            <p class="hero-lede" data-motion-step="copy">@Text["Zomboid.Lede"]</p>
 
-            <div class="hero-actions">
+            <div class="hero-actions" data-motion-step="details">
                 <CtaButton Href="#plans" Variant="CtaVariant.Primary" TrailingIcon="IconName.ArrowRight">
                     @Text["Zomboid.CtaPlans"]
                 </CtaButton>
@@ -46,7 +46,7 @@
                 </CtaButton>
             </div>
 
-            <dl class="hero-facts">
+            <dl class="hero-facts" data-motion-step="details" data-scene-exit>
                 @if (From is { } from)
                 {
                     <div>
@@ -58,7 +58,7 @@
                 {
                     <div>
                         <dt class="hts-label">@Text["Zomboid.FactPlans"]</dt>
-                        <dd class="hts-mono">@Plans.Count</dd>
+                        <dd class="hts-mono" data-count="@Plans.Count">@Plans.Count</dd>
                     </div>
                     <div>
                         <dt class="hts-label">@Text["Zomboid.FactMemory"]</dt>
@@ -71,20 +71,23 @@
     </div>
 </section>
 
-<section class="features" aria-labelledby="features-heading">
+@* The live rail is deliberately part of the product path, not only the home page. *@
+<TelemetryStrip />
+
+<section class="features" aria-labelledby="features-heading" data-motion="section">
     <div class="hts-container hts-container--wide">
         <header class="features-head" data-reveal>
-            <p class="features-kicker">
+            <p class="features-kicker" data-motion-step="label">
                 <span class="kicker-index">01</span>
                 <span class="hts-label">@Text["Zomboid.FeatureKicker"]</span>
             </p>
-            <h2 id="features-heading" class="features-title">@Text["Zomboid.FeatureTitle"]</h2>
+            <h2 id="features-heading" class="features-title" data-motion-step="headline">@Text["Zomboid.FeatureTitle"]</h2>
         </header>
 
-        <ul class="feature-grid">
+        <ul class="feature-grid" data-motion-stagger>
             @foreach (var (feature, index) in Features.Select((f, i) => (f, i)))
             {
-                <li data-reveal style="--hts-reveal-delay: @(index * 50)ms">
+                <li data-reveal data-motion-step="card" style="--hts-reveal-delay: @(index * 50)ms">
                     <span class="feature-index hts-mono">@((index + 1).ToString("00"))</span>
                     <h3 class="feature-name">@feature.Label</h3>
                     <p class="feature-detail">@feature.Detail</p>

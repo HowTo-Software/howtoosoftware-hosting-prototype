@@ -12,9 +12,9 @@ public sealed class ProvisioningLabOptions
     /// Opens the real-deployment lab. Off unless deliberately switched on.
     /// </summary>
     /// <remarks>
-    /// Exists so the pipeline can be exercised on a staging host that does not run in the
-    /// Development environment. Turning it on in production would put a button that creates and
-    /// deletes real servers on a public URL.
+    /// This flag is necessary but not sufficient: the guard also requires the Development
+    /// environment. A configuration mistake on staging or production can therefore never expose
+    /// a button that creates and deletes real servers on a public URL.
     /// </remarks>
     public bool Enabled { get; set; }
 }
@@ -43,7 +43,7 @@ public interface IProvisioningLabGuard
 }
 
 /// <summary>
-/// Opens the lab only where <c>ProvisioningTest:Enabled</c> is explicitly set.
+/// Opens the lab only in Development and where <c>ProvisioningTest:Enabled</c> is explicitly set.
 /// </summary>
 public sealed class ProvisioningLabGuard : IProvisioningLabGuard
 {
@@ -62,11 +62,12 @@ public sealed class ProvisioningLabGuard : IProvisioningLabGuard
     }
 
     /// <inheritdoc />
-    public bool IsAvailable => _options.Enabled;
+    public bool IsAvailable => _environment.IsDevelopment() && _options.Enabled;
 
     /// <inheritdoc />
     public string ClosedReason =>
-        $"The provisioning lab is disabled until {ProvisioningLabOptions.SectionName}:Enabled is explicitly set. "
+        $"The provisioning lab requires both the Development environment and "
+            + $"{ProvisioningLabOptions.SectionName}:Enabled=true. "
             + $"This host runs in the {_environment.EnvironmentName} environment.";
 
     /// <inheritdoc />

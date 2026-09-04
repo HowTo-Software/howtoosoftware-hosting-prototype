@@ -12,25 +12,25 @@
 @inject IMarketingContentService Content
 @inject IStringLocalizer<HomeText> Text
 
-<section class="world" id="world" aria-labelledby="world-heading">
+<section class="world" id="world" aria-labelledby="world-heading" data-motion="scene" data-scene>
     <div class="hts-container hts-container--wide world-inner">
         <div class="world-copy" data-reveal="left">
-            <p class="world-kicker" data-text-effect="flicker">
+            <p class="world-kicker" data-text-effect="flicker" data-motion-step="label">
                 <span class="kicker-index">01</span>
                 @Text["World.Kicker"]
             </p>
 
-            <h2 id="world-heading" class="world-title" data-text-effect="rise">
+            <h2 id="world-heading" class="world-title" data-text-effect="rise" data-motion-step="headline">
                 @Text["World.Line1"]<br />
                 @Text["World.Line2"] <span class="world-accent">@Text["World.Accent"]</span><br />
                 @Text["World.Line3"]
             </h2>
 
-            <p class="world-body">@Text["World.Body1"]</p>
+            <p class="world-body" data-motion-step="copy">@Text["World.Body1"]</p>
 
-            <p class="world-body">@Text["World.Body2"]</p>
+            <p class="world-body" data-motion-step="copy">@Text["World.Body2"]</p>
 
-            <dl class="world-readout">
+            <dl class="world-readout" data-motion-step="details">
                 <div>
                     <dt>@Text["World.DataLabel"]</dt>
                     <dd>@Text["World.DataValue"]</dd>
@@ -46,7 +46,7 @@
             </dl>
         </div>
 
-        <div class="world-figure" data-reveal="right">
+        <div class="world-figure" data-reveal="right" data-motion-step="visual" data-parallax="14">
             <WorldTimeline Events="Content.WorldEvents" />
         </div>
     </div>

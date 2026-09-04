@@ -12,21 +12,21 @@
 @inject IJSRuntime JS
 @inject IStringLocalizer<HomeText> Text
 
-<section class="provision" id="provisioning" aria-labelledby="provisioning-heading">
+<section class="provision" id="provisioning" aria-labelledby="provisioning-heading" data-motion="scene" data-scene>
     <div class="hts-container hts-container--wide">
         <header class="provision-head" data-reveal>
-            <p class="provision-kicker" data-text-effect="flicker">
+            <p class="provision-kicker" data-text-effect="flicker" data-motion-step="label">
                 <span class="kicker-index">03</span>
                 @Text["Provisioning.Kicker"]
             </p>
-            <h2 id="provisioning-heading" class="provision-title" data-text-effect="rise">
+            <h2 id="provisioning-heading" class="provision-title" data-text-effect="rise" data-motion-step="headline">
                 @Text["Provisioning.Line1"]<br />
                 <span class="provision-accent">@Text["Provisioning.Accent"]</span>
             </h2>
-            <p class="provision-lede">@Text["Provisioning.Lede"]</p>
+            <p class="provision-lede" data-motion-step="copy">@Text["Provisioning.Lede"]</p>
         </header>
 
-        <div class="provision-body" @ref="_scope">
+        <div class="provision-body" @ref="_scope" data-motion-step="visual">
             <ol class="stage-list">
                 @foreach (var (stage, index) in Content.ProvisioningStages.Select((s, i) => (s, i)))
                 {
@@ -115,6 +115,10 @@
             try
             {
                 await JS.InvokeVoidAsync("htsProvisioning.dispose", _scope);
+            }
+            catch (JSDisconnectedException)
+            {
+                // A refresh/shutdown disposed the circuit before this component.
             }
             catch (JSException)
             {

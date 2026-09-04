@@ -17,22 +17,22 @@
 @inject IStringLocalizer<HomeText> Text
 @inject IStringLocalizer<CommonText> Common
 
-<section class="workshop" id="workshop" aria-labelledby="workshop-heading">
+<section class="workshop" id="workshop" aria-labelledby="workshop-heading" data-motion="scene" data-scene>
     <div class="hts-container hts-container--wide workshop-inner">
         <div class="workshop-copy" data-reveal="left">
-            <p class="workshop-kicker" data-text-effect="flicker">
+            <p class="workshop-kicker" data-text-effect="flicker" data-motion-step="label">
                 <span class="kicker-index">02</span>
                 @Text["Workshop.Kicker"]
             </p>
 
-            <h2 id="workshop-heading" class="workshop-title" data-text-effect="rise">
+            <h2 id="workshop-heading" class="workshop-title" data-text-effect="rise" data-motion-step="headline">
                 @Text["Workshop.Line1"]<br />
                 <span class="workshop-accent">@Text["Workshop.Accent"]</span>
             </h2>
 
-            <p class="workshop-body">@Text["Workshop.Body"]</p>
+            <p class="workshop-body" data-motion-step="copy">@Text["Workshop.Body"]</p>
 
-            <ul class="workshop-points">
+            <ul class="workshop-points" data-motion-step="details">
                 <li><span class="point-mark"></span>@Text["Workshop.Point1"]</li>
                 <li><span class="point-mark"></span>@Text["Workshop.Point2"]</li>
                 <li><span class="point-mark"></span>@Text["Workshop.Point3"]</li>
@@ -40,7 +40,7 @@
             </ul>
         </div>
 
-        <div class="workshop-panel" data-reveal="right" data-spotlight>
+        <div class="workshop-panel" data-reveal="right" data-spotlight data-motion-step="visual">
             <header class="panel-bar">
                 <span class="bar-title">@Text["Installer.Title"]</span>
             </header>

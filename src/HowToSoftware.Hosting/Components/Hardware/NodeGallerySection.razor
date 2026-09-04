@@ -14,20 +14,20 @@
 @inject IStringLocalizer<CommonText> Common
 @inject IInfrastructureContentService Content
 
-<section class="gallery" id="machines" aria-labelledby="gallery-heading">
+<section class="gallery" id="machines" aria-labelledby="gallery-heading" data-motion="scene" data-scene>
     <div class="hts-container hts-container--wide">
         <header class="gallery-head" data-reveal="rise">
-            <p class="chapter-kicker" data-text-effect="flicker">
+            <p class="chapter-kicker" data-text-effect="flicker" data-motion-step="label">
                 <span class="kicker-index">@Text["Nodes.Index"]</span>
                 @Text["Nodes.Kicker"]
             </p>
-            <h2 id="gallery-heading" class="gallery-title" data-text-effect="rise">@Text["Nodes.Title"]</h2>
-            <p class="gallery-lede">
+            <h2 id="gallery-heading" class="gallery-title" data-text-effect="rise" data-motion-step="headline">@Text["Nodes.Title"]</h2>
+            <p class="gallery-lede" data-motion-step="copy">
                 @Text["Nodes.Lede"]
             </p>
         </header>
 
-        <div class="gallery-lead" data-reveal>
+        <div class="gallery-lead" data-reveal data-motion-step="visual" data-parallax="12">
             @* The rack with its door open: the one shot that shows the machines themselves. *@
             <HardwarePhoto Slot="HardwarePhotoSlot.RackOpen"
                            Alt="@Text["Photo.Alt.RackOpen"]"
@@ -78,7 +78,7 @@
         </div>
 
         @* The rest of the rack, as a strip. *@
-        <div class="gallery-strip" data-reveal>
+        <div class="gallery-strip" data-reveal data-motion-step="details">
             <HardwarePhoto Slot="HardwarePhotoSlot.RackInterior"
                            Alt="@Text["Photo.Alt.RackInterior"]"
                            Caption="@Text["Photo.Caption.Interior"]" />

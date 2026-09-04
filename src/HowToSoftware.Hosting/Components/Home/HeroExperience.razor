@@ -18,10 +18,10 @@
 
 @inject IStringLocalizer<HomeText> Text
 
-<section class="hero" id="top" data-stage>
+<section class="hero" id="top" data-stage data-motion="scene" data-scene>
     <div class="hts-container hts-container--wide hero-inner">
-        <p class="hero-kicker" data-text-effect="flicker">
-            <span class="kicker-rule"></span>
+        <p class="hero-kicker" data-text-effect="flicker" data-motion-step="label">
+            <span class="kicker-rule" data-motion-draw></span>
             @Text["Hero.Kicker"]
         </p>
 
@@ -31,14 +31,14 @@
             leaves purple free to mean what it means everywhere else on the site - running, or
             the one thing this page wants you to press.
         *@
-        <h1 class="hero-title" data-text-effect="rise">
+        <h1 class="hero-title" data-text-effect="rise" data-motion-step="headline">
             <span class="title-line">@Text["Hero.Line1"]</span>
             <span class="title-line title-line--accent">@Text["Hero.Line2"]</span>
             <span class="title-line">@Text["Hero.Line3"]</span>
         </h1>
 
         <div class="hero-body">
-            <div class="hero-copy-col">
+            <div class="hero-copy-col" data-motion-step="copy">
                 <p class="hero-copy">@Text["Hero.Copy"]</p>
 
                 <div class="hero-actions">
@@ -51,13 +51,13 @@
                 </div>
             </div>
 
-            <div class="hero-panel-col">
+            <div class="hero-panel-col" data-motion-step="visual">
                 <HeroPanel />
             </div>
         </div>
     </div>
 
-    <div class="hts-container hts-container--wide hero-foot">
+    <div class="hts-container hts-container--wide hero-foot" data-scene-exit>
         <span class="foot-coord">@Text["Hero.FootCell"]</span>
         <span class="foot-scroll">
             <span class="foot-scroll-track"><span class="foot-scroll-dot"></span></span>

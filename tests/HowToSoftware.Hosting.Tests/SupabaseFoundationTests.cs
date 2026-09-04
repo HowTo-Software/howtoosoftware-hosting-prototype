@@ -32,7 +32,7 @@ public sealed class SupabaseFoundationTests
         var parsed = new NpgsqlConnectionStringBuilder(options.GetNpgsqlConnectionString());
         Assert.Equal("postgres.project", parsed.Username);
         Assert.Equal("p@ss", parsed.Password);
-        Assert.Equal(SslMode.Require, parsed.SslMode);
+        Assert.Equal(SslMode.VerifyFull, parsed.SslMode);
     }
 
     [Fact]
@@ -46,8 +46,8 @@ public sealed class SupabaseFoundationTests
         });
 
         var result = await check.CheckHealthAsync(new HealthCheckContext());
-        Assert.Equal(HealthStatus.Degraded, result.Status);
-        Assert.Equal("Supabase not configured", result.Description);
+        Assert.Equal(HealthStatus.Healthy, result.Status);
+        Assert.Equal("Local database fallback active", result.Description);
     }
 
     [Fact]

@@ -15,20 +15,21 @@
 
 <section class="chapter layout-@LayoutClass @(Chapter.Mirrored ? "is-mirrored" : null)"
          id="@Chapter.Id"
-         aria-labelledby="@HeadingId">
+         aria-labelledby="@HeadingId"
+         data-motion="section">
     <div class="hts-container hts-container--wide chapter-inner">
         <div class="chapter-copy" data-reveal="@(Chapter.Mirrored ? "right" : "left")">
-            <p class="chapter-kicker" data-text-effect="flicker">
+            <p class="chapter-kicker" data-text-effect="flicker" data-motion-step="label">
                 <span class="kicker-index">@Chapter.Index</span>
                 @Text[$"{KeyPrefix}.Kicker"]
             </p>
 
-            <h2 class="chapter-title" id="@HeadingId" data-text-effect="rise">@Text[$"{KeyPrefix}.Title"]</h2>
+            <h2 class="chapter-title" id="@HeadingId" data-text-effect="rise" data-motion-step="headline">@Text[$"{KeyPrefix}.Title"]</h2>
 
-            <p class="chapter-lede">@Text[$"{KeyPrefix}.Body"]</p>
+            <p class="chapter-lede" data-motion-step="copy">@Text[$"{KeyPrefix}.Body"]</p>
         </div>
 
-        <div class="chapter-visual" data-reveal="@(Chapter.Mirrored ? "left" : "right")">
+        <div class="chapter-visual" data-reveal="@(Chapter.Mirrored ? "left" : "right")" data-motion-step="visual">
             @switch (Chapter.Layout)
             {
                 case InfrastructureLayout.SpecFigure:

@@ -155,7 +155,7 @@ public sealed class PurchaseFlowTests : IDisposable
         Assert.Equal(options.Metadata, options.SubscriptionData!.Metadata);
 
         Assert.Equal("https://hts.example/payment/success?session_id={CHECKOUT_SESSION_ID}", options.SuccessUrl);
-        Assert.Equal($"https://hts.example/payment/cancel?order={order.Id:D}", options.CancelUrl);
+        Assert.Equal("https://hts.example/payment/cancel?game=project-zomboid&plan=zomboid-4gb&period=quarterly", options.CancelUrl);
         Assert.Equal("pt-BR", options.Locale);
     }
 
@@ -192,15 +192,26 @@ public sealed class PurchaseFlowTests : IDisposable
     }
 
     [Fact]
-    public async Task ConfiguredReturnUrlsWin_AndTheOrderIdIsSubstituted()
+    public async Task ConfiguredReturnUrlsWin_AndPublicSlugsAreSubstituted()
     {
         _stripeOptions.SuccessUrl = "https://howtoosoftware.com/payment/success?session_id={CHECKOUT_SESSION_ID}";
-        _stripeOptions.CancelUrl = "https://howtoosoftware.com/payment/cancel?order={ORDER_ID}";
+        _stripeOptions.CancelUrl = "https://howtoosoftware.com/payment/cancel?game={GAME_SLUG}&plan={PLAN_SLUG}&period={BILLING_PERIOD}";
 
         var result = await Checkout().CreateCheckoutSessionAsync(Request());
 
         Assert.Equal(_stripeOptions.SuccessUrl, _stripe.LastOptions!.SuccessUrl);
-        Assert.Equal($"https://howtoosoftware.com/payment/cancel?order={result.OrderId:D}", _stripe.LastOptions.CancelUrl);
+        Assert.Equal("https://howtoosoftware.com/payment/cancel?game=project-zomboid&plan=zomboid-4gb&period=quarterly", _stripe.LastOptions.CancelUrl);
+    }
+
+    [Fact]
+    public async Task AnUntrustedReturnOriginCannotCreateACheckoutSession()
+    {
+        var request = Request() with { ReturnOrigin = "http://attacker.example" };
+
+        var result = await Checkout().CreateCheckoutSessionAsync(request);
+
+        Assert.Equal(CheckoutOutcome.Rejected, result.Outcome);
+        Assert.Null(_stripe.LastOptions);
     }
 
     [Fact]

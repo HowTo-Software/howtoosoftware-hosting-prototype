@@ -3,6 +3,7 @@ using HowToSoftware.Hosting.Data;
 using HowToSoftware.Hosting.Endpoints;
 using HowToSoftware.Hosting.Infrastructure.Configuration;
 using HowToSoftware.Hosting.Infrastructure.Pterodactyl;
+using HowToSoftware.Hosting.Infrastructure.Security;
 using HowToSoftware.Hosting.Infrastructure.Stripe;
 using HowToSoftware.Hosting.Infrastructure.Supabase;
 using HowToSoftware.Hosting.Localization;
@@ -11,6 +12,8 @@ using HowToSoftware.Hosting.Services;
 using HowToSoftware.Hosting.Services.Orders;
 using HowToSoftware.Hosting.Services.Payments;
 using HowToSoftware.Hosting.Services.Provisioning;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
@@ -19,10 +22,37 @@ EnvironmentFile.ApplyAspNetCoreAliases();
 var builder = WebApplication.CreateBuilder(args);
 var supabase = SupabaseOptions.FromConfiguration(builder.Configuration);
 
+if (!string.IsNullOrWhiteSpace(supabase.DbConnectionString)
+    && !SupabaseOptions.IsPlaceholder(supabase.DbConnectionString)
+    && !supabase.IsDatabaseConfigured)
+{
+    // Never silently fall back to a different database because a production connection string
+    // was malformed. The message intentionally does not echo the credential-bearing value.
+    throw new InvalidOperationException("SUPABASE_DB_CONNECTION_STRING is set but is not a valid PostgreSQL connection string.");
+}
+
 // Blazor: the marketing pages render statically on the server for SEO and hydrate only the
 // islands that genuinely need interactivity (navigation, FAQ, control-panel preview, sign-in).
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents(options =>
+    {
+        // Exception details must never cross a production Blazor circuit.
+        options.DetailedErrors = builder.Environment.IsDevelopment();
+        options.MaxBufferedUnacknowledgedRenderBatches = 10;
+    });
+
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.AddServerHeader = false;
+    options.Limits.MaxRequestBodySize = 1024 * 1024;
+    options.Limits.MaxRequestHeaderCount = 64;
+    options.Limits.MaxRequestHeadersTotalSize = 32 * 1024;
+    options.Limits.RequestHeadersTimeout = TimeSpan.FromSeconds(15);
+    options.Limits.KeepAliveTimeout = TimeSpan.FromMinutes(2);
+});
+
+builder.Services.AddSiteSecurity(builder.Environment, builder.Configuration);
+builder.Services.AddDataProtection().SetApplicationName("HowToSoftware.Hosting");
 
 // Localisation. Resources live beside their marker types under Localization/, so
 // IStringLocalizer<CommonText> reads Localization/CommonText.resx and its .pt-BR sibling.
@@ -30,7 +60,11 @@ builder.Services.AddLocalization();
 builder.Services.Configure<RequestLocalizationOptions>(SiteLocalization.Configure);
 
 builder.Services.AddOptions<SiteOptions>()
-    .Bind(builder.Configuration.GetSection(SiteOptions.SectionName));
+    .Bind(builder.Configuration.GetSection(SiteOptions.SectionName))
+    .ValidateOnStart();
+builder.Services.AddSingleton<
+    Microsoft.Extensions.Options.IValidateOptions<SiteOptions>,
+    SiteOptionsValidator>();
 
 // Plan prices are commercial values that change without the plans changing, so they arrive from
 // configuration. A plan with no configured price renders as visibly unpriced rather than
@@ -81,7 +115,8 @@ if (supabase.IsDatabaseConfigured)
             supabase.GetNpgsqlConnectionString(),
             postgres => postgres
                 .MigrationsHistoryTable("__ef_migrations_history")
-                .EnableRetryOnFailure()));
+                .EnableRetryOnFailure())
+            .EnableSensitiveDataLogging(false));
     builder.Services.AddSingleton<IOrderStore, PostgresOrderStore>();
     builder.Services.AddSingleton<IProvisioningStateStore, PostgresProvisioningStateStore>();
     builder.Services.AddSingleton<IBillingStore, PostgresBillingStore>();
@@ -92,7 +127,8 @@ else
     builder.Services.AddDbContextFactory<HostingDbContext>(options =>
         options.UseSqlite(
             builder.Configuration.GetConnectionString(HostingDbContext.ConnectionName)
-                ?? "Data Source=hosting.db"));
+                ?? "Data Source=hosting.db")
+            .EnableSensitiveDataLogging(false));
     builder.Services.AddSingleton<IOrderStore, EfOrderStore>();
     builder.Services.AddSingleton<IProvisioningStateStore, NullProvisioningStateStore>();
     builder.Services.AddSingleton<IBillingStore, NullBillingStore>();
@@ -185,43 +221,54 @@ if (!supabase.IsDatabaseConfigured)
     db.Database.Migrate();
 }
 
+// Forwarded headers are accepted only from framework defaults (loopback) or IPs explicitly
+// listed under Security:KnownProxies. This must precede HTTPS and IP-based rate limiting.
+app.UseForwardedHeaders();
+
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/error", createScopeForErrors: true);
-    // Default HSTS value is 30 days. Change this for production scenarios - see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
-app.UseHttpsRedirection();
+app.UseSiteSecurityHeaders();
+if (!app.Environment.IsDevelopment())
+{
+    // Local development intentionally runs on http://localhost. Production never does.
+    app.UseHttpsRedirection();
+}
 
 // Must run before the components: it sets the culture for the request that renders the page
 // and, just as importantly, for the request that opens an interactive circuit, so both halves
 // of a page speak the same language.
 app.UseRequestLocalization();
 
+app.UseRateLimiter();
 app.UseAntiforgery();
 
 app.MapStaticAssets();
 app.MapCultureSelection();
 app.MapPaymentEndpoints();
-app.MapGet("/health/supabase", async (SupabaseHealthCheck check, CancellationToken cancellationToken) =>
+app.MapHealthChecks("/health", new HealthCheckOptions
 {
-    var result = await check.CheckHealthAsync(new HealthCheckContext(), cancellationToken);
-    var status = result.Status switch
+    AllowCachingResponses = false,
+    ResponseWriter = static async (context, report) =>
     {
-        HealthStatus.Healthy => "Connected",
-        HealthStatus.Degraded => "Not configured",
-        _ => "Error"
-    };
-
-    return Results.Json(new { service = "Supabase", status });
-}).WithName("SupabaseHealth");
+        context.Response.ContentType = "application/json";
+        await context.Response.WriteAsJsonAsync(new
+        {
+            status = report.Status is HealthStatus.Unhealthy ? "Unhealthy" : "Healthy"
+        });
+    }
+}).RequireRateLimiting(SecurityRateLimitPolicies.Health)
+    .WithName("SiteHealth");
 
 // The Project Zomboid page moved under /game-hosting. Links already out in the world keep
 // working, and search engines are told the move is permanent.
 app.MapGet(SiteRoutes.LegacyProjectZomboid, () => Results.Redirect(SiteRoutes.ProjectZomboid, permanent: true));
 app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
+    .AddInteractiveServerRenderMode()
+    .RequireRateLimiting(SecurityRateLimitPolicies.PublicPages);
 
 app.Run();
 

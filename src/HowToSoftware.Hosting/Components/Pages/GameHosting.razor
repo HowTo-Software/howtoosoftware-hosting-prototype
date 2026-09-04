@@ -24,18 +24,18 @@
     <link rel="canonical" href="@($"{Site.Value.BaseUrl.TrimEnd('/')}{SiteRoutes.GameHosting}")" />
 </HeadContent>
 
-<section class="catalog" aria-labelledby="catalog-heading">
+<section class="catalog" aria-labelledby="catalog-heading" data-motion="scene" data-scene>
     <div class="hts-container hts-container--wide">
         <header class="catalog-head" data-reveal>
-            <p class="catalog-kicker">
+            <p class="catalog-kicker" data-motion-step="label">
                 <span class="kicker-index">01</span>
                 <span class="hts-label">@Text["GameHosting.Kicker"]</span>
             </p>
-            <h1 id="catalog-heading" class="catalog-title" data-text-effect="rise">@Text["GameHosting.Title"]</h1>
-            <p class="catalog-lede">@Text["GameHosting.Lede"]</p>
+            <h1 id="catalog-heading" class="catalog-title" data-text-effect="rise" data-motion-step="headline">@Text["GameHosting.Title"]</h1>
+            <p class="catalog-lede" data-motion-step="copy">@Text["GameHosting.Lede"]</p>
         </header>
 
-        <ul class="games">
+        <ul class="games" data-motion-stagger>
             @foreach (var (game, index) in Games.Games.Select((g, i) => (g, i)))
             {
                 var isPrimary = string.Equals(game.Slug, Games.Primary.Slug, StringComparison.Ordinal);
@@ -45,6 +45,7 @@
                 <li class="game @(isPrimary ? "is-primary" : null) @(game.IsAvailable ? "is-available" : "is-planned")"
                     data-reveal
                     data-spotlight
+                    data-motion-step="card"
                     style="--hts-reveal-delay: @(index * 90)ms">
 
                     <GameCover Game="game"
@@ -118,7 +119,7 @@
                 </li>
             }
 
-            <li class="game game--request" data-reveal style="--hts-reveal-delay: @(Games.Games.Count * 90)ms">
+            <li class="game game--request" data-reveal data-motion-step="card" style="--hts-reveal-delay: @(Games.Games.Count * 90)ms">
                 <div class="request">
                     <p class="hts-label request-kicker">@Text["GameHosting.RequestKicker"]</p>
                     <h2 class="request-title">@Text["GameHosting.RequestTitle"]</h2>
@@ -133,7 +134,7 @@
         </ul>
 
         @* The four steps, stated once so nobody has to guess where the button goes. *@
-        <ol class="how" data-reveal aria-label="@Text["GameHosting.HowKicker"]">
+        <ol class="how" data-reveal data-motion-step="details" aria-label="@Text["GameHosting.HowKicker"]">
             <li><span class="how-index hts-mono">01</span><span>@Text["GameHosting.Step1"]</span></li>
             <li><span class="how-index hts-mono">02</span><span>@Text["GameHosting.Step2"]</span></li>
             <li><span class="how-index hts-mono">03</span><span>@Text["GameHosting.Step3"]</span></li>

@@ -285,7 +285,9 @@ public sealed class OrderFulfillmentWorker : BackgroundService
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
-            _logger.LogError(exception, "Could not scan for unprovisioned orders at start-up.");
+            _logger.LogError(
+                "Could not scan for unprovisioned orders at start-up ({FailureType}).",
+                exception.GetType().Name);
         }
 
         await foreach (var orderId in _queue.ReadAllAsync(stoppingToken).ConfigureAwait(false))
@@ -304,7 +306,10 @@ public sealed class OrderFulfillmentWorker : BackgroundService
             catch (Exception exception)
             {
                 // One order's failure must not stop the queue. The order itself records why.
-                _logger.LogError(exception, "Fulfilment of order {OrderId} threw.", orderId);
+                _logger.LogError(
+                    "Fulfilment of order {OrderId} threw {FailureType}.",
+                    orderId,
+                    exception.GetType().Name);
             }
         }
     }

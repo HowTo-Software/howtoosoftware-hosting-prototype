@@ -1,6 +1,5 @@
-using Microsoft.Extensions.Options;
-
 using HowToSoftware.Hosting.Infrastructure.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace HowToSoftware.Hosting.Infrastructure.Stripe;
 
@@ -45,9 +44,9 @@ public sealed class StripeOptions
     public string SuccessUrl { get; set; } = string.Empty;
 
     /// <summary>
-    /// Absolute URL Stripe returns the customer to if they back out. May contain
-    /// <c>{ORDER_ID}</c>, which the site substitutes. When empty the site builds it from the
-    /// request origin.
+    /// Absolute URL Stripe returns the customer to if they back out. It may contain the public
+    /// placeholders <c>{GAME_SLUG}</c>, <c>{PLAN_SLUG}</c> and <c>{BILLING_PERIOD}</c>. Internal
+    /// order identifiers are deliberately never put in this URL.
     /// </summary>
     public string CancelUrl { get; set; } = string.Empty;
 
@@ -140,15 +139,15 @@ public sealed class StripeOptionsValidator : IValidateOptions<StripeOptions>
         }
 
         if (!string.IsNullOrWhiteSpace(options.SuccessUrl)
-            && !Uri.TryCreate(options.SuccessUrl, UriKind.Absolute, out _))
+            && !IsSecurePublicUrl(options.SuccessUrl))
         {
-            failures.Add("Stripe:SuccessUrl must be an absolute URL.");
+            failures.Add("Stripe:SuccessUrl must use HTTPS (HTTP is accepted only for a loopback development URL).");
         }
 
         if (!string.IsNullOrWhiteSpace(options.CancelUrl)
-            && !Uri.TryCreate(options.CancelUrl, UriKind.Absolute, out _))
+            && !IsSecurePublicUrl(options.CancelUrl))
         {
-            failures.Add("Stripe:CancelUrl must be an absolute URL.");
+            failures.Add("Stripe:CancelUrl must use HTTPS (HTTP is accepted only for a loopback development URL).");
         }
 
         if (options.WebhookToleranceSeconds is < 0 or > 3600)
@@ -158,6 +157,12 @@ public sealed class StripeOptionsValidator : IValidateOptions<StripeOptions>
 
         return failures.Count == 0 ? ValidateOptionsResult.Success : ValidateOptionsResult.Fail(failures);
     }
+
+    private static bool IsSecurePublicUrl(string value) =>
+        Uri.TryCreate(value, UriKind.Absolute, out var uri)
+        && string.IsNullOrEmpty(uri.UserInfo)
+        && (uri.Scheme == Uri.UriSchemeHttps
+            || (uri.Scheme == Uri.UriSchemeHttp && uri.IsLoopback));
 }
 
 // =============================================================

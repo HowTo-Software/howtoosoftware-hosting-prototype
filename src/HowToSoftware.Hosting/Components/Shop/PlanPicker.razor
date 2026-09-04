@@ -19,23 +19,23 @@
 @inject IPlanCatalogService Catalog
 @inject IStringLocalizer<CheckoutText> Text
 
-<section class="picker" id="plans" aria-labelledby="picker-heading">
+<section class="picker" id="plans" aria-labelledby="picker-heading" data-motion="scene" data-scene>
     <div class="hts-container hts-container--wide">
         <header class="picker-head" data-reveal>
-            <p class="picker-kicker">
+            <p class="picker-kicker" data-motion-step="label">
                 <span class="kicker-index">@Index</span>
                 <span class="hts-label">@Text["Picker.Kicker"]</span>
             </p>
-            <h2 id="picker-heading" class="picker-title">@Text["Picker.Title"]</h2>
+            <h2 id="picker-heading" class="picker-title" data-motion-step="headline">@Text["Picker.Title"]</h2>
             @if (Smallest is { } small && Largest is { } large)
             {
-                <p class="picker-lede">@Text["Picker.Lede", small.MemoryGb, large.MemoryGb, Plans.Count]</p>
+                <p class="picker-lede" data-motion-step="copy">@Text["Picker.Lede", small.MemoryGb, large.MemoryGb, Plans.Count]</p>
             }
         </header>
 
         @if (Catalog.HasPricing)
         {
-            <fieldset class="periods" data-reveal>
+            <fieldset class="periods" data-reveal data-motion-step="details">
                 <legend class="periods-legend hts-label">@Text["Picker.PeriodLegend"]</legend>
 
                 <div class="periods-track">
@@ -59,12 +59,13 @@
             </fieldset>
         }
 
-        <ul class="plans">
+        <ul class="plans" data-motion-stagger>
             @foreach (var (plan, index) in Plans.Select((p, i) => (p, i)))
             {
                 <li class="plan @(plan.IsRecommended ? "is-recommended" : null)"
                     data-reveal
                     data-spotlight
+                    data-motion-step="card"
                     style="--hts-reveal-delay: @(index * 60)ms">
 
                     <header class="plan-head">
@@ -150,9 +151,6 @@
             }
         </ul>
 
-        @* Said once, under the grid, rather than on eight cards. The one technical footnote the
-           interface keeps: it stops "300% CPU" being read as three cores. *@
-        <p class="picker-note">@Text["Picker.CpuNote"]</p>
     </div>
 </section>
 
