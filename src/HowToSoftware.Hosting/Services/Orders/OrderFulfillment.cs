@@ -79,6 +79,7 @@ public sealed class OrderFulfillmentService : IOrderFulfillmentService
     private readonly IOptionsMonitor<PterodactylOptions> _panelOptions;
     private readonly TimeProvider _clock;
     private readonly ILogger<OrderFulfillmentService> _logger;
+    private readonly IProvisioningStateStore _state;
 
     /// <summary>Creates the service.</summary>
     public OrderFulfillmentService(
@@ -87,7 +88,8 @@ public sealed class OrderFulfillmentService : IOrderFulfillmentService
         IPterodactylClient panel,
         IOptionsMonitor<PterodactylOptions> panelOptions,
         TimeProvider clock,
-        ILogger<OrderFulfillmentService> logger)
+        ILogger<OrderFulfillmentService> logger,
+        IProvisioningStateStore? state = null)
     {
         _orders = orders;
         _provisioning = provisioning;
@@ -95,6 +97,7 @@ public sealed class OrderFulfillmentService : IOrderFulfillmentService
         _panelOptions = panelOptions;
         _clock = clock;
         _logger = logger;
+        _state = state ?? new NullProvisioningStateStore();
     }
 
     /// <inheritdoc />
@@ -108,7 +111,7 @@ public sealed class OrderFulfillmentService : IOrderFulfillmentService
             return;
         }
 
-        if (order.Status is not OrderStatus.Paid)
+        if (order.Status is not (OrderStatus.Paid or OrderStatus.Provisioning))
         {
             _logger.LogInformation("Order {OrderId} is {Status}, not Paid; fulfilment skipped.", order.Id, order.Status);
             return;
@@ -130,9 +133,14 @@ public sealed class OrderFulfillmentService : IOrderFulfillmentService
             return;
         }
 
-        order.TransitionTo(OrderStatus.Provisioning, _clock.GetUtcNow());
-        order.ProvisioningStage = FulfilmentStage.Preparing;
-        await _orders.UpdateAsync(order, cancellationToken).ConfigureAwait(false);
+        if (order.Status is OrderStatus.Paid)
+        {
+            order.TransitionTo(OrderStatus.Provisioning, _clock.GetUtcNow());
+            order.ProvisioningStage = FulfilmentStage.Preparing;
+            await _orders.UpdateAsync(order, cancellationToken).ConfigureAwait(false);
+        }
+
+        await _state.BeginAsync(order.Id, cancellationToken).ConfigureAwait(false);
 
         var request = new ProvisioningRequest
         {
@@ -157,6 +165,7 @@ public sealed class OrderFulfillmentService : IOrderFulfillmentService
         order.ProvisioningStage = result.NodeId is null ? FulfilmentStage.NodeSelected : FulfilmentStage.ResourcesAllocated;
         order.UpdatedAt = _clock.GetUtcNow();
         await _orders.UpdateAsync(order, cancellationToken).ConfigureAwait(false);
+        await _state.MarkCreatedAsync(order.Id, result, cancellationToken).ConfigureAwait(false);
 
         _logger.LogInformation(
             "Order {OrderId}: server {Server} created on node {Node}; waiting for install.",
@@ -170,10 +179,15 @@ public sealed class OrderFulfillmentService : IOrderFulfillmentService
         order.ProvisioningStage = FulfilmentStage.Installing;
         order.UpdatedAt = _clock.GetUtcNow();
         await _orders.UpdateAsync(order, cancellationToken).ConfigureAwait(false);
+        await _state.MarkInstallingAsync(order.Id, cancellationToken).ConfigureAwait(false);
 
         if (string.IsNullOrWhiteSpace(externalId))
         {
-            _logger.LogWarning("Order {OrderId}: no external id came back, so the install cannot be watched.", order.Id);
+            await FailAsync(
+                order,
+                FulfilmentStage.Failed,
+                "Pterodactyl returned no external server id, so installation cannot be verified.",
+                cancellationToken).ConfigureAwait(false);
             return;
         }
 
@@ -198,6 +212,7 @@ public sealed class OrderFulfillmentService : IOrderFulfillmentService
                     order.ProvisioningStage = FulfilmentStage.Online;
                     order.TransitionTo(OrderStatus.Active, _clock.GetUtcNow());
                     await _orders.UpdateAsync(order, cancellationToken).ConfigureAwait(false);
+                    await _state.MarkOnlineAsync(order.Id, cancellationToken).ConfigureAwait(false);
                     _logger.LogInformation("Order {OrderId}: server {Server} is online. Order active.", order.Id, order.ServerIdentifier);
                     return;
 
@@ -207,9 +222,11 @@ public sealed class OrderFulfillmentService : IOrderFulfillmentService
             }
         }
 
-        _logger.LogWarning(
-            "Order {OrderId}: install still running after {Timeout}; left in Provisioning for an operator.",
-            order.Id, InstallTimeout);
+        await FailAsync(
+            order,
+            FulfilmentStage.Failed,
+            $"Pterodactyl installation did not finish within {InstallTimeout}.",
+            cancellationToken).ConfigureAwait(false);
     }
 
     private async Task FailAsync(Order order, FulfilmentStage stage, string reason, CancellationToken cancellationToken)
@@ -222,6 +239,7 @@ public sealed class OrderFulfillmentService : IOrderFulfillmentService
         order.ProvisioningStage = stage;
         order.FailureReason = reason;
         await _orders.UpdateAsync(order, cancellationToken).ConfigureAwait(false);
+        await _state.MarkFailedAsync(order.Id, reason, cancellationToken).ConfigureAwait(false);
 
         _logger.LogError("Order {OrderId}: {Reason}", order.Id, reason);
     }

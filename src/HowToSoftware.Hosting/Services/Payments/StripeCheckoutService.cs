@@ -90,6 +90,9 @@ public interface IStripeCheckoutService
     /// <summary>Mirrors a subscription's Stripe status onto its order.</summary>
     Task HandleSubscriptionStateAsync(Subscription subscription, CancellationToken cancellationToken = default);
 
+    /// <summary>Mirrors Stripe invoice state and keeps a small invoice reference cache.</summary>
+    Task HandleInvoiceStateAsync(Invoice invoice, CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Whether what Stripe reports as paid is exactly what the server told it to charge.
     /// </summary>
@@ -119,6 +122,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
     private readonly IOrderStore _orders;
     private readonly OrderFulfillmentQueue _fulfilment;
     private readonly IOptionsMonitor<StripeOptions> _options;
+    private readonly IBillingStore _billing;
     private readonly TimeProvider _clock;
     private readonly ILogger<StripeCheckoutService> _logger;
 
@@ -130,13 +134,15 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
         OrderFulfillmentQueue fulfilment,
         IOptionsMonitor<StripeOptions> options,
         TimeProvider clock,
-        ILogger<StripeCheckoutService> logger)
+        ILogger<StripeCheckoutService> logger,
+        IBillingStore? billing = null)
     {
         _stripe = stripe;
         _pricing = pricing;
         _orders = orders;
         _fulfilment = fulfilment;
         _options = options;
+        _billing = billing ?? new NullBillingStore();
         _clock = clock;
         _logger = logger;
     }
@@ -166,6 +172,9 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
         }
 
         var now = _clock.GetUtcNow();
+        var existingStripeCustomerId = string.IsNullOrWhiteSpace(request.UserId)
+            ? null
+            : await _billing.FindStripeCustomerIdAsync(request.UserId, cancellationToken).ConfigureAwait(false);
         var order = new Order
         {
             Id = Guid.NewGuid(),
@@ -182,6 +191,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
             Currency = priced.CurrencyCode,
             Status = OrderStatus.Pending,
             ProvisioningStage = FulfilmentStage.NotStarted,
+            StripeCustomerId = existingStripeCustomerId,
             CreatedAt = now,
             UpdatedAt = now
         };
@@ -293,6 +303,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
 
         order.CustomerEmail = session.CustomerDetails?.Email ?? session.CustomerEmail ?? order.CustomerEmail;
         order.StripeCustomerId = session.CustomerId ?? order.StripeCustomerId;
+        order.StripePaymentIntentId = session.PaymentIntentId ?? order.StripePaymentIntentId;
         order.StripeSubscriptionId = session.SubscriptionId ?? order.StripeSubscriptionId;
         order.StripeCheckoutSessionId ??= session.Id;
         order.TransitionTo(OrderStatus.Paid, now);
@@ -352,6 +363,46 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
 
         _logger.LogInformation(
             "Order {OrderId}: subscription status is now {Status}.", order.Id, subscription.Status);
+    }
+
+    /// <inheritdoc />
+    public async Task HandleInvoiceStateAsync(Invoice invoice, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(invoice);
+
+        var subscriptionId = invoice.Parent?.SubscriptionDetails?.SubscriptionId;
+        Order? order = null;
+
+        if (!string.IsNullOrWhiteSpace(subscriptionId))
+        {
+            order = await _orders.FindBySubscriptionAsync(subscriptionId, cancellationToken).ConfigureAwait(false);
+        }
+
+        if (order is null
+            && invoice.Parent?.SubscriptionDetails?.Metadata is { } metadata
+            && metadata.TryGetValue(MetadataKeys.OrderId, out var rawOrderId)
+            && Guid.TryParse(rawOrderId, out var orderId))
+        {
+            order = await _orders.FindAsync(orderId, cancellationToken).ConfigureAwait(false);
+        }
+
+        if (order is null)
+        {
+            _logger.LogWarning("Invoice event for an unknown subscription; ignored.");
+            return;
+        }
+
+        order.StripeInvoiceId = invoice.Id;
+        order.StripeSubscriptionId ??= subscriptionId;
+        order.UpdatedAt = _clock.GetUtcNow();
+        await _orders.UpdateAsync(order, cancellationToken).ConfigureAwait(false);
+        await _billing.SyncInvoiceAsync(order, invoice, cancellationToken).ConfigureAwait(false);
+
+        _logger.LogInformation(
+            "Order {OrderId}: invoice {InvoiceId} is {Status}.",
+            order.Id,
+            invoice.Id,
+            invoice.Status);
     }
 
     /// <inheritdoc />
@@ -443,6 +494,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
         return new SessionCreateOptions
         {
             Mode = "subscription",
+            Customer = order.StripeCustomerId,
             LineItems = [lineItem],
             SuccessUrl = successUrl,
             CancelUrl = cancelUrl,

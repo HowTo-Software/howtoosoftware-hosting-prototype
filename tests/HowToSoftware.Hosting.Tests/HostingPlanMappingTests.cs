@@ -500,13 +500,13 @@ public class HostingPlanMappingTests : IDisposable
 
         var plan = catalog.FindBySlug("zomboid-4gb")!;
 
-        // Annual takes 15% off twelve months: 10.00 x 12 x 0.85.
+        // Annual takes 10% off twelve months: 10.00 x 12 x 0.90.
         var annual = catalog.Quote(plan, BillingPeriod.Annual);
 
         Assert.NotNull(annual);
         Assert.Equal(120.00m, annual.BaseAmount);
-        Assert.Equal(102.00m, annual.FinalAmount);
-        Assert.Equal(8.50m, annual.EffectiveMonthly);
+        Assert.Equal(108.00m, annual.FinalAmount);
+        Assert.Equal(9.00m, annual.EffectiveMonthly);
     }
 
     [Fact]

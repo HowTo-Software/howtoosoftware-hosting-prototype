@@ -124,11 +124,17 @@ public sealed class Order
     /// <summary>The Checkout session created for this order.</summary>
     public string? StripeCheckoutSessionId { get; set; }
 
+    /// <summary>The PaymentIntent when Stripe creates one for the Checkout lifecycle.</summary>
+    public string? StripePaymentIntentId { get; set; }
+
     /// <summary>The Stripe customer, once Checkout completes.</summary>
     public string? StripeCustomerId { get; set; }
 
     /// <summary>The subscription, once Checkout completes.</summary>
     public string? StripeSubscriptionId { get; set; }
+
+    /// <summary>The most recently observed Stripe invoice for this subscription.</summary>
+    public string? StripeInvoiceId { get; set; }
 
     /// <summary>
     /// Stripe's own status word for the subscription (<c>active</c>, <c>past_due</c>,

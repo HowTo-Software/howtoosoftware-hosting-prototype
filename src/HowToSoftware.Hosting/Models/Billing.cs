@@ -26,7 +26,7 @@ public enum BillingPeriod
 /// <remarks>
 /// <para>
 /// <b>These are the only discounts that exist.</b> Monthly is the list price. Quarterly takes
-/// five per cent off three months paid together; annual takes fifteen per cent off twelve. There
+/// five per cent off three months paid together; annual takes ten per cent off twelve. There
 /// is no first-month promotion, no renewal discount and no coupon, and this class is the single
 /// place a percentage lives - the catalogue, the plan picker, the review step, the Stripe line
 /// item and the webhook's price check all call into it. A percentage typed anywhere else would
@@ -63,7 +63,7 @@ public static class BillingPolicy
     {
         BillingPeriod.Monthly => 0,
         BillingPeriod.Quarterly => 5,
-        BillingPeriod.Annual => 15,
+        BillingPeriod.Annual => 10,
         _ => throw new ArgumentOutOfRangeException(nameof(period), period, "Unknown billing period.")
     };
 

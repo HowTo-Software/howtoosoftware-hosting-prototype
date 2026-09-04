@@ -9,7 +9,7 @@ public sealed class ProvisioningLabOptions
     public const string SectionName = "ProvisioningTest";
 
     /// <summary>
-    /// Opens the lab outside Development. Off unless deliberately switched on.
+    /// Opens the real-deployment lab. Off unless deliberately switched on.
     /// </summary>
     /// <remarks>
     /// Exists so the pipeline can be exercised on a staging host that does not run in the
@@ -43,7 +43,7 @@ public interface IProvisioningLabGuard
 }
 
 /// <summary>
-/// Opens the lab in Development, or wherever <c>ProvisioningTest:Enabled</c> is explicitly set.
+/// Opens the lab only where <c>ProvisioningTest:Enabled</c> is explicitly set.
 /// </summary>
 public sealed class ProvisioningLabGuard : IProvisioningLabGuard
 {
@@ -62,11 +62,11 @@ public sealed class ProvisioningLabGuard : IProvisioningLabGuard
     }
 
     /// <inheritdoc />
-    public bool IsAvailable => _environment.IsDevelopment() || _options.Enabled;
+    public bool IsAvailable => _options.Enabled;
 
     /// <inheritdoc />
     public string ClosedReason =>
-        $"The provisioning lab is only available in Development, or where {ProvisioningLabOptions.SectionName}:Enabled is set. "
+        $"The provisioning lab is disabled until {ProvisioningLabOptions.SectionName}:Enabled is explicitly set. "
             + $"This host runs in the {_environment.EnvironmentName} environment.";
 
     /// <inheritdoc />

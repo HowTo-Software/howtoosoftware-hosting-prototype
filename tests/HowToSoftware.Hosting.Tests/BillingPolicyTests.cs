@@ -3,7 +3,7 @@ using HowToSoftware.Hosting.Models;
 namespace HowToSoftware.Hosting.Tests;
 
 /// <summary>
-/// The one pricing policy: monthly at list, quarterly five per cent off, annual fifteen off,
+/// The one pricing policy: monthly at list, quarterly five per cent off, annual ten off,
 /// and nothing else.
 /// </summary>
 public class BillingPolicyTests
@@ -11,7 +11,7 @@ public class BillingPolicyTests
     [Theory]
     [InlineData(BillingPeriod.Monthly, 1, 0)]
     [InlineData(BillingPeriod.Quarterly, 3, 5)]
-    [InlineData(BillingPeriod.Annual, 12, 15)]
+    [InlineData(BillingPeriod.Annual, 12, 10)]
     public void ThePeriodsAreExactlyTheAgreedThree(BillingPeriod period, int months, int percent)
     {
         Assert.Equal(months, BillingPolicy.Months(period));
@@ -54,28 +54,28 @@ public class BillingPolicyTests
         Assert.True(quote.IsDiscounted);
     }
 
-    /// <summary>The brief's own formula: (P x 12) x 0.85.</summary>
+    /// <summary>The agreed formula: (P x 12) x 0.90.</summary>
     [Fact]
-    public void AnnualIsTwelveMonthsLessFifteenPercent()
+    public void AnnualIsTwelveMonthsLessTenPercent()
     {
         var quote = BillingPolicy.Quote(7.99m, BillingPeriod.Annual);
 
         Assert.Equal(95.88m, quote.BaseAmount);
-        Assert.Equal(81.50m, quote.FinalAmount);   // 81.498 rounded to the cent
-        Assert.Equal(14.38m, quote.DiscountAmount);
-        Assert.Equal(6.79m, quote.EffectiveMonthly);
-        Assert.Equal(8150, quote.FinalAmountMinor);
+        Assert.Equal(86.29m, quote.FinalAmount);   // 86.292 rounded to the cent
+        Assert.Equal(9.59m, quote.DiscountAmount);
+        Assert.Equal(7.19m, quote.EffectiveMonthly);
+        Assert.Equal(8629, quote.FinalAmountMinor);
     }
 
     [Theory]
-    [InlineData(7.99, 22.77, 81.50)]
-    [InlineData(9.99, 28.47, 101.90)]
-    [InlineData(10.99, 31.32, 112.10)]
-    [InlineData(14.99, 42.72, 152.90)]
-    [InlineData(16.99, 48.42, 173.30)]
-    [InlineData(19.99, 56.97, 203.90)]
-    [InlineData(22.99, 65.52, 234.50)]
-    [InlineData(25.99, 74.07, 265.10)]
+    [InlineData(7.99, 22.77, 86.29)]
+    [InlineData(9.99, 28.47, 107.89)]
+    [InlineData(10.99, 31.32, 118.69)]
+    [InlineData(14.99, 42.72, 161.89)]
+    [InlineData(16.99, 48.42, 183.49)]
+    [InlineData(19.99, 56.97, 215.89)]
+    [InlineData(22.99, 65.52, 248.29)]
+    [InlineData(25.99, 74.07, 280.69)]
     public void EveryShippedPriceFollowsTheFormulas(decimal monthly, decimal quarterly, decimal annual)
     {
         Assert.Equal(quarterly, BillingPolicy.Quote(monthly, BillingPeriod.Quarterly).FinalAmount);
@@ -83,7 +83,7 @@ public class BillingPolicyTests
 
         // Rounded once, at the end, never per month and then multiplied.
         Assert.Equal(BillingPolicy.RoundToCent(monthly * 3 * 0.95m), quarterly);
-        Assert.Equal(BillingPolicy.RoundToCent(monthly * 12 * 0.85m), annual);
+        Assert.Equal(BillingPolicy.RoundToCent(monthly * 12 * 0.90m), annual);
     }
 
     [Fact]

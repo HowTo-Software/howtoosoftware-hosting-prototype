@@ -1,7 +1,7 @@
-# HowToSoftware — Project Zomboid Hosting (Frontend Prototype)
+# HowToSoftware — Project Zomboid Hosting
 
-A frontend prototype for the HowToSoftware **Project Zomboid server hosting** platform,
-built with **C# / .NET 10 / Blazor**. Three pages, in **English and Brazilian Portuguese**.
+The HowToSoftware **Project Zomboid server hosting** platform, built with
+**C# / .NET 10 / Blazor**, with a Stripe, PostgreSQL/Supabase and Pterodactyl backend foundation.
 
 > 🇧🇷 **A versão em português está mais abaixo** — veja [Português (BR)](#português-br).
 
@@ -11,12 +11,10 @@ built with **C# / .NET 10 / Blazor**. Three pages, in **English and Brazilian Po
 >
 > - **All pricing is placeholder test data.** The plans, prices, discounts and promotional
 >   codes exist so the interface can be reviewed. **Nothing here is a commercial offer.**
-> - **No checkout, no payments, no accounts, no database.** There is no billing provider
->   connected and nothing is charged.
+> - **Checkout is implemented but credentials are placeholders.** Nothing is charged until a
+>   developer deliberately supplies Stripe test/live credentials.
 > - **The control panel is a mock.** It looks and behaves like the real thing, but no server
 >   is ever created, started or stopped.
-> - **No game panel integration yet.** Pterodactyl is the intended target and the code is
->   structured for it, but it is not wired up.
 > - **Provisioning is real, and it is gated.** The Pterodactyl integration creates and deletes
 >   actual servers. It is reachable only from a development-only lab page, only after an explicit
 >   confirmation, and only with an API key supplied from outside the repository.
@@ -70,20 +68,25 @@ Then open **http://localhost:5147**.
 
 ```bash
 dotnet build          # build everything
-dotnet test           # run the 356 unit tests
+dotnet test           # run the automated test suite
 ```
 
-The site has three routes:
+Important routes include:
 
 | Route | What it is |
 |---|---|
 | `/` | the marketing homepage |
 | `/infrastructure` (also `/hardware`) | the hardware and infrastructure page |
-| `/project-zomboid` | the plan ladder, build-to-order and the plan questions |
+| `/game-hosting/project-zomboid` | the plan ladder, build-to-order and the plan questions |
 | `/login` | the control-panel sign-in screen |
-| `/dev/provisioning` | the provisioning lab — Development only, see below |
+| `/dev/provisioning` | the explicitly enabled real provisioning lab |
 
-There is nothing else to install. No npm, no database, no configuration, no API keys.
+No npm is required. The site starts without external credentials; Stripe, Supabase and
+Pterodactyl features report “not configured” until `.env` is filled. See
+[`docs/COMMERCE-ARCHITECTURE.md`](docs/COMMERCE-ARCHITECTURE.md),
+[`docs/SUPABASE-SETUP.md`](docs/SUPABASE-SETUP.md), and
+[`docs/stripe-testing.md`](docs/stripe-testing.md). For a Portuguese map of every major folder,
+page and integration, see [`docs/PROJECT-MAP.md`](docs/PROJECT-MAP.md).
 
 ---
 
@@ -491,12 +494,12 @@ so nothing on the page falls outside the brand.
 
 ## Not implemented yet
 
-- Payments, checkout and real pricing
+- Production Stripe credentials and Dashboard configuration
 - Customer accounts and authentication (the sign-in screen exists; nothing is behind it)
 - Account creation and password recovery
 - The infrastructure page's copy and specifications
-- Pterodactyl / game panel integration
-- Database and server provisioning
+- Authenticated customer billing/Customer Portal pages
+- Authorized admin retry and diagnostics (the real deploy lab is explicitly gated)
 - Legal pages (Terms, Privacy, Acceptable Use) — shown as "Soon" placeholders
 - A real contact address (currently a placeholder in `appsettings.json`)
 
@@ -512,9 +515,8 @@ See [LICENSE](LICENSE). This is **proprietary software** —
 
 # Português (BR)
 
-Protótipo de frontend para a plataforma de **hospedagem de servidores de Project Zomboid**
-da HowToSoftware, feito em **C# / .NET 10 / Blazor**. Três páginas, em **inglês e português
-do Brasil**.
+Plataforma de **hospedagem de servidores de Project Zomboid** da HowToSoftware, feita em
+**C# / .NET 10 / Blazor**, com base de backend para Stripe, PostgreSQL/Supabase e Pterodactyl.
 
 ---
 
@@ -522,12 +524,12 @@ do Brasil**.
 >
 > - **Todos os preços são dados de teste.** Os planos, preços, descontos e cupons existem
 >   apenas para avaliar a interface. **Nada aqui é uma oferta comercial.**
-> - **Sem checkout, sem pagamentos, sem contas, sem banco de dados.** Não há nenhum gateway
->   conectado e nada é cobrado.
+> - **O checkout está implementado, mas as credenciais são placeholders.** Nada é cobrado até
+>   que um desenvolvedor forneça deliberadamente credenciais de teste/produção do Stripe.
 > - **O painel de controle é simulado.** Ele se parece e se comporta como o real, mas nenhum
 >   servidor é criado, iniciado ou parado.
-> - **Ainda não há integração com painel de jogo.** O Pterodactyl é o alvo pretendido e o
->   código está estruturado para isso, mas não está conectado.
+> - **O provisionamento Pterodactyl é real e protegido.** O laboratório só abre após ativação
+>   explícita e confirmação; sem credenciais a integração informa “não configurado”.
 > - **O login não autentica ninguém.** Não existe provedor de identidade, lista de usuários,
 >   credencial de demonstração nem armazenamento de senha. Toda tentativa informa que a
 >   autenticação não está conectada, e a tela avisa isso antes de você digitar qualquer coisa.
@@ -553,19 +555,24 @@ Depois abra **http://localhost:5147**.
 
 ```bash
 dotnet build          # compila tudo
-dotnet test           # roda os 243 testes unitários
+dotnet test           # roda a suíte automatizada
 ```
 
-O site tem três rotas:
+Rotas importantes:
 
 | Rota | O que é |
 |---|---|
 | `/` | a página inicial |
 | `/infrastructure` (e também `/hardware`) | a página de hardware e infraestrutura |
+| `/game-hosting/project-zomboid` | planos, revisão e início do checkout |
 | `/login` | a tela de acesso ao painel de controle |
-| `/dev/provisioning` | o laboratório de provisionamento — só em Development |
+| `/dev/provisioning` | laboratório real, somente após ativação explícita |
 
-Não precisa instalar mais nada. Sem npm, sem banco de dados, sem configuração, sem chaves.
+Não precisa de npm. O site inicia sem credenciais externas; Stripe, Supabase e Pterodactyl
+informam “não configurado” até o `.env` ser preenchido. Consulte
+[`docs/COMMERCE-ARCHITECTURE.md`](docs/COMMERCE-ARCHITECTURE.md),
+[`docs/SUPABASE-SETUP.md`](docs/SUPABASE-SETUP.md) e
+[`docs/stripe-testing.md`](docs/stripe-testing.md).
 
 ---
 
@@ -805,12 +812,12 @@ habituais**, para que nada na página saia da identidade da marca.
 
 ## Ainda não implementado
 
-- Pagamentos, checkout e preços reais
+- Credenciais de produção e configuração do Stripe Dashboard
 - Contas de cliente e autenticação (a tela de acesso existe; não há nada por trás dela)
 - Criação de conta e recuperação de senha
 - O texto e as especificações da página de infraestrutura
-- Integração com Pterodactyl / painel de jogo
-- Banco de dados e provisionamento de servidores
+- Páginas autenticadas de cobrança/Customer Portal
+- Retry e diagnósticos administrativos autorizados (o laboratório real é explicitamente protegido)
 - Páginas legais (Termos, Privacidade, Uso Aceitável) — aparecem como "Soon"
 - Um endereço de contato real (hoje é um placeholder no `appsettings.json`)
 

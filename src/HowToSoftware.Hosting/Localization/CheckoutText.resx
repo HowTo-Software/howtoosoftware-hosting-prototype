@@ -150,12 +150,6 @@
   <data name="Zomboid.FactMemory" xml:space="preserve">
     <value>Memory</value>
   </data>
-  <data name="Zomboid.PanelFigureAlt" xml:space="preserve">
-    <value>The HTS control panel, showing the Project Zomboid Workshop Manager for a server.</value>
-  </data>
-  <data name="Zomboid.PanelFigureCaption" xml:space="preserve">
-    <value>The Workshop Manager in the HTS panel. Real capture.</value>
-  </data>
   <data name="Zomboid.FeatureKicker" xml:space="preserve">
     <value>What every server gets</value>
   </data>

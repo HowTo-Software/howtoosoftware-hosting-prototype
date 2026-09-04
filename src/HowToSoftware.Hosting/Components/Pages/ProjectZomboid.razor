@@ -1,6 +1,6 @@
 @*
-    The Project Zomboid hosting page: a short statement of what every server gets, then the
-    plan picker, then the build-to-order panel for anyone the ladder does not reach.
+    The Project Zomboid hosting page: a headline, a short statement of what every server gets,
+    then the plan picker, then the build-to-order panel for anyone the ladder does not reach.
 
     Deliberately short above the plans. A visitor who arrived from the catalogue has already
     chosen the game; what they need now is what the server does and what it costs, in that
@@ -26,7 +26,7 @@
 </HeadContent>
 
 <section class="zomboid-hero" aria-labelledby="zomboid-heading">
-    <div class="hts-container hts-container--wide hero-inner">
+    <div class="hts-container hts-container--wide">
         <div class="hero-copy" data-reveal>
             <nav class="hero-crumbs" aria-label="@Text["Zomboid.CrumbLabel"]">
                 <a href="@SiteRoutes.GameHosting">@Text["Zomboid.Crumb"]</a>
@@ -68,26 +68,6 @@
             </dl>
         </div>
 
-        @*
-            The product, not a mock-up of it: a capture of the HTS panel's Workshop Manager,
-            cropped to the panel's own chrome. See wwwroot/images/panel/README.md.
-        *@
-        <figure class="hero-figure" data-reveal="right">
-            <div class="figure-frame">
-                <picture>
-                    <source srcset="images/panel/workshop-manager.webp" type="image/webp" />
-                    <img src="images/panel/workshop-manager.png"
-                         alt="@Text["Zomboid.PanelFigureAlt"]"
-                         width="1482"
-                         height="340"
-                         decoding="async" />
-                </picture>
-            </div>
-            <figcaption class="figure-caption">
-                <span class="caption-lamp" aria-hidden="true"></span>
-                <span>@Text["Zomboid.PanelFigureCaption"]</span>
-            </figcaption>
-        </figure>
     </div>
 </section>
 

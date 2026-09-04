@@ -69,37 +69,56 @@ public sealed class StripeWebhookHandler : IStripeWebhookHandler
             return false;
         }
 
-        switch (stripeEvent.Type)
+        try
         {
-            case EventTypes.CheckoutSessionCompleted:
-            case EventTypes.CheckoutSessionAsyncPaymentSucceeded:
-                if (stripeEvent.Data.Object is Session completed)
-                {
-                    await _checkout.HandleCompletedCheckoutAsync(completed, cancellationToken).ConfigureAwait(false);
-                }
+            switch (stripeEvent.Type)
+            {
+                case EventTypes.CheckoutSessionCompleted:
+                case EventTypes.CheckoutSessionAsyncPaymentSucceeded:
+                    if (stripeEvent.Data.Object is Session completed)
+                    {
+                        await _checkout.HandleCompletedCheckoutAsync(completed, cancellationToken).ConfigureAwait(false);
+                    }
 
-                break;
+                    break;
 
-            case EventTypes.CheckoutSessionAsyncPaymentFailed:
-            case EventTypes.CheckoutSessionExpired:
-                if (stripeEvent.Data.Object is Session ended)
-                {
-                    await _checkout.HandleExpiredCheckoutAsync(ended, cancellationToken).ConfigureAwait(false);
-                }
+                case EventTypes.CheckoutSessionAsyncPaymentFailed:
+                case EventTypes.CheckoutSessionExpired:
+                    if (stripeEvent.Data.Object is Session ended)
+                    {
+                        await _checkout.HandleExpiredCheckoutAsync(ended, cancellationToken).ConfigureAwait(false);
+                    }
 
-                break;
+                    break;
 
-            case EventTypes.CustomerSubscriptionCreated:
-            case EventTypes.CustomerSubscriptionUpdated:
-            case EventTypes.CustomerSubscriptionDeleted:
-            case EventTypes.CustomerSubscriptionPaused:
-            case EventTypes.CustomerSubscriptionResumed:
-                if (stripeEvent.Data.Object is Subscription subscription)
-                {
-                    await _checkout.HandleSubscriptionStateAsync(subscription, cancellationToken).ConfigureAwait(false);
-                }
+                case EventTypes.CustomerSubscriptionCreated:
+                case EventTypes.CustomerSubscriptionUpdated:
+                case EventTypes.CustomerSubscriptionDeleted:
+                case EventTypes.CustomerSubscriptionPaused:
+                case EventTypes.CustomerSubscriptionResumed:
+                    if (stripeEvent.Data.Object is Subscription subscription)
+                    {
+                        await _checkout.HandleSubscriptionStateAsync(subscription, cancellationToken).ConfigureAwait(false);
+                    }
 
-                break;
+                    break;
+
+                case EventTypes.InvoicePaid:
+                case EventTypes.InvoicePaymentFailed:
+                    if (stripeEvent.Data.Object is Invoice invoice)
+                    {
+                        await _checkout.HandleInvoiceStateAsync(invoice, cancellationToken).ConfigureAwait(false);
+                    }
+
+                    break;
+            }
+        }
+        catch
+        {
+            // A failed handler returns 5xx and Stripe retries. Release the idempotency claim so
+            // that retry performs the work instead of being mistaken for a completed delivery.
+            await _orders.ReleaseEventAsync(stripeEvent.Id, cancellationToken).ConfigureAwait(false);
+            throw;
         }
 
         return true;
@@ -115,7 +134,9 @@ public sealed class StripeWebhookHandler : IStripeWebhookHandler
         or EventTypes.CustomerSubscriptionUpdated
         or EventTypes.CustomerSubscriptionDeleted
         or EventTypes.CustomerSubscriptionPaused
-        or EventTypes.CustomerSubscriptionResumed;
+        or EventTypes.CustomerSubscriptionResumed
+        or EventTypes.InvoicePaid
+        or EventTypes.InvoicePaymentFailed;
 }
 
 // =============================================================

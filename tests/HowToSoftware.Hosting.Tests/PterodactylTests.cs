@@ -338,9 +338,9 @@ public class ProvisioningLabGuardTests
             Options.Create(new ProvisioningLabOptions { Enabled = enabled }));
 
     [Fact]
-    public void DevelopmentOpensTheLab()
+    public void DevelopmentDoesNotRunRealDeploymentsWithoutTheFlag()
     {
-        Assert.True(Build("Development", enabled: false).IsAvailable);
+        Assert.False(Build("Development", enabled: false).IsAvailable);
     }
 
     /// <summary>
@@ -362,7 +362,7 @@ public class ProvisioningLabGuardTests
     [Fact]
     public void TheFlagOpensItDeliberately()
     {
-        var guard = Build("Staging", enabled: true);
+        var guard = Build("Development", enabled: true);
 
         Assert.True(guard.IsAvailable);
         guard.EnsureAvailable();

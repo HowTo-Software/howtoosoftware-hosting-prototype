@@ -1,8 +1,10 @@
 using HowToSoftware.Hosting.Components;
 using HowToSoftware.Hosting.Data;
 using HowToSoftware.Hosting.Endpoints;
+using HowToSoftware.Hosting.Infrastructure.Configuration;
 using HowToSoftware.Hosting.Infrastructure.Pterodactyl;
 using HowToSoftware.Hosting.Infrastructure.Stripe;
+using HowToSoftware.Hosting.Infrastructure.Supabase;
 using HowToSoftware.Hosting.Localization;
 using HowToSoftware.Hosting.Models;
 using HowToSoftware.Hosting.Services;
@@ -10,8 +12,12 @@ using HowToSoftware.Hosting.Services.Orders;
 using HowToSoftware.Hosting.Services.Payments;
 using HowToSoftware.Hosting.Services.Provisioning;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 
+EnvironmentFile.LoadNearest();
+EnvironmentFile.ApplyAspNetCoreAliases();
 var builder = WebApplication.CreateBuilder(args);
+var supabase = SupabaseOptions.FromConfiguration(builder.Configuration);
 
 // Blazor: the marketing pages render statically on the server for SEO and hydrate only the
 // islands that genuinely need interactivity (navigation, FAQ, control-panel preview, sign-in).
@@ -64,11 +70,33 @@ builder.Services.AddSingleton<
 // SQLite by default, chosen by connection string. A factory rather than a scoped context,
 // because the webhook and the fulfilment worker both need short units of work outside a
 // component's scope.
-builder.Services.AddDbContextFactory<HostingDbContext>(options =>
-    options.UseSqlite(
-        builder.Configuration.GetConnectionString(HostingDbContext.ConnectionName)
-            ?? "Data Source=hosting.db"));
-builder.Services.AddSingleton<IOrderStore, EfOrderStore>();
+builder.Services.AddSingleton(supabase);
+builder.Services.AddSingleton<SupabaseHealthCheck>();
+builder.Services.AddHealthChecks().AddCheck<SupabaseHealthCheck>("supabase");
+
+if (supabase.IsDatabaseConfigured)
+{
+    builder.Services.AddPooledDbContextFactory<CommerceDbContext>(options =>
+        options.UseNpgsql(
+            supabase.GetNpgsqlConnectionString(),
+            postgres => postgres
+                .MigrationsHistoryTable("__ef_migrations_history")
+                .EnableRetryOnFailure()));
+    builder.Services.AddSingleton<IOrderStore, PostgresOrderStore>();
+    builder.Services.AddSingleton<IProvisioningStateStore, PostgresProvisioningStateStore>();
+    builder.Services.AddSingleton<IBillingStore, PostgresBillingStore>();
+    builder.Services.AddScoped<CommerceSeedService>();
+}
+else
+{
+    builder.Services.AddDbContextFactory<HostingDbContext>(options =>
+        options.UseSqlite(
+            builder.Configuration.GetConnectionString(HostingDbContext.ConnectionName)
+                ?? "Data Source=hosting.db"));
+    builder.Services.AddSingleton<IOrderStore, EfOrderStore>();
+    builder.Services.AddSingleton<IProvisioningStateStore, NullProvisioningStateStore>();
+    builder.Services.AddSingleton<IBillingStore, NullBillingStore>();
+}
 
 builder.Services.AddHttpClient<IPterodactylClient, PterodactylClient>(PterodactylClient.HttpClientName,
     (provider, client) =>
@@ -113,6 +141,7 @@ builder.Services.AddHostedService<OrderFulfillmentWorker>();
 builder.Services.AddSingleton<IInfrastructureContentService, StaticInfrastructureContentService>();
 builder.Services.AddSingleton<IHardwarePhotoLibrary, HardwarePhotoLibrary>();
 builder.Services.AddSingleton<IZomboidPhotoLibrary, ZomboidPhotoLibrary>();
+builder.Services.AddSingleton<IGameBannerLibrary, GameBannerLibrary>();
 builder.Services.AddSingleton<IGameTemplateCatalog, GameTemplateCatalog>();
 builder.Services.AddScoped<IServerPreviewService, MockServerPreviewService>();
 builder.Services.AddScoped<IProvisioningService, ProvisioningService>();
@@ -123,10 +152,34 @@ builder.Services.AddScoped<IAuthenticationGateway, PrototypeAuthenticationGatewa
 
 var app = builder.Build();
 
-// The order tables. Migrations rather than EnsureCreated, so the schema can change later
-// without dropping the orders already in it.
-using (var scope = app.Services.CreateScope())
+if (args.Contains("--migrate-commerce", StringComparer.Ordinal))
 {
+    if (!supabase.IsDatabaseConfigured)
+    {
+        Console.Error.WriteLine(
+            "Supabase not configured. Set SUPABASE_DB_CONNECTION_STRING before applying commerce migrations.");
+        return;
+    }
+
+    await using var scope = app.Services.CreateAsyncScope();
+    var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<CommerceDbContext>>();
+    await using var db = await factory.CreateDbContextAsync();
+    await db.Database.MigrateAsync();
+
+    if (args.Contains("--seed-commerce", StringComparer.Ordinal))
+    {
+        await scope.ServiceProvider.GetRequiredService<CommerceSeedService>().SeedAsync();
+    }
+
+    Console.WriteLine("Commerce database is up to date.");
+    return;
+}
+
+// SQLite is only the credential-free development fallback and can be migrated automatically.
+// Supabase changes are explicit so placeholders can never initialise a remote database.
+if (!supabase.IsDatabaseConfigured)
+{
+    using var scope = app.Services.CreateScope();
     var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<HostingDbContext>>();
     using var db = factory.CreateDbContext();
     db.Database.Migrate();
@@ -151,6 +204,18 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapCultureSelection();
 app.MapPaymentEndpoints();
+app.MapGet("/health/supabase", async (SupabaseHealthCheck check, CancellationToken cancellationToken) =>
+{
+    var result = await check.CheckHealthAsync(new HealthCheckContext(), cancellationToken);
+    var status = result.Status switch
+    {
+        HealthStatus.Healthy => "Connected",
+        HealthStatus.Degraded => "Not configured",
+        _ => "Error"
+    };
+
+    return Results.Json(new { service = "Supabase", status });
+}).WithName("SupabaseHealth");
 
 // The Project Zomboid page moved under /game-hosting. Links already out in the world keep
 // working, and search engines are told the move is permanent.

@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Options;
 
+using HowToSoftware.Hosting.Infrastructure.Configuration;
+
 namespace HowToSoftware.Hosting.Infrastructure.Stripe;
 
 /// <summary>
@@ -62,10 +64,15 @@ public sealed class StripeOptions
     public int WebhookToleranceSeconds { get; set; } = 300;
 
     /// <summary>Whether Checkout sessions can be created.</summary>
-    public bool IsConfigured => !string.IsNullOrWhiteSpace(SecretKey);
+    public bool IsConfigured =>
+        !EnvironmentFile.IsPlaceholder(SecretKey)
+        && (SecretKey.StartsWith("sk_", StringComparison.Ordinal)
+            || SecretKey.StartsWith("rk_", StringComparison.Ordinal));
 
     /// <summary>Whether webhook deliveries can be verified.</summary>
-    public bool IsWebhookConfigured => !string.IsNullOrWhiteSpace(WebhookSecret);
+    public bool IsWebhookConfigured =>
+        !EnvironmentFile.IsPlaceholder(WebhookSecret)
+        && WebhookSecret.StartsWith("whsec_", StringComparison.Ordinal);
 
     /// <summary>Looks up a configured Price id for a plan and period.</summary>
     public string? FindPriceId(string planSlug, string periodSlug) =>

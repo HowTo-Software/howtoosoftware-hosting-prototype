@@ -10,6 +10,27 @@
 @inject IOptions<SiteOptions> Site
 
 <footer class="site-footer">
+    @* A continuous, decorative systems ribbon. The group is deliberately duplicated so the
+       translation is seamless; it is aria-hidden because it conveys no live service state. *@
+    <div class="footer-ticker" aria-hidden="true">
+        <div class="footer-ticker-window">
+            <div class="footer-ticker-track">
+                @foreach (var copy in Enumerable.Range(0, 2))
+                {
+                    <ul class="footer-ticker-group">
+                        @foreach (var (signal, index) in TickerSignals.Select((signal, index) => (signal, index)))
+                        {
+                            <li class="footer-ticker-item" style="--ticker-index: @index">
+                                <span class="footer-ticker-dot"></span>
+                                <span>@signal</span>
+                            </li>
+                        }
+                    </ul>
+                }
+            </div>
+        </div>
+    </div>
+
     <div class="hts-container hts-container--wide footer-inner">
         <div class="footer-brand">
             <BrandMark Name="@Options.Name" Tagline="@Text["Brand.Tagline"]" CssClass="is-lg is-plain" />
@@ -64,6 +85,18 @@
     private SiteOptions Options => Site.Value;
 
     private static int Year => DateTime.UtcNow.Year;
+
+    private IReadOnlyList<string> TickerSignals =>
+    [
+        Text["Footer.Ticker.Live"].Value,
+        Text["Footer.Ticker.Game"].Value,
+        Text["Footer.Ticker.Workshop"].Value,
+        Text["Footer.Ticker.Backups"].Value,
+        Text["Footer.Ticker.Deploy"].Value,
+        Text["Footer.Ticker.Resources"].Value,
+        Text["Footer.Ticker.Panel"].Value,
+        Text["Footer.Ticker.Support"].Value
+    ];
 }
 
 @*

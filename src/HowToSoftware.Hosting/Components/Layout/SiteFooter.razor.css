@@ -28,6 +28,111 @@
     pointer-events: none;
 }
 
+/* The footer begins with a systems ribbon rather than a silent edge. Its two identical groups
+   slide by exactly one group's width, so the loop has no visible reset. */
+.footer-ticker {
+    position: relative;
+    z-index: var(--hts-z-content);
+    border-bottom: 1px solid var(--hts-border);
+    background:
+        linear-gradient(90deg, color-mix(in srgb, var(--ht-live-500) 7%, transparent), transparent 20%, transparent 80%, color-mix(in srgb, var(--ht-data-500) 7%, transparent)),
+        var(--hts-surface-inset);
+}
+
+.footer-ticker-window {
+    position: relative;
+    overflow: hidden;
+}
+
+.footer-ticker-window::before,
+.footer-ticker-window::after {
+    content: "";
+    position: absolute;
+    z-index: 1;
+    top: 0;
+    bottom: 0;
+    width: clamp(1.5rem, 6vw, 7rem);
+    pointer-events: none;
+}
+
+.footer-ticker-window::before {
+    left: 0;
+    background: linear-gradient(90deg, var(--hts-surface-inset), transparent);
+}
+
+.footer-ticker-window::after {
+    right: 0;
+    background: linear-gradient(270deg, var(--hts-surface-inset), transparent);
+}
+
+.footer-ticker-track {
+    display: flex;
+    width: max-content;
+    animation: footer-ticker-roll 34s linear infinite;
+    will-change: transform;
+}
+
+.footer-ticker:hover .footer-ticker-track {
+    animation-play-state: paused;
+}
+
+.footer-ticker-group {
+    display: flex;
+    flex: none;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.footer-ticker-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: 3.4rem;
+    padding-inline: clamp(1.25rem, 2.5vw, 2.75rem);
+    border-right: 1px solid var(--hts-border);
+    color: var(--hts-ink-muted);
+    font-family: var(--ht-font-mono);
+    font-size: var(--ht-text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--ht-track-label);
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.footer-ticker-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--ht-live-400);
+    box-shadow: var(--ht-lamp-live);
+    animation: footer-ticker-pulse 2.8s var(--hts-ease-in-out) infinite;
+    animation-delay: calc(var(--ticker-index) * -0.32s);
+}
+
+.footer-ticker-item:nth-child(3n) .footer-ticker-dot {
+    background: var(--ht-data-400);
+    box-shadow: var(--ht-lamp-data);
+}
+
+@keyframes footer-ticker-roll {
+    to {
+        transform: translate3d(-50%, 0, 0);
+    }
+}
+
+@keyframes footer-ticker-pulse {
+    0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 0.38;
+        transform: scale(0.72);
+    }
+}
+
 .footer-inner,
 .footer-base {
     position: relative;
@@ -170,5 +275,12 @@
     .footer-base {
         flex-direction: column;
         align-items: flex-start;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .footer-ticker-track,
+    .footer-ticker-dot {
+        animation: none;
     }
 }

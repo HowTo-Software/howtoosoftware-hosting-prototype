@@ -97,6 +97,14 @@ namespace HowToSoftware.Hosting.Data.Migrations
                         .HasMaxLength(128)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("StripeInvoiceId")
+                        .HasMaxLength(128)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("StripePaymentIntentId")
+                        .HasMaxLength(128)
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("StripeSubscriptionId")
                         .HasMaxLength(128)
                         .HasColumnType("TEXT");

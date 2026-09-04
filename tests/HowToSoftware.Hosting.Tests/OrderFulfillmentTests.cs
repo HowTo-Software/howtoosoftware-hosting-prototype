@@ -190,7 +190,7 @@ public sealed class OrderFulfillmentTests : IDisposable
     }
 
     [Fact]
-    public async Task AnInstallThatNeverFinishesIsLeftInProvisioning_NotFailed()
+    public async Task AnInstallThatNeverFinishesIsRecordedAsFailed()
     {
         var order = await PaidOrderAsync();
         _panel.DefaultStatus = "installing";
@@ -198,8 +198,9 @@ public sealed class OrderFulfillmentTests : IDisposable
         await AdvanceUntilDoneAsync(Service().FulfilAsync(order.Id), maxAdvance: OrderFulfillmentService.InstallTimeout + TimeSpan.FromMinutes(1));
 
         var waiting = (await _orders.FindAsync(order.Id))!;
-        Assert.Equal(OrderStatus.Provisioning, waiting.Status);
-        Assert.Equal(FulfilmentStage.Installing, waiting.ProvisioningStage);
+        Assert.Equal(OrderStatus.Failed, waiting.Status);
+        Assert.Equal(FulfilmentStage.Failed, waiting.ProvisioningStage);
+        Assert.Contains("did not finish", waiting.FailureReason, StringComparison.OrdinalIgnoreCase);
         Assert.True(_panel.Lookups > 1);
     }
 

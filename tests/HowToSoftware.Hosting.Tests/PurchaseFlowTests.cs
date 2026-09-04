@@ -160,12 +160,12 @@ public sealed class PurchaseFlowTests : IDisposable
     }
 
     [Fact]
-    public async Task AnnualIsBilledEveryTwelveMonths_AtFifteenPercentOff()
+    public async Task AnnualIsBilledEveryTwelveMonths_AtTenPercentOff()
     {
         await Checkout().CreateCheckoutSessionAsync(Request(period: BillingPeriod.Annual));
 
         var line = Assert.Single(_stripe.LastOptions!.LineItems);
-        Assert.Equal(8150, line.PriceData!.UnitAmount);
+        Assert.Equal(8629, line.PriceData!.UnitAmount);
         Assert.Equal(12, line.PriceData.Recurring!.IntervalCount);
     }
 

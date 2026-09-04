@@ -130,7 +130,7 @@
     <value>Hospedagem de jogos</value>
   </data>
   <data name="Zomboid.Title" xml:space="preserve">
-    <value>Um servidor de Project Zomboid, montado no momento em que você paga.</value>
+    <value>Seu servidor de Project Zomboid, pronto para jogar.</value>
   </data>
   <data name="Zomboid.Lede" xml:space="preserve">
     <value>Escolha a memória que a sua comunidade precisa. Todo o resto - mods do Workshop, backups, console, arquivos, o painel - é igual em todos os planos.</value>
@@ -149,12 +149,6 @@
   </data>
   <data name="Zomboid.FactMemory" xml:space="preserve">
     <value>Memória</value>
-  </data>
-  <data name="Zomboid.PanelFigureAlt" xml:space="preserve">
-    <value>O painel HTS, mostrando o Workshop Manager de Project Zomboid de um servidor.</value>
-  </data>
-  <data name="Zomboid.PanelFigureCaption" xml:space="preserve">
-    <value>O Workshop Manager no painel HTS. Captura real.</value>
   </data>
   <data name="Zomboid.FeatureKicker" xml:space="preserve">
     <value>O que todo servidor tem</value>

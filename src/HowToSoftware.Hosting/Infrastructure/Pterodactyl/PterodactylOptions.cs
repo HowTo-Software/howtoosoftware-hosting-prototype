@@ -1,3 +1,5 @@
+using HowToSoftware.Hosting.Infrastructure.Configuration;
+
 namespace HowToSoftware.Hosting.Infrastructure.Pterodactyl;
 
 /// <summary>
@@ -76,7 +78,9 @@ public sealed class PterodactylOptions
 
     /// <summary>Whether a usable key has been supplied.</summary>
     public bool IsConfigured =>
-        !string.IsNullOrWhiteSpace(BaseUrl) && !string.IsNullOrWhiteSpace(ApiKey);
+        !EnvironmentFile.IsPlaceholder(BaseUrl)
+        && !EnvironmentFile.IsPlaceholder(ApiKey)
+        && ApiKey.StartsWith("ptla_", StringComparison.Ordinal);
 
     /// <summary>
     /// The panel root with any trailing slash removed, so paths concatenate predictably.

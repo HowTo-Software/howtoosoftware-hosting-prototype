@@ -19,18 +19,17 @@
     isolation: isolate;
 }
 
-.cover-photo,
-.cover-photo img {
+/* The banner fills the plate. Graded only slightly, so the artwork the company supplied
+   reads as itself and not as a tinted backdrop. */
+.cover-banner {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center;
     z-index: 0;
-}
-
-.cover-photo img {
-    filter: saturate(0.85) contrast(1.05) brightness(0.72);
+    filter: saturate(0.95) contrast(1.03);
 }
 
 .cover-grid {
@@ -42,10 +41,6 @@
         repeating-linear-gradient(180deg, var(--ht-grid-ink) 0 1px, transparent 1px var(--ht-grid-cell));
     mask-image: linear-gradient(180deg, #000 30%, transparent 100%);
     pointer-events: none;
-}
-
-.has-photo .cover-grid {
-    opacity: 0.5;
 }
 
 .cover-face {
@@ -83,20 +78,22 @@
     opacity: 0.6;
 }
 
-.has-photo .cover-name {
-    color: #ffffff;
-    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.6);
-}
-
 .cover-foot {
     position: relative;
     z-index: 2;
+    align-self: end;
     display: flex;
     align-items: center;
     gap: var(--ht-space-3);
     padding: var(--ht-space-3) var(--ht-space-5);
     border-top: 1px solid var(--ht-edge);
     background: color-mix(in srgb, var(--ht-surface-inset) 78%, transparent);
+}
+
+/* Over a banner the strip needs its own ground to stay legible on any artwork. */
+.has-banner .cover-foot {
+    background: rgba(8, 9, 11, 0.82);
+    backdrop-filter: blur(6px);
 }
 
 .cover-lamp {

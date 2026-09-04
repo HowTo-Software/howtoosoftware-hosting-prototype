@@ -1,39 +1,32 @@
 @*
     The face of a game in the catalogue.
 
-    There is no game artwork here and none is faked. Project Zomboid's art belongs to The Indie
-    Stone and Minecraft's to Mojang; a hosting company reusing either on a sales page is a
-    licensing question with a real answer, so the cover is typographic - the name stamped on a
-    graphite plate the way a designation is stamped on equipment - and it stays that way until a
-    photograph the company is allowed to use is dropped into the Zomboid image slot, at which
-    point the plate shows it with no code change.
+    Each game has one banner file with a fixed name (see GameBannerLibrary and
+    wwwroot/images/games/README.md). When the file is there, the card shows it edge to edge with
+    the status strip along the bottom; while it is missing, the card draws a typographic plate -
+    the name stamped on graphite - so the catalogue never shows a broken image or a grey box.
+
+    Nothing here is fetched from a studio's press kit: the banner is whatever the company
+    supplies and is entitled to use.
 
     Decorative: the card around it carries the name and the status as text.
 *@
 
-@inject IZomboidPhotoLibrary Photos
+@inject IGameBannerLibrary Banners
 
-<div class="cover cover--@Game.Slug @(Photo is { IsAvailable: true } ? "has-photo" : null) @CssClass" aria-hidden="true">
-    @if (Photo is { IsAvailable: true, WebPath: { } source })
+<div class="cover cover--@Game.Slug @(Banner.IsAvailable ? "has-banner" : null) @CssClass" aria-hidden="true">
+    @if (Banner is { IsAvailable: true, WebPath: { } source })
     {
-        <picture class="cover-photo">
-            @if (Photo.FallbackWebPath is { } fallback)
-            {
-                <source srcset="@source" type="image/webp" />
-                <img src="@fallback" alt="" loading="lazy" decoding="async" />
-            }
-            else
-            {
-                <img src="@source" alt="" loading="lazy" decoding="async" />
-            }
-        </picture>
+        <img class="cover-banner" src="@source" alt="" loading="lazy" decoding="async" />
     }
+    else
+    {
+        <div class="cover-grid"></div>
 
-    <div class="cover-grid"></div>
-
-    <div class="cover-face">
-        <span class="cover-name">@Game.Name</span>
-    </div>
+        <div class="cover-face">
+            <span class="cover-name">@Game.Name</span>
+        </div>
+    }
 
     <div class="cover-foot">
         @if (Game.IsAvailable)
@@ -49,13 +42,6 @@
     [Parameter, EditorRequired]
     public HostedGame Game { get; set; } = default!;
 
-    /// <summary>
-    /// An image slot to show when its file exists. Only Project Zomboid has slots; other games
-    /// stay typographic.
-    /// </summary>
-    [Parameter]
-    public ZomboidPhotoSlot? PhotoSlot { get; set; }
-
     /// <summary>The short mono line in the corner: a status, a build, a region.</summary>
     [Parameter]
     public string? Tag { get; set; }
@@ -64,7 +50,7 @@
     [Parameter]
     public string? CssClass { get; set; }
 
-    private ZomboidPhotoAsset? Photo => PhotoSlot is { } slot ? Photos.Resolve(slot) : null;
+    private GameBanner Banner => Banners.Resolve(Game.Slug);
 }
 
 @*

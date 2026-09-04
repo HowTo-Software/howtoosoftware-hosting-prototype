@@ -88,7 +88,8 @@ public sealed class EfOrderStore : IOrderStore
         // Ordered in memory: SQLite cannot sort a DateTimeOffset column, and the set here is
         // whatever was paid across one restart - a handful of rows at most.
         var waiting = await db.Orders.AsNoTracking()
-            .Where(o => o.Status == OrderStatus.Paid && o.ProvisioningStage == FulfilmentStage.NotStarted)
+            .Where(o => (o.Status == OrderStatus.Paid && o.ProvisioningStage == FulfilmentStage.NotStarted)
+                || o.Status == OrderStatus.Provisioning)
             .Select(o => new { o.Id, o.PaidAt })
             .ToListAsync(cancellationToken)
             .ConfigureAwait(false);
@@ -122,6 +123,21 @@ public sealed class EfOrderStore : IOrderStore
             // followed by a write that two concurrent deliveries could both pass.
             return false;
         }
+    }
+
+    /// <inheritdoc />
+    public async Task ReleaseEventAsync(string eventId, CancellationToken cancellationToken = default)
+    {
+        await using var db = await _factory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        var record = await db.ProcessedStripeEvents.SingleOrDefaultAsync(x => x.Id == eventId, cancellationToken)
+            .ConfigureAwait(false);
+        if (record is null)
+        {
+            return;
+        }
+
+        db.ProcessedStripeEvents.Remove(record);
+        await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
     }
 }
 

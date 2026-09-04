@@ -58,7 +58,15 @@ Non-secret values can live in `appsettings.json` (or `appsettings.Development.js
 }
 ```
 
-The key comes from outside the repository:
+The key comes from outside the repository. The recommended `.env` names are:
+
+```dotenv
+PTERODACTYL_PANEL_URL=https://panel.example.com
+PTERODACTYL_APPLICATION_API_KEY=ptla_...
+PTERODACTYL_DEPLOY_TESTS_ENABLED=false
+```
+
+ASP.NET Core environment variables and user-secrets remain supported:
 
 ```bash
 # Development — stored in the user profile, never in the working tree
@@ -95,7 +103,10 @@ What the panel shows you:
 The key is never printed. The panel shows its prefix and length only, which is enough to answer
 "did it read the key I set?".
 
-## 5. Deploy a test server
+## 5. Deliberately enable and deploy a test server
+
+Set `PTERODACTYL_DEPLOY_TESTS_ENABLED=true` (or `ProvisioningTest__Enabled=true`) and restart the
+application. The page stays closed even in Development until this explicit flag is present.
 
 Pick a plan, press **Create test server**, then confirm. The lab shows the exact numbers it will
 send before you confirm:
@@ -113,16 +124,16 @@ Deletion is guarded twice: the button passes a provisioning request id rather th
 and the service re-reads the server and refuses unless its external id begins with
 `hts-test-server:`. A customer's server cannot be reached from this page.
 
-## 6. Opening the lab outside Development
+## 6. Closing the lab again
 
-The lab is available in the Development environment automatically. Anywhere else it renders a
-closed notice and every action refuses on the server. To open it deliberately on a staging host:
+Set the flag back to `false` and restart. Environment name alone never opens a route that can
+create real servers:
 
 ```jsonc
-"ProvisioningTest": { "Enabled": true }
+"ProvisioningTest": { "Enabled": false }
 ```
 
-Do not set this in production. It is a button that creates and deletes real servers.
+Do not enable it in production. It is a button that creates and deletes real servers.
 
 ---
 

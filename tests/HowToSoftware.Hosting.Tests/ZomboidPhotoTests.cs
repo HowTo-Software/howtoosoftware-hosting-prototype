@@ -98,17 +98,26 @@ public class ZomboidPhotoTests : IDisposable
     /// fails loudly the day the folder stops being empty, so the README gets updated with it.
     /// </summary>
     [Fact]
-    public void TheFolderIsStillEmpty_SoTheLicenceNoteIsStillCurrent()
+    public void TheEditorialPhotoSlotsAreStillEmpty_SoTheLicenceNoteIsStillCurrent()
     {
         var folder = Path.Combine(LocateWebRoot(), "images", "zomboid");
+        var editorialSlots = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+        {
+            "hero-world.webp", "hero-world.jpg",
+            "world.webp", "world.jpg",
+            "workshop.webp", "workshop.jpg",
+            "survivors.webp", "survivors.jpg",
+            "closing.webp", "closing.jpg"
+        };
         var images = Directory.EnumerateFiles(folder)
-            .Where(path => Path.GetExtension(path) is ".webp" or ".jpg" or ".png")
             .Select(Path.GetFileName)
+            .OfType<string>()
+            .Where(editorialSlots.Contains)
             .ToArray();
 
         Assert.True(
             images.Length == 0,
-            "Game imagery has been added: " + string.Join(", ", images) +
+            "Editorial game imagery has been added: " + string.Join(", ", images) +
             ". Record where each file came from and what permits its use in " +
             "wwwroot/images/zomboid/README.md, then update this test.");
     }

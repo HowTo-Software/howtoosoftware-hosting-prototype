@@ -225,4 +225,28 @@
   <data name="Cta.Panel" xml:space="preserve">
     <value>Panel</value>
   </data>
+  <data name="Footer.Ticker.Live" xml:space="preserve">
+    <value>PLATFORM READY</value>
+  </data>
+  <data name="Footer.Ticker.Game" xml:space="preserve">
+    <value>PROJECT ZOMBOID</value>
+  </data>
+  <data name="Footer.Ticker.Workshop" xml:space="preserve">
+    <value>WORKSHOP + MODS</value>
+  </data>
+  <data name="Footer.Ticker.Backups" xml:space="preserve">
+    <value>BACKUPS SCHEDULED</value>
+  </data>
+  <data name="Footer.Ticker.Deploy" xml:space="preserve">
+    <value>DEPLOY AFTER PAYMENT</value>
+  </data>
+  <data name="Footer.Ticker.Resources" xml:space="preserve">
+    <value>4–16 GB RAM</value>
+  </data>
+  <data name="Footer.Ticker.Panel" xml:space="preserve">
+    <value>CONSOLE + FILES</value>
+  </data>
+  <data name="Footer.Ticker.Support" xml:space="preserve">
+    <value>HTS INFRASTRUCTURE</value>
+  </data>
 </root>

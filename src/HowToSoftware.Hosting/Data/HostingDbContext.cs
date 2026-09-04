@@ -48,8 +48,10 @@ public sealed class HostingDbContext : DbContext
             order.Property(o => o.UserId).HasMaxLength(128);
             order.Property(o => o.CustomerEmail).HasMaxLength(320);
             order.Property(o => o.StripeCheckoutSessionId).HasMaxLength(128);
+            order.Property(o => o.StripePaymentIntentId).HasMaxLength(128);
             order.Property(o => o.StripeCustomerId).HasMaxLength(128);
             order.Property(o => o.StripeSubscriptionId).HasMaxLength(128);
+            order.Property(o => o.StripeInvoiceId).HasMaxLength(128);
             order.Property(o => o.SubscriptionStatus).HasMaxLength(32);
             order.Property(o => o.ServerIdentifier).HasMaxLength(64);
             order.Property(o => o.FailureReason).HasMaxLength(1024);

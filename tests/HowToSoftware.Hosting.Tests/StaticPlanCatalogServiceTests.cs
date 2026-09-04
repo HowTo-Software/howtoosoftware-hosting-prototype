@@ -88,7 +88,7 @@ public class StaticPlanCatalogServiceTests : IDisposable
             _sut.BillingOptions,
             option => { Assert.Equal(BillingPeriod.Monthly, option.Period); Assert.Equal(1, option.Months); Assert.Equal(0, option.DiscountPercent); },
             option => { Assert.Equal(BillingPeriod.Quarterly, option.Period); Assert.Equal(3, option.Months); Assert.Equal(5, option.DiscountPercent); },
-            option => { Assert.Equal(BillingPeriod.Annual, option.Period); Assert.Equal(12, option.Months); Assert.Equal(15, option.DiscountPercent); });
+            option => { Assert.Equal(BillingPeriod.Annual, option.Period); Assert.Equal(12, option.Months); Assert.Equal(10, option.DiscountPercent); });
     }
 
     [Fact]

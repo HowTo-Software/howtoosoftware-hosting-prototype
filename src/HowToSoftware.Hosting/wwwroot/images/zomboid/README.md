@@ -1,6 +1,10 @@
 # Project Zomboid imagery
 
-**This folder is empty on purpose, and the site is already built to use it.**
+**The editorial photo slots listed below are empty on purpose, and the site is already built to use them.**
+
+`Zomboid_Banner.png` is the separately supplied catalogue banner. It is not used by the
+editorial photo slots below; its provenance and permission should still be recorded before a
+production launch.
 
 `ZomboidPlate.razor` checks for each file at render time. While a file is missing the plate
 draws a composed stand-in and prints the exact path to drop the image at; the moment the file

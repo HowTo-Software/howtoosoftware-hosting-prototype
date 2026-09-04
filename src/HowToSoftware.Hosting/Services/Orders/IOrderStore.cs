@@ -28,8 +28,7 @@ public interface IOrderStore
     Task UpdateAsync(Order order, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Ids of orders that are paid but whose provisioning never started - the ones a restart
-    /// could have dropped from the in-memory fulfilment queue.
+    /// Ids of paid or in-progress orders a restart could have dropped from the in-memory queue.
     /// </summary>
     Task<IReadOnlyList<Guid>> ListAwaitingFulfilmentAsync(CancellationToken cancellationToken = default);
 
@@ -41,6 +40,11 @@ public interface IOrderStore
     /// already there, in which case the caller must not act on the event again.
     /// </returns>
     Task<bool> TryRecordEventAsync(string eventId, string eventType, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Releases an event claim after processing failed, allowing Stripe's next delivery to retry.
+    /// </summary>
+    Task ReleaseEventAsync(string eventId, CancellationToken cancellationToken = default);
 }
 
 // =============================================================

@@ -129,9 +129,50 @@ public class ShippedConfigurationTests : IDisposable
                 || value.StartsWith("whsec_", StringComparison.Ordinal)
                 || value.StartsWith("ptla_", StringComparison.Ordinal))
             {
-                Assert.Contains("REPLACE_ME", value, StringComparison.Ordinal);
+                Assert.True(
+                    value.Contains("REPLACE_ME", StringComparison.Ordinal)
+                    || value.Contains("API_AQUI", StringComparison.Ordinal),
+                    $"A credential-shaped value in .env.example is not a recognised placeholder: {line[..line.IndexOf('=')]}.");
             }
         }
+    }
+
+    /// <summary>
+    /// The template is part of the deployment contract. Keep every credential and topology
+    /// setting discoverable there instead of making an operator read source code to find it.
+    /// </summary>
+    [Fact]
+    public void TheEnvironmentTemplateDocumentsEveryExternalIntegration()
+    {
+        var template = Path.Combine(Path.GetDirectoryName(LocateAppSettings())!, "..", "..", ".env.example");
+        var raw = File.ReadAllText(template);
+
+        var requiredNames = new[]
+        {
+            "STRIPE_PUBLISHABLE_KEY",
+            "STRIPE_SECRET_KEY",
+            "STRIPE_WEBHOOK_SECRET",
+            "STRIPE_SUCCESS_URL",
+            "STRIPE_CANCEL_URL",
+            "STRIPE_CURRENCY",
+            "STRIPE_WEBHOOK_TOLERANCE_SECONDS",
+            "SUPABASE_URL",
+            "SUPABASE_PUBLISHABLE_KEY",
+            "SUPABASE_SECRET_KEY",
+            "SUPABASE_DB_CONNECTION_STRING",
+            "PTERODACTYL_PANEL_URL",
+            "PTERODACTYL_APPLICATION_API_KEY",
+            "PTERODACTYL_LOCATION_ID",
+            "PTERODACTYL_NEST_ID",
+            "PTERODACTYL_EGG_ID",
+            "PTERODACTYL_TIMEOUT_SECONDS",
+            "PTERODACTYL_DEPLOY_TESTS_ENABLED",
+            "APP_BASE_URL",
+            "APP_ENVIRONMENT",
+            "ConnectionStrings__Hosting"
+        };
+
+        Assert.All(requiredNames, name => Assert.Contains(name, raw, StringComparison.Ordinal));
     }
 
     private static string LocateAppSettings()
