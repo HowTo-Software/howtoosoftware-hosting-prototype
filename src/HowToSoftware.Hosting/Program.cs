@@ -198,6 +198,9 @@ if (args.Contains("--migrate-commerce", StringComparer.Ordinal))
     {
         Console.Error.WriteLine(
             $"SQL Server not configured. Set {SqlServerOptions.EnvironmentVariableName} before applying commerce migrations.");
+        // A migration that applied nothing must not report success, or a deployment job will
+        // carry on and start the application against a schema that does not exist.
+        Environment.ExitCode = 1;
         return;
     }
 
@@ -211,7 +214,7 @@ if (args.Contains("--migrate-commerce", StringComparer.Ordinal))
         await scope.ServiceProvider.GetRequiredService<CommerceSeedService>().SeedAsync();
     }
 
-    Console.WriteLine("Commerce database is up to date.");
+    Console.WriteLine($"Commerce database is up to date: {database.DescribeTarget()}");
     return;
 }
 
@@ -224,6 +227,7 @@ if (args.Contains("--migrate-hosting", StringComparer.Ordinal))
     {
         Console.Error.WriteLine(
             $"Set ConnectionStrings__{HostingDbContext.ConnectionName} before applying hosting migrations.");
+        Environment.ExitCode = 1;
         return;
     }
 
