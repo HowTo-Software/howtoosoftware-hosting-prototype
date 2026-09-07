@@ -13,7 +13,7 @@ roll back the other. Each context here declares its own history table
 but a separate database is the first.
 
 ```sql
-CREATE DATABASE [Website_Application_HostingDb];
+CREATE DATABASE [HowToSoftwareHosting];
 GO
 ```
 
@@ -22,7 +22,7 @@ Create a login for the application that is **not** `sa` and owns nothing else:
 ```sql
 CREATE LOGIN [hts_hosting_app] WITH PASSWORD = N'<generated>', CHECK_POLICY = ON;
 GO
-USE [Website_Application_HostingDb];
+USE [HowToSoftwareHosting];
 GO
 CREATE USER [hts_hosting_app] FOR LOGIN [hts_hosting_app];
 ALTER ROLE db_datareader ADD MEMBER [hts_hosting_app];
@@ -36,7 +36,7 @@ separate deployment principal, or grant `db_ddladmin` only for the duration of t
 Copy `.env.example` to `.env` and fill:
 
 ```dotenv
-SQLSERVER_CONNECTION_STRING=Server=HOST,1433;Database=Website_Application_HostingDb;User Id=hts_hosting_app;Password=...;Encrypt=True
+SQLSERVER_CONNECTION_STRING=Server=HOST,1433;Database=HowToSoftwareHosting;User Id=hts_hosting_app;Password=...;Encrypt=True
 ```
 
 `.env` is git-ignored. In production prefer host environment variables or a secrets vault.
