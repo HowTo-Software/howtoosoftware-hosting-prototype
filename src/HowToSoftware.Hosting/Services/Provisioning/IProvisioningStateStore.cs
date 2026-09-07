@@ -32,6 +32,16 @@ public sealed class SqlServerProvisioningStateStore(
     public async Task BeginAsync(Guid orderId, CancellationToken cancellationToken = default)
     {
         await using var db = await factory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+
+        // The connection retries transient faults, and a retrying strategy will not drive a
+        // transaction it did not open: the whole unit has to be replayable as one.
+        await db.Database.CreateExecutionStrategy()
+            .ExecuteAsync(token => BeginCoreAsync(db, orderId, token), cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private async Task BeginCoreAsync(CommerceDbContext db, Guid orderId, CancellationToken cancellationToken)
+    {
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
         var order = await db.Orders.SingleAsync(x => x.Id == orderId, cancellationToken).ConfigureAwait(false);
         var now = clock.GetUtcNow();

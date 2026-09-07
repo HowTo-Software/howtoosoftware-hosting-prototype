@@ -24,6 +24,16 @@ public sealed class CommerceSeedService(
         }
 
         await using var db = await factory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+
+        // The connection retries transient faults, and a retrying strategy will not drive a
+        // transaction it did not open: the whole unit has to be replayable as one.
+        await db.Database.CreateExecutionStrategy()
+            .ExecuteAsync(token => SeedCoreAsync(db, token), cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private async Task SeedCoreAsync(CommerceDbContext db, CancellationToken cancellationToken)
+    {
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
         var now = DateTimeOffset.UtcNow;
 
