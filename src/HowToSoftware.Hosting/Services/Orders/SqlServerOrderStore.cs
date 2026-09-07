@@ -4,16 +4,16 @@ using HowToSoftware.Hosting.Data;
 using HowToSoftware.Hosting.Models;
 using HowToSoftware.Hosting.Models.Commerce;
 using HowToSoftware.Hosting.Models.Orders;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
 
 namespace HowToSoftware.Hosting.Services.Orders;
 
 /// <summary>
-/// Supabase/PostgreSQL implementation of the existing order persistence seam. The payment and
+/// SQL Server implementation of the existing order persistence seam. The payment and
 /// provisioning services remain unaware of the active database provider.
 /// </summary>
-public sealed class PostgresOrderStore(IDbContextFactory<CommerceDbContext> factory) : IOrderStore
+public sealed class SqlServerOrderStore(IDbContextFactory<CommerceDbContext> factory) : IOrderStore
 {
     public async Task AddAsync(Order order, CancellationToken cancellationToken = default)
     {
@@ -128,7 +128,9 @@ public sealed class PostgresOrderStore(IDbContextFactory<CommerceDbContext> fact
             return true;
         }
         catch (DbUpdateException exception) when (
-            exception.InnerException is PostgresException { SqlState: PostgresErrorCodes.UniqueViolation })
+            // 2627 unique constraint, 2601 unique index. Either means this delivery is a duplicate
+            // and another worker already claimed it, which is exactly what the caller asked.
+            exception.InnerException is SqlException { Number: 2601 or 2627 })
         {
             return false;
         }

@@ -85,7 +85,7 @@ public sealed class EfOrderStore : IOrderStore
     {
         await using var db = await _factory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
 
-        // Ordered in memory: SQLite cannot sort a DateTimeOffset column, and the set here is
+        // Ordered in memory: the hermetic test provider cannot sort a DateTimeOffset column, and the set here is
         // whatever was paid across one restart - a handful of rows at most.
         var waiting = await db.Orders.AsNoTracking()
             .Where(o => (o.Status == OrderStatus.Paid && o.ProvisioningStage == FulfilmentStage.NotStarted)

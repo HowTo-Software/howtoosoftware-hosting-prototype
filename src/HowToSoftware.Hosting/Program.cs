@@ -2,10 +2,10 @@ using HowToSoftware.Hosting.Components;
 using HowToSoftware.Hosting.Data;
 using HowToSoftware.Hosting.Endpoints;
 using HowToSoftware.Hosting.Infrastructure.Configuration;
+using HowToSoftware.Hosting.Infrastructure.Database;
 using HowToSoftware.Hosting.Infrastructure.Pterodactyl;
 using HowToSoftware.Hosting.Infrastructure.Security;
 using HowToSoftware.Hosting.Infrastructure.Stripe;
-using HowToSoftware.Hosting.Infrastructure.Supabase;
 using HowToSoftware.Hosting.Localization;
 using HowToSoftware.Hosting.Models;
 using HowToSoftware.Hosting.Services;
@@ -20,15 +20,16 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 EnvironmentFile.LoadNearest();
 EnvironmentFile.ApplyAspNetCoreAliases();
 var builder = WebApplication.CreateBuilder(args);
-var supabase = SupabaseOptions.FromConfiguration(builder.Configuration);
+var database = SqlServerOptions.FromConfiguration(builder.Configuration);
 
-if (!string.IsNullOrWhiteSpace(supabase.DbConnectionString)
-    && !SupabaseOptions.IsPlaceholder(supabase.DbConnectionString)
-    && !supabase.IsDatabaseConfigured)
+if (!string.IsNullOrWhiteSpace(database.ConnectionString)
+    && !SqlServerOptions.IsPlaceholder(database.ConnectionString)
+    && !database.IsDatabaseConfigured)
 {
     // Never silently fall back to a different database because a production connection string
     // was malformed. The message intentionally does not echo the credential-bearing value.
-    throw new InvalidOperationException("SUPABASE_DB_CONNECTION_STRING is set but is not a valid PostgreSQL connection string.");
+    throw new InvalidOperationException(
+        $"{SqlServerOptions.EnvironmentVariableName} is set but is not a valid SQL Server connection string naming a server and a database.");
 }
 
 // Blazor: the marketing pages render statically on the server for SEO and hydrate only the
@@ -101,33 +102,36 @@ builder.Services.AddSingleton<
 
 // ── Orders ────────────────────────────────────────────────────────────────
 //
-// SQLite by default, chosen by connection string. A factory rather than a scoped context,
+// SQL Server throughout, chosen by connection string. A factory rather than a scoped context,
 // because the webhook and the fulfilment worker both need short units of work outside a
-// component's scope.
-builder.Services.AddSingleton(supabase);
-builder.Services.AddSingleton<SupabaseHealthCheck>();
-builder.Services.AddHealthChecks().AddCheck<SupabaseHealthCheck>("supabase");
+// component's scope. Registration never opens a connection, so the marketing pages still serve
+// on a host that has no database credentials at all.
+builder.Services.AddSingleton(database);
+builder.Services.AddSingleton<SqlServerHealthCheck>();
+builder.Services.AddHealthChecks().AddCheck<SqlServerHealthCheck>("sqlserver");
 
-if (supabase.IsDatabaseConfigured)
+if (database.IsDatabaseConfigured)
 {
     builder.Services.AddPooledDbContextFactory<CommerceDbContext>(options =>
-        options.UseNpgsql(
-            supabase.GetNpgsqlConnectionString(),
-            postgres => postgres
-                .MigrationsHistoryTable("__ef_migrations_history")
+        options.UseSqlServer(
+            database.GetConnectionString(),
+            sqlServer => sqlServer
+                .MigrationsHistoryTable(CommerceDbContext.MigrationsHistoryTable)
                 .EnableRetryOnFailure())
             .EnableSensitiveDataLogging(false));
-    builder.Services.AddSingleton<IOrderStore, PostgresOrderStore>();
-    builder.Services.AddSingleton<IProvisioningStateStore, PostgresProvisioningStateStore>();
-    builder.Services.AddSingleton<IBillingStore, PostgresBillingStore>();
+    builder.Services.AddSingleton<IOrderStore, SqlServerOrderStore>();
+    builder.Services.AddSingleton<IProvisioningStateStore, SqlServerProvisioningStateStore>();
+    builder.Services.AddSingleton<IBillingStore, SqlServerBillingStore>();
     builder.Services.AddScoped<CommerceSeedService>();
 }
 else
 {
     builder.Services.AddDbContextFactory<HostingDbContext>(options =>
-        options.UseSqlite(
-            builder.Configuration.GetConnectionString(HostingDbContext.ConnectionName)
-                ?? "Data Source=hosting.db")
+        options.UseSqlServer(
+            builder.Configuration.GetConnectionString(HostingDbContext.ConnectionName) ?? string.Empty,
+            sqlServer => sqlServer
+                .MigrationsHistoryTable(HostingDbContext.MigrationsHistoryTable)
+                .EnableRetryOnFailure())
             .EnableSensitiveDataLogging(false));
     builder.Services.AddSingleton<IOrderStore, EfOrderStore>();
     builder.Services.AddSingleton<IProvisioningStateStore, NullProvisioningStateStore>();
@@ -190,10 +194,13 @@ var app = builder.Build();
 
 if (args.Contains("--migrate-commerce", StringComparer.Ordinal))
 {
-    if (!supabase.IsDatabaseConfigured)
+    if (!database.IsDatabaseConfigured)
     {
         Console.Error.WriteLine(
-            "Supabase not configured. Set SUPABASE_DB_CONNECTION_STRING before applying commerce migrations.");
+            $"SQL Server not configured. Set {SqlServerOptions.EnvironmentVariableName} before applying commerce migrations.");
+        // A migration that applied nothing must not report success, or a deployment job will
+        // carry on and start the application against a schema that does not exist.
+        Environment.ExitCode = 1;
         return;
     }
 
@@ -207,18 +214,29 @@ if (args.Contains("--migrate-commerce", StringComparer.Ordinal))
         await scope.ServiceProvider.GetRequiredService<CommerceSeedService>().SeedAsync();
     }
 
-    Console.WriteLine("Commerce database is up to date.");
+    Console.WriteLine($"Commerce database is up to date: {database.DescribeTarget()}");
     return;
 }
 
-// SQLite is only the credential-free development fallback and can be migrated automatically.
-// Supabase changes are explicit so placeholders can never initialise a remote database.
-if (!supabase.IsDatabaseConfigured)
+// Every database is now remote, so nothing is migrated on startup: a deploy must never be able
+// to reshape a shared server just by restarting a process. Both schemas move under an explicit
+// flag instead.
+if (args.Contains("--migrate-hosting", StringComparer.Ordinal))
 {
+    if (string.IsNullOrWhiteSpace(builder.Configuration.GetConnectionString(HostingDbContext.ConnectionName)))
+    {
+        Console.Error.WriteLine(
+            $"Set ConnectionStrings__{HostingDbContext.ConnectionName} before applying hosting migrations.");
+        Environment.ExitCode = 1;
+        return;
+    }
+
     using var scope = app.Services.CreateScope();
     var factory = scope.ServiceProvider.GetRequiredService<IDbContextFactory<HostingDbContext>>();
     using var db = factory.CreateDbContext();
     db.Database.Migrate();
+    Console.WriteLine("Hosting database is up to date.");
+    return;
 }
 
 // Forwarded headers are accepted only from framework defaults (loopback) or IPs explicitly

@@ -15,12 +15,12 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 name: "customer_profiles",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    hts_user_id = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    email = table.Column<string>(type: "character varying(320)", maxLength: 320, nullable: true),
-                    stripe_customer_id = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    hts_user_id = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false, collation: "Latin1_General_100_BIN2"),
+                    email = table.Column<string>(type: "nvarchar(320)", maxLength: 320, nullable: true),
+                    stripe_customer_id = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true, collation: "Latin1_General_100_BIN2"),
+                    created_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,15 +31,15 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 name: "games",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    slug = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    description = table.Column<string>(type: "text", nullable: true),
-                    active = table.Column<bool>(type: "boolean", nullable: false),
-                    primary_game = table.Column<bool>(type: "boolean", nullable: false),
-                    artwork_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    slug = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    active = table.Column<bool>(type: "bit", nullable: false),
+                    primary_game = table.Column<bool>(type: "bit", nullable: false),
+                    artwork_url = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
+                    created_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -50,17 +50,17 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 name: "hosting_nodes",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    pterodactyl_node_id = table.Column<int>(type: "integer", nullable: false),
-                    name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    region = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
-                    location = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    maintenance = table.Column<bool>(type: "boolean", nullable: false),
-                    priority = table.Column<int>(type: "integer", nullable: false),
-                    supported_games = table.Column<string[]>(type: "text[]", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    pterodactyl_node_id = table.Column<int>(type: "int", nullable: false),
+                    name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    region = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
+                    location = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    enabled = table.Column<bool>(type: "bit", nullable: false),
+                    maintenance = table.Column<bool>(type: "bit", nullable: false),
+                    priority = table.Column<int>(type: "int", nullable: false),
+                    supported_games = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -71,13 +71,13 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 name: "stripe_events",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    stripe_event_id = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    event_type = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    processed = table.Column<bool>(type: "boolean", nullable: false),
-                    processing_error = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
-                    received_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    processed_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    stripe_event_id = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false, collation: "Latin1_General_100_BIN2"),
+                    event_type = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    processed = table.Column<bool>(type: "bit", nullable: false),
+                    processing_error = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
+                    received_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    processed_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -88,16 +88,16 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 name: "game_deployment_profiles",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    game_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    pterodactyl_nest_id = table.Column<int>(type: "integer", nullable: false),
-                    pterodactyl_egg_id = table.Column<int>(type: "integer", nullable: false),
-                    docker_image = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: true),
-                    default_startup = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
-                    deployment_config_json = table.Column<string>(type: "jsonb", nullable: false),
-                    active = table.Column<bool>(type: "boolean", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    game_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    pterodactyl_nest_id = table.Column<int>(type: "int", nullable: false),
+                    pterodactyl_egg_id = table.Column<int>(type: "int", nullable: false),
+                    docker_image = table.Column<string>(type: "nvarchar(512)", maxLength: 512, nullable: true),
+                    default_startup = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
+                    deployment_config_json = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    active = table.Column<bool>(type: "bit", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -114,23 +114,23 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 name: "hosting_plans",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    game_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    slug = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    description = table.Column<string>(type: "text", nullable: true),
-                    ram_mb = table.Column<int>(type: "integer", nullable: false),
-                    cpu_percent = table.Column<int>(type: "integer", nullable: false),
-                    disk_mb = table.Column<int>(type: "integer", nullable: false),
-                    allocation_limit = table.Column<int>(type: "integer", nullable: false),
-                    database_limit = table.Column<int>(type: "integer", nullable: false),
-                    backup_limit = table.Column<int>(type: "integer", nullable: false),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    game_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    slug = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ram_mb = table.Column<int>(type: "int", nullable: false),
+                    cpu_percent = table.Column<int>(type: "int", nullable: false),
+                    disk_mb = table.Column<int>(type: "int", nullable: false),
+                    allocation_limit = table.Column<int>(type: "int", nullable: false),
+                    database_limit = table.Column<int>(type: "int", nullable: false),
+                    backup_limit = table.Column<int>(type: "int", nullable: false),
                     monthly_price_cents = table.Column<long>(type: "bigint", nullable: false),
-                    currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
-                    active = table.Column<bool>(type: "boolean", nullable: false),
-                    sort_order = table.Column<int>(type: "integer", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    currency = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
+                    active = table.Column<bool>(type: "bit", nullable: false),
+                    sort_order = table.Column<int>(type: "int", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -150,35 +150,35 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 name: "orders",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    customer_profile_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    hts_user_id = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    customer_email = table.Column<string>(type: "character varying(320)", maxLength: 320, nullable: true),
-                    game_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    plan_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    game_slug = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    plan_slug = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    plan_name = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    billing_period = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
-                    currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    customer_profile_id = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    hts_user_id = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true, collation: "Latin1_General_100_BIN2"),
+                    customer_email = table.Column<string>(type: "nvarchar(320)", maxLength: 320, nullable: true),
+                    game_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    plan_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    game_slug = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    plan_slug = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    plan_name = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    billing_period = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: false),
+                    currency = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
                     monthly_price_cents = table.Column<long>(type: "bigint", nullable: false),
                     base_amount_cents = table.Column<long>(type: "bigint", nullable: false),
-                    discount_percent = table.Column<int>(type: "integer", nullable: false),
+                    discount_percent = table.Column<int>(type: "int", nullable: false),
                     discount_amount_cents = table.Column<long>(type: "bigint", nullable: false),
                     final_amount_cents = table.Column<long>(type: "bigint", nullable: false),
-                    status = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    provisioning_stage = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    stripe_customer_id = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    stripe_checkout_session_id = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    stripe_payment_intent_id = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    stripe_subscription_id = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    stripe_invoice_id = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    subscription_status = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: true),
-                    server_identifier = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
-                    failure_reason = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    paid_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true)
+                    status = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    provisioning_stage = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    stripe_customer_id = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true, collation: "Latin1_General_100_BIN2"),
+                    stripe_checkout_session_id = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true, collation: "Latin1_General_100_BIN2"),
+                    stripe_payment_intent_id = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true, collation: "Latin1_General_100_BIN2"),
+                    stripe_subscription_id = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true, collation: "Latin1_General_100_BIN2"),
+                    stripe_invoice_id = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true, collation: "Latin1_General_100_BIN2"),
+                    subscription_status = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: true),
+                    server_identifier = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
+                    failure_reason = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
+                    created_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    paid_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -209,17 +209,17 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 name: "plan_billing_prices",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    plan_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    billing_period = table.Column<string>(type: "character varying(16)", maxLength: 16, nullable: false),
-                    discount_percent = table.Column<int>(type: "integer", nullable: false),
-                    stripe_product_id = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    stripe_price_id = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    plan_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    billing_period = table.Column<string>(type: "nvarchar(16)", maxLength: 16, nullable: false),
+                    discount_percent = table.Column<int>(type: "int", nullable: false),
+                    stripe_product_id = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true, collation: "Latin1_General_100_BIN2"),
+                    stripe_price_id = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true, collation: "Latin1_General_100_BIN2"),
                     amount_cents = table.Column<long>(type: "bigint", nullable: false),
-                    currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
-                    active = table.Column<bool>(type: "boolean", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    currency = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
+                    active = table.Column<bool>(type: "bit", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    updated_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -239,21 +239,21 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 name: "hosting_services",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    customer_profile_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    order_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    game_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    plan_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    stripe_subscription_id = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: true),
-                    pterodactyl_server_id = table.Column<int>(type: "integer", nullable: true),
-                    pterodactyl_server_uuid = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
-                    pterodactyl_node_id = table.Column<int>(type: "integer", nullable: true),
-                    status = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    activated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    suspended_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    cancelled_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    customer_profile_id = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    order_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    game_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    plan_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    stripe_subscription_id = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true, collation: "Latin1_General_100_BIN2"),
+                    pterodactyl_server_id = table.Column<int>(type: "int", nullable: true),
+                    pterodactyl_server_uuid = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true, collation: "Latin1_General_100_BIN2"),
+                    pterodactyl_node_id = table.Column<int>(type: "int", nullable: true),
+                    status = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    activated_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    suspended_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    cancelled_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    updated_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -288,18 +288,18 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 name: "billing_invoice_refs",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    customer_profile_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    hosting_service_id = table.Column<Guid>(type: "uuid", nullable: true),
-                    stripe_invoice_id = table.Column<string>(type: "character varying(128)", maxLength: 128, nullable: false),
-                    status = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    customer_profile_id = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    hosting_service_id = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
+                    stripe_invoice_id = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false, collation: "Latin1_General_100_BIN2"),
+                    status = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
                     amount_due_cents = table.Column<long>(type: "bigint", nullable: false),
                     amount_paid_cents = table.Column<long>(type: "bigint", nullable: false),
-                    currency = table.Column<string>(type: "character varying(3)", maxLength: 3, nullable: false),
-                    invoice_date = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    hosted_invoice_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
-                    invoice_pdf_url = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: true),
-                    synced_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    currency = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
+                    invoice_date = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    hosted_invoice_url = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
+                    invoice_pdf_url = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: true),
+                    synced_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -323,19 +323,19 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 name: "provisioning_jobs",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    hosting_service_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    order_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    status = table.Column<string>(type: "character varying(32)", maxLength: 32, nullable: false),
-                    attempt_count = table.Column<int>(type: "integer", nullable: false),
-                    selected_node_id = table.Column<int>(type: "integer", nullable: true),
-                    pterodactyl_server_id = table.Column<int>(type: "integer", nullable: true),
-                    pterodactyl_server_uuid = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: true),
-                    last_error = table.Column<string>(type: "character varying(4096)", maxLength: 4096, nullable: true),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
-                    started_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    completed_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: true),
-                    updated_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    hosting_service_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    order_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    status = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: false),
+                    attempt_count = table.Column<int>(type: "int", nullable: false),
+                    selected_node_id = table.Column<int>(type: "int", nullable: true),
+                    pterodactyl_server_id = table.Column<int>(type: "int", nullable: true),
+                    pterodactyl_server_uuid = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true, collation: "Latin1_General_100_BIN2"),
+                    last_error = table.Column<string>(type: "nvarchar(max)", maxLength: 4096, nullable: true),
+                    created_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    started_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    completed_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: true),
+                    updated_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -359,13 +359,13 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 name: "deployment_events",
                 columns: table => new
                 {
-                    id = table.Column<Guid>(type: "uuid", nullable: false),
-                    provisioning_job_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    hosting_service_id = table.Column<Guid>(type: "uuid", nullable: false),
-                    event_type = table.Column<string>(type: "character varying(64)", maxLength: 64, nullable: false),
-                    message = table.Column<string>(type: "character varying(2048)", maxLength: 2048, nullable: false),
-                    metadata_json = table.Column<string>(type: "jsonb", nullable: false),
-                    created_at = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false)
+                    id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    provisioning_job_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    hosting_service_id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    event_type = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
+                    message = table.Column<string>(type: "nvarchar(2048)", maxLength: 2048, nullable: false),
+                    metadata_json = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    created_at = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -375,7 +375,7 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                         column: x => x.hosting_service_id,
                         principalTable: "hosting_services",
                         principalColumn: "id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_deployment_events_provisioning_jobs_provisioning_job_id",
                         column: x => x.provisioning_job_id,
@@ -410,7 +410,8 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 name: "IX_customer_profiles_stripe_customer_id",
                 table: "customer_profiles",
                 column: "stripe_customer_id",
-                unique: true);
+                unique: true,
+                filter: "[stripe_customer_id] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_deployment_events_hosting_service_id",
@@ -427,7 +428,7 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 table: "game_deployment_profiles",
                 column: "game_id",
                 unique: true,
-                filter: "active");
+                filter: "[active] = 1");
 
             migrationBuilder.CreateIndex(
                 name: "IX_games_active_primary_game",
@@ -487,19 +488,22 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 name: "IX_hosting_services_pterodactyl_server_id",
                 table: "hosting_services",
                 column: "pterodactyl_server_id",
-                unique: true);
+                unique: true,
+                filter: "[pterodactyl_server_id] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_hosting_services_pterodactyl_server_uuid",
                 table: "hosting_services",
                 column: "pterodactyl_server_uuid",
-                unique: true);
+                unique: true,
+                filter: "[pterodactyl_server_uuid] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_hosting_services_stripe_subscription_id",
                 table: "hosting_services",
                 column: "stripe_subscription_id",
-                unique: true);
+                unique: true,
+                filter: "[stripe_subscription_id] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_orders_customer_profile_id",
@@ -525,7 +529,8 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 name: "IX_orders_stripe_checkout_session_id",
                 table: "orders",
                 column: "stripe_checkout_session_id",
-                unique: true);
+                unique: true,
+                filter: "[stripe_checkout_session_id] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_orders_stripe_subscription_id",
@@ -542,7 +547,8 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 name: "IX_plan_billing_prices_stripe_price_id",
                 table: "plan_billing_prices",
                 column: "stripe_price_id",
-                unique: true);
+                unique: true,
+                filter: "[stripe_price_id] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_provisioning_jobs_hosting_service_id",
@@ -571,37 +577,6 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 table: "stripe_events",
                 column: "stripe_event_id",
                 unique: true);
-
-            // These tables are owned exclusively by the trusted HTS backend. RLS is enabled
-            // with no browser policies, and the Supabase Data API roles are explicitly denied.
-            // The direct PostgreSQL migration/application role remains the server-side path.
-            migrationBuilder.Sql("""
-                ALTER TABLE customer_profiles ENABLE ROW LEVEL SECURITY;
-                ALTER TABLE games ENABLE ROW LEVEL SECURITY;
-                ALTER TABLE hosting_plans ENABLE ROW LEVEL SECURITY;
-                ALTER TABLE plan_billing_prices ENABLE ROW LEVEL SECURITY;
-                ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
-                ALTER TABLE hosting_services ENABLE ROW LEVEL SECURITY;
-                ALTER TABLE stripe_events ENABLE ROW LEVEL SECURITY;
-                ALTER TABLE provisioning_jobs ENABLE ROW LEVEL SECURITY;
-                ALTER TABLE hosting_nodes ENABLE ROW LEVEL SECURITY;
-                ALTER TABLE game_deployment_profiles ENABLE ROW LEVEL SECURITY;
-                ALTER TABLE deployment_events ENABLE ROW LEVEL SECURITY;
-                ALTER TABLE billing_invoice_refs ENABLE ROW LEVEL SECURITY;
-
-                DO $block$
-                DECLARE api_role text;
-                BEGIN
-                    FOREACH api_role IN ARRAY ARRAY['anon', 'authenticated'] LOOP
-                        IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = api_role) THEN
-                            EXECUTE format(
-                                'REVOKE ALL PRIVILEGES ON TABLE customer_profiles, games, hosting_plans, plan_billing_prices, orders, hosting_services, stripe_events, provisioning_jobs, hosting_nodes, game_deployment_profiles, deployment_events, billing_invoice_refs FROM %I',
-                                api_role);
-                        END IF;
-                    END LOOP;
-                END
-                $block$;
-                """);
         }
 
         /// <inheritdoc />

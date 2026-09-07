@@ -17,7 +17,7 @@ autorização por recurso e auditoria.
 ## Regras do repositório
 
 - `.env`, bancos locais, certificados, dumps e arquivos de publicação são ignorados pelo Git.
-- Chaves Stripe, Supabase e Pterodactyl são exclusivas do servidor e devem vir do cofre de
+- Chaves Stripe, SQL Server e Pterodactyl são exclusivas do servidor e devem vir do cofre de
   segredos/ambiente da hospedagem.
 - Nunca publique logs, capturas ou exports que contenham dados de clientes.
 - Ao suspeitar de vazamento, revogue e substitua a credencial antes de investigar a causa.

@@ -1,6 +1,6 @@
 using HowToSoftware.Hosting.Data;
+using HowToSoftware.Hosting.Infrastructure.Database;
 using HowToSoftware.Hosting.Infrastructure.Pterodactyl;
-using HowToSoftware.Hosting.Infrastructure.Supabase;
 using HowToSoftware.Hosting.Models;
 using HowToSoftware.Hosting.Models.Commerce;
 using HowToSoftware.Hosting.Models.Orders;
@@ -11,32 +11,34 @@ using Microsoft.EntityFrameworkCore;
 namespace HowToSoftware.Hosting.Tests;
 
 /// <summary>
-/// Opt-in PostgreSQL contract test. It never reads the application's production connection
+/// Opt-in SQL Server contract test. It never reads the application's production connection
 /// variable: a developer must deliberately enable it and provide the dedicated TEST variable.
 /// </summary>
-public sealed class SupabaseIntegrationTests
+public sealed class SqlServerIntegrationTests
 {
     [Fact]
     [Trait("Category", "Integration")]
     public async Task CommerceLifecyclePersistsAndRemainsIdempotent()
     {
         if (!string.Equals(
-                Environment.GetEnvironmentVariable("SUPABASE_INTEGRATION_TESTS_ENABLED"),
+                Environment.GetEnvironmentVariable("SQLSERVER_INTEGRATION_TESTS_ENABLED"),
                 "true",
                 StringComparison.OrdinalIgnoreCase))
         {
             return;
         }
 
-        var raw = Environment.GetEnvironmentVariable("SUPABASE_TEST_DB_CONNECTION_STRING");
+        var raw = Environment.GetEnvironmentVariable("SQLSERVER_TEST_CONNECTION_STRING");
         Assert.False(string.IsNullOrWhiteSpace(raw),
-            "Set SUPABASE_TEST_DB_CONNECTION_STRING to a dedicated non-production Supabase project.");
+            "Set SQLSERVER_TEST_CONNECTION_STRING to a dedicated non-production database.");
 
-        var supabase = new SupabaseOptions { DbConnectionString = raw! };
-        Assert.True(supabase.IsDatabaseConfigured);
+        var database = new SqlServerOptions { ConnectionString = raw! };
+        Assert.True(database.IsDatabaseConfigured);
 
         var options = new DbContextOptionsBuilder<CommerceDbContext>()
-            .UseNpgsql(supabase.GetNpgsqlConnectionString())
+            .UseSqlServer(
+                database.GetConnectionString(),
+                sqlServer => sqlServer.MigrationsHistoryTable(CommerceDbContext.MigrationsHistoryTable))
             .Options;
         var factory = new TestCommerceFactory(options);
 
@@ -87,7 +89,7 @@ public sealed class SupabaseIntegrationTests
             await db.SaveChangesAsync();
         }
 
-        var orders = new PostgresOrderStore(factory);
+        var orders = new SqlServerOrderStore(factory);
         var order = new Order
         {
             Id = orderId,
@@ -120,7 +122,7 @@ public sealed class SupabaseIntegrationTests
             Assert.True(await orders.TryRecordEventAsync($"evt_{suffix}", "checkout.session.completed"));
             Assert.False(await orders.TryRecordEventAsync($"evt_{suffix}", "checkout.session.completed"));
 
-            var state = new PostgresProvisioningStateStore(factory, TimeProvider.System);
+            var state = new SqlServerProvisioningStateStore(factory, TimeProvider.System);
             await state.BeginAsync(orderId);
             await state.MarkCreatedAsync(orderId, new ProvisioningResult(
                 ProvisioningOutcome.Created,

@@ -23,8 +23,8 @@ public sealed class NullBillingStore : IBillingStore
         Task.CompletedTask;
 }
 
-/// <summary>Supabase/PostgreSQL invoice reference store.</summary>
-public sealed class PostgresBillingStore(IDbContextFactory<CommerceDbContext> factory, TimeProvider clock) : IBillingStore
+/// <summary>SQL Server invoice reference store.</summary>
+public sealed class SqlServerBillingStore(IDbContextFactory<CommerceDbContext> factory, TimeProvider clock) : IBillingStore
 {
     public async Task<string?> FindStripeCustomerIdAsync(
         string htsUserId,

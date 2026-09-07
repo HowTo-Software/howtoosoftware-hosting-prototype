@@ -1,12 +1,17 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
+using HowToSoftware.Hosting.Data;
 using HowToSoftware.Hosting.Models;
 using HowToSoftware.Hosting.Models.Orders;
 using HowToSoftware.Hosting.Services.Orders;
+using HowToSoftware.Hosting.Services.Payments;
+using HowToSoftware.Hosting.Services.Provisioning;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Stripe;
 
 namespace HowToSoftware.Hosting.Tests;
@@ -29,13 +34,60 @@ public sealed class StripeWebhookEndpointTests : IDisposable
 
     public StripeWebhookEndpointTests()
     {
+        // The application targets SQL Server. This test is about the webhook endpoint, not the
+        // provider, so it swaps in a throwaway file-backed store and stays hermetic.
+        var dbOptions = new DbContextOptionsBuilder<HostingDbContext>()
+            .UseSqlite($"Data Source={_dbPath}")
+            .Options;
+
+        using (var db = new HostingDbContext(dbOptions))
+        {
+            db.Database.EnsureCreated();
+        }
+
         _factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
-            builder.UseSetting("ConnectionStrings:Hosting", $"Data Source={_dbPath}");
             builder.UseSetting("Stripe:WebhookSecret", Secret);
+            builder.ConfigureServices(services =>
+            {
+                // Program picks its stores from configuration, so a configured host would wire the
+                // real commerce database in here. Replace the whole persistence seam, not just the
+                // context factory, so no code path can reach a server.
+                services.RemoveAll<IOrderStore>();
+                services.RemoveAll<IProvisioningStateStore>();
+                services.RemoveAll<IBillingStore>();
+                services.RemoveAll<IDbContextFactory<CommerceDbContext>>();
+                services.RemoveAll<DbContextOptions<CommerceDbContext>>();
+                services.RemoveAll<IDbContextFactory<HostingDbContext>>();
+                services.RemoveAll<DbContextOptions<HostingDbContext>>();
+
+                services.AddSingleton<IDbContextFactory<HostingDbContext>>(
+                    new TestHostingContextFactory(dbOptions));
+                services.AddSingleton<IOrderStore, EfOrderStore>();
+                services.AddSingleton<IProvisioningStateStore, NullProvisioningStateStore>();
+                services.AddSingleton<IBillingStore, NullBillingStore>();
+            });
         });
 
         _client = _factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+    }
+
+    /// <summary>
+    /// The suite once wrote seven orders into a real database because this host inherited a
+    /// developer's <c>.env</c>. Assert the substitution held rather than trusting it.
+    /// </summary>
+    [Fact]
+    public void TheHostedApplicationNeverResolvesAServerBackedStore()
+    {
+        Assert.IsType<EfOrderStore>(_factory.Services.GetRequiredService<IOrderStore>());
+        Assert.IsType<NullProvisioningStateStore>(_factory.Services.GetRequiredService<IProvisioningStateStore>());
+        Assert.IsType<NullBillingStore>(_factory.Services.GetRequiredService<IBillingStore>());
+    }
+
+    private sealed class TestHostingContextFactory(DbContextOptions<HostingDbContext> options)
+        : IDbContextFactory<HostingDbContext>
+    {
+        public HostingDbContext CreateDbContext() => new(options);
     }
 
     public void Dispose()

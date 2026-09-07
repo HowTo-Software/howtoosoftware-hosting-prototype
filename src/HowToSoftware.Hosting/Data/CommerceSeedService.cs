@@ -23,6 +23,17 @@ public sealed class CommerceSeedService(
             throw new InvalidOperationException("Commerce seed data may only be applied in Development.");
         }
 
+        // Two constraints, not one. A retrying strategy will not drive a transaction it did not
+        // open, and each attempt must build its own context: a reused one still tracks the failed
+        // attempt's inserts, so the replay would add them a second time and break its own indexes.
+        await using var strategyContext = await factory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        await strategyContext.Database.CreateExecutionStrategy()
+            .ExecuteAsync(SeedCoreAsync, cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private async Task SeedCoreAsync(CancellationToken cancellationToken)
+    {
         await using var db = await factory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
         var now = DateTimeOffset.UtcNow;

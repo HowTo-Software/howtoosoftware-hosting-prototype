@@ -24,12 +24,24 @@ public sealed class NullProvisioningStateStore : IProvisioningStateStore
     public Task MarkFailedAsync(Guid orderId, string reason, CancellationToken cancellationToken = default) => Task.CompletedTask;
 }
 
-/// <summary>PostgreSQL implementation with an append-only deployment event trail.</summary>
-public sealed class PostgresProvisioningStateStore(
+/// <summary>SQL Server implementation with an append-only deployment event trail.</summary>
+public sealed class SqlServerProvisioningStateStore(
     IDbContextFactory<CommerceDbContext> factory,
     TimeProvider clock) : IProvisioningStateStore
 {
     public async Task BeginAsync(Guid orderId, CancellationToken cancellationToken = default)
+    {
+        // Two constraints, not one. A retrying strategy will not drive a transaction it did not
+        // open, and each attempt must build its own context: a reused one still tracks the failed
+        // attempt's inserts, so the replay would add a second hosting service for this order and
+        // die on the unique index instead of recovering.
+        await using var strategyContext = await factory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        await strategyContext.Database.CreateExecutionStrategy()
+            .ExecuteAsync(token => BeginCoreAsync(orderId, token), cancellationToken)
+            .ConfigureAwait(false);
+    }
+
+    private async Task BeginCoreAsync(Guid orderId, CancellationToken cancellationToken)
     {
         await using var db = await factory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);

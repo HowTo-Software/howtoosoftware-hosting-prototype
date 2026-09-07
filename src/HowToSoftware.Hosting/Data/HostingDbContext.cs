@@ -8,19 +8,20 @@ namespace HowToSoftware.Hosting.Data;
 /// </summary>
 /// <remarks>
 /// <para>
-/// SQLite by default, chosen by connection string alone - the model uses nothing provider
-/// specific, so pointing <c>ConnectionStrings:Hosting</c> at PostgreSQL later is a package
-/// swap and a migration, not a rewrite.
+/// SQL Server, reached by connection string alone - the model uses nothing provider specific,
+/// so moving it to another host is a connection string change, not a rewrite.
 /// </para>
 /// <para>
-/// Money is stored as <c>decimal</c> mapped to a TEXT column on SQLite. That is exact, which is
-/// what matters; it is not sortable in SQL, which nothing here needs.
+/// Money is stored as <c>decimal(18,2)</c>, which is exact and sortable.
 /// </para>
 /// </remarks>
 public sealed class HostingDbContext : DbContext
 {
     /// <summary>Name of the connection string in configuration.</summary>
     public const string ConnectionName = "Hosting";
+
+    /// <summary>Kept distinct so this schema can never share a history table with another app.</summary>
+    public const string MigrationsHistoryTable = "__EFMigrationsHistory_Hosting";
 
     /// <summary>Creates the context.</summary>
     public HostingDbContext(DbContextOptions<HostingDbContext> options) : base(options)
@@ -63,7 +64,9 @@ public sealed class HostingDbContext : DbContext
 
             // The webhook looks orders up by session and by subscription; both are unique
             // once set, and an index on each keeps the lookup honest as the table grows.
-            order.HasIndex(o => o.StripeCheckoutSessionId).IsUnique();
+            // The filter matters: SQL Server treats NULLs as equal in a unique index, so without
+            // it only one order could ever sit unpaid with no session id.
+            order.HasIndex(o => o.StripeCheckoutSessionId).IsUnique().HasFilter("[StripeCheckoutSessionId] IS NOT NULL");
             order.HasIndex(o => o.StripeSubscriptionId);
             order.HasIndex(o => o.Status);
         });
@@ -75,6 +78,25 @@ public sealed class HostingDbContext : DbContext
             evt.Property(e => e.Id).HasMaxLength(128);
             evt.Property(e => e.Type).HasMaxLength(128).IsRequired();
         });
+
+        // Stripe identifiers are case-sensitive keys minted elsewhere, and SQL Server's usual
+        // default collation is not. Without this, two distinct identifiers compare equal: the
+        // unique index rejects a legitimate row, and a lookup can return the wrong order.
+        // Applied only on SQL Server, because the hermetic test provider has no such collation.
+        if (Database.IsSqlServer())
+        {
+            // ProcessedStripeEvent.Id is itself a Stripe event id, so it is included by type
+            // rather than by name: it is the key the replay guard compares on.
+            foreach (var property in modelBuilder.Model.GetEntityTypes()
+                .SelectMany(x => x.GetProperties())
+                .Where(x => x.ClrType == typeof(string)
+                    && (x.Name.StartsWith("Stripe", StringComparison.Ordinal)
+                        || x.Name == "UserId"
+                        || x.DeclaringType.ClrType == typeof(ProcessedStripeEvent))))
+            {
+                property.SetCollation("Latin1_General_100_BIN2");
+            }
+        }
     }
 }
 

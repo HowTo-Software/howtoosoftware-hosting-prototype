@@ -1,7 +1,7 @@
 # HowToSoftware — Project Zomboid Hosting
 
 The HowToSoftware **Project Zomboid server hosting** platform, built with
-**C# / .NET 10 / Blazor**, with a Stripe, PostgreSQL/Supabase and Pterodactyl backend foundation.
+**C# / .NET 10 / Blazor**, with a Stripe, SQL Server and Pterodactyl backend foundation.
 
 > 🇧🇷 **A versão em português está mais abaixo** — veja [Português (BR)](#português-br).
 
@@ -81,10 +81,10 @@ Important routes include:
 | `/login` | the control-panel sign-in screen |
 | `/dev/provisioning` | the explicitly enabled real provisioning lab |
 
-No npm is required. The site starts without external credentials; Stripe, Supabase and
+No npm is required. The site starts without external credentials; Stripe, SQL Server and
 Pterodactyl features report “not configured” until `.env` is filled. See
 [`docs/COMMERCE-ARCHITECTURE.md`](docs/COMMERCE-ARCHITECTURE.md),
-[`docs/SUPABASE-SETUP.md`](docs/SUPABASE-SETUP.md), and
+[`docs/SQLSERVER-SETUP.md`](docs/SQLSERVER-SETUP.md), and
 [`docs/stripe-testing.md`](docs/stripe-testing.md). For a Portuguese map of every major folder,
 page and integration, see [`docs/PROJECT-MAP.md`](docs/PROJECT-MAP.md).
 
@@ -516,7 +516,7 @@ See [LICENSE](LICENSE). This is **proprietary software** —
 # Português (BR)
 
 Plataforma de **hospedagem de servidores de Project Zomboid** da HowToSoftware, feita em
-**C# / .NET 10 / Blazor**, com base de backend para Stripe, PostgreSQL/Supabase e Pterodactyl.
+**C# / .NET 10 / Blazor**, com base de backend para Stripe, SQL Server e Pterodactyl.
 
 ---
 
@@ -568,10 +568,10 @@ Rotas importantes:
 | `/login` | a tela de acesso ao painel de controle |
 | `/dev/provisioning` | laboratório real, somente após ativação explícita |
 
-Não precisa de npm. O site inicia sem credenciais externas; Stripe, Supabase e Pterodactyl
+Não precisa de npm. O site inicia sem credenciais externas; Stripe, SQL Server e Pterodactyl
 informam “não configurado” até o `.env` ser preenchido. Consulte
 [`docs/COMMERCE-ARCHITECTURE.md`](docs/COMMERCE-ARCHITECTURE.md),
-[`docs/SUPABASE-SETUP.md`](docs/SUPABASE-SETUP.md) e
+[`docs/SQLSERVER-SETUP.md`](docs/SQLSERVER-SETUP.md) e
 [`docs/stripe-testing.md`](docs/stripe-testing.md).
 
 ---
