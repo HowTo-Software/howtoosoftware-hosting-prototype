@@ -1,0 +1,17 @@
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: howtoosoftware-hosting:latest
+    restart: unless-stopped
+    ports:
+      # Host 8080 is taken by crowdsec on the deployment host; 5003 groups with hts-admin (5001).
+      - "5003:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
