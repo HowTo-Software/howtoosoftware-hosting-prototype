@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace HowToSoftware.Hosting.Data.CommerceMigrations
 {
     [DbContext(typeof(CommerceDbContext))]
-    [Migration("20260907200123_InitialCommerce")]
+    [Migration("20260907203612_InitialCommerce")]
     partial class InitialCommerce
     {
         /// <inheritdoc />
@@ -78,7 +78,8 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)")
-                        .HasColumnName("stripe_invoice_id");
+                        .HasColumnName("stripe_invoice_id")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<DateTimeOffset>("SyncedAt")
                         .HasColumnType("datetimeoffset")
@@ -313,7 +314,8 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                     b.Property<string>("HtsUserId")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)")
-                        .HasColumnName("hts_user_id");
+                        .HasColumnName("hts_user_id")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<long>("MonthlyPriceCents")
                         .HasColumnType("bigint")
@@ -359,27 +361,32 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                     b.Property<string>("StripeCheckoutSessionId")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)")
-                        .HasColumnName("stripe_checkout_session_id");
+                        .HasColumnName("stripe_checkout_session_id")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<string>("StripeCustomerId")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)")
-                        .HasColumnName("stripe_customer_id");
+                        .HasColumnName("stripe_customer_id")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<string>("StripeInvoiceId")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)")
-                        .HasColumnName("stripe_invoice_id");
+                        .HasColumnName("stripe_invoice_id")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<string>("StripePaymentIntentId")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)")
-                        .HasColumnName("stripe_payment_intent_id");
+                        .HasColumnName("stripe_payment_intent_id")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<string>("StripeSubscriptionId")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)")
-                        .HasColumnName("stripe_subscription_id");
+                        .HasColumnName("stripe_subscription_id")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<string>("SubscriptionStatus")
                         .HasMaxLength(32)
@@ -434,12 +441,14 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)")
-                        .HasColumnName("hts_user_id");
+                        .HasColumnName("hts_user_id")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<string>("StripeCustomerId")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)")
-                        .HasColumnName("stripe_customer_id");
+                        .HasColumnName("stripe_customer_id")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset")
@@ -665,7 +674,8 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                     b.Property<string>("PterodactylServerUuid")
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)")
-                        .HasColumnName("pterodactyl_server_uuid");
+                        .HasColumnName("pterodactyl_server_uuid")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<string>("Status")
                         .IsRequired()
@@ -676,7 +686,8 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                     b.Property<string>("StripeSubscriptionId")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)")
-                        .HasColumnName("stripe_subscription_id");
+                        .HasColumnName("stripe_subscription_id")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<DateTimeOffset?>("SuspendedAt")
                         .HasColumnType("datetimeoffset")
@@ -754,12 +765,14 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                     b.Property<string>("StripePriceId")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)")
-                        .HasColumnName("stripe_price_id");
+                        .HasColumnName("stripe_price_id")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<string>("StripeProductId")
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)")
-                        .HasColumnName("stripe_product_id");
+                        .HasColumnName("stripe_product_id")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
                         .HasColumnType("datetimeoffset")
@@ -823,7 +836,8 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                     b.Property<string>("PterodactylServerUuid")
                         .HasMaxLength(64)
                         .HasColumnType("nvarchar(64)")
-                        .HasColumnName("pterodactyl_server_uuid");
+                        .HasColumnName("pterodactyl_server_uuid")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.Property<int?>("SelectedNodeId")
                         .HasColumnType("int")
@@ -893,7 +907,8 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                         .IsRequired()
                         .HasMaxLength(128)
                         .HasColumnType("nvarchar(128)")
-                        .HasColumnName("stripe_event_id");
+                        .HasColumnName("stripe_event_id")
+                        .UseCollation("Latin1_General_100_BIN2");
 
                     b.HasKey("Id");
 

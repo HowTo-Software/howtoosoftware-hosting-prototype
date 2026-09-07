@@ -78,6 +78,25 @@ public sealed class HostingDbContext : DbContext
             evt.Property(e => e.Id).HasMaxLength(128);
             evt.Property(e => e.Type).HasMaxLength(128).IsRequired();
         });
+
+        // Stripe identifiers are case-sensitive keys minted elsewhere, and SQL Server's usual
+        // default collation is not. Without this, two distinct identifiers compare equal: the
+        // unique index rejects a legitimate row, and a lookup can return the wrong order.
+        // Applied only on SQL Server, because the hermetic test provider has no such collation.
+        if (Database.IsSqlServer())
+        {
+            // ProcessedStripeEvent.Id is itself a Stripe event id, so it is included by type
+            // rather than by name: it is the key the replay guard compares on.
+            foreach (var property in modelBuilder.Model.GetEntityTypes()
+                .SelectMany(x => x.GetProperties())
+                .Where(x => x.ClrType == typeof(string)
+                    && (x.Name.StartsWith("Stripe", StringComparison.Ordinal)
+                        || x.Name == "UserId"
+                        || x.DeclaringType.ClrType == typeof(ProcessedStripeEvent))))
+            {
+                property.SetCollation("Latin1_General_100_BIN2");
+            }
+        }
     }
 }
 

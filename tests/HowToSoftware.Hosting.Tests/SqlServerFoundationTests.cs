@@ -136,6 +136,48 @@ public sealed class SqlServerFoundationTests
         Assert.NotEqual(CommerceDbContext.MigrationsHistoryTable, HostingDbContext.MigrationsHistoryTable);
     }
 
+    /// <summary>
+    /// Stripe and panel identifiers are case-sensitive keys minted elsewhere. SQL Server defaults
+    /// to a case-insensitive collation, under which two distinct identifiers compare equal: the
+    /// unique index would reject a legitimate row, and a webhook lookup could return a different
+    /// customer's order. This is the difference most likely to be missed in a port from Postgres.
+    /// </summary>
+    [Theory]
+    [InlineData("stripe_checkout_session_id")]
+    [InlineData("stripe_subscription_id")]
+    [InlineData("stripe_event_id")]
+    [InlineData("hts_user_id")]
+    [InlineData("stripe_customer_id")]
+    [InlineData("pterodactyl_server_uuid")]
+    public void CommerceExternalIdentifiersAreComparedCaseSensitively(string column)
+    {
+        using var db = new CommerceDbContext(CommerceOptions());
+        AssertColumnIsCaseSensitive(db.Database.GenerateCreateScript(), column);
+    }
+
+    [Theory]
+    [InlineData("StripeCheckoutSessionId")]
+    [InlineData("StripeSubscriptionId")]
+    [InlineData("UserId")]
+    public void HostingExternalIdentifiersAreComparedCaseSensitively(string column)
+    {
+        var options = new DbContextOptionsBuilder<HostingDbContext>()
+            .UseSqlServer("Server=localhost,1433;Database=test;User Id=test;Password=test")
+            .Options;
+        using var db = new HostingDbContext(options);
+        AssertColumnIsCaseSensitive(db.Database.GenerateCreateScript(), column);
+    }
+
+    private static void AssertColumnIsCaseSensitive(string script, string column)
+    {
+        // The first mention of a column in the script is its definition; later ones are indexes.
+        var definition = script
+            .Split('\n')
+            .First(line => line.Contains($"[{column}]", StringComparison.Ordinal));
+
+        Assert.Contains("COLLATE Latin1_General_100_BIN2", definition, StringComparison.Ordinal);
+    }
+
     [Fact]
     public void DiagnosticsNeverStringifySecrets()
     {

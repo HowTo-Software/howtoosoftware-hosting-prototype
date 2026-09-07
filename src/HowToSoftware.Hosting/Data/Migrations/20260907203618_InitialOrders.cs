@@ -16,7 +16,7 @@ namespace HowToSoftware.Hosting.Data.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    UserId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true, collation: "Latin1_General_100_BIN2"),
                     CustomerEmail = table.Column<string>(type: "nvarchar(320)", maxLength: 320, nullable: true),
                     GameId = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     PlanId = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
@@ -30,11 +30,11 @@ namespace HowToSoftware.Hosting.Data.Migrations
                     Currency = table.Column<string>(type: "nvarchar(3)", maxLength: 3, nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     ProvisioningStage = table.Column<int>(type: "int", nullable: false),
-                    StripeCheckoutSessionId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
-                    StripePaymentIntentId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
-                    StripeCustomerId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
-                    StripeSubscriptionId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
-                    StripeInvoiceId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true),
+                    StripeCheckoutSessionId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true, collation: "Latin1_General_100_BIN2"),
+                    StripePaymentIntentId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true, collation: "Latin1_General_100_BIN2"),
+                    StripeCustomerId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true, collation: "Latin1_General_100_BIN2"),
+                    StripeSubscriptionId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true, collation: "Latin1_General_100_BIN2"),
+                    StripeInvoiceId = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: true, collation: "Latin1_General_100_BIN2"),
                     SubscriptionStatus = table.Column<string>(type: "nvarchar(32)", maxLength: 32, nullable: true),
                     ServerIdentifier = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
                     FailureReason = table.Column<string>(type: "nvarchar(1024)", maxLength: 1024, nullable: true),
@@ -51,8 +51,8 @@ namespace HowToSoftware.Hosting.Data.Migrations
                 name: "ProcessedStripeEvents",
                 columns: table => new
                 {
-                    Id = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
-                    Type = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false),
+                    Id = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false, collation: "Latin1_General_100_BIN2"),
+                    Type = table.Column<string>(type: "nvarchar(128)", maxLength: 128, nullable: false, collation: "Latin1_General_100_BIN2"),
                     ProcessedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false)
                 },
                 constraints: table =>

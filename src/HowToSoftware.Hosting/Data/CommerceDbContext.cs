@@ -214,9 +214,26 @@ public sealed class CommerceDbContext(DbContextOptions<CommerceDbContext> option
             foreach (var property in entityType.GetProperties())
             {
                 property.SetColumnName(ToSnakeCase(property.Name));
+
+                if (property.ClrType == typeof(string) && IsExternalIdentifier(property.Name))
+                {
+                    property.SetCollation(ExternalIdentifierCollation);
+                }
             }
         }
     }
+
+    /// <summary>
+    /// Stripe and Pterodactyl identifiers are case-sensitive keys minted elsewhere. A server
+    /// whose default collation is case-insensitive would treat two distinct identifiers as the
+    /// same value: the unique indexes would reject a legitimate second row, and worse, a webhook
+    /// lookup could return a different customer's order. Binary collation removes the question.
+    /// </summary>
+    private const string ExternalIdentifierCollation = "Latin1_General_100_BIN2";
+
+    private static bool IsExternalIdentifier(string name) =>
+        name.StartsWith("Stripe", StringComparison.Ordinal)
+        || name is "HtsUserId" or "PterodactylServerUuid";
 
     private static string ToSnakeCase(string value) => string.Concat(
         value.Select((character, index) => char.IsUpper(character) && index > 0
