@@ -5,6 +5,8 @@ using HowToSoftware.Hosting.Data;
 using HowToSoftware.Hosting.Models;
 using HowToSoftware.Hosting.Models.Orders;
 using HowToSoftware.Hosting.Services.Orders;
+using HowToSoftware.Hosting.Services.Payments;
+using HowToSoftware.Hosting.Services.Provisioning;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
@@ -48,14 +50,38 @@ public sealed class StripeWebhookEndpointTests : IDisposable
             builder.UseSetting("Stripe:WebhookSecret", Secret);
             builder.ConfigureServices(services =>
             {
+                // Program picks its stores from configuration, so a configured host would wire the
+                // real commerce database in here. Replace the whole persistence seam, not just the
+                // context factory, so no code path can reach a server.
+                services.RemoveAll<IOrderStore>();
+                services.RemoveAll<IProvisioningStateStore>();
+                services.RemoveAll<IBillingStore>();
+                services.RemoveAll<IDbContextFactory<CommerceDbContext>>();
+                services.RemoveAll<DbContextOptions<CommerceDbContext>>();
                 services.RemoveAll<IDbContextFactory<HostingDbContext>>();
                 services.RemoveAll<DbContextOptions<HostingDbContext>>();
+
                 services.AddSingleton<IDbContextFactory<HostingDbContext>>(
                     new TestHostingContextFactory(dbOptions));
+                services.AddSingleton<IOrderStore, EfOrderStore>();
+                services.AddSingleton<IProvisioningStateStore, NullProvisioningStateStore>();
+                services.AddSingleton<IBillingStore, NullBillingStore>();
             });
         });
 
         _client = _factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+    }
+
+    /// <summary>
+    /// The suite once wrote seven orders into a real database because this host inherited a
+    /// developer's <c>.env</c>. Assert the substitution held rather than trusting it.
+    /// </summary>
+    [Fact]
+    public void TheHostedApplicationNeverResolvesAServerBackedStore()
+    {
+        Assert.IsType<EfOrderStore>(_factory.Services.GetRequiredService<IOrderStore>());
+        Assert.IsType<NullProvisioningStateStore>(_factory.Services.GetRequiredService<IProvisioningStateStore>());
+        Assert.IsType<NullBillingStore>(_factory.Services.GetRequiredService<IBillingStore>());
     }
 
     private sealed class TestHostingContextFactory(DbContextOptions<HostingDbContext> options)

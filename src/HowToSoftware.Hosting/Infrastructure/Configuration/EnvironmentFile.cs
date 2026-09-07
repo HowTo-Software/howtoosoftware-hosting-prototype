@@ -31,9 +31,24 @@ public static class EnvironmentFile
             ["APP_ENVIRONMENT"] = "ASPNETCORE_ENVIRONMENT"
         };
 
+    /// <summary>
+    /// Set to <c>true</c> to stop <see cref="LoadNearest"/> finding a developer's <c>.env</c>.
+    /// An in-process test host runs the real <c>Program</c>, so without this a test on a developer
+    /// machine boots fully configured and writes to whatever real database that file names.
+    /// </summary>
+    public const string SuppressionVariableName = "HTS_SKIP_DOTENV";
+
     /// <summary>Finds and loads the nearest <c>.env</c> at or above the current directory.</summary>
     public static void LoadNearest()
     {
+        if (string.Equals(
+                Environment.GetEnvironmentVariable(SuppressionVariableName),
+                "true",
+                StringComparison.OrdinalIgnoreCase))
+        {
+            return;
+        }
+
         var directory = new DirectoryInfo(Directory.GetCurrentDirectory());
 
         while (directory is not null)

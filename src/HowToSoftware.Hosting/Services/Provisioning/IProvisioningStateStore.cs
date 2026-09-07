@@ -31,17 +31,19 @@ public sealed class SqlServerProvisioningStateStore(
 {
     public async Task BeginAsync(Guid orderId, CancellationToken cancellationToken = default)
     {
-        await using var db = await factory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
-
-        // The connection retries transient faults, and a retrying strategy will not drive a
-        // transaction it did not open: the whole unit has to be replayable as one.
-        await db.Database.CreateExecutionStrategy()
-            .ExecuteAsync(token => BeginCoreAsync(db, orderId, token), cancellationToken)
+        // Two constraints, not one. A retrying strategy will not drive a transaction it did not
+        // open, and each attempt must build its own context: a reused one still tracks the failed
+        // attempt's inserts, so the replay would add a second hosting service for this order and
+        // die on the unique index instead of recovering.
+        await using var strategyContext = await factory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        await strategyContext.Database.CreateExecutionStrategy()
+            .ExecuteAsync(token => BeginCoreAsync(orderId, token), cancellationToken)
             .ConfigureAwait(false);
     }
 
-    private async Task BeginCoreAsync(CommerceDbContext db, Guid orderId, CancellationToken cancellationToken)
+    private async Task BeginCoreAsync(Guid orderId, CancellationToken cancellationToken)
     {
+        await using var db = await factory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
         var order = await db.Orders.SingleAsync(x => x.Id == orderId, cancellationToken).ConfigureAwait(false);
         var now = clock.GetUtcNow();
