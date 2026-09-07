@@ -203,7 +203,8 @@ public sealed class CommerceDbContext(DbContextOptions<CommerceDbContext> option
             entity.Property(x => x.Currency).HasMaxLength(3);
             entity.Property(x => x.HostedInvoiceUrl).HasMaxLength(2048);
             entity.Property(x => x.InvoicePdfUrl).HasMaxLength(2048);
-            entity.HasIndex(x => x.StripeInvoiceId).IsUnique();            entity.HasIndex(x => new { x.CustomerProfileId, x.InvoiceDate });
+            entity.HasIndex(x => x.StripeInvoiceId).IsUnique();
+            entity.HasIndex(x => new { x.CustomerProfileId, x.InvoiceDate });
             entity.HasOne<CustomerProfile>().WithMany().HasForeignKey(x => x.CustomerProfileId).OnDelete(DeleteBehavior.Restrict);
             entity.HasOne<HostingServiceRecord>().WithMany().HasForeignKey(x => x.HostingServiceId).OnDelete(DeleteBehavior.Restrict);
         });
