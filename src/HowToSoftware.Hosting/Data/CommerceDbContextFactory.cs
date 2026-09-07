@@ -1,5 +1,5 @@
 using HowToSoftware.Hosting.Infrastructure.Configuration;
-using HowToSoftware.Hosting.Infrastructure.Supabase;
+using HowToSoftware.Hosting.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
@@ -12,14 +12,16 @@ public sealed class CommerceDbContextFactory : IDesignTimeDbContextFactory<Comme
     {
         EnvironmentFile.LoadNearest();
 
-        var raw = Environment.GetEnvironmentVariable("SUPABASE_DB_CONNECTION_STRING");
-        var connectionString = SupabaseOptions.TryBuildNpgsqlConnectionString(raw, out var configured)
+        // Scaffolding a migration only needs a well-formed string; it never opens the connection.
+        // The placeholder keeps `dotnet ef migrations add` working on a machine with no server.
+        var raw = Environment.GetEnvironmentVariable(SqlServerOptions.EnvironmentVariableName);
+        var connectionString = SqlServerOptions.TryBuildConnectionString(raw, out var configured)
             ? configured
-            : "Host=localhost;Port=5432;Database=hts_commerce;Username=postgres;Password=postgres;SSL Mode=Disable";
+            : "Server=localhost,1433;Database=HowToSoftwareHosting;Integrated Security=True;Encrypt=True";
 
         var options = new DbContextOptionsBuilder<CommerceDbContext>()
-            .UseNpgsql(connectionString, postgres =>
-                postgres.MigrationsHistoryTable("__ef_migrations_history"))
+            .UseSqlServer(connectionString, sqlServer =>
+                sqlServer.MigrationsHistoryTable(CommerceDbContext.MigrationsHistoryTable))
             .Options;
 
         return new CommerceDbContext(options);

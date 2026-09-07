@@ -13,7 +13,7 @@ Copy-Item .env.example .env
 dotnet run --project src/HowToSoftware.Hosting --launch-profile http
 ```
 
-O site abre em `http://localhost:5147`. O modo local funciona sem Stripe, Supabase e
+O site abre em `http://localhost:5147`. O modo local funciona sem Stripe, SQL Server e
 Pterodactyl preenchidos; nesses casos, pagamento e provisionamento continuam desativados de
 forma explícita. Para validar alterações, rode `dotnet build` e `dotnet test` na raiz.
 
@@ -29,7 +29,7 @@ forma explícita. Para validar alterações, rode `dotnet build` e `dotnet test`
 |- docs/                                 guias operacionais e de arquitetura
 |- src/HowToSoftware.Hosting/           aplicação web .NET/Blazor
 |  |- Components/                       páginas, layout e componentes de interface
-|  |- Data/                             SQLite local, PostgreSQL/Supabase e migrations EF
+|  |- Data/                             SQL Server, contextos e migrations EF
 |  |- Endpoints/                        endpoints HTTP, inclusive webhook Stripe
 |  |- Infrastructure/                   integrações e configuração externa
 |  |- Localization/                     textos em inglês e português
@@ -113,16 +113,20 @@ assinado, com valor conferido, pode enviar o pedido à fila de provisionamento.
 
 ## Banco de dados
 
-Sem Supabase configurado, `Data/HostingDbContext.cs` usa SQLite local (`hosting.db`) para o modo
-de desenvolvimento. Com `SUPABASE_DB_CONNECTION_STRING`, o comércio usa PostgreSQL/Supabase:
+Tudo roda em SQL Server. Com `SQLSERVER_CONNECTION_STRING`, o comércio usa o schema completo;
+sem ela, apenas o schema reduzido de pedidos em `ConnectionStrings__Hosting`; sem nenhuma das
+duas, o site serve as páginas sem banco.
 
 - `Data/CommerceDbContext.cs`: entidades de clientes, pedidos, eventos, cobranças e estado de
   provisionamento.
-- `Data/CommerceMigrations/`: migrations exclusivas do schema de comércio no Supabase.
-- `Data/Migrations/`: migrations do fallback SQLite.
-- `Services/Orders/PostgresOrderStore.cs`: persistência de pedidos no PostgreSQL.
+- `Data/CommerceMigrations/`: migrations exclusivas do schema de comércio.
+- `Data/Migrations/`: migrations do schema reduzido de pedidos.
+- `Services/Orders/SqlServerOrderStore.cs`: persistência de pedidos no SQL Server.
 - `Services/Payments/IBillingStore.cs` e `Services/Provisioning/IProvisioningStateStore.cs`:
   contratos e implementações persistentes para cobrança e provisionamento.
+
+Cada contexto tem sua própria tabela de histórico de migrations, e nada é migrado na inicialização:
+um restart nunca deve poder remodelar um servidor compartilhado.
 
 Para aplicar migrations reais, após preencher o `.env`:
 
@@ -130,8 +134,8 @@ Para aplicar migrations reais, após preencher o `.env`:
 dotnet run --project src/HowToSoftware.Hosting -- --migrate-commerce --seed-commerce
 ```
 
-Leia [`SUPABASE-SETUP.md`](SUPABASE-SETUP.md) antes: ele cobre acesso, RLS e a diferença entre
-chaves publicáveis e segredos de servidor.
+Leia [`SQLSERVER-SETUP.md`](SQLSERVER-SETUP.md) antes: ele cobre banco dedicado, login de menor
+privilégio e criptografia de transporte.
 
 ## Configuração e segredos
 
@@ -141,21 +145,21 @@ operá-lo:
 | Grupo | Para que serve | Onde é usado |
 |---|---|---|
 | `STRIPE_*` | Checkout, webhook, URLs de retorno e moeda | `Infrastructure/Stripe/`, `Services/Payments/` |
-| `SUPABASE_*` | banco PostgreSQL e futuras chamadas Data API | `Infrastructure/Supabase/`, `Data/CommerceDbContext.cs` |
+| `SQLSERVER_CONNECTION_STRING` | banco SQL Server do comércio | `Infrastructure/Database/`, `Data/CommerceDbContext.cs` |
 | `PTERODACTYL_*` | painel, chave Application e topologia do servidor | `Infrastructure/Pterodactyl/`, `Services/Provisioning/` |
 | `APP_*` | URL pública e ambiente ASP.NET | `Models/SiteOptions.cs`, inicialização em `Program.cs` |
-| `ConnectionStrings__Hosting` | SQLite local quando Supabase não está ativo | `Data/HostingDbContext.cs` |
+| `ConnectionStrings__Hosting` | schema reduzido de pedidos quando o comércio não está ativo | `Data/HostingDbContext.cs` |
 | `HostingPlans__*` | override opcional de rate card/preço | `Models/HostingPlanPricingOptions.cs` |
 
 `Infrastructure/Configuration/EnvironmentFile.cs` carrega o `.env` somente em
 desenvolvimento/local e traduz os nomes portáteis para a configuração padrão do ASP.NET Core.
-Em produção, prefira variáveis do host ou um cofre de segredos. Não use `SUPABASE_SECRET_KEY`,
+Em produção, prefira variáveis do host ou um cofre de segredos. Não use `SQLSERVER_CONNECTION_STRING`,
 `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` nem `PTERODACTYL_APPLICATION_API_KEY` no browser.
 
 ## Documentação por tarefa
 
 - [`COMMERCE-ARCHITECTURE.md`](COMMERCE-ARCHITECTURE.md): limites de segurança e fluxo completo.
-- [`SUPABASE-SETUP.md`](SUPABASE-SETUP.md): conexão do PostgreSQL, migrations e segurança.
+- [`SQLSERVER-SETUP.md`](SQLSERVER-SETUP.md): conexão do SQL Server, migrations e segurança.
 - [`stripe-testing.md`](stripe-testing.md): Checkout, Stripe CLI e teste de webhooks.
 - [`PTERODACTYL-SETUP.md`](PTERODACTYL-SETUP.md): painel, egg e laboratório de provisionamento.
 - [`SECURITY-HARDENING.md`](SECURITY-HARDENING.md): fronteiras do backend, headers, TLS, WAF,
@@ -164,7 +168,7 @@ Em produção, prefira variáveis do host ou um cofre de segredos. Não use `SUP
 ## Ordem segura para ligar produção
 
 1. Configure domínio/HTTPS e `APP_BASE_URL`.
-2. Conecte Supabase, aplique as migrations e confirme o health check.
+2. Conecte o SQL Server, aplique as migrations e confirme o health check.
 3. Cadastre produtos/Price IDs Stripe (ou mantenha preços recorrentes calculados) e teste em modo
    teste com Stripe CLI.
 4. Configure Pterodactyl primeiro no laboratório de desenvolvimento, com uma chave `ptla_` de

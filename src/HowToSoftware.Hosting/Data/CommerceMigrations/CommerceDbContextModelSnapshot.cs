@@ -3,8 +3,8 @@ using System;
 using HowToSoftware.Hosting.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -18,15 +18,15 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "10.0.11")
-                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+                .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
-            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+            SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("HowToSoftware.Hosting.Models.Commerce.BillingInvoiceReference", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<long>("AmountDueCents")
@@ -40,45 +40,45 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                     b.Property<string>("Currency")
                         .IsRequired()
                         .HasMaxLength(3)
-                        .HasColumnType("character varying(3)")
+                        .HasColumnType("nvarchar(3)")
                         .HasColumnName("currency");
 
                     b.Property<Guid?>("CustomerProfileId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("customer_profile_id");
 
                     b.Property<string>("HostedInvoiceUrl")
                         .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)")
+                        .HasColumnType("nvarchar(2048)")
                         .HasColumnName("hosted_invoice_url");
 
                     b.Property<Guid?>("HostingServiceId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("hosting_service_id");
 
                     b.Property<DateTimeOffset?>("InvoiceDate")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("invoice_date");
 
                     b.Property<string>("InvoicePdfUrl")
                         .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)")
+                        .HasColumnType("nvarchar(2048)")
                         .HasColumnName("invoice_pdf_url");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
+                        .HasColumnType("nvarchar(32)")
                         .HasColumnName("status");
 
                     b.Property<string>("StripeInvoiceId")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("stripe_invoice_id");
 
                     b.Property<DateTimeOffset>("SyncedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("synced_at");
 
                     b.HasKey("Id");
@@ -100,44 +100,44 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<bool>("Active")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("active");
 
                     b.Property<string>("ArtworkUrl")
                         .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)")
+                        .HasColumnType("nvarchar(2048)")
                         .HasColumnName("artwork_url");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("description");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("name");
 
                     b.Property<bool>("PrimaryGame")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("primary_game");
 
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasColumnType("nvarchar(64)")
                         .HasColumnName("slug");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id");
@@ -154,49 +154,49 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<bool>("Active")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("active");
 
                     b.Property<int>("AllocationLimit")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("allocation_limit");
 
                     b.Property<int>("BackupLimit")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("backup_limit");
 
                     b.Property<int>("CpuPercent")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("cpu_percent");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<string>("Currency")
                         .IsRequired()
                         .HasMaxLength(3)
-                        .HasColumnType("character varying(3)")
+                        .HasColumnType("nvarchar(3)")
                         .HasColumnName("currency");
 
                     b.Property<int>("DatabaseLimit")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("database_limit");
 
                     b.Property<string>("Description")
-                        .HasColumnType("text")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("description");
 
                     b.Property<int>("DiskMb")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("disk_mb");
 
                     b.Property<Guid>("GameId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("game_id");
 
                     b.Property<long>("MonthlyPriceCents")
@@ -206,25 +206,25 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("name");
 
                     b.Property<int>("RamMb")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("ram_mb");
 
                     b.Property<string>("Slug")
                         .IsRequired()
                         .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasColumnType("nvarchar(64)")
                         .HasColumnName("slug");
 
                     b.Property<int>("SortOrder")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("sort_order");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id");
@@ -248,7 +248,7 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<long>("BaseAmountCents")
@@ -258,26 +258,26 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                     b.Property<string>("BillingPeriod")
                         .IsRequired()
                         .HasMaxLength(16)
-                        .HasColumnType("character varying(16)")
+                        .HasColumnType("nvarchar(16)")
                         .HasColumnName("billing_period");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<string>("Currency")
                         .IsRequired()
                         .HasMaxLength(3)
-                        .HasColumnType("character varying(3)")
+                        .HasColumnType("nvarchar(3)")
                         .HasColumnName("currency");
 
                     b.Property<string>("CustomerEmail")
                         .HasMaxLength(320)
-                        .HasColumnType("character varying(320)")
+                        .HasColumnType("nvarchar(320)")
                         .HasColumnName("customer_email");
 
                     b.Property<Guid?>("CustomerProfileId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("customer_profile_id");
 
                     b.Property<long>("DiscountAmountCents")
@@ -285,12 +285,12 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                         .HasColumnName("discount_amount_cents");
 
                     b.Property<int>("DiscountPercent")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("discount_percent");
 
                     b.Property<string>("FailureReason")
                         .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)")
+                        .HasColumnType("nvarchar(2048)")
                         .HasColumnName("failure_reason");
 
                     b.Property<long>("FinalAmountCents")
@@ -298,18 +298,18 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                         .HasColumnName("final_amount_cents");
 
                     b.Property<Guid>("GameId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("game_id");
 
                     b.Property<string>("GameSlug")
                         .IsRequired()
                         .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasColumnType("nvarchar(64)")
                         .HasColumnName("game_slug");
 
                     b.Property<string>("HtsUserId")
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("hts_user_id");
 
                     b.Property<long>("MonthlyPriceCents")
@@ -317,74 +317,74 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                         .HasColumnName("monthly_price_cents");
 
                     b.Property<DateTimeOffset?>("PaidAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("paid_at");
 
                     b.Property<Guid>("PlanId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("plan_id");
 
                     b.Property<string>("PlanName")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("plan_name");
 
                     b.Property<string>("PlanSlug")
                         .IsRequired()
                         .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasColumnType("nvarchar(64)")
                         .HasColumnName("plan_slug");
 
                     b.Property<string>("ProvisioningStage")
                         .IsRequired()
                         .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
+                        .HasColumnType("nvarchar(32)")
                         .HasColumnName("provisioning_stage");
 
                     b.Property<string>("ServerIdentifier")
                         .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasColumnType("nvarchar(64)")
                         .HasColumnName("server_identifier");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
+                        .HasColumnType("nvarchar(32)")
                         .HasColumnName("status");
 
                     b.Property<string>("StripeCheckoutSessionId")
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("stripe_checkout_session_id");
 
                     b.Property<string>("StripeCustomerId")
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("stripe_customer_id");
 
                     b.Property<string>("StripeInvoiceId")
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("stripe_invoice_id");
 
                     b.Property<string>("StripePaymentIntentId")
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("stripe_payment_intent_id");
 
                     b.Property<string>("StripeSubscriptionId")
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("stripe_subscription_id");
 
                     b.Property<string>("SubscriptionStatus")
                         .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
+                        .HasColumnType("nvarchar(32)")
                         .HasColumnName("subscription_status");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id");
@@ -398,7 +398,8 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                     b.HasIndex("Status");
 
                     b.HasIndex("StripeCheckoutSessionId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[stripe_checkout_session_id] IS NOT NULL");
 
                     b.HasIndex("StripeSubscriptionId");
 
@@ -414,31 +415,31 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<string>("Email")
                         .HasMaxLength(320)
-                        .HasColumnType("character varying(320)")
+                        .HasColumnType("nvarchar(320)")
                         .HasColumnName("email");
 
                     b.Property<string>("HtsUserId")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("hts_user_id");
 
                     b.Property<string>("StripeCustomerId")
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("stripe_customer_id");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id");
@@ -447,7 +448,8 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                         .IsUnique();
 
                     b.HasIndex("StripeCustomerId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[stripe_customer_id] IS NOT NULL");
 
                     b.ToTable("customer_profiles");
                 });
@@ -456,36 +458,36 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<string>("EventType")
                         .IsRequired()
                         .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasColumnType("nvarchar(64)")
                         .HasColumnName("event_type");
 
                     b.Property<Guid>("HostingServiceId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("hosting_service_id");
 
                     b.Property<string>("Message")
                         .IsRequired()
                         .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)")
+                        .HasColumnType("nvarchar(2048)")
                         .HasColumnName("message");
 
                     b.Property<string>("MetadataJson")
                         .IsRequired()
-                        .HasColumnType("jsonb")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("metadata_json");
 
                     b.Property<Guid>("ProvisioningJobId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("provisioning_job_id");
 
                     b.HasKey("Id");
@@ -501,53 +503,53 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<bool>("Active")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("active");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<string>("DefaultStartup")
                         .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)")
+                        .HasColumnType("nvarchar(2048)")
                         .HasColumnName("default_startup");
 
                     b.Property<string>("DeploymentConfigJson")
                         .IsRequired()
-                        .HasColumnType("jsonb")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("deployment_config_json");
 
                     b.Property<string>("DockerImage")
                         .HasMaxLength(512)
-                        .HasColumnType("character varying(512)")
+                        .HasColumnType("nvarchar(512)")
                         .HasColumnName("docker_image");
 
                     b.Property<Guid>("GameId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("game_id");
 
                     b.Property<int>("PterodactylEggId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("pterodactyl_egg_id");
 
                     b.Property<int>("PterodactylNestId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("pterodactyl_nest_id");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
                     b.HasIndex("GameId")
                         .IsUnique()
-                        .HasFilter("active");
+                        .HasFilter("[active] = 1");
 
                     b.ToTable("game_deployment_profiles");
                 });
@@ -556,52 +558,52 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<bool>("Enabled")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("enabled");
 
                     b.Property<string>("Location")
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("location");
 
                     b.Property<bool>("Maintenance")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("maintenance");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("name");
 
                     b.Property<int>("Priority")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("priority");
 
                     b.Property<int>("PterodactylNodeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("pterodactyl_node_id");
 
                     b.Property<string>("Region")
                         .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasColumnType("nvarchar(64)")
                         .HasColumnName("region");
 
-                    b.PrimitiveCollection<string[]>("SupportedGames")
+                    b.PrimitiveCollection<string>("SupportedGames")
                         .IsRequired()
-                        .HasColumnType("text[]")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("supported_games");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id");
@@ -618,67 +620,67 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<DateTimeOffset?>("ActivatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("activated_at");
 
                     b.Property<DateTimeOffset?>("CancelledAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("cancelled_at");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<Guid?>("CustomerProfileId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("customer_profile_id");
 
                     b.Property<Guid>("GameId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("game_id");
 
                     b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("order_id");
 
                     b.Property<Guid>("PlanId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("plan_id");
 
                     b.Property<int?>("PterodactylNodeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("pterodactyl_node_id");
 
                     b.Property<int?>("PterodactylServerId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("pterodactyl_server_id");
 
                     b.Property<string>("PterodactylServerUuid")
                         .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasColumnType("nvarchar(64)")
                         .HasColumnName("pterodactyl_server_uuid");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
+                        .HasColumnType("nvarchar(32)")
                         .HasColumnName("status");
 
                     b.Property<string>("StripeSubscriptionId")
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("stripe_subscription_id");
 
                     b.Property<DateTimeOffset?>("SuspendedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("suspended_at");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id");
@@ -691,13 +693,16 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                     b.HasIndex("PlanId");
 
                     b.HasIndex("PterodactylServerId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[pterodactyl_server_id] IS NOT NULL");
 
                     b.HasIndex("PterodactylServerUuid")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[pterodactyl_server_uuid] IS NOT NULL");
 
                     b.HasIndex("StripeSubscriptionId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[stripe_subscription_id] IS NOT NULL");
 
                     b.HasIndex("CustomerProfileId", "Status");
 
@@ -708,11 +713,11 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<bool>("Active")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("active");
 
                     b.Property<long>("AmountCents")
@@ -722,45 +727,46 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                     b.Property<string>("BillingPeriod")
                         .IsRequired()
                         .HasMaxLength(16)
-                        .HasColumnType("character varying(16)")
+                        .HasColumnType("nvarchar(16)")
                         .HasColumnName("billing_period");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<string>("Currency")
                         .IsRequired()
                         .HasMaxLength(3)
-                        .HasColumnType("character varying(3)")
+                        .HasColumnType("nvarchar(3)")
                         .HasColumnName("currency");
 
                     b.Property<int>("DiscountPercent")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("discount_percent");
 
                     b.Property<Guid>("PlanId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("plan_id");
 
                     b.Property<string>("StripePriceId")
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("stripe_price_id");
 
                     b.Property<string>("StripeProductId")
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("stripe_product_id");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 
                     b.HasIndex("StripePriceId")
-                        .IsUnique();
+                        .IsUnique()
+                        .HasFilter("[stripe_price_id] IS NOT NULL");
 
                     b.HasIndex("PlanId", "BillingPeriod")
                         .IsUnique();
@@ -779,59 +785,59 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<int>("AttemptCount")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("attempt_count");
 
                     b.Property<DateTimeOffset?>("CompletedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("completed_at");
 
                     b.Property<DateTimeOffset>("CreatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("created_at");
 
                     b.Property<Guid>("HostingServiceId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("hosting_service_id");
 
                     b.Property<string>("LastError")
                         .HasMaxLength(4096)
-                        .HasColumnType("character varying(4096)")
+                        .HasColumnType("nvarchar(max)")
                         .HasColumnName("last_error");
 
                     b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("order_id");
 
                     b.Property<int?>("PterodactylServerId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("pterodactyl_server_id");
 
                     b.Property<string>("PterodactylServerUuid")
                         .HasMaxLength(64)
-                        .HasColumnType("character varying(64)")
+                        .HasColumnType("nvarchar(64)")
                         .HasColumnName("pterodactyl_server_uuid");
 
                     b.Property<int?>("SelectedNodeId")
-                        .HasColumnType("integer")
+                        .HasColumnType("int")
                         .HasColumnName("selected_node_id");
 
                     b.Property<DateTimeOffset?>("StartedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("started_at");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasMaxLength(32)
-                        .HasColumnType("character varying(32)")
+                        .HasColumnType("nvarchar(32)")
                         .HasColumnName("status");
 
                     b.Property<DateTimeOffset>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("updated_at");
 
                     b.HasKey("Id");
@@ -854,36 +860,36 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("uniqueidentifier")
                         .HasColumnName("id");
 
                     b.Property<string>("EventType")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("event_type");
 
                     b.Property<bool>("Processed")
-                        .HasColumnType("boolean")
+                        .HasColumnType("bit")
                         .HasColumnName("processed");
 
                     b.Property<DateTimeOffset?>("ProcessedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("processed_at");
 
                     b.Property<string>("ProcessingError")
                         .HasMaxLength(2048)
-                        .HasColumnType("character varying(2048)")
+                        .HasColumnType("nvarchar(2048)")
                         .HasColumnName("processing_error");
 
                     b.Property<DateTimeOffset>("ReceivedAt")
-                        .HasColumnType("timestamp with time zone")
+                        .HasColumnType("datetimeoffset")
                         .HasColumnName("received_at");
 
                     b.Property<string>("StripeEventId")
                         .IsRequired()
                         .HasMaxLength(128)
-                        .HasColumnType("character varying(128)")
+                        .HasColumnType("nvarchar(128)")
                         .HasColumnName("stripe_event_id");
 
                     b.HasKey("Id");
@@ -943,7 +949,7 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                     b.HasOne("HowToSoftware.Hosting.Models.Commerce.HostingServiceRecord", null)
                         .WithMany()
                         .HasForeignKey("HostingServiceId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("HowToSoftware.Hosting.Models.Commerce.ProvisioningJobRecord", null)

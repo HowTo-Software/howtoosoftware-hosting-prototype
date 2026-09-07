@@ -23,8 +23,9 @@ DDoS volumétrico; a defesa é feita em camadas e precisa ser monitorada continu
   `Development` e a flag explícita. A flag não consegue abrir o laboratório em staging/produção.
 - **Saídas externas:** redirects automáticos do cliente Pterodactyl estão desligados, a URL exige
   HTTPS e a chave é colocada somente no header `Authorization` do backend.
-- **Transporte do banco:** a conexão Supabase/PostgreSQL força TLS com validação completa do
-  certificado e do hostname (`VerifyFull`).
+- **Transporte do banco:** a conexão SQL Server força `Encrypt=True` mesmo que a string informada
+  desative, e a validação do certificado continua ativa a menos que o operador escreva
+  `TrustServerCertificate=True` deliberadamente - o que permite man-in-the-middle.
 
 O middleware em `Infrastructure/Security/SecurityHardening.cs` centraliza CSP, headers,
 antiforgery e rate limits. Os testes em `SecurityBoundaryTests.cs` impedem que esses limites sejam
@@ -48,7 +49,7 @@ borda pública assim:
 ## E2E: o que pode e o que não pode ser prometido
 
 O checkout de cartão fica hospedado no Stripe; o site não recebe nem armazena número completo do
-cartão. Entre navegador, aplicação, Stripe, Supabase e Pterodactyl existe TLS em trânsito.
+cartão. Entre navegador, aplicação, Stripe, SQL Server e Pterodactyl existe TLS em trânsito.
 
 Isso **não é criptografia end-to-end** no sentido de mensagens privadas: o backend precisa ler o
 pedido para cobrar e provisionar. Chamar esse fluxo de E2E seria incorreto. Dados pessoais devem
@@ -75,9 +76,10 @@ ou ação de pedido/servidor. Não transforme o formulário visual atual em aute
 
 ## Banco e segredos
 
-- Use um usuário PostgreSQL dedicado à aplicação, sem `postgres`, owner ou permissões de DDL no
+- Use um login SQL Server dedicado à aplicação, nunca `sa`, sem owner nem permissões de DDL no
   runtime. Aplique migrations com uma identidade separada.
-- Ative RLS onde houver acesso via Data API e teste isolamento entre dois clientes.
+- Dê à aplicação um banco próprio. Dois aplicativos no mesmo banco compartilham a tabela de
+  histórico de migrations, e um deploy de um pode remodelar o outro.
 - Guarde chaves em secret manager, habilite rotação e separe teste/staging/produção.
 - Persista chaves do ASP.NET Data Protection em armazenamento privado e criptografado quando
   houver múltiplas instâncias; sem isso, reinícios invalidam tokens/cookies.

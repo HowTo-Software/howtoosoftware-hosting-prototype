@@ -1,12 +1,15 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
+using HowToSoftware.Hosting.Data;
 using HowToSoftware.Hosting.Models;
 using HowToSoftware.Hosting.Models.Orders;
 using HowToSoftware.Hosting.Services.Orders;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Stripe;
 
 namespace HowToSoftware.Hosting.Tests;
@@ -29,13 +32,36 @@ public sealed class StripeWebhookEndpointTests : IDisposable
 
     public StripeWebhookEndpointTests()
     {
+        // The application targets SQL Server. This test is about the webhook endpoint, not the
+        // provider, so it swaps in a throwaway file-backed store and stays hermetic.
+        var dbOptions = new DbContextOptionsBuilder<HostingDbContext>()
+            .UseSqlite($"Data Source={_dbPath}")
+            .Options;
+
+        using (var db = new HostingDbContext(dbOptions))
+        {
+            db.Database.EnsureCreated();
+        }
+
         _factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
         {
-            builder.UseSetting("ConnectionStrings:Hosting", $"Data Source={_dbPath}");
             builder.UseSetting("Stripe:WebhookSecret", Secret);
+            builder.ConfigureServices(services =>
+            {
+                services.RemoveAll<IDbContextFactory<HostingDbContext>>();
+                services.RemoveAll<DbContextOptions<HostingDbContext>>();
+                services.AddSingleton<IDbContextFactory<HostingDbContext>>(
+                    new TestHostingContextFactory(dbOptions));
+            });
         });
 
         _client = _factory.CreateClient(new WebApplicationFactoryClientOptions { AllowAutoRedirect = false });
+    }
+
+    private sealed class TestHostingContextFactory(DbContextOptions<HostingDbContext> options)
+        : IDbContextFactory<HostingDbContext>
+    {
+        public HostingDbContext CreateDbContext() => new(options);
     }
 
     public void Dispose()

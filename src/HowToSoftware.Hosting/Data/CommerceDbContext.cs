@@ -4,11 +4,13 @@ using Microsoft.EntityFrameworkCore;
 namespace HowToSoftware.Hosting.Data;
 
 /// <summary>
-/// Independent PostgreSQL commerce database. Business services depend on repository interfaces,
-/// so this provider can later move from Supabase to the primary HTS database without a rewrite.
+/// Independent SQL Server commerce database. Business services depend on repository interfaces,
+/// so this provider can later move to another SQL Server host without a rewrite.
 /// </summary>
 public sealed class CommerceDbContext(DbContextOptions<CommerceDbContext> options) : DbContext(options)
 {
+    /// <summary>Kept distinct so this schema can never share a history table with another app.</summary>
+    public const string MigrationsHistoryTable = "__EFMigrationsHistory_Commerce";
     public DbSet<CustomerProfile> CustomerProfiles => Set<CustomerProfile>();
     public DbSet<CommerceGame> Games => Set<CommerceGame>();
     public DbSet<CommerceHostingPlan> HostingPlans => Set<CommerceHostingPlan>();
@@ -31,7 +33,9 @@ public sealed class CommerceDbContext(DbContextOptions<CommerceDbContext> option
             entity.Property(x => x.Email).HasMaxLength(320);
             entity.Property(x => x.StripeCustomerId).HasMaxLength(128);
             entity.HasIndex(x => x.HtsUserId).IsUnique();
-            entity.HasIndex(x => x.StripeCustomerId).IsUnique();
+            // SQL Server treats NULLs as equal in a unique index, so an unfiltered one would cap
+            // the table at a single not-yet-linked row. Postgres allowed many; keep that.
+            entity.HasIndex(x => x.StripeCustomerId).IsUnique().HasFilter("[stripe_customer_id] IS NOT NULL");
         });
 
         modelBuilder.Entity<CommerceGame>(entity =>
@@ -75,7 +79,7 @@ public sealed class CommerceDbContext(DbContextOptions<CommerceDbContext> option
             entity.Property(x => x.StripeProductId).HasMaxLength(128);
             entity.Property(x => x.StripePriceId).HasMaxLength(128);
             entity.HasIndex(x => new { x.PlanId, x.BillingPeriod }).IsUnique();
-            entity.HasIndex(x => x.StripePriceId).IsUnique();
+            entity.HasIndex(x => x.StripePriceId).IsUnique().HasFilter("[stripe_price_id] IS NOT NULL");
             entity.HasOne<CommerceHostingPlan>().WithMany().HasForeignKey(x => x.PlanId).OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -104,7 +108,7 @@ public sealed class CommerceDbContext(DbContextOptions<CommerceDbContext> option
             entity.Property(x => x.SubscriptionStatus).HasMaxLength(32);
             entity.Property(x => x.ServerIdentifier).HasMaxLength(64);
             entity.Property(x => x.FailureReason).HasMaxLength(2048);
-            entity.HasIndex(x => x.StripeCheckoutSessionId).IsUnique();
+            entity.HasIndex(x => x.StripeCheckoutSessionId).IsUnique().HasFilter("[stripe_checkout_session_id] IS NOT NULL");
             entity.HasIndex(x => x.StripeSubscriptionId);
             entity.HasIndex(x => x.CustomerProfileId);
             entity.HasIndex(x => x.Status);
@@ -120,9 +124,9 @@ public sealed class CommerceDbContext(DbContextOptions<CommerceDbContext> option
             entity.Property(x => x.StripeSubscriptionId).HasMaxLength(128);
             entity.Property(x => x.PterodactylServerUuid).HasMaxLength(64);
             entity.HasIndex(x => x.OrderId).IsUnique();
-            entity.HasIndex(x => x.StripeSubscriptionId).IsUnique();
-            entity.HasIndex(x => x.PterodactylServerId).IsUnique();
-            entity.HasIndex(x => x.PterodactylServerUuid).IsUnique();
+            entity.HasIndex(x => x.StripeSubscriptionId).IsUnique().HasFilter("[stripe_subscription_id] IS NOT NULL");
+            entity.HasIndex(x => x.PterodactylServerId).IsUnique().HasFilter("[pterodactyl_server_id] IS NOT NULL");
+            entity.HasIndex(x => x.PterodactylServerUuid).IsUnique().HasFilter("[pterodactyl_server_uuid] IS NOT NULL");
             entity.HasIndex(x => new { x.CustomerProfileId, x.Status });
             entity.HasOne<CommerceOrder>().WithMany().HasForeignKey(x => x.OrderId).OnDelete(DeleteBehavior.Restrict);
             entity.HasOne<CustomerProfile>().WithMany().HasForeignKey(x => x.CustomerProfileId).OnDelete(DeleteBehavior.Restrict);
@@ -169,8 +173,8 @@ public sealed class CommerceDbContext(DbContextOptions<CommerceDbContext> option
             entity.HasKey(x => x.Id);
             entity.Property(x => x.DockerImage).HasMaxLength(512);
             entity.Property(x => x.DefaultStartup).HasMaxLength(2048);
-            entity.Property(x => x.DeploymentConfigJson).HasColumnType("jsonb");
-            entity.HasIndex(x => x.GameId).IsUnique().HasFilter("active");
+            entity.Property(x => x.DeploymentConfigJson).HasColumnType("nvarchar(max)");
+            entity.HasIndex(x => x.GameId).IsUnique().HasFilter("[active] = 1");
             entity.HasOne<CommerceGame>().WithMany().HasForeignKey(x => x.GameId).OnDelete(DeleteBehavior.Cascade);
         });
 
@@ -179,10 +183,13 @@ public sealed class CommerceDbContext(DbContextOptions<CommerceDbContext> option
             entity.HasKey(x => x.Id);
             entity.Property(x => x.EventType).HasMaxLength(64);
             entity.Property(x => x.Message).HasMaxLength(2048);
-            entity.Property(x => x.MetadataJson).HasColumnType("jsonb");
+            entity.Property(x => x.MetadataJson).HasColumnType("nvarchar(max)");
             entity.HasIndex(x => new { x.ProvisioningJobId, x.CreatedAt });
             entity.HasOne<ProvisioningJobRecord>().WithMany().HasForeignKey(x => x.ProvisioningJobId).OnDelete(DeleteBehavior.Cascade);
-            entity.HasOne<HostingServiceRecord>().WithMany().HasForeignKey(x => x.HostingServiceId).OnDelete(DeleteBehavior.Cascade);
+            // Deleting a hosting service already reaches these rows through its provisioning job.
+            // A second cascade would give SQL Server two paths to the same table, which it rejects
+            // outright (error 1785), so this edge stops at the foreign key.
+            entity.HasOne<HostingServiceRecord>().WithMany().HasForeignKey(x => x.HostingServiceId).OnDelete(DeleteBehavior.Restrict);
         });
 
         modelBuilder.Entity<BillingInvoiceReference>(entity =>
@@ -196,8 +203,7 @@ public sealed class CommerceDbContext(DbContextOptions<CommerceDbContext> option
             entity.Property(x => x.Currency).HasMaxLength(3);
             entity.Property(x => x.HostedInvoiceUrl).HasMaxLength(2048);
             entity.Property(x => x.InvoicePdfUrl).HasMaxLength(2048);
-            entity.HasIndex(x => x.StripeInvoiceId).IsUnique();
-            entity.HasIndex(x => new { x.CustomerProfileId, x.InvoiceDate });
+            entity.HasIndex(x => x.StripeInvoiceId).IsUnique();            entity.HasIndex(x => new { x.CustomerProfileId, x.InvoiceDate });
             entity.HasOne<CustomerProfile>().WithMany().HasForeignKey(x => x.CustomerProfileId).OnDelete(DeleteBehavior.Restrict);
             entity.HasOne<HostingServiceRecord>().WithMany().HasForeignKey(x => x.HostingServiceId).OnDelete(DeleteBehavior.Restrict);
         });

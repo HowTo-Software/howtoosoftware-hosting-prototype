@@ -24,8 +24,8 @@ public sealed class NullProvisioningStateStore : IProvisioningStateStore
     public Task MarkFailedAsync(Guid orderId, string reason, CancellationToken cancellationToken = default) => Task.CompletedTask;
 }
 
-/// <summary>PostgreSQL implementation with an append-only deployment event trail.</summary>
-public sealed class PostgresProvisioningStateStore(
+/// <summary>SQL Server implementation with an append-only deployment event trail.</summary>
+public sealed class SqlServerProvisioningStateStore(
     IDbContextFactory<CommerceDbContext> factory,
     TimeProvider clock) : IProvisioningStateStore
 {
