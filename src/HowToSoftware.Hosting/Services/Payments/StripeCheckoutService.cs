@@ -481,6 +481,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
                 {
                     Name = $"{priced.Game.Name} - {priced.Plan.Name}",
                     Description = DescribePlan(priced),
+                    TaxCode = "txcd_10010001",
                     Metadata = new Dictionary<string, string>(StringComparer.Ordinal)
                     {
                         [MetadataKeys.GameId] = order.GameId,
