@@ -81,6 +81,20 @@ else
                     <AntiforgeryToken />
                     <input type="hidden" name="PlanSlug" value="@priced.Plan.Slug" />
                     <input type="hidden" name="Period" value="@BillingPolicy.Slug(priced.Quote.Period)" />
+                    <input type="hidden" name="PromoCode" value="@PromoCode" />
+
+                    <div class="review-promo">
+                        <label class="hts-label" for="promo-code">PROMO CODE</label>
+                        <div class="review-promo-row">
+                            <input id="promo-code"
+                                   name="PromoCode"
+                                   type="text"
+                                   value="@PromoCode"
+                                   maxlength="64"
+                                   autocomplete="off"
+                                   placeholder="Enter your code" />
+                        </div>
+                    </div>
 
                     @if (Checkout.IsConfigured)
                     {
@@ -145,6 +159,10 @@ else
     [SupplyParameterFromQuery(Name = "period")]
     public string? PeriodQuery { get; set; }
 
+    /// <summary>The promotion code supplied in the review URL.</summary>
+    [SupplyParameterFromQuery(Name = "promo")]
+    public string? PromoQuery { get; set; }
+
     /// <summary>The plan, as posted by the form.</summary>
     [SupplyParameterFromForm(FormName = "checkout", Name = "PlanSlug")]
     public string? PlanForm { get; set; }
@@ -152,6 +170,14 @@ else
     /// <summary>The period, as posted by the form.</summary>
     [SupplyParameterFromForm(FormName = "checkout", Name = "Period")]
     public string? PeriodForm { get; set; }
+
+    /// <summary>The promotion code, as posted by the form.</summary>
+    [SupplyParameterFromForm(FormName = "checkout", Name = "PromoCode")]
+    public string? PromoForm { get; set; }
+
+    private string? PromoCode => string.IsNullOrWhiteSpace(PromoForm)
+        ? PromoQuery
+        : PromoForm;
 
     protected override void OnParametersSet()
     {
@@ -182,7 +208,8 @@ else
             // The browser-controlled Host header is never used to build a Stripe redirect.
             ReturnOrigin: Site.Value.BaseUrl.TrimEnd('/'),
             UserId: null,
-            Locale: CultureInfo.CurrentUICulture.Name);
+            Locale: CultureInfo.CurrentUICulture.Name,
+            PromoCode: PromoCode);
 
         var result = await Checkout.CreateCheckoutSessionAsync(request);
 

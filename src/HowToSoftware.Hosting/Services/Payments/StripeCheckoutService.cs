@@ -27,7 +27,8 @@ public sealed record CheckoutRequest(
     BillingPeriod Period,
     string ReturnOrigin,
     string? UserId,
-    string? Locale);
+    string? Locale,
+    string? PromoCode);
 
 /// <summary>How an attempt to start Checkout ended.</summary>
 public enum CheckoutOutcome
@@ -119,6 +120,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
 
     private readonly IStripeGateway _stripe;
     private readonly IOrderPricingService _pricing;
+    private readonly IPromotionService _promotions;
     private readonly IOrderStore _orders;
     private readonly OrderFulfillmentQueue _fulfilment;
     private readonly IOptionsMonitor<StripeOptions> _options;
@@ -130,6 +132,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
     public StripeCheckoutService(
         IStripeGateway stripe,
         IOrderPricingService pricing,
+        IPromotionService promotions,
         IOrderStore orders,
         OrderFulfillmentQueue fulfilment,
         IOptionsMonitor<StripeOptions> options,
@@ -139,6 +142,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
     {
         _stripe = stripe;
         _pricing = pricing;
+        _promotions = promotions;
         _orders = orders;
         _fulfilment = fulfilment;
         _options = options;
@@ -171,6 +175,27 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
             return new CheckoutStart(CheckoutOutcome.Rejected, null, null);
         }
 
+        PromotionResult? promotion = null;
+
+        if (!string.IsNullOrWhiteSpace(request.PromoCode))
+        {
+            promotion = await _promotions.ValidateAsync(
+                request.PromoCode,
+                priced.Game.Slug,
+                priced.Plan.Slug,
+                priced.Quote,
+                cancellationToken).ConfigureAwait(false);
+
+            if (promotion is null)
+            {
+                _logger.LogInformation(
+                    "Checkout rejected: promotion code {PromoCode} is invalid or not applicable.",
+                    request.PromoCode);
+
+                return new CheckoutStart(CheckoutOutcome.Rejected, null, null);
+            }
+        }
+
         if (!TryNormaliseReturnOrigin(request.ReturnOrigin, out var returnOrigin))
         {
             _logger.LogWarning("Checkout rejected because the configured public origin is not a secure origin.");
@@ -183,6 +208,10 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
         var existingStripeCustomerId = string.IsNullOrWhiteSpace(request.UserId)
             ? null
             : await _billing.FindStripeCustomerIdAsync(request.UserId, cancellationToken).ConfigureAwait(false);
+        var finalAmount = promotion?.FinalAmount ?? priced.Quote.FinalAmount;
+        var totalDiscountAmount =
+            (priced.Quote.BaseAmount - finalAmount);
+
         var order = new Order
         {
             Id = Guid.NewGuid(),
@@ -194,8 +223,8 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
             MonthlyPrice = priced.Quote.MonthlyPrice,
             BaseAmount = priced.Quote.BaseAmount,
             DiscountPercentage = priced.Quote.DiscountPercent,
-            DiscountAmount = priced.Quote.DiscountAmount,
-            FinalAmount = priced.Quote.FinalAmount,
+            DiscountAmount = totalDiscountAmount,
+            FinalAmount = finalAmount,
             Currency = priced.CurrencyCode,
             Status = OrderStatus.Pending,
             ProvisioningStage = FulfilmentStage.NotStarted,
@@ -206,7 +235,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
 
         await _orders.AddAsync(order, cancellationToken).ConfigureAwait(false);
 
-        var sessionOptions = BuildSessionOptions(order, priced, request);
+        var sessionOptions = BuildSessionOptions(order, priced, request, promotion);
 
         try
         {
@@ -439,7 +468,11 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
             : null;
     }
 
-    private SessionCreateOptions BuildSessionOptions(Order order, PricedPlan priced, CheckoutRequest request)
+    private SessionCreateOptions BuildSessionOptions(
+        Order order,
+        PricedPlan priced,
+        CheckoutRequest request,
+        PromotionResult? promotion)
     {
         var options = _options.CurrentValue;
         var periodSlug = BillingPolicy.Slug(order.BillingPeriod);
@@ -451,6 +484,12 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
             [MetadataKeys.PlanId] = order.PlanId,
             [MetadataKeys.BillingPeriod] = periodSlug
         };
+
+        if (promotion is not null)
+        {
+            metadata["promotion_code_id"] = promotion.Promotion.Id.ToString("D");
+            metadata["promotion_code"] = promotion.Promotion.Code;
+        }
 
         if (!string.IsNullOrWhiteSpace(order.UserId))
         {
@@ -471,7 +510,9 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
             lineItem.PriceData = new SessionLineItemPriceDataOptions
             {
                 Currency = order.Currency,
-                UnitAmount = priced.Quote.FinalAmountMinor,
+                UnitAmount = checked((long)Math.Round(
+                    order.FinalAmount * 100m,
+                    MidpointRounding.AwayFromZero)),
                 Recurring = new SessionLineItemPriceDataRecurringOptions
                 {
                     Interval = "month",

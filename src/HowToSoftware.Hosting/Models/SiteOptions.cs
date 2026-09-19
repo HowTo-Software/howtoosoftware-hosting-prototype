@@ -19,7 +19,7 @@ public sealed class SiteOptions
     public string BaseUrl { get; set; } = "https://howtoosoftware.com";
 
     /// <summary>Contact mailbox surfaced in the footer and contact call-to-action.</summary>
-    public string ContactEmail { get; set; } = "hello@howtoosoftware.com";
+    public string ContactEmail { get; set; } = "henry.cahill@howtoosoftware.com";
 }
 
 /// <summary>Rejects unsafe public origins before they can be used in metadata or redirects.</summary>
