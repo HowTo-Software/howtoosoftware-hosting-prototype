@@ -172,6 +172,7 @@ builder.Services.AddScoped<ICustomBuildService, RateCardBuildService>();
 // currency sign on it is computed here, sent to Stripe from here, and checked here when
 // Stripe's webhook reports it paid. Fulfilment runs off a queue so the webhook answers fast.
 builder.Services.AddScoped<IOrderPricingService, OrderPricingService>();
+builder.Services.AddScoped<IPromotionService, PromotionService>();
 builder.Services.AddSingleton<IStripeGateway, StripeGateway>();
 builder.Services.AddSingleton<OrderFulfillmentQueue>();
 builder.Services.AddScoped<IStripeCheckoutService, StripeCheckoutService>();

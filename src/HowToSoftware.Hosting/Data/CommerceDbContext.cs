@@ -23,6 +23,8 @@ public sealed class CommerceDbContext(DbContextOptions<CommerceDbContext> option
     public DbSet<GameDeploymentProfileRecord> GameDeploymentProfiles => Set<GameDeploymentProfileRecord>();
     public DbSet<DeploymentEventRecord> DeploymentEvents => Set<DeploymentEventRecord>();
     public DbSet<BillingInvoiceReference> BillingInvoiceRefs => Set<BillingInvoiceReference>();
+    public DbSet<PromotionCode> PromotionCodes => Set<PromotionCode>();
+    public DbSet<PromotionRedemption> PromotionRedemptions => Set<PromotionRedemption>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -207,6 +209,64 @@ public sealed class CommerceDbContext(DbContextOptions<CommerceDbContext> option
             entity.HasIndex(x => new { x.CustomerProfileId, x.InvoiceDate });
             entity.HasOne<CustomerProfile>().WithMany().HasForeignKey(x => x.CustomerProfileId).OnDelete(DeleteBehavior.Restrict);
             entity.HasOne<HostingServiceRecord>().WithMany().HasForeignKey(x => x.HostingServiceId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<PromotionCode>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.ToTable(table =>
+            {
+                table.HasCheckConstraint(
+                    "ck_promotion_codes_discount_type",
+                    "discount_type IN ('percent', 'fixed')");
+
+                table.HasCheckConstraint(
+                    "ck_promotion_codes_discount_value",
+                    "(discount_type = 'percent' AND discount_percent BETWEEN 1 AND 100 AND fixed_amount_cents IS NULL) OR " +
+                    "(discount_type = 'fixed' AND fixed_amount_cents > 0 AND discount_percent IS NULL)");
+
+                table.HasCheckConstraint(
+                    "ck_promotion_codes_max_redemptions",
+                    "max_redemptions IS NULL OR max_redemptions > 0");
+
+                table.HasCheckConstraint(
+                    "ck_promotion_codes_minimum_amount",
+                    "minimum_amount_cents IS NULL OR minimum_amount_cents >= 0");
+            });
+
+            entity.Property(x => x.Code).HasMaxLength(64).IsRequired();
+            entity.Property(x => x.DiscountType).HasMaxLength(16).IsRequired();
+            entity.Property(x => x.Currency).HasMaxLength(3);
+            entity.Property(x => x.GameSlug).HasMaxLength(64);
+            entity.Property(x => x.PlanSlug).HasMaxLength(64);
+            entity.Property(x => x.CreatedBy).HasMaxLength(128);
+
+            entity.HasIndex(x => x.Code).IsUnique();
+            entity.HasIndex(x => new { x.Active, x.ExpiresAt });
+        });
+
+        modelBuilder.Entity<PromotionRedemption>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+
+            entity.ToTable(table =>
+                table.HasCheckConstraint(
+                    "ck_promotion_redemptions_discount",
+                    "discount_amount_cents >= 0"));
+
+            entity.HasIndex(x => new { x.PromotionCodeId, x.OrderId }).IsUnique();
+            entity.HasIndex(x => x.OrderId).IsUnique();
+
+            entity.HasOne<PromotionCode>()
+                .WithMany()
+                .HasForeignKey(x => x.PromotionCodeId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne<CommerceOrder>()
+                .WithMany()
+                .HasForeignKey(x => x.OrderId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
 
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
