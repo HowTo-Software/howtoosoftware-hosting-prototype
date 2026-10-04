@@ -27,6 +27,29 @@ public interface IPromotionService
         CancellationToken cancellationToken = default);
 }
 
+/// <summary>
+/// Credential-free fallback for hosts without a commerce database: with nowhere to look a code
+/// up, every code is treated as not applicable rather than honoured unchecked.
+/// </summary>
+public sealed class NullPromotionService : IPromotionService
+{
+    public Task<PromotionResult?> ValidateAsync(
+        string? code,
+        string gameSlug,
+        string planSlug,
+        BillingQuote quote,
+        CancellationToken cancellationToken = default) =>
+        Task.FromResult<PromotionResult?>(null);
+
+    public Task RedeemAsync(
+        Guid promotionId,
+        Guid orderId,
+        long discountAmountCents,
+        DateTimeOffset redeemedAt,
+        CancellationToken cancellationToken = default) =>
+        Task.CompletedTask;
+}
+
 public sealed class PromotionService(
     IDbContextFactory<CommerceDbContext> factory)
     : IPromotionService

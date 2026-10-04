@@ -340,10 +340,12 @@ public sealed class ProvisioningService : IProvisioningService
 
         if (existing is not null)
         {
+            // The customer id is derived from the email address, so it is not logged; the
+            // request id correlates the entry instead.
             _logger.LogInformation(
-                "Reusing panel user {PanelUserId} for customer {CustomerId}",
+                "Reusing panel user {PanelUserId} for request {RequestId}",
                 existing.Id,
-                request.CustomerId);
+                request.RequestId);
 
             return (existing, true);
         }
@@ -366,9 +368,9 @@ public sealed class ProvisioningService : IProvisioningService
             cancellationToken).ConfigureAwait(false);
 
         _logger.LogInformation(
-            "Created panel user {PanelUserId} for customer {CustomerId}",
+            "Created panel user {PanelUserId} for request {RequestId}",
             created.Id,
-            request.CustomerId);
+            request.RequestId);
 
         return (created, false);
     }

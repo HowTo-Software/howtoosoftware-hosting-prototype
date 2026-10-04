@@ -122,6 +122,7 @@ if (database.IsDatabaseConfigured)
     builder.Services.AddSingleton<IOrderStore, SqlServerOrderStore>();
     builder.Services.AddSingleton<IProvisioningStateStore, SqlServerProvisioningStateStore>();
     builder.Services.AddSingleton<IBillingStore, SqlServerBillingStore>();
+    builder.Services.AddScoped<IPromotionService, PromotionService>();
     builder.Services.AddScoped<CommerceSeedService>();
 }
 else
@@ -136,6 +137,7 @@ else
     builder.Services.AddSingleton<IOrderStore, EfOrderStore>();
     builder.Services.AddSingleton<IProvisioningStateStore, NullProvisioningStateStore>();
     builder.Services.AddSingleton<IBillingStore, NullBillingStore>();
+    builder.Services.AddSingleton<IPromotionService, NullPromotionService>();
 }
 
 builder.Services.AddHttpClient<IPterodactylClient, PterodactylClient>(PterodactylClient.HttpClientName,
@@ -172,7 +174,6 @@ builder.Services.AddScoped<ICustomBuildService, RateCardBuildService>();
 // currency sign on it is computed here, sent to Stripe from here, and checked here when
 // Stripe's webhook reports it paid. Fulfilment runs off a queue so the webhook answers fast.
 builder.Services.AddScoped<IOrderPricingService, OrderPricingService>();
-builder.Services.AddScoped<IPromotionService, PromotionService>();
 builder.Services.AddSingleton<IStripeGateway, StripeGateway>();
 builder.Services.AddSingleton<OrderFulfillmentQueue>();
 builder.Services.AddScoped<IStripeCheckoutService, StripeCheckoutService>();

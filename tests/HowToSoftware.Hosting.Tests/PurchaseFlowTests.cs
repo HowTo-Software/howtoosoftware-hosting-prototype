@@ -73,6 +73,7 @@ public sealed class PurchaseFlowTests : IDisposable
     private StripeCheckoutService Checkout() => new(
         _stripe,
         _pricing,
+        new NullPromotionService(),
         _orders,
         _queue,
         new StaticOptionsMonitor<StripeOptions>(_stripeOptions),
@@ -83,7 +84,7 @@ public sealed class PurchaseFlowTests : IDisposable
         string game = "project-zomboid",
         string plan = "zomboid-4gb",
         BillingPeriod period = BillingPeriod.Quarterly) =>
-        new(game, plan, period, "https://hts.example", UserId: null, Locale: "pt-BR");
+        new(game, plan, period, "https://hts.example", UserId: null, Locale: "pt-BR", PromoCode: null);
 
     // ── Pricing ────────────────────────────────────────────────────────────
 

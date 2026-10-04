@@ -188,9 +188,11 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
 
             if (promotion is null)
             {
+                // The code itself is caller-supplied, so it is deliberately left out of the log.
                 _logger.LogInformation(
-                    "Checkout rejected: promotion code {PromoCode} is invalid or not applicable.",
-                    request.PromoCode);
+                    "Checkout rejected: the promotion code supplied for {Game}/{Plan} is invalid or not applicable.",
+                    priced.Game.Slug,
+                    priced.Plan.Slug);
 
                 return new CheckoutStart(CheckoutOutcome.Rejected, null, null);
             }
