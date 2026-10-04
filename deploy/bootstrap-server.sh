@@ -74,10 +74,12 @@ if [[ ! -f "$RUNNER_DIR/.runner" ]]; then
     --name "$RUNNER_NAME" \
     --labels "$RUNNER_LABELS" \
     --work _work
-  sudo ./svc.sh install "$user"
 fi
 
 cd "$RUNNER_DIR"
+if [[ ! -f "$RUNNER_DIR/.service" ]]; then
+  sudo ./svc.sh install "$user"
+fi
 sudo ./svc.sh start >/dev/null 2>&1 || true
 sudo ./svc.sh status | sed -n '1,5p'
 
