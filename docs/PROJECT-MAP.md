@@ -164,6 +164,7 @@ Em produção, prefira variáveis do host ou um cofre de segredos. Não use `SQL
 - [`PTERODACTYL-SETUP.md`](PTERODACTYL-SETUP.md): painel, egg e laboratório de provisionamento.
 - [`SECURITY-HARDENING.md`](SECURITY-HARDENING.md): fronteiras do backend, headers, TLS, WAF,
   DDoS, banco, segredos e checklist de produção.
+- [`DEPLOYMENT.md`](DEPLOYMENT.md): pipeline de CI/CD, deploy no servidor de produção e rollback.
 
 ## Ordem segura para ligar produção
 

@@ -27,7 +27,10 @@ ENV ASPNETCORE_HTTP_PORTS=8080 \
 
 EXPOSE 8080
 
-# APP_UID is the non-root user baked into the Microsoft base images.
+# APP_UID is the non-root user baked into the Microsoft base images. The data-protection key
+# directory is created with that owner so a named volume mounted over it inherits it.
+RUN mkdir -p /home/app/.aspnet/DataProtection-Keys \
+    && chown -R $APP_UID:$APP_UID /home/app/.aspnet
 USER $APP_UID
 
 COPY --from=build /app/publish .

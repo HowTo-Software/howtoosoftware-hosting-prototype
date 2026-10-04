@@ -1,0 +1,4 @@
+self-hosted-runner:
+  # The production host's runner, registered by deploy/bootstrap-server.sh.
+  labels:
+    - hts-production

@@ -86,7 +86,8 @@ Pterodactyl features report “not configured” until `.env` is filled. See
 [`docs/COMMERCE-ARCHITECTURE.md`](docs/COMMERCE-ARCHITECTURE.md),
 [`docs/SQLSERVER-SETUP.md`](docs/SQLSERVER-SETUP.md), and
 [`docs/stripe-testing.md`](docs/stripe-testing.md). For a Portuguese map of every major folder,
-page and integration, see [`docs/PROJECT-MAP.md`](docs/PROJECT-MAP.md).
+page and integration, see [`docs/PROJECT-MAP.md`](docs/PROJECT-MAP.md). Production is deployed by
+the CI/CD pipeline described in [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
 ---
 
@@ -572,7 +573,8 @@ Não precisa de npm. O site inicia sem credenciais externas; Stripe, SQL Server 
 informam “não configurado” até o `.env` ser preenchido. Consulte
 [`docs/COMMERCE-ARCHITECTURE.md`](docs/COMMERCE-ARCHITECTURE.md),
 [`docs/SQLSERVER-SETUP.md`](docs/SQLSERVER-SETUP.md) e
-[`docs/stripe-testing.md`](docs/stripe-testing.md).
+[`docs/stripe-testing.md`](docs/stripe-testing.md). A produção é publicada pelo pipeline de CI/CD
+descrito em [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md).
 
 ---
 
