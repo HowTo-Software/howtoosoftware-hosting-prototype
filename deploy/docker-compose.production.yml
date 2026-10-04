@@ -1,0 +1,41 @@
+# Production stack, run by deploy/deploy.sh from /opt/hts-hosting on the production host.
+#
+# The project, service and container names match the stack that was previously run by hand, so
+# the first pipeline deploy replaces that container in place rather than starting a second one
+# that would fight it for port 5147.
+#
+# Secrets come from /opt/hts-hosting/.env (mode 600), which never leaves the server. The image
+# reference comes from /opt/hts-hosting/image.env, which deploy.sh rewrites on every release.
+
+name: hts-hosting-prototype
+
+services:
+  site:
+    container_name: hts-hosting-site
+    image: ${HTS_IMAGE:?HTS_IMAGE must name the image to run}
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "5147:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      # The reverse proxy (Security__KnownProxies__0 in .env) forwards with an allowed Host.
+      APP_ALLOWED_HOSTS: "localhost;127.0.0.1;[::1];192.168.1.206;howtoosoftware.com;www.howtoosoftware.com"
+    volumes:
+      # Keeps antiforgery tokens and cookies valid across deploys.
+      - dataprotection-keys:/home/app/.aspnet/DataProtection-Keys
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "5"
+
+volumes:
+  dataprotection-keys:
