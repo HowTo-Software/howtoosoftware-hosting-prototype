@@ -5,9 +5,9 @@
 #   HTS_IMAGE=ghcr.io/howto-software/howtoosoftware-hosting-prototype:sha-<commit> bash deploy/deploy.sh
 #
 # Server layout (created once by deploy/bootstrap-server.sh; see docs/DEPLOYMENT.md):
-#   ~/hts-hosting/.env          runtime configuration and secrets (mode 600)
-#   ~/hts-hosting/migrate.env   SQLSERVER_CONNECTION_STRING for the migration login (mode 600)
-#   ~/hts-hosting/image.env     written here: the image currently deployed
+#   /opt/howtoosoftware-hosting-prototype/.env          runtime configuration and secrets (mode 600)
+#   /opt/howtoosoftware-hosting-prototype/migrate.env   SQLSERVER_CONNECTION_STRING for the migration login (mode 600)
+#   /opt/howtoosoftware-hosting-prototype/image.env     written here: the image currently deployed
 #
 # Both env files are literal KEY=value lines: no quotes, no ${} interpolation.
 #
@@ -17,7 +17,7 @@
 set -Eeuo pipefail
 
 readonly IMAGE_REPOSITORY="ghcr.io/howto-software/howtoosoftware-hosting-prototype"
-readonly DEPLOY_DIR="${HTS_DEPLOY_DIR:-$HOME/hts-hosting}"
+readonly DEPLOY_DIR="${HTS_DEPLOY_DIR:-/opt/howtoosoftware-hosting-prototype}"
 readonly HEALTH_URL="${HTS_HEALTH_URL:-http://127.0.0.1:5147/health}"
 # /health is rate limited to 20 requests per window, so stay well under it.
 readonly HEALTH_ATTEMPTS=15

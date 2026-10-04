@@ -23,7 +23,8 @@ push to main ──► Build and test ──► Container image ──► [appro
 
 ## What a deploy does
 
-[`deploy/deploy.sh`](../deploy/deploy.sh) runs on the production host, from `~/hts-hosting`:
+[`deploy/deploy.sh`](../deploy/deploy.sh) runs on the production host, from
+`/opt/howtoosoftware-hosting-prototype`:
 
 1. **Refuses anything unexpected:** an image from another repository, or a secrets file that is
    missing or not mode `600`.
@@ -42,10 +43,12 @@ with the previous release (add columns and tables first, remove them in a later 
 
 ## Server layout
 
-Everything belongs to `htsadmin`; nothing needs root.
+Production sites on the host live in `/opt/<repository name>`, never in a user's home directory.
+The deployment directory is created once by root; after that everything belongs to `htsadmin`
+and nothing needs root.
 
 ```
-~htsadmin/hts-hosting/                 mode 750
+/opt/howtoosoftware-hosting-prototype/ mode 750, owner htsadmin
 ├── .env                               runtime configuration and secrets   (mode 600, never committed)
 ├── migrate.env                        SQLSERVER_CONNECTION_STRING used for migrations (mode 600)
 ├── docker-compose.yml                 copied from deploy/ on every deploy
@@ -74,9 +77,16 @@ This has been done for `192.168.1.206`. Use these steps to rebuild the host or s
 
 ### 1. Bootstrap the server
 
-[`deploy/bootstrap-server.sh`](../deploy/bootstrap-server.sh) runs as `htsadmin` without `sudo`:
+[`deploy/bootstrap-server.sh`](../deploy/bootstrap-server.sh) runs as `htsadmin` without `sudo`,
+once an administrator has created the deployment directory:
 
-- creates `~/hts-hosting`;
+```bash
+sudo install -d -o htsadmin -g htsadmin -m 750 /opt/howtoosoftware-hosting-prototype
+```
+
+The script then:
+
+- checks `/opt/howtoosoftware-hosting-prototype` exists and is writable;
 - captures `.env` from the running `hts-hosting-site` container, so it matches the live
   configuration exactly, without printing any value;
 - writes `migrate.env`;
@@ -100,7 +110,8 @@ Run interactively, it prompts for the migration connection string. With
 > **Current state:** `migrate.env` reuses the runtime login. To tighten this, create a separate
 > principal with DDL rights on the commerce database only (see
 > [`SQLSERVER-SETUP.md`](SQLSERVER-SETUP.md)), put its connection string in
-> `~/hts-hosting/migrate.env`, and then remove the DDL rights from the runtime login.
+> `/opt/howtoosoftware-hosting-prototype/migrate.env`, and then remove the DDL rights from the
+> runtime login.
 
 ### 2. Configure GitHub
 
@@ -123,8 +134,8 @@ from `main`. Pull requests run entirely on GitHub-hosted runners.
 - **Redeploy `main`:** Actions → CI/CD → *Run workflow* with the tag left empty.
 - **Roll back:** Actions → CI/CD → *Run workflow*, set `image_tag` to an earlier
   `sha-<commit>`. This skips the build and deploys that image, still behind the approval.
-- **Change configuration:** edit `~/hts-hosting/.env` on the server, then
-  `cd ~/hts-hosting && docker compose --env-file image.env up -d`.
+- **Change configuration:** edit `/opt/howtoosoftware-hosting-prototype/.env` on the server,
+  then `cd /opt/howtoosoftware-hosting-prototype && docker compose --env-file image.env up -d`.
 - **Logs:** `docker logs -f hts-hosting-site`.
 ## Local compose files
 

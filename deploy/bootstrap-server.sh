@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
-# One-time preparation of the production host for the CI/CD pipeline. Needs no root: run it ON
-# the server as the account the runner will use (htsadmin, a member of the docker group).
+# One-time preparation of the production host for the CI/CD pipeline. Run it ON the server as the
+# account the runner will use (htsadmin, a member of the docker group). The only root step is
+# creating the deployment directory, which an administrator does once beforehand:
+#
+#   sudo install -d -o htsadmin -g htsadmin -m 750 /opt/howtoosoftware-hosting-prototype
 #
 #   RUNNER_TOKEN=<registration token> bash bootstrap-server.sh
 #
@@ -16,9 +19,8 @@
 set -Eeuo pipefail
 
 readonly REPO_URL="https://github.com/HowTo-Software/howtoosoftware-hosting-prototype"
-readonly DEPLOY_DIR="$HOME/hts-hosting"
+readonly DEPLOY_DIR="/opt/howtoosoftware-hosting-prototype"
 readonly LIVE_CONTAINER="hts-hosting-site"
-readonly LEGACY_ENV="/home/malaio/howtoosoftware-hosting-prototype/.env"
 readonly RUNNER_DIR="$HOME/actions-runner-hts-hosting"
 readonly RUNNER_VERSION="2.337.0"
 readonly RUNNER_SHA256="70920811a4f8ad4328818682bca5c6469c1c942fab52448868071d0063816613"
@@ -39,8 +41,9 @@ id -nG "$user" | grep -qw docker || fail "$user must be in the docker group."
 
 umask 077
 
-# 1. Deployment directory.
-mkdir -p "$DEPLOY_DIR"
+# 1. Deployment directory. /opt needs root to create it, so it must already exist.
+[[ -d "$DEPLOY_DIR" && -w "$DEPLOY_DIR" ]] \
+  || fail "$DEPLOY_DIR must exist and be writable by $user. Ask an administrator to run: sudo install -d -o $user -g $user -m 750 $DEPLOY_DIR"
 chmod 750 "$DEPLOY_DIR"
 
 # 2. Runtime configuration, carried over from the deployment this replaces. Values are written
@@ -56,11 +59,8 @@ if [[ ! -f "$DEPLOY_DIR/.env" ]]; then
       || { rm -f "$DEPLOY_DIR/.env.all"; fail "A configuration value contains a line break; create $DEPLOY_DIR/.env by hand."; }
     grep -Ev "$NON_CONFIG_KEYS" "$DEPLOY_DIR/.env.all" > "$DEPLOY_DIR/.env" || true
     rm -f "$DEPLOY_DIR/.env.all"
-  elif [[ -r "$LEGACY_ENV" ]]; then
-    log "Copying runtime configuration from $LEGACY_ENV"
-    install -m 600 "$LEGACY_ENV" "$DEPLOY_DIR/.env"
   else
-    fail "No $DEPLOY_DIR/.env, no running $LIVE_CONTAINER and no readable $LEGACY_ENV. Create $DEPLOY_DIR/.env (mode 600) from .env.example."
+    fail "No $DEPLOY_DIR/.env and no running $LIVE_CONTAINER. Create $DEPLOY_DIR/.env (mode 600) from .env.example."
   fi
   log "Wrote $DEPLOY_DIR/.env with $(grep -c '=' "$DEPLOY_DIR/.env") settings"
 fi
