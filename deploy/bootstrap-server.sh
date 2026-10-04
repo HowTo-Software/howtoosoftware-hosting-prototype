@@ -1,26 +1,34 @@
 #!/usr/bin/env bash
-# One-time preparation of the production host for the CI/CD pipeline. Run it ON the server, as
-# the account the runner will use (htsadmin, a member of the docker group), from a checkout or
-# a copy of this file. It prompts for sudo where it needs it.
+# One-time preparation of the production host for the CI/CD pipeline. Needs no root: run it ON
+# the server as the account the runner will use (htsadmin, a member of the docker group).
 #
 #   RUNNER_TOKEN=<registration token> bash bootstrap-server.sh
 #
 # Get a registration token (valid for one hour) from a machine with repository admin rights:
 #   gh api -X POST repos/HowTo-Software/howtoosoftware-hosting-prototype/actions/runners/registration-token --jq .token
 #
-# Safe to re-run: every step checks before it acts.
+# Options (environment variables):
+#   MIGRATE_WITH_RUNTIME_LOGIN=1   use the runtime SQLSERVER_CONNECTION_STRING for migrations
+#                                  instead of prompting for a dedicated migration login.
+#
+# Safe to re-run: every step checks before it acts, and existing files are never overwritten.
 
 set -Eeuo pipefail
 
 readonly REPO_URL="https://github.com/HowTo-Software/howtoosoftware-hosting-prototype"
-readonly DEPLOY_DIR="/opt/hts-hosting"
+readonly DEPLOY_DIR="$HOME/hts-hosting"
+readonly LIVE_CONTAINER="hts-hosting-site"
 readonly LEGACY_ENV="/home/malaio/howtoosoftware-hosting-prototype/.env"
 readonly RUNNER_DIR="$HOME/actions-runner-hts-hosting"
 readonly RUNNER_VERSION="2.337.0"
 readonly RUNNER_SHA256="70920811a4f8ad4328818682bca5c6469c1c942fab52448868071d0063816613"
+readonly RUNNER_LABELS="hts-production"
+readonly RUNNER_UNIT="actions-runner-hts-hosting.service"
 RUNNER_NAME="hts-production-$(hostname)"
 readonly RUNNER_NAME
-readonly RUNNER_LABELS="hts-production"
+
+# Set by the image or by the compose file itself, so not part of the operator's configuration.
+readonly NON_CONFIG_KEYS='^(PATH|HOME|HOSTNAME|APP_UID|ASPNET_VERSION|DOTNET_VERSION|DOTNET_RUNNING_IN_CONTAINER|DOTNET_gcServer|ASPNETCORE_HTTP_PORTS|ASPNETCORE_ENVIRONMENT|ASPNETCORE_URLS|APP_ALLOWED_HOSTS)='
 
 log() { printf '[bootstrap] %s\n' "$*"; }
 fail() { printf '[bootstrap] ERROR: %s\n' "$*" >&2; exit 1; }
@@ -29,43 +37,65 @@ user="$(id -un)"
 [[ "$user" != "root" ]] || fail "Run as the runner account, not root."
 id -nG "$user" | grep -qw docker || fail "$user must be in the docker group."
 
-# 1. Deployment directory, owned by the runner account.
-if [[ ! -d "$DEPLOY_DIR" ]]; then
-  log "Creating $DEPLOY_DIR"
-  sudo install -d -o "$user" -g "$user" -m 750 "$DEPLOY_DIR"
-fi
+umask 077
 
-# 2. Runtime configuration: carried over from the hand-run deployment it replaces.
+# 1. Deployment directory.
+mkdir -p "$DEPLOY_DIR"
+chmod 750 "$DEPLOY_DIR"
+
+# 2. Runtime configuration, carried over from the deployment this replaces. Values are written
+#    straight to the file and never echoed.
 if [[ ! -f "$DEPLOY_DIR/.env" ]]; then
-  if sudo test -f "$LEGACY_ENV"; then
+  if docker inspect "$LIVE_CONTAINER" >/dev/null 2>&1; then
+    log "Capturing runtime configuration from the running $LIVE_CONTAINER container"
+    expected="$(docker inspect --format '{{len .Config.Env}}' "$LIVE_CONTAINER")"
+    docker inspect --format '{{range .Config.Env}}{{println .}}{{end}}' "$LIVE_CONTAINER" \
+      | sed '/^$/d' > "$DEPLOY_DIR/.env.all"
+    # A value spanning lines cannot be expressed in an env file; refuse rather than truncate.
+    [[ "$(wc -l < "$DEPLOY_DIR/.env.all")" == "$expected" ]] \
+      || { rm -f "$DEPLOY_DIR/.env.all"; fail "A configuration value contains a line break; create $DEPLOY_DIR/.env by hand."; }
+    grep -Ev "$NON_CONFIG_KEYS" "$DEPLOY_DIR/.env.all" > "$DEPLOY_DIR/.env" || true
+    rm -f "$DEPLOY_DIR/.env.all"
+  elif [[ -r "$LEGACY_ENV" ]]; then
     log "Copying runtime configuration from $LEGACY_ENV"
-    sudo install -o "$user" -g "$user" -m 600 "$LEGACY_ENV" "$DEPLOY_DIR/.env"
+    install -m 600 "$LEGACY_ENV" "$DEPLOY_DIR/.env"
   else
-    fail "No $DEPLOY_DIR/.env and no $LEGACY_ENV to copy. Create $DEPLOY_DIR/.env (mode 600) from .env.example."
+    fail "No $DEPLOY_DIR/.env, no running $LIVE_CONTAINER and no readable $LEGACY_ENV. Create $DEPLOY_DIR/.env (mode 600) from .env.example."
   fi
+  log "Wrote $DEPLOY_DIR/.env with $(grep -c '=' "$DEPLOY_DIR/.env") settings"
 fi
 chmod 600 "$DEPLOY_DIR/.env"
+grep -q '^SQLSERVER_CONNECTION_STRING=.' "$DEPLOY_DIR/.env" \
+  || fail "$DEPLOY_DIR/.env has no SQLSERVER_CONNECTION_STRING; the commerce database is required."
 
-# 3. Migration credential: a separate, DDL-capable principal. Never the runtime login.
+# 3. Migration login.
 if [[ ! -f "$DEPLOY_DIR/migrate.env" ]]; then
-  log "Enter the SQL Server connection string for the MIGRATION principal (input hidden)."
-  read -r -s -p "SQLSERVER_CONNECTION_STRING: " migrate_connection
-  printf '\n'
-  [[ -n "$migrate_connection" ]] || fail "A migration connection string is required."
-  (umask 077 && printf 'SQLSERVER_CONNECTION_STRING=%s\n' "$migrate_connection" > "$DEPLOY_DIR/migrate.env")
-  unset migrate_connection
+  if [[ "${MIGRATE_WITH_RUNTIME_LOGIN:-0}" == "1" ]]; then
+    log "Using the runtime login for migrations (MIGRATE_WITH_RUNTIME_LOGIN=1)"
+    grep '^SQLSERVER_CONNECTION_STRING=' "$DEPLOY_DIR/.env" > "$DEPLOY_DIR/migrate.env"
+  elif [[ -t 0 ]]; then
+    log "Enter the SQL Server connection string for the MIGRATION login (input hidden)."
+    read -r -s -p "SQLSERVER_CONNECTION_STRING: " migrate_connection
+    printf '\n'
+    [[ -n "$migrate_connection" ]] || fail "A migration connection string is required."
+    printf 'SQLSERVER_CONNECTION_STRING=%s\n' "$migrate_connection" > "$DEPLOY_DIR/migrate.env"
+    unset migrate_connection
+  else
+    fail "No $DEPLOY_DIR/migrate.env. Re-run interactively, or with MIGRATE_WITH_RUNTIME_LOGIN=1."
+  fi
 fi
 chmod 600 "$DEPLOY_DIR/migrate.env"
 
-# 4. Self-hosted GitHub Actions runner, as a systemd service under this account.
+# 4. Self-hosted GitHub Actions runner.
 if [[ ! -f "$RUNNER_DIR/.runner" ]]; then
   [[ -n "${RUNNER_TOKEN:-}" ]] || fail "Set RUNNER_TOKEN to a repository registration token."
   mkdir -p "$RUNNER_DIR"
+  chmod 700 "$RUNNER_DIR"
   cd "$RUNNER_DIR"
   archive="actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz"
   log "Downloading runner $RUNNER_VERSION"
   curl -fsSL -o "$archive" "https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/${archive}"
-  echo "${RUNNER_SHA256}  ${archive}" | sha256sum -c - || fail "Runner download failed its checksum."
+  echo "${RUNNER_SHA256}  ${archive}" | sha256sum -c --quiet - || fail "Runner download failed its checksum."
   tar xzf "$archive"
   rm -f "$archive"
   ./config.sh --unattended --replace \
@@ -76,11 +106,36 @@ if [[ ! -f "$RUNNER_DIR/.runner" ]]; then
     --work _work
 fi
 
-cd "$RUNNER_DIR"
-if [[ ! -f "$RUNNER_DIR/.service" ]]; then
-  sudo ./svc.sh install "$user"
+# 5. Run it as a systemd *user* service. Lingering starts the user manager at boot, so the
+#    runner survives logouts and reboots without a system-wide unit (and without root).
+if [[ "$(loginctl show-user "$user" -p Linger --value 2>/dev/null)" != "yes" ]]; then
+  loginctl enable-linger "$user" || fail "Could not enable lingering; ask an administrator to run: sudo loginctl enable-linger $user"
 fi
-sudo ./svc.sh start >/dev/null 2>&1 || true
-sudo ./svc.sh status | sed -n '1,5p'
 
-log "Done. $DEPLOY_DIR is ready and the runner '$RUNNER_NAME' is labelled '$RUNNER_LABELS'."
+mkdir -p "$HOME/.config/systemd/user"
+cat > "$HOME/.config/systemd/user/$RUNNER_UNIT" <<UNIT
+[Unit]
+Description=GitHub Actions runner for howtoosoftware-hosting-prototype ($RUNNER_LABELS)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+WorkingDirectory=$RUNNER_DIR
+ExecStart=$RUNNER_DIR/run.sh
+Restart=always
+RestartSec=10
+KillMode=process
+KillSignal=SIGTERM
+TimeoutStopSec=5min
+
+[Install]
+WantedBy=default.target
+UNIT
+chmod 644 "$HOME/.config/systemd/user/$RUNNER_UNIT"
+
+systemctl --user daemon-reload
+systemctl --user enable --now "$RUNNER_UNIT" >/dev/null
+sleep 3
+systemctl --user is-active --quiet "$RUNNER_UNIT" || fail "Runner service did not start: systemctl --user status $RUNNER_UNIT"
+
+log "Done. $DEPLOY_DIR is ready and runner '$RUNNER_NAME' ($RUNNER_LABELS) is running as $RUNNER_UNIT."

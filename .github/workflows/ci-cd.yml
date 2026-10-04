@@ -140,6 +140,11 @@ jobs:
           sparse-checkout: deploy
           persist-credentials: false
 
+      # The runner account's own ~/.docker/config.json holds other stacks' registry logins;
+      # logging in (and out) there would clobber them.
+      - name: Isolate Docker credentials
+        run: echo "DOCKER_CONFIG=${RUNNER_TEMP}/docker-config" >> "$GITHUB_ENV"
+
       - name: Log in to GHCR
         uses: docker/login-action@v4
         with:
