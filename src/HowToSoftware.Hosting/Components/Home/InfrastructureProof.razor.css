@@ -1,0 +1,21 @@
+/* Evidence is the photograph and the service-backed spec sheet, without ornamental badges. */
+.proof { padding-block: clamp(3.5rem, 6vw, 5.5rem); border-top: 1px solid var(--ht-edge-strong); }
+.proof-grid { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); align-items: center; gap: clamp(2rem, 5vw, 5rem); }
+.proof-visual { position: relative; min-width: 0; }
+.proof-visual ::deep .hts-plate { margin: 0; }
+.proof-visual ::deep .hts-plate-frame { border: 1px solid var(--ht-edge-strong); border-radius: 8px; }
+.proof-visual ::deep .hts-plate-caption { display: none; }
+.proof-visual ::deep .hts-plate-image { transition: transform 450ms var(--ht-ease-out); }
+.proof-caption { padding-top: .85rem; color: var(--ht-ink-muted); font-size: .8125rem; line-height: 1.7; }
+.proof-copy { min-width: 0; }
+.proof-copy .storefront-title { max-width: 22ch; font-size: clamp(2rem, 1.6rem + 2vw, 3rem); }
+.proof-copy .storefront-copy { max-width: 34rem; margin-top: 1.3rem; font-size: 1rem; line-height: 1.8; }
+.proof-specs { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin-block: 1.8rem 1rem; border-top: 1px solid var(--ht-edge-strong); transition: opacity 260ms ease, transform 260ms ease; }
+.proof-specs > div { min-width: 0; padding: 1rem 1rem 1rem 0; border-bottom: 1px solid var(--ht-edge); }
+.proof-specs dt { margin-bottom: .55rem; color: var(--ht-ink-muted); font-size: .8125rem; line-height: 1.6; }
+.proof-specs dd { margin: 0; color: var(--ht-ink); font-size: 1rem; font-weight: 600; line-height: 1.6; letter-spacing: -.015em; overflow-wrap: anywhere; }
+.proof-copy > .hts-text-link { min-height: 44px; font-size: .9375rem; }
+@media (hover:hover) and (pointer:fine) { .proof-visual:hover ::deep .hts-plate-image { transform: scale(1.02); } }
+@media (max-width:800px) { .proof-grid { grid-template-columns: 1fr; gap: 2rem; } .proof-visual { max-width: 34rem; } .proof-visual ::deep .hts-plate-frame { aspect-ratio: 4/3 !important; } }
+@media (max-width:380px) { .proof-specs { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion:reduce) { .proof-specs, .proof-visual ::deep .hts-plate-image { transition: none; } .proof-visual:hover ::deep .hts-plate-image { transform: none; } }

@@ -1,103 +1,53 @@
-@*
-    The plans, in one paragraph and a price, on the home page.
-
-    The full grid lives at /game-hosting/project-zomboid. Eight cards is a page, not a section, and putting
-    them here would make the home page mostly a price list for one game - which is the opposite
-    of what a platform's front page is for.
-
-    Every figure below is read from the catalogue rather than written out, so the teaser cannot
-    fall behind the ladder it is teasing.
-*@
-
+@using System.Globalization
 @inject IPlanCatalogService Catalog
-@inject IStringLocalizer<HomeText> Text
+@inject IGameCatalogService Games
+@inject IStringLocalizer<StorefrontText> Text
 
-<section class="teaser" id="plans" aria-labelledby="teaser-heading" data-motion="section">
-    <div class="hts-container hts-container--wide teaser-inner" data-reveal>
-        <div class="teaser-copy">
-            <p class="teaser-kicker" data-text-effect="flicker" data-motion-step="label">
-                <span class="kicker-index">@Text["PlansTeaser.Index"]</span>
-                @Text["PlansTeaser.Kicker"]
-            </p>
-
-            <h2 id="teaser-heading" class="teaser-title" data-text-effect="rise" data-motion-step="headline">
-                @Text["PlansTeaser.Title"]
-            </h2>
-
-            <p class="teaser-lede" data-motion-step="copy">@Text["PlansTeaser.Lede"]</p>
-
-            <ul class="teaser-points" data-motion-step="details">
-                @if (Smallest is { } small && Largest is { } large)
-                {
-                    <li>@Text["PlansTeaser.Range", small.MemoryGb, large.MemoryGb, Catalog.Plans.Count]</li>
-                    <li>@Text["PlansTeaser.Storage", small.DiskGb, large.DiskGb]</li>
-                }
-                <li>@Text["PlansTeaser.Custom"]</li>
-            </ul>
-
-            <CtaButton Href="@SiteRoutes.GameHosting"
-                       Variant="CtaVariant.Primary"
-                       TrailingIcon="IconName.ArrowRight"
-                       CssClass="teaser-cta">
-                @Text["PlansTeaser.Cta"]
-            </CtaButton>
+<section class="teaser" id="plans" aria-labelledby="teaser-heading">
+    <div class="hts-container hts-container--wide">
+        <div class="teaser-head">
+            <div><p class="storefront-kicker"><span>02</span>@Text["Plans.Kicker"]</p><h2 id="teaser-heading" class="storefront-title"><MaskReveal>@Text["Plans.Title"]</MaskReveal></h2></div>
+            <p class="storefront-copy" data-reveal>@Text["Plans.Copy"]</p>
         </div>
-
-        <div class="teaser-price" data-spotlight data-motion-step="visual">
-            @if (EntryPrice is { } price)
+        <div class="preview-plans">
+            @foreach (var (plan, index) in PreviewPlans.Select((plan, index) => (plan, index)))
             {
-                <p class="price-label">@Text["PlansTeaser.From"]</p>
-                <p class="price-figure">
-                    <span class="price-symbol">@Catalog.CurrencySymbol</span>@price.ToString("0.00", Invariant)
-                </p>
-                <p class="price-unit">@Text["PlansTeaser.PerMonth"]</p>
-
-                @if (Smallest is { } entry)
-                {
-                    <dl class="price-spec">
-                        <div>
-                            <dt>@Text["Plans.MemoryLabel"]</dt>
-                            <dd>@entry.MemoryGb @Text["Plans.MemoryUnit"]</dd>
-                        </div>
-                        <div>
-                            <dt>@Text["Plans.SpecCpu"]</dt>
-                            <dd>@Text["Plans.CpuValue", entry.CpuPercent]</dd>
-                        </div>
-                        <div>
-                            <dt>@Text["Plans.SpecStorage"]</dt>
-                            <dd>@Text["Plans.StorageValue", entry.DiskGb]</dd>
-                        </div>
+                <article class="preview-plan @(plan.IsRecommended ? "is-recommended" : null)" data-reveal style="--hts-reveal-delay: @(index * 70)ms">
+                    <div class="plan-top"><h3>@plan.Name</h3>@if (plan.IsRecommended) { <span class="plan-badge">@Text["Plans.Recommended"]</span> }</div>
+                    <p class="plan-memory"><strong>@plan.MemoryGb</strong><span>GB @Text["Plans.Memory"]</span></p>
+                    <dl class="plan-specs">
+                        <div><dt>@Text["Plans.Cpu"]</dt><dd>@plan.CpuPercent%</dd></div>
+                        <div><dt>@Text["Plans.Storage"]</dt><dd>@plan.DiskGb GB</dd></div>
+                        <div><dt>@Text["Plans.Backups"]</dt><dd>@plan.BackupLimit</dd></div>
                     </dl>
-                }
-            }
-            else
-            {
-                @* No rate card on this deployment. The teaser still says what the ladder is; it
-                   simply has no figure to lead with. *@
-                <p class="price-label">@Text["PlansTeaser.From"]</p>
-                <p class="price-pending">@Text["PlansTeaser.Unpriced"]</p>
+                    <div class="plan-price">
+                        @if (Catalog.Quote(plan, BillingPeriod.Monthly) is { } quote)
+                        {
+                            <span>@Text["Plans.From"]</span>
+                            <p><strong>@Catalog.CurrencySymbol@quote.FinalAmount.ToString("0.00", CultureInfo.InvariantCulture)</strong><span>@Text["Plans.PerMonth"]</span></p>
+                            <CtaButton Href="@SiteRoutes.Review(Games.Primary.Slug, plan.Slug, BillingPeriod.Monthly)" Variant="@(plan.IsRecommended ? CtaVariant.Primary : CtaVariant.Secondary)" TrailingIcon="IconName.ArrowRight">@Text["Plans.View"]</CtaButton>
+                        }
+                        else
+                        {
+                            <p class="pending">@Text["Plans.Pending"]</p>
+                            <CtaButton Href="@Games.Primary.PageHref" Variant="CtaVariant.Secondary" TrailingIcon="IconName.ArrowRight">@Text["Plans.View"]</CtaButton>
+                        }
+                    </div>
+                </article>
             }
         </div>
+        <div class="teaser-foot"><span>@Games.Primary.Name</span><a class="hts-text-link" href="@SiteRoutes.ProjectZomboidPlans">@Text["Plans.All"] <Icon Name="IconName.ArrowRight" /></a></div>
     </div>
 </section>
 
 @code {
-    private static readonly System.Globalization.CultureInfo Invariant =
-        System.Globalization.CultureInfo.InvariantCulture;
-
-    private HostingPlan? Smallest => Catalog.Plans.Count == 0 ? null : Catalog.Plans[0];
-
-    private HostingPlan? Largest => Catalog.Plans.Count == 0 ? null : Catalog.Plans[^1];
-
-    /// <summary>
-    /// The cheapest plan that has a price, which is not assumed to be the smallest one - an
-    /// override on the entry tier could put it above the next.
-    /// </summary>
-    private decimal? EntryPrice =>
-        Catalog.Plans.Where(plan => plan.IsPriced).Min(plan => plan.PriceMonthly);
+    private IReadOnlyList<HostingPlan> PreviewPlans
+    {
+        get
+        {
+            var plans = Games.PlansFor(Games.Primary);
+            if (plans.Count == 0) return [];
+            return new[] { plans[0], plans.FirstOrDefault(p => p.IsRecommended) ?? plans[plans.Count / 2], plans[^1] }.DistinctBy(p => p.Slug).ToArray();
+        }
+    }
 }
-
-@*
-    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
-    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
-*@

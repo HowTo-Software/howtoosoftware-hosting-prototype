@@ -1,0 +1,58 @@
+@using System.Globalization
+@inject IGameCatalogService Games
+@inject IPlanCatalogService Catalog
+@inject IOptions<SiteOptions> Site
+@inject IStringLocalizer<StorefrontText> Text
+
+<section class="gateway" id="games" aria-labelledby="games-heading">
+    <div class="hts-container hts-container--wide">
+        <div class="gateway-head">
+            <div><p class="storefront-kicker"><span>01</span>@Text["Games.Kicker"]</p><h2 id="games-heading" class="storefront-title"><MaskReveal>@Text["Games.Title"]</MaskReveal></h2></div>
+            <p class="storefront-copy" data-reveal>@Text["Games.Copy"]</p>
+        </div>
+        <div class="game-grid">
+            @foreach (var (game, index) in Games.Games.Select((game, index) => (game, index)))
+            {
+                var price = Games.StartingPrice(game);
+                var plans = Games.PlansFor(game);
+                <article class="game-card @(game.IsAvailable ? "game-card--available" : "game-card--planned")" data-reveal style="--hts-reveal-delay: @(index * 70)ms">
+                    <div class="game-art"><GameCover Game="game" Tag="@(game.Slug == StaticGameCatalogService.MinecraftSlug ? Text["Games.TrialAvailable"] : game.IsAvailable ? Text["Games.Available"] : Text["Games.Planned"])" /></div>
+                    <div class="game-details">
+                        <span class="game-category">@game.Tagline</span>
+                        <div class="game-title-row"><h3>@game.Name</h3></div>
+                        <p class="game-description">@game.Summary</p>
+                        <div class="game-bottom">
+                            @if (game.Slug == StaticGameCatalogService.MinecraftSlug)
+                            {
+                                <div class="game-from"><span>@Text["Games.TrialAvailable"]</span><strong>6 GB <small>RAM</small></strong><p>25 GB · @Text["Hero.Storage"]</p></div>
+                                <CtaButton Href="/game-hosting/minecraft" TrailingIcon="IconName.ArrowRight">@Text["Hero.TrialAction"]</CtaButton>
+                            }
+                            else if (game.IsAvailable)
+                            {
+                                <div class="game-from">
+                                    @if (price is { } amount)
+                                    {
+                                        <span>@Text["Games.From"]</span><strong>@Catalog.CurrencySymbol@amount.ToString("0.00", CultureInfo.InvariantCulture)<small>@Text["Plans.PerMonth"]</small></strong>
+                                    }
+                                    else { <strong class="unpriced">@Text["Games.Pending"]</strong> }
+                                    @if (plans.Count > 0) { <p>@Text["Games.Range", plans.Count, plans[0].MemoryGb, plans[^1].MemoryGb]</p> }
+                                </div>
+                                <CtaButton Href="@game.PageHref" TrailingIcon="IconName.ArrowRight">@Text["Games.Plans"]</CtaButton>
+                            }
+                            else
+                            {
+                                <a class="hts-text-link" href="@NotifyHref(game)">@Text["Games.Notify"] <Icon Name="IconName.ArrowRight" /></a>
+                            }
+                        </div>
+                    </div>
+                </article>
+            }
+        </div>
+        <div class="gateway-foot"><a href="@RequestHref">@Text["Games.Request"]</a><a class="hts-text-link" href="@SiteRoutes.GameHosting">@Text["Games.All"] <Icon Name="IconName.ArrowRight" /></a></div>
+    </div>
+</section>
+
+@code {
+    private string RequestHref => $"mailto:{Site.Value.ContactEmail}?subject={Uri.EscapeDataString(Text["Games.RequestSubject"].Value)}";
+    private string NotifyHref(HostedGame game) => $"mailto:{Site.Value.ContactEmail}?subject={Uri.EscapeDataString(Text["Games.NotifySubject", game.Name].Value)}";
+}

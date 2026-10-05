@@ -19,19 +19,19 @@
 @inject IStringLocalizer<HomeText> Text
 @inject IOptions<SiteOptions> Site
 
-<section class="build" id="custom-build" aria-labelledby="build-heading" data-motion="section">
+<section class="build" id="custom-build" aria-labelledby="build-heading">
     <div class="hts-container hts-container--wide build-inner">
-        <header class="build-copy" data-reveal="left">
-            <p class="build-kicker" data-text-effect="flicker" data-motion-step="label">
+        <header class="build-copy">
+            <p class="build-kicker">
                 <span class="kicker-index">@Text["CustomBuild.Index"]</span>
                 @Text["CustomBuild.Kicker"]
             </p>
 
-            <h2 id="build-heading" class="build-title" data-text-effect="rise" data-motion-step="headline">
+            <h2 id="build-heading" class="build-title">
                 @Text["CustomBuild.Title"]
             </h2>
 
-            <p class="build-lede" data-motion-step="copy">@Text["CustomBuild.Lede"]</p>
+            <p class="build-lede">@Text["CustomBuild.Lede"]</p>
 
             @if (_bounds is { } bounds)
             {
@@ -42,7 +42,7 @@
             }
         </header>
 
-        <div class="build-panel" data-reveal="right" data-spotlight data-motion-step="visual">
+        <div class="build-panel">
             @if (_bounds is { } range)
             {
                 <div class="build-fields">
@@ -57,7 +57,7 @@
                                    value="@_request.MemoryGb"
                                    @oninput="OnMemoryChanged"
                                    aria-describedby="build-memory-value" />
-                            <output id="build-memory-value" class="field-value">
+                            <output id="build-memory-value" for="build-memory" class="field-value">
                                 @_request.MemoryGb<span class="field-unit">@Text["CustomBuild.MemoryUnit"]</span>
                             </output>
                         </div>
@@ -74,7 +74,7 @@
                                    value="@_request.CpuPercent"
                                    @oninput="OnCpuChanged"
                                    aria-describedby="build-cpu-value" />
-                            <output id="build-cpu-value" class="field-value">
+                            <output id="build-cpu-value" for="build-cpu" class="field-value">
                                 @_request.CpuPercent<span class="field-unit">%</span>
                             </output>
                         </div>
@@ -91,7 +91,7 @@
                                    value="@_request.DiskGb"
                                    @oninput="OnDiskChanged"
                                    aria-describedby="build-disk-value" />
-                            <output id="build-disk-value" class="field-value">
+                            <output id="build-disk-value" for="build-disk" class="field-value">
                                 @_request.DiskGb<span class="field-unit">@Text["CustomBuild.DiskUnit"]</span>
                             </output>
                         </div>
@@ -121,7 +121,7 @@
                     </div>
                 </div>
 
-                <div class="build-quote">
+                <aside class="build-quote" aria-label="@Text["CustomBuild.EstimateLabel"]">
                     @if (_estimate is { } estimate)
                     {
                         <p class="quote-label">@Text["CustomBuild.EstimateLabel"]</p>
@@ -198,7 +198,7 @@
 
                         <p class="quote-send-note">@Text["CustomBuild.SendNote"]</p>
                     }
-                </div>
+                </aside>
             }
         </div>
     </div>

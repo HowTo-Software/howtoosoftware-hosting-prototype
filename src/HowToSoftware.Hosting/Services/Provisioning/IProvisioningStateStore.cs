@@ -9,6 +9,8 @@ public interface IProvisioningStateStore
 {
     Task BeginAsync(Guid orderId, CancellationToken cancellationToken = default);
     Task MarkCreatedAsync(Guid orderId, ProvisioningResult result, CancellationToken cancellationToken = default);
+    Task MarkReusedAsync(Guid orderId, ProvisioningResult result, CancellationToken cancellationToken = default) =>
+        MarkCreatedAsync(orderId, result, cancellationToken);
     Task MarkInstallingAsync(Guid orderId, CancellationToken cancellationToken = default);
     Task MarkOnlineAsync(Guid orderId, CancellationToken cancellationToken = default);
     Task MarkFailedAsync(Guid orderId, string reason, CancellationToken cancellationToken = default);
@@ -17,6 +19,7 @@ public interface IProvisioningStateStore
 /// <summary>Local-development implementation used while the independent database is absent.</summary>
 public sealed class NullProvisioningStateStore : IProvisioningStateStore
 {
+    public Task MarkReusedAsync(Guid orderId, ProvisioningResult result, CancellationToken cancellationToken = default) => Task.CompletedTask;
     public Task BeginAsync(Guid orderId, CancellationToken cancellationToken = default) => Task.CompletedTask;
     public Task MarkCreatedAsync(Guid orderId, ProvisioningResult result, CancellationToken cancellationToken = default) => Task.CompletedTask;
     public Task MarkInstallingAsync(Guid orderId, CancellationToken cancellationToken = default) => Task.CompletedTask;
@@ -112,6 +115,9 @@ public sealed class SqlServerProvisioningStateStore(
 
     public Task MarkInstallingAsync(Guid orderId, CancellationToken cancellationToken = default) =>
         UpdateAsync(orderId, "installing", "installation_started", "Game installation started.", null, null, cancellationToken);
+
+    public Task MarkReusedAsync(Guid orderId, ProvisioningResult result, CancellationToken cancellationToken = default) =>
+        UpdateAsync(orderId, "online", "trial_converted", "Existing trial server upgraded; world files preserved.", result, null, cancellationToken);
 
     public Task MarkOnlineAsync(Guid orderId, CancellationToken cancellationToken = default) =>
         UpdateAsync(orderId, "online", "server_online", "Server installation completed and the service is active.", null, null, cancellationToken);

@@ -1,13 +1,6 @@
 @*
-    The game catalogue: the first step of buying a server.
-
-    A visitor chooses the game before they see a price, because that is the decision they
-    arrived with. Project Zomboid is the product and takes the wide tile; the planned game and
-    the "ask for another" tile take the narrow column, so the hierarchy on the page is the
-    hierarchy of the business.
-
-    Nothing here is priced by the page. The "from" figure is the cheapest priced plan in the
-    catalogue for that game, read at render time.
+    Choose the game before configuring the server. The available product leads the storefront;
+    roadmap games and requests remain secondary. Every displayed price comes from the catalogue.
 *@
 
 @page "/game-hosting"
@@ -26,14 +19,26 @@
 
 <section class="catalog" aria-labelledby="catalog-heading" data-motion="scene" data-scene>
     <div class="hts-container hts-container--wide">
-        <header class="catalog-head" data-reveal>
-            <p class="catalog-kicker" data-motion-step="label">
-                <span class="kicker-index">01</span>
-                <span class="hts-label">@Text["GameHosting.Kicker"]</span>
-            </p>
-            <h1 id="catalog-heading" class="catalog-title" data-text-effect="rise" data-motion-step="headline">@Text["GameHosting.Title"]</h1>
-            <p class="catalog-lede" data-motion-step="copy">@Text["GameHosting.Lede"]</p>
-        </header>
+        <div class="catalog-intro">
+            <header class="catalog-head" data-reveal>
+                <p class="catalog-kicker" data-motion-step="label">
+                    <span class="kicker-index">01</span>
+                    <span class="hts-label">@Text["GameHosting.Kicker"]</span>
+                </p>
+                <h1 id="catalog-heading" class="catalog-title" data-text-effect="rise" data-motion-step="headline">@Text["GameHosting.Title"]</h1>
+                <p class="catalog-lede" data-motion-step="copy">@Text["GameHosting.Lede"]</p>
+            </header>
+
+            <aside class="catalog-guide" data-reveal aria-labelledby="catalog-guide-heading">
+                <p class="hts-label" id="catalog-guide-heading">@Text["GameHosting.HowKicker"]</p>
+                <ol class="how">
+                    <li><span class="how-index hts-mono">01</span><span>@Text["GameHosting.Step1"]</span></li>
+                    <li><span class="how-index hts-mono">02</span><span>@Text["GameHosting.Step2"]</span></li>
+                    <li><span class="how-index hts-mono">03</span><span>@Text["GameHosting.Step3"]</span></li>
+                    <li><span class="how-index hts-mono">04</span><span>@Text["GameHosting.Step4"]</span></li>
+                </ol>
+            </aside>
+        </div>
 
         <ul class="games" data-motion-stagger>
             @foreach (var (game, index) in Games.Games.Select((g, i) => (g, i)))
@@ -44,7 +49,6 @@
 
                 <li class="game @(isPrimary ? "is-primary" : null) @(game.IsAvailable ? "is-available" : "is-planned")"
                     data-reveal
-                    data-spotlight
                     data-motion-step="card"
                     style="--hts-reveal-delay: @(index * 90)ms">
 
@@ -133,15 +137,10 @@
             </li>
         </ul>
 
-        @* The four steps, stated once so nobody has to guess where the button goes. *@
-        <ol class="how" data-reveal data-motion-step="details" aria-label="@Text["GameHosting.HowKicker"]">
-            <li><span class="how-index hts-mono">01</span><span>@Text["GameHosting.Step1"]</span></li>
-            <li><span class="how-index hts-mono">02</span><span>@Text["GameHosting.Step2"]</span></li>
-            <li><span class="how-index hts-mono">03</span><span>@Text["GameHosting.Step3"]</span></li>
-            <li><span class="how-index hts-mono">04</span><span>@Text["GameHosting.Step4"]</span></li>
-        </ol>
     </div>
 </section>
+
+<TrialServerBanner />
 
 @code {
     private static readonly CultureInfo Invariant = CultureInfo.InvariantCulture;

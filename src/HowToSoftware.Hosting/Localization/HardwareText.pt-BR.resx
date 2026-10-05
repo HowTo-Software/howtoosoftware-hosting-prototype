@@ -28,13 +28,13 @@
     <value>HARDWARE</value>
   </data>
   <data name="Hero.Line1" xml:space="preserve">
-    <value>Infraestrutura</value>
+    <value>Infraestrutura própria.</value>
   </data>
   <data name="Hero.Line2" xml:space="preserve">
-    <value>construída para</value>
+    <value>Feita para</value>
   </data>
   <data name="Hero.Line3" xml:space="preserve">
-    <value>mundos persistentes.</value>
+    <value>o seu mundo.</value>
   </data>
   <data name="Hero.Rail.Platform" xml:space="preserve">
     <value>PLATAFORMA</value>
@@ -217,7 +217,7 @@
     <value>As especificações são lidas dos hosts em execução, não copiadas de uma ficha técnica. Onde um número não foi confirmado, ele fica de fora em vez de ser estimado.</value>
   </data>
   <data name="Photo.Pending" xml:space="preserve">
-    <value>FOTO PENDENTE</value>
+    <value>Fotografia em breve</value>
   </data>
   <data name="Photo.Slot.RackFront" xml:space="preserve">
     <value>Rack, na sala</value>
@@ -409,7 +409,7 @@
     <value>Site, banco de dados e cargas de jogo são papéis de infraestrutura separados. Uma manutenção ou atualização em um tem muito menos como levar os outros junto, e uma falha tem onde menos se esconder.</value>
   </data>
   <data name="Hero.Lede" xml:space="preserve">
-    <value>Duas máquinas num rack que é nosso, numa sala onde a gente entra. Tudo abaixo é o que tem nele e como está arranjado.</value>
+    <value>Hardware próprio, dois nós de computação e uma camada de gerenciamento separada. Conheça a estrutura do seu servidor, do processador ao painel de controle.</value>
   </data>
   <data name="Physical.Lede" xml:space="preserve">
     <value>As especificações abaixo são lidas dos hosts em execução, não copiadas de uma ficha técnica. Onde um número não foi confirmado, ele fica de fora em vez de ser estimado.</value>
@@ -443,5 +443,89 @@
   </data>
   <data name="Physical.PhotoLabel" xml:space="preserve">
     <value>O RACK</value>
+  </data>
+  <data name="Overview.DetailsLink" xml:space="preserve">
+    <value>Como a plataforma funciona</value>
+  </data>
+  <data name="Overview.RackCaption" xml:space="preserve">
+    <value>O rack de computação por trás da hospedagem {0}.</value>
+  </data>
+  <data name="Overview.SpecHeading" xml:space="preserve">
+    <value>Hardware por nó de computação</value>
+  </data>
+  <data name="Overview.SpecNote" xml:space="preserve">
+    <value>Estas são as especificações da máquina. A memória, a alocação de CPU e o armazenamento do seu servidor são definidos pelo plano escolhido.</value>
+  </data>
+  <data name="Overview.GalleryTitle" xml:space="preserve">
+    <value>Conheça o nosso hardware de perto.</value>
+  </data>
+  <data name="Overview.GalleryLede" xml:space="preserve">
+    <value>Fotografias do nosso próprio rack: a parte frontal, o interior e os equipamentos instalados.</value>
+  </data>
+  <data name="Overview.OperationsKicker" xml:space="preserve">
+    <value>Por trás do seu servidor</value>
+  </data>
+  <data name="Overview.OperationsTitle" xml:space="preserve">
+    <value>Uma plataforma. Responsabilidades separadas.</value>
+  </data>
+  <data name="Overview.OperationsLede" xml:space="preserve">
+    <value>O site, o painel e os jogos têm funções distintas. Abra um tópico para entender como essas partes se conectam.</value>
+  </data>
+  <data name="Overview.ClosingTitle" xml:space="preserve">
+    <value>Um lugar para o seu próximo mundo.</value>
+  </data>
+  <data name="Overview.ClosingNote" xml:space="preserve">
+    <value>Compare os planos ou solicite um servidor de teste antes de escolher a sua configuração.</value>
+  </data>
+  <data name="Overview.TrialCta" xml:space="preserve">
+    <value>Solicitar servidor de teste</value>
+  </data>
+  <data name="Overview.Compute.Hint" xml:space="preserve">
+    <value>Jogos executados nos nós de computação</value>
+  </data>
+  <data name="Overview.Compute.Body" xml:space="preserve">
+    <value>Os servidores de jogo rodam em nós de computação, separados do site público. O painel baseado em Pterodactyl gerencia a carga; o jogo em si é executado no nó.</value>
+  </data>
+  <data name="Overview.Memory.Hint" xml:space="preserve">
+    <value>Limites definidos pelo seu plano</value>
+  </data>
+  <data name="Overview.Memory.Body" xml:space="preserve">
+    <value>A memória escolhida no plano é aplicada à instância do seu servidor. O total de RAM da máquina e a memória alocada ao seu servidor são medidas diferentes.</value>
+  </data>
+  <data name="Overview.Storage.Hint" xml:space="preserve">
+    <value>Dados do mundo em NVMe local</value>
+  </data>
+  <data name="Overview.Storage.Body" xml:space="preserve">
+    <value>Os arquivos do mundo ficam no armazenamento local do nó que executa o jogo. Os backups de infraestrutura são mantidos separados dos servidores de origem.</value>
+  </data>
+  <data name="Overview.Network.Hint" xml:space="preserve">
+    <value>Acesso público e serviços internos separados</value>
+  </data>
+  <data name="Overview.Network.Body" xml:space="preserve">
+    <value>O site, os nós de jogo e os serviços de apoio são separados. Os componentes internos se comunicam por caminhos privados; os jogadores acessam os pontos públicos do jogo.</value>
+  </data>
+  <data name="Overview.Database.Hint" xml:space="preserve">
+    <value>Estado do painel em serviço separado</value>
+  </data>
+  <data name="Overview.Database.Body" xml:space="preserve">
+    <value>O painel guarda seu estado em um serviço MariaDB central, separado da aplicação web e dos nós de jogo. As migrações de esquema fazem parte da implantação do painel.</value>
+  </data>
+  <data name="Overview.Deployment.Hint" xml:space="preserve">
+    <value>Implantação repetível por contêiner</value>
+  </data>
+  <data name="Overview.Deployment.Body" xml:space="preserve">
+    <value>O painel é entregue como imagem de contêiner. As versões recriam o contêiner e aplicam as migrações necessárias pelo processo de implantação.</value>
+  </data>
+  <data name="Overview.Allocation.Hint" xml:space="preserve">
+    <value>Uma instância no nó de jogo</value>
+  </data>
+  <data name="Overview.Allocation.Body" xml:space="preserve">
+    <value>Ao criar um servidor, a camada de gerenciamento escolhe um nó de jogo e aplica os recursos do plano. O jogo é executado nesse nó, separado do site.</value>
+  </data>
+  <data name="Overview.Reliability.Hint" xml:space="preserve">
+    <value>Manutenção por serviço e função</value>
+  </data>
+  <data name="Overview.Reliability.Body" xml:space="preserve">
+    <value>Site, banco de dados e jogos têm papéis de infraestrutura separados. Essa organização permite direcionar a manutenção a um serviço, sem tratar toda a plataforma como uma única aplicação.</value>
   </data>
 </root>

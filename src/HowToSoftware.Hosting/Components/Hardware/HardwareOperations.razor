@@ -1,0 +1,35 @@
+@inject IStringLocalizer<HardwareText> Text
+@inject IInfrastructureContentService Content
+
+@* Native disclosures keep the technical information available without eight full-height scenes.
+   Existing chapter fragment IDs remain stable. No script or interactive circuit is required. *@
+<section class="hardware-operations" id="topology" aria-labelledby="operations-heading" data-motion="scene" data-scene>
+    <div class="hts-container hts-container--wide operations-inner">
+        <header class="operations-head" data-reveal>
+            <p class="operations-kicker" data-motion-step="label">@Text["Overview.OperationsKicker"]</p>
+            <h2 id="operations-heading" class="operations-heading" data-motion-step="headline">@Text["Overview.OperationsTitle"]</h2>
+            <p class="operations-lede" data-motion-step="copy">@Text["Overview.OperationsLede"]</p>
+        </header>
+
+        <div class="operations-list" data-reveal>
+            @foreach (var chapter in Content.Chapters)
+            {
+                <details class="operation" id="@chapter.Id" name="hardware-details" @key="chapter.Id">
+                    <summary class="operation-summary">
+                        <span class="operation-label">
+                            <strong>@Text[$"{chapter.Topic}.Title"]</strong>
+                            <span class="operation-hint">@Text[$"Overview.{chapter.Topic}.Hint"]</span>
+                        </span>
+                        <span class="operation-mark" aria-hidden="true"></span>
+                    </summary>
+                    <p class="operation-body">@Text[$"Overview.{chapter.Topic}.Body"]</p>
+                </details>
+            }
+        </div>
+    </div>
+</section>
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

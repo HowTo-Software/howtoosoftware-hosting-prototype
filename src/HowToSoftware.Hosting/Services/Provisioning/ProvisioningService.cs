@@ -323,8 +323,8 @@ public sealed class ProvisioningService : IProvisioningService
     /// Finds the customer's panel account, or creates one.
     /// </summary>
     /// <remarks>
-    /// Keyed on our own external id rather than on the email address, so a customer who changes
-    /// their email keeps the same panel account and their servers with it.
+    /// HTS external ids take precedence. A verified billing email may also resolve an existing
+    /// customer account created directly in the panel; the development lab keeps its own ids.
     /// </remarks>
     private async Task<(PterodactylUser User, bool WasReused)> ResolveUserAsync(
         ProvisioningRequest request,
@@ -338,8 +338,15 @@ public sealed class ProvisioningService : IProvisioningService
             .FindUserByExternalIdAsync(externalId, cancellationToken)
             .ConfigureAwait(false);
 
+        if (existing is null && !request.IsTest)
+        {
+            existing = await _panel.FindUserByEmailAsync(request.CustomerEmail, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
         if (existing is not null)
         {
+            EnsureCustomerAccount(existing);
             // The customer id is derived from the email address, so it is not logged; the
             // request id correlates the entry instead.
             _logger.LogInformation(
@@ -352,7 +359,10 @@ public sealed class ProvisioningService : IProvisioningService
 
         var localPart = request.CustomerEmail.Split('@', 2)[0];
 
-        var created = await _panel.CreateUserAsync(
+        PterodactylUser created;
+        try
+        {
+            created = await _panel.CreateUserAsync(
             new CreateUserRequest
             {
                 ExternalId = externalId,
@@ -365,7 +375,26 @@ public sealed class ProvisioningService : IProvisioningService
                 Password = PterodactylNaming.GeneratePassword(),
                 RootAdmin = false
             },
-            cancellationToken).ConfigureAwait(false);
+                cancellationToken).ConfigureAwait(false);
+        }
+        catch (PterodactylApiException exception)
+            when (!request.IsTest && (exception.StatusCode == 422
+                || exception.Failure is PterodactylFailure.AlreadyExists))
+        {
+            // A concurrent signup can win email/external-id uniqueness after our lookup.
+            // Recover by identity rather than masking an unrelated validation failure.
+            var raced = await _panel.FindUserByExternalIdAsync(externalId, cancellationToken)
+                .ConfigureAwait(false)
+                ?? await _panel.FindUserByEmailAsync(request.CustomerEmail, cancellationToken)
+                    .ConfigureAwait(false);
+            if (raced is null)
+            {
+                throw;
+            }
+            EnsureCustomerAccount(raced);
+            return (raced, true);
+        }
+        EnsureCustomerAccount(created);
 
         _logger.LogInformation(
             "Created panel user {PanelUserId} for request {RequestId}",
@@ -373,6 +402,15 @@ public sealed class ProvisioningService : IProvisioningService
             request.RequestId);
 
         return (created, false);
+    }
+
+    private static void EnsureCustomerAccount(PterodactylUser user)
+    {
+        if (user.Id <= 0 || user.RootAdmin)
+        {
+            throw new PterodactylApiException(PterodactylFailure.Forbidden,
+                "An administrative panel account cannot own a provisioned customer server.");
+        }
     }
 
     /// <summary>

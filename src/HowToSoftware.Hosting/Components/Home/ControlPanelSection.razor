@@ -2,9 +2,8 @@
     Product reveal: the control panel at close to full page width.
 
     Everything interactive here is Blazor state - the sidebar view, the power controls and the
-    transition the instance goes through. The staged reveal (frame, sidebar, metrics, console)
-    is CSS keyed off the `is-revealed` class the scroll observer adds, so the content is
-    immediately usable and never waits on an animation to finish.
+    transition the instance goes through. This is a labelled preview, with an immediately
+    readable interface and short transitions only when a visitor changes a control.
 *@
 
 @rendermode InteractiveServer
@@ -14,26 +13,27 @@
 @inject IStringLocalizer<HomeText> Text
 @inject IStringLocalizer<CommonText> Common
 
-<section class="cp" id="control-panel" aria-labelledby="control-panel-heading" data-motion="scene" data-scene>
-    <div class="hts-container hts-container--wide cp-head" data-reveal>
-        <p class="cp-kicker" data-text-effect="flicker" data-motion-step="label">
-            <span class="kicker-index">04</span>
+<section class="cp" id="control-panel" aria-labelledby="control-panel-heading">
+    <div class="hts-container hts-container--wide cp-head">
+        <p class="cp-kicker">
+            <span class="kicker-index">03</span>
             @Text["Cp.Kicker"]
         </p>
-        <h2 id="control-panel-heading" class="cp-title" data-text-effect="rise" data-motion-step="headline">
+        <h2 id="control-panel-heading" class="cp-title">
             @Text["Cp.Line1"]<br />
             <span class="cp-accent">@Text["Cp.Accent"]</span>
         </h2>
-        <p class="cp-lede" data-motion-step="copy">@Text["Cp.Lede"]</p>
+        <p class="cp-lede">@Text["Cp.Lede"]</p>
     </div>
 
-    <div class="cp-stage" data-reveal="scale" data-motion-step="visual">
-        <div class="app">
+    <div class="hts-container hts-container--wide cp-stage">
+        <div class="app technical-frame">
             <div class="app-chrome">
-                <span class="chrome-dots"><i></i><i></i><i></i></span>
+                <span class="chrome-dots" aria-hidden="true"><i></i><i></i><i></i></span>
                 <span class="chrome-url">
-                    <span class="url-lock"></span>
-                    panel.howtoosoftware.com / knox-county-01
+                    <span class="url-lock" aria-hidden="true"></span>
+                    <span class="url-host">@PanelHost</span>
+                    <span class="url-path">/ knox-county-01</span>
                 </span>
                 <span class="chrome-env">@Text["Cp.Env"]</span>
             </div>
@@ -170,6 +170,8 @@
     }
 
     private const int MaxSettlePolls = 30;
+
+    private static readonly string PanelHost = new Uri(SiteRoutes.PanelLogin).Host;
 
     private static readonly PanelView[] Views = Enum.GetValues<PanelView>();
 

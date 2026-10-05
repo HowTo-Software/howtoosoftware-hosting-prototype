@@ -249,4 +249,5 @@
   <data name="Footer.Ticker.Support" xml:space="preserve">
     <value>INFRAESTRUTURA HTS</value>
   </data>
+  <data name="Footer.ComponentCredit" xml:space="preserve"><value>Interações adaptadas de</value></data>
 </root>

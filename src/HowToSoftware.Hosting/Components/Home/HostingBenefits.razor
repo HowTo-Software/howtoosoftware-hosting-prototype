@@ -1,0 +1,16 @@
+@inject IStringLocalizer<StorefrontText> Text
+
+<section class="benefits" id="capabilities" aria-labelledby="benefits-heading">
+    <div class="hts-container hts-container--wide">
+        <div class="benefits-head"><div><p class="storefront-kicker"><span>04</span>@Text["Features.Kicker"]</p><h2 id="benefits-heading" class="storefront-title"><MaskReveal>@Text["Features.Title"]</MaskReveal></h2></div><p class="storefront-copy" data-reveal>@Text["Features.Copy"]</p></div>
+        <div class="benefits-grid">
+            <article class="benefit benefit--world" id="world" data-reveal>
+                <div class="benefit-top"><Icon Name="IconName.Map" /><span>01 / @Text["Features.WorldLabel"]</span></div>
+                <h3>@Text["Features.WorldTitle"]</h3><p>@Text["Features.WorldCopy"]</p>
+                <a href="@SiteRoutes.PanelLogin" class="hts-text-link">@Text["Features.Explore"] <Icon Name="IconName.ArrowRight" /></a>
+            </article>
+            <article class="benefit" id="workshop" data-reveal style="--hts-reveal-delay: 70ms"><div class="benefit-top"><Icon Name="IconName.Puzzle" /><span>02 / WORKSHOP</span></div><h3>@Text["Features.WorkshopTitle"]</h3><p>@Text["Features.WorkshopCopy"]</p><span class="benefit-detail"><span class="detail-rule"></span>STEAM WORKSHOP</span></article>
+            <article class="benefit" id="provisioning" data-reveal style="--hts-reveal-delay: 140ms"><div class="benefit-top"><Icon Name="IconName.Layers" /><span>03 / @Text["Hero.Plan"]</span></div><h3>@Text["Features.ProvisioningTitle"]</h3><p>@Text["Features.ProvisioningCopy"]</p><a href="@SiteRoutes.GameHosting" class="hts-text-link">@Text["Hero.Primary"] <Icon Name="IconName.ArrowRight" /></a></article>
+        </div>
+    </div>
+</section>

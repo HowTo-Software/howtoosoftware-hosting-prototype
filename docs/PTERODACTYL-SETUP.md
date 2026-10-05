@@ -1,64 +1,54 @@
-# Connecting the Pterodactyl panel
+# Configure Pterodactyl and the lab
 
-Everything in the provisioning pipeline is built and tested. What it needs to run against a real
-panel is five values, four of which are configuration and one of which is a secret.
+> **Status:** Technical procedure checked against the code; external execution unverified
+>
+> **Owner:** HTS / HowToSoftware maintainers
+>
+> **Last updated:** 2026-10-05
 
-> **The API key is an administrative credential for the whole panel.** It can read every
-> customer, create servers and delete them. It does not go in `appsettings.json`, it does not go
-> in the repository, and it is never sent to a browser.
+[Index](README.md) · [Configuration and precedence](phase-3-development/configuration.md) · [Architecture](phase-2-design/architecture.md)
 
----
+The backend creates servers through the panel's **Application API**. The HTS storefront, panel, and nodes are separate applications/services. Public pages work without the panel; options are validated when used.
 
-## 1. Create an Application API key
+## 1. Key and permissions
 
-In the panel: **Admin → Application API → Create New**.
+Create a key under **Admin → Application API**. Application keys start with `ptla_`; Client API keys starting with `ptlc_` are unsuitable and rejected by the validator.
 
-Grant **read and write** on:
+This administrative key is backend-only. Do not put it in versioned JSON, browsers, screenshots, or logs.
 
-| Resource | Why |
-|---|---|
-| Users | look a customer up by external id, and create one |
-| Servers | create, look up by external id, delete |
-| Nodes | the connectivity test, and the lab's capacity readout |
-| Locations | the connectivity test |
-| Nests / Eggs | read the egg's image, startup command and variables |
+| Resource | Required flow access |
+| --- | --- |
+| Users | Read/find by external ID or exact verified email, and create provisioning users |
+| Servers | Read/find/create; trials additionally update limits, suspend/unsuspend and delete |
+| Nodes and Locations | Connectivity/capacity reads |
+| Nests / Eggs | Read game configuration |
 
-The key looks like `ptla_` followed by 43 characters. A key beginning `ptlc_` is a **client** key
-from *Account → API Credentials* — it authenticates and then refuses every one of these
-endpoints, which reads like a permissions problem rather than the wrong key. The application
-refuses to start on a `ptlc_` key for exactly that reason.
+Verify permissions against the actual panel version/policy. Do not broaden access just to bypass an error without understanding the failed endpoint.
 
-## 2. Find the nest, egg and location ids
+## 2. Game configuration
 
-They are in the panel's own URLs:
+LocationId is under Admin → Locations; NestId under Admin → Nests; EggId under that nest's egg. Nest and egg must match because egg queries are nested under the nest.
 
-| Value | Where |
-|---|---|
-| `NestId` | Admin → Nests — the number in `/admin/nests/view/{id}` |
-| `EggId` | Admin → Nests → your Project Zomboid egg — `/admin/nests/egg/{id}` |
-| `LocationId` | Admin → Locations — `/admin/locations/view/{id}` |
+Nonsecret configuration example:
 
-Both nest and egg are needed: the panel's egg endpoint is nested under its nest, so a correct egg
-id under the wrong nest is a 404.
-
-## 3. Supply the configuration
-
-Non-secret values can live in `appsettings.json` (or `appsettings.Development.json`):
-
-```jsonc
-"Pterodactyl": {
-  "BaseUrl": "https://panel.example.com",   // panel root, no /api/application suffix
-  "LocationId": 1,
-  "NestId": 5,
-  "EggId": 15,
-  "PortRange": ["16261-16281"],             // optional; empty lets the panel choose
-  "Environment": {                          // egg variables, by env_variable name
-    "SERVER_NAME": "HowToSoftware"
+```json
+{
+  "Pterodactyl": {
+    "BaseUrl": "https://panel.example.com",
+    "LocationId": 1,
+    "NestId": 5,
+    "EggId": 15,
+    "PortRange": ["16261-16281"],
+    "Environment": {
+      "SERVER_NAME": "HowToSoftware"
+    }
   }
 }
 ```
 
-The key comes from outside the repository. The recommended `.env` names are:
+BaseUrl is the HTTPS root without /api/application. The egg supplies image, startup, and variables; overrides must be compatible. The location needs an eligible node and free allocations.
+
+In the private environment:
 
 ```dotenv
 PTERODACTYL_PANEL_URL=https://panel.example.com
@@ -66,120 +56,121 @@ PTERODACTYL_APPLICATION_API_KEY=ptla_...
 PTERODACTYL_DEPLOY_TESTS_ENABLED=false
 ```
 
-ASP.NET Core environment variables and user-secrets remain supported:
+ASP.NET `Pterodactyl__...` names and Development user-secrets are also supported. See [all aliases](phase-3-development/configuration.md).
 
-```bash
-# Development — stored in the user profile, never in the working tree
-dotnet user-secrets --project src/HowToSoftware.Hosting set "Pterodactyl:ApiKey" "ptla_..."
+## 3. Prepare a development lab
 
-# Windows, current user
-setx Pterodactyl__ApiKey "ptla_..."
+`/dev/provisioning` requires **Development and ProvisioningTest.Enabled=true** simultaneously. The guard closes the connectivity screen without the flag as well as the create action.
 
-# Linux / container
-export Pterodactyl__ApiKey="ptla_..."
+In a dedicated session with a test panel:
+
+```powershell
+$env:PTERODACTYL_DEPLOY_TESTS_ENABLED = 'true'
+dotnet run --project src/HowToSoftware.Hosting --launch-profile http
 ```
 
-The double underscore is the .NET convention for a nested key in an environment variable:
-`Pterodactyl__ApiKey` binds to `Pterodactyl:ApiKey`. Every other setting can be supplied the same
-way — `Pterodactyl__BaseUrl`, `Pterodactyl__EggId`, and so on.
+Check for a conflicting native `ProvisioningTest__Enabled` variable, which takes precedence over the alias. Do not enable this lab on a public host. Test payment and Development do not make panel creation simulated.
 
-## 4. Run the connectivity test
+## 4. Test connectivity
 
-```bash
-dotnet run --project src/HowToSoftware.Hosting
+Open `http://localhost:5147/dev/provisioning` and run the test. The service queries nodes, locations, and the configured egg.
+
+| Result | Check |
+| --- | --- |
+| CONNECTED | Queries completed; capacity/installation still need verification |
+| UNAUTHORIZED | Incorrect, revoked, or unsuitable key |
+| FORBIDDEN | Insufficient ACL |
+| UNREACHABLE | DNS, HTTPS/TLS, and BaseUrl |
+| Egg not read | NestId/EggId relationship and permission |
+
+The lab does not display the full secret. Do not publish administrative details or raw panel errors.
+
+## 5. Create and remove a test server
+
+Select a plan, review shown resources, request creation, and confirm. Outpost example:
+
+```text
+memory = 4096 MiB
+cpu = 300%
+disk = 25600 MiB
+allocations = 2
+databases = 0
+backups = 1
 ```
 
-Open **<http://localhost:5147/dev/provisioning>** and press **Test connection**. It calls
-`GET /api/application/nodes` and `GET /api/application/locations`, then reads the configured egg.
+Creation returns panel identification/resources. Deletion receives a provisioning request ID and rereads the server; the service permits deletion only for the `hts-test-server:` external prefix.
 
-What the panel shows you:
+Do not pass a customer server ID to bypass the guard. After testing, remove lab-created resources and restore the flag to false. The flag cannot open the lab in production.
 
-- **CONNECTED**, the node list, and the egg's name and image — everything is wired up.
-- **UNAUTHORIZED** — the key is wrong, revoked, or a client key.
-- **FORBIDDEN** — the key is valid but missing an ACL bit from the table above.
-- **UNREACHABLE** — DNS, TLS or the wrong `BaseUrl`.
-- Connected, but *"the configured egg could not be read"* — `NestId`/`EggId` do not match.
+## Creation payload
 
-The key is never printed. The panel shows its prefix and length only, which is enough to answer
-"did it read the key I set?".
+The implementation sends the following structure to `POST /api/application/servers`, with backend Bearer Authorization. Values are illustrative:
 
-## 5. Deliberately enable and deploy a test server
-
-Set `PTERODACTYL_DEPLOY_TESTS_ENABLED=true` (or `ProvisioningTest__Enabled=true`) and restart the
-application. The page stays closed even in Development until this explicit flag is present.
-
-Pick a plan, press **Create test server**, then confirm. The lab shows the exact numbers it will
-send before you confirm:
-
-```
-memory = 4096      # MiB
-cpu    = 300       # percent of one thread
-disk   = 25600     # MiB
-```
-
-On success it reports the panel's server id, UUID, node and allocation. **Delete test server**
-removes it again.
-
-Deletion is guarded twice: the button passes a provisioning request id rather than a server id,
-and the service re-reads the server and refuses unless its external id begins with
-`hts-test-server:`. A customer's server cannot be reached from this page.
-
-## 6. Closing the lab again
-
-Set the flag back to `false` and restart. Environment name alone never opens a route that can
-create real servers:
-
-```jsonc
-"ProvisioningTest": { "Enabled": false }
-```
-
-Do not enable it in production. It is a button that creates and deletes real servers.
-
----
-
-## What the panel receives
-
-Verified against Panel source at **v1.15.1**; the request shape is stable across 1.11.x–1.15.x.
-
-```jsonc
-POST /api/application/servers
-Authorization: Bearer ptla_…
-Accept: application/json
-Content-Type: application/json
-
+```json
 {
-  "external_id": "hts-test-server:{guid}",
-  "name": "hts-lab-1a2b3c4d",
-  "user": 12,                       // resolved or created from the customer's external id
+  "external_id": "hts-test-server:test-uuid",
+  "name": "hts-lab-example",
+  "user": 12,
   "egg": 15,
-  "docker_image": "…",              // read from the egg
-  "startup": "…",                   // read from the egg
-  "environment": { … },             // egg defaults, overlaid with configured values
-  "limits":  { "memory": 4096, "swap": 0, "disk": 25600, "io": 500, "cpu": 300 },
-  "feature_limits": { "databases": 0, "allocations": 2, "backups": 1 },
-  "deploy": { "locations": [1], "dedicated_ip": false, "port_range": [] },
+  "docker_image": "egg-configured-image",
+  "startup": "egg-configured-startup-command",
+  "environment": {},
+  "limits": {
+    "memory": 4096,
+    "swap": 0,
+    "disk": 25600,
+    "io": 500,
+    "cpu": 300
+  },
+  "feature_limits": {
+    "databases": 0,
+    "allocations": 2,
+    "backups": 1
+  },
+  "deploy": {
+    "locations": [1],
+    "dedicated_ip": false,
+    "port_range": []
+  },
   "start_on_completion": true
 }
 ```
 
-Notes that cost time if you learn them the hard way:
+RAM/disk are MiB; CPU is a shared percentage limit without dedicated cores. The payload does not send nest: nest is used to query the egg. Image, startup, and environment are part of the implemented contract.
 
-- **`memory` and `disk` are MiB**, not MB. 4 GB is 4096, 25 GB is 25600.
-- **`cpu` is a percentage of one thread.** 100 = one thread, 300 = three. It is a ceiling on a
-  shared pool, not pinned cores — which is why the site says "300% CPU allocation" and never
-  "3 dedicated cores".
-- **There is no `nest` field** on this endpoint in Panel 1.x. The panel derives it from the egg.
-  Guides that list it as required are wrong.
-- **`docker_image` and `startup` are required**, which is why the egg is read first.
-- **`io` must be 10–1000.** There is no "unlimited" value; 0 is rejected.
-- **`environment` must be present** even when empty. Omitting the key is a 422.
-- **Redirects are not followed.** An unauthenticated request gets a 302 to the panel's HTML login
-  page, and a client that followed it would see HTTP 200 and call the call a success.
+The client does not follow redirects: a 302 to HTML login must not become a false HTTP 200 success. Deployment provides location and lets the panel choose a node with capacity/allocations; the site implements no load balancer.
 
-Node placement is the panel's job: the `deploy` block names the location and the panel picks a
-public node with memory and disk headroom and a free allocation on it. There is deliberately no
-load balancer in this codebase.
+The previous guide recorded contract verification against Panel v1.15.1. This is a historical reference; the documentation review did not inspect the installed production version.
 
-<!--
-    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
--->
+Verified purchases use their own stable order-derived external ID, separate from lab resources.
+Customer trials use `hts-trial-…` identifiers and their own durable lifecycle; upgrading a trial
+keeps that original server/identifier. See [commerce](COMMERCE-ARCHITECTURE.md) and
+[tests](phase-4-testing/test-plan.md).
+
+## Customer trials and account matching
+
+Customer trials are enabled with `Trials.Enabled`, not `ProvisioningTest.Enabled`. They also
+require commerce SQL and SMTP email confirmation. The default payload uses memory 6144 MiB,
+disk 25600 MiB, CPU 0 (unlimited), and swap 0 (disabled). The timer starts after installation;
+24 hours later the worker suspends the server, retains its data for another 72 hours, then
+deletes unpaid trials. Trial state and entitlement remain in SQL after deletion.
+
+The gateway resolves an existing user by an exact verified email before creating one. It
+does not overwrite another user's password or promote a customer to root administrator.
+The SQL unique panel-user claim prevents a second trial against the same panel account,
+including a request through another game.
+
+Panel operations include `POST /api/application/servers/{id}/suspend`, the corresponding
+`unsuspend` POST, `PATCH /api/application/servers/{id}/build`, and guarded deletion. These
+are present in the [official Application API routes](https://github.com/pterodactyl/panel/blob/1.0-develop/routes/api-application.php).
+Same-server paid conversion updates resource/feature limits and resumes the server; it does
+not reinstall the egg, recreate the server or clear its save. Verify the deployed panel's
+actual permissions and compatible build payload in a controlled environment.
+
+Minecraft trials require enabled operator-approved profiles with existing nest/egg IDs,
+edition, software label, explicit allowed versions and the egg's version-variable name.
+Bedrock is not mapped to Java-only Forge/Fabric profiles. The client only posts a public
+profile/version selector; it cannot supply the egg, node or startup command.
+
+See [TRIAL-SERVERS.md](TRIAL-SERVERS.md) for full configuration, owner recovery and lifecycle
+obligations. No production API call was performed during this local implementation.

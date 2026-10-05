@@ -4,6 +4,7 @@ using HowToSoftware.Hosting.Infrastructure.Stripe;
 using HowToSoftware.Hosting.Models;
 using HowToSoftware.Hosting.Models.Orders;
 using HowToSoftware.Hosting.Services.Orders;
+using HowToSoftware.Hosting.Services.Trials;
 using Microsoft.Extensions.Options;
 
 namespace HowToSoftware.Hosting.Services.Payments;
@@ -28,7 +29,9 @@ public sealed record CheckoutRequest(
     string ReturnOrigin,
     string? UserId,
     string? Locale,
-    string? PromoCode);
+    string? PromoCode,
+    string? TrialAccessToken = null,
+    bool IsTrialUpgrade = false);
 
 /// <summary>How an attempt to start Checkout ended.</summary>
 public enum CheckoutOutcome
@@ -126,6 +129,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
     private readonly IOptionsMonitor<StripeOptions> _options;
     private readonly IBillingStore _billing;
     private readonly TimeProvider _clock;
+    private readonly ITrialService? _trials;
     private readonly ILogger<StripeCheckoutService> _logger;
 
     /// <summary>Creates the service.</summary>
@@ -138,7 +142,8 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
         IOptionsMonitor<StripeOptions> options,
         TimeProvider clock,
         ILogger<StripeCheckoutService> logger,
-        IBillingStore? billing = null)
+        IBillingStore? billing = null,
+        ITrialService? trials = null)
     {
         _stripe = stripe;
         _pricing = pricing;
@@ -147,6 +152,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
         _fulfilment = fulfilment;
         _options = options;
         _billing = billing ?? new NullBillingStore();
+        _trials = trials;
         _clock = clock;
         _logger = logger;
     }
@@ -158,6 +164,8 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
     public async Task<CheckoutStart> CreateCheckoutSessionAsync(CheckoutRequest request, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
+        if (request.IsTrialUpgrade && string.IsNullOrWhiteSpace(request.TrialAccessToken))
+            return new CheckoutStart(CheckoutOutcome.Rejected, null, null);
 
         if (!_stripe.IsConfigured)
         {
@@ -206,6 +214,19 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
 
         request = request with { ReturnOrigin = returnOrigin };
 
+        TrialAccountView? trial = null;
+        if (!string.IsNullOrWhiteSpace(request.TrialAccessToken))
+        {
+            trial = _trials is null ? null : await _trials.GetByAccessTokenAsync(request.TrialAccessToken, cancellationToken).ConfigureAwait(false);
+            if (trial is null || !trial.CanUpgrade || !string.Equals(trial.GameSlug, priced.Game.Slug, StringComparison.Ordinal))
+                return new CheckoutStart(CheckoutOutcome.Rejected, null, null);
+            request = request with { UserId = CustomerIdentity.FromEmail(trial.Email).ToString("D") };
+        }
+
+        // A Minecraft purchase converts an existing, verified trial and keeps its chosen egg.
+        if (priced.Game.Slug == StaticGameCatalogService.MinecraftSlug && trial is null)
+            return new CheckoutStart(CheckoutOutcome.Rejected, null, null);
+
         var now = _clock.GetUtcNow();
         var existingStripeCustomerId = string.IsNullOrWhiteSpace(request.UserId)
             ? null
@@ -218,6 +239,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
         {
             Id = Guid.NewGuid(),
             UserId = request.UserId,
+            CustomerEmail = trial?.Email,
             GameId = priced.Game.Slug,
             PlanId = priced.Plan.Slug,
             PlanName = priced.Plan.Name,
@@ -235,9 +257,41 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
             UpdatedAt = now
         };
 
-        await _orders.AddAsync(order, cancellationToken).ConfigureAwait(false);
+        try
+        {
+            await _orders.AddAsync(order, cancellationToken).ConfigureAwait(false);
+            if (trial is not null)
+            {
+                var reservation = await _trials!.ReserveUpgradeAsync(trial.Id, request.TrialAccessToken!, order.Id, cancellationToken).ConfigureAwait(false);
+                if (!reservation.Reserved)
+                {
+                    order.TransitionTo(OrderStatus.Cancelled, _clock.GetUtcNow());
+                    await _orders.UpdateAsync(order, cancellationToken).ConfigureAwait(false);
+                    return new CheckoutStart(CheckoutOutcome.Rejected, order.Id, null);
+                }
+            }
+        }
+        catch (Exception error) when (error is not OperationCanceledException)
+        {
+            // No Stripe call has happened. A store outage must not turn a reservation into
+            // payment for a fresh server or expose SQL details in the review response.
+            _logger.LogWarning("Order {OrderId}: checkout persistence failed ({FailureClass}).", order.Id, error.GetType().Name);
+            try
+            {
+                order.TransitionTo(OrderStatus.Failed, _clock.GetUtcNow());
+                order.FailureReason = "Checkout persistence unavailable before payment.";
+                await _orders.UpdateAsync(order, cancellationToken).ConfigureAwait(false);
+                if (trial is not null) await _trials!.ReleaseUpgradeAsync(order.Id, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception cleanupError) when (cleanupError is not OperationCanceledException)
+            {
+                _logger.LogWarning("Order {OrderId}: pending checkout cleanup deferred ({FailureClass}).", order.Id, cleanupError.GetType().Name);
+            }
+            return new CheckoutStart(CheckoutOutcome.Failed, order.Id, null);
+        }
 
         var sessionOptions = BuildSessionOptions(order, priced, request, promotion);
+        if (trial is not null) sessionOptions.ExpiresAt = _clock.GetUtcNow().AddMinutes(30).UtcDateTime;
 
         try
         {
@@ -259,6 +313,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
             // key. Logged as the type and Stripe's own error code, which is what an operator
             // needs and nothing a customer would.
             order.TransitionTo(OrderStatus.Failed, _clock.GetUtcNow());
+            if (trial is not null) await _trials!.ReleaseUpgradeAsync(order.Id, cancellationToken).ConfigureAwait(false);
             order.FailureReason = $"Stripe rejected the Checkout session ({exception.StripeError?.Code ?? exception.GetType().Name}).";
             await _orders.UpdateAsync(order, cancellationToken).ConfigureAwait(false);
 
@@ -340,7 +395,8 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
             return;
         }
 
-        order.CustomerEmail = session.CustomerDetails?.Email ?? session.CustomerEmail ?? order.CustomerEmail;
+        // A trial keeps the verified panel owner even if the billing contact differs.
+        order.CustomerEmail ??= session.CustomerDetails?.Email ?? session.CustomerEmail;
         order.StripeCustomerId = session.CustomerId ?? order.StripeCustomerId;
         order.StripePaymentIntentId = session.PaymentIntentId ?? order.StripePaymentIntentId;
         order.StripeSubscriptionId = session.SubscriptionId ?? order.StripeSubscriptionId;
@@ -371,6 +427,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
         order.TransitionTo(OrderStatus.Cancelled, _clock.GetUtcNow());
         await _orders.UpdateAsync(order, cancellationToken).ConfigureAwait(false);
 
+        if (_trials is not null) await _trials.ReleaseUpgradeAsync(order.Id, cancellationToken).ConfigureAwait(false);
         _logger.LogInformation("Order {OrderId}: Checkout session expired; order cancelled.", order.Id);
     }
 
@@ -549,6 +606,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
         {
             Mode = "subscription",
             Customer = order.StripeCustomerId,
+            CustomerEmail = order.StripeCustomerId is null ? order.CustomerEmail : null,
             LineItems = [lineItem],
             SuccessUrl = successUrl,
             CancelUrl = cancelUrl,

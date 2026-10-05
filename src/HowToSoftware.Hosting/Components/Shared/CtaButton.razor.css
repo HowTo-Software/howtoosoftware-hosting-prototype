@@ -1,166 +1,165 @@
-/*
-    The action primitive.
-
-    What changed and why:
-
-      - No pill. A 999px radius on a call to action is the single most common tell of a
-        consumer software template. Hardware has small corners, so this has small corners.
-      - No gradient fill. One flat hue, which is what makes it read as a switch rather than as
-        an advertisement.
-      - No lift on hover. Buttons that rise off the page are the default everywhere; a mounted
-        control does not move when you point at it. What changes instead is the rim, the edge
-        and the arrow - the button acknowledges the pointer without leaving its seat.
-      - No light sweeping across it. That effect existed because it could.
-
-    The fill stays at one lightness in every state on purpose: white on it measures 5.3:1, and
-    a hover that brightened the fill would drop that under the AA floor exactly when somebody
-    is about to press it.
-*/
-
+/* One action primitive for marketing and transactional pages. Native element semantics,
+   disabled/busy states and existing targets are retained. The short underline on text
+   actions adapts Skiper40's hover acknowledgement without its decorative looping effects. */
 .cta {
     position: relative;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--ht-space-2);
+    gap: .6rem;
+    min-height: 48px;
+    padding: .75rem 1.3rem;
     border: 1px solid transparent;
-    border-radius: var(--ht-radius-sm);
-    font-weight: 620;
-    letter-spacing: -0.005em;
+    border-radius: 8px;
+    font-size: var(--ht-text-base);
+    font-weight: 630;
+    letter-spacing: -.01em;
     text-align: center;
     text-decoration: none;
     white-space: nowrap;
     cursor: pointer;
-    transition:
-        background-color var(--ht-dur-2) var(--ht-ease-lock),
-        border-color var(--ht-dur-2) var(--ht-ease-lock),
-        box-shadow var(--ht-dur-2) var(--ht-ease-lock),
-        color var(--ht-dur-2) var(--ht-ease-lock);
+    transition: background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease, color 200ms ease;
 }
-
-.cta:disabled {
-    opacity: 0.42;
-    cursor: not-allowed;
-    box-shadow: none;
-}
-
-/* -- Sizes ------------------------------------------------------------------------------- */
 
 .cta--sm {
-    padding: 0.5rem 0.95rem;
-    font-size: var(--ht-text-base);
-}
-
-.cta--md {
-    padding: 0.7rem 1.3rem;
-    font-size: var(--ht-text-base);
+    min-height: 44px;
+    padding: .6rem 1rem;
+    font-size: .875rem;
 }
 
 .cta--lg {
-    padding: 0.9rem 1.7rem;
-    font-size: var(--ht-text-md);
+    min-height: 54px;
+    padding: .95rem 1.6rem;
+    font-size: 1rem;
 }
-
-/* -- Primary ------------------------------------------------------------------------------
-   Live purple, and the only place on a given view it is allowed to be used as a fill. */
 
 .cta--primary {
-    background-color: var(--ht-live-600);
-    color: #ffffff;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    background: var(--ht-accent, var(--ht-live-600));
+    color: var(--ht-accent-ink, #fff);
+    border-color: var(--ht-accent);
+    box-shadow: none;
 }
-
-.cta--primary:hover {
-    color: #ffffff;
-    box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.3),
-        0 0 0 1px var(--ht-live-400);
-}
-
-.cta--primary:active {
-    background-color: var(--ht-live-700);
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-/* -- Secondary ----------------------------------------------------------------------------
-   Deliberately colourless. If the secondary action also carried brand colour, the primary one
-   would stop being the answer to the question "what does this page want me to do". */
 
 .cta--secondary {
-    background-color: transparent;
+    background: var(--ht-surface-1);
     border-color: var(--ht-edge-strong);
     color: var(--ht-ink);
 }
 
-.cta--secondary:hover {
-    border-color: var(--ht-ink-faint);
-    background-color: var(--hts-tint-hover);
-    color: var(--ht-ink);
-}
-
-.cta--secondary:active {
-    background-color: transparent;
-}
-
-/* -- Ghost: an inline text action --------------------------------------------------------- */
-
 .cta--ghost {
-    padding-inline: 0.3rem;
-    color: var(--ht-live-400);
+    padding-inline: .3rem;
+    color: var(--ht-accent, var(--ht-live-400));
 }
 
-.cta--ghost:hover {
-    color: var(--ht-live-300);
+.cta--ghost::before {
+    content: "";
+    position: absolute;
+    right: .3rem;
+    bottom: .5rem;
+    left: .3rem;
+    height: 1px;
+    background: currentColor;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 240ms ease;
 }
-
-/* -- Inverse: for the rare panel that is itself light ------------------------------------- */
 
 .cta--inverse {
-    background-color: var(--ht-graphite-100);
-    color: var(--ht-graphite-1000);
-}
-
-.cta--inverse:hover {
-    background-color: #ffffff;
-    color: var(--ht-graphite-1000);
+    background: #f4f5f8;
+    color: #121318;
 }
 
 .cta--outline-inverse {
-    background-color: transparent;
-    border-color: var(--ht-ink-faint);
-    color: #ffffff;
+    background: transparent;
+    border-color: rgb(255 255 255 / 30%);
+    color: #fff;
 }
 
-.cta--outline-inverse:hover {
-    border-color: var(--ht-ink-muted);
-    background-color: var(--ht-ink-faint);
-    color: #ffffff;
+.cta:focus-visible {
+    outline: 2px solid var(--ht-accent);
+    outline-offset: 4px;
 }
 
-/* -- Trailing icon ------------------------------------------------------------------------
-   The one thing that moves. Short, and it locks rather than easing out for a third of a
-   second - the difference between a mechanism and a decoration. */
+.cta--primary:focus-visible {
+    background-color: var(--ht-accent-hover);
+    color: var(--ht-accent-ink);
+}
+
+.cta--ghost:focus-visible::before {
+    transform: scaleX(1);
+}
+
+.cta:not(:disabled):focus-visible ::deep .hts-icon {
+    transform: translateX(3px);
+}
+
+.cta:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+    box-shadow: none;
+}
+
+.cta[aria-busy="true"] {
+    opacity: .9;
+    cursor: progress;
+}
 
 .cta ::deep .hts-icon {
     width: 1em;
     height: 1em;
-    transition: transform var(--ht-dur-2) var(--ht-ease-lock);
+    flex: none;
+    transition: transform 220ms ease;
 }
 
-.cta:hover ::deep .hts-icon {
-    transform: translateX(3px);
+.cta-spinner {
+    width: .9em;
+    height: .9em;
+    flex: none;
+    border: 2px solid currentColor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    opacity: .8;
 }
 
-.cta--secondary:focus-visible,
-.cta--outline-inverse:focus-visible {
-    outline: 2px solid var(--ht-data-400);
-    outline-offset: 2px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-    .cta:hover ::deep .hts-icon {
-        transform: none;
+@media (hover: hover) and (pointer: fine) {
+    .cta--primary:not(:disabled):hover {
+        background-color: var(--ht-accent-hover);
+        color: var(--ht-accent-ink, #fff);
+        border-color: var(--ht-accent-hover);
     }
+
+    .cta--secondary:not(:disabled):hover {
+        color: var(--ht-ink);
+        border-color: var(--ht-ink-faint);
+        background: var(--ht-surface-2);
+    }
+
+    .cta--ghost:not(:disabled):hover {
+        color: var(--ht-ink);
+    }
+
+    .cta--ghost:not(:disabled):hover::before {
+        transform: scaleX(1);
+    }
+
+    .cta--inverse:not(:disabled):hover {
+        background: #fff;
+        color: #121318;
+    }
+
+    .cta--outline-inverse:not(:disabled):hover {
+        border-color: rgb(255 255 255 / 55%);
+        background: rgb(255 255 255 / 6%);
+        color: #fff;
+    }
+
+    .cta:not(:disabled):hover ::deep .hts-icon {
+        transform: translateX(3px);
+    }
+}
+
+.cta:not(:disabled):active {
+    box-shadow: inset 0 2px 3px rgb(0 0 0 / 15%);
 }
 
 @media (max-width: 480px) {
@@ -170,39 +169,19 @@
     }
 }
 
-/* -- Busy ---------------------------------------------------------------------------------- */
-
-.cta-spinner {
-    width: 0.9em;
-    height: 0.9em;
-    flex: none;
-    border: 2px solid currentColor;
-    border-top-color: transparent;
-    border-radius: 50%;
-    opacity: 0.85;
-    animation: cta-spin 620ms linear infinite;
-}
-
-@keyframes cta-spin {
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* A spinner that cannot spin is just a ring; a pulse still reads as working. */
 @media (prefers-reduced-motion: reduce) {
+    .cta,
+    .cta::before,
+    .cta ::deep .hts-icon {
+        transition: none;
+    }
+
     .cta-spinner {
-        animation: cta-pulse 1.4s steps(2, jump-none) infinite;
+        animation: none;
     }
-}
 
-@keyframes cta-pulse {
-    50% {
-        opacity: 0.3;
+    .cta:not(:disabled):hover ::deep .hts-icon,
+    .cta:not(:disabled):focus-visible ::deep .hts-icon {
+        transform: none;
     }
-}
-
-.cta[aria-busy="true"] {
-    opacity: 0.9;
-    cursor: progress;
 }

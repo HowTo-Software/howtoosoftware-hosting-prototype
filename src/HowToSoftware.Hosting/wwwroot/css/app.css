@@ -708,154 +708,38 @@ html.hts-js [data-reveal="plate"].is-revealed .hts-plate-image {
     }
 }
 
-/* ── Text effects ────────────────────────────────────────────────────────── */
-
-/*
-    `wwwroot/js/site.js` wraps rise text by word and reserves per-character spans for the
-    flicker/sweep effects that actually need them. Each animation unit carries its index.
-
-    All of it is additive: without scripting there are no spans, the selectors match
-    nothing, and the heading is simply a heading. The stagger runs off the character
-    index, so a line settles left to right at a fixed rate rather than a fixed total
-    duration - a long headline takes longer than a short one, which is what reading
-    it does too.
-*/
-
-/* The wrapper keeps the split to a single item, so a flex parent lays it out as one run of
-   text rather than as one item per word. */
-[data-text-effect] .split {
-    display: inline;
+/* Text effects keep the server-rendered text tree intact. A short CSS mask on
+   the element replaces client-generated character spans, so enhanced navigation
+   can reconcile the same Razor nodes on every route. No script means visible text. */
+html.hts-js [data-text-effect],
+html.hts-js [data-motion] [data-text-effect][data-motion-step] {
+    transition:
+        clip-path var(--ht-motion-duration, 560ms) var(--ht-motion-ease, var(--hts-ease-out)),
+        transform var(--ht-motion-duration, 560ms) var(--ht-motion-ease, var(--hts-ease-out)),
+        opacity var(--ht-motion-duration, 560ms) var(--ht-motion-ease, var(--hts-ease-out));
+    transition-delay: var(--motion-delay, 0ms);
 }
 
-/* A word is the unit a line breaks on. Without this the characters, being inline-block,
-   would let the browser break a heading in the middle of a word. */
-[data-text-effect] .word {
-    display: inline-block;
-    white-space: nowrap;
-}
-
-[data-text-effect] .char {
-    display: inline-block;
-}
-
-/* --- rise: words lift into focus, one after another --------------------- */
-
-html.hts-js [data-text-effect="rise"] .char {
-    opacity: 0;
-    transform: translate3d(0, 0.55em, 0);
-    filter: blur(6px);
-}
-
-html.hts-js [data-text-effect="rise"].is-revealed .char,
-html.hts-js .is-revealed [data-text-effect="rise"] .char {
-    animation: char-rise 0.62s var(--hts-ease-out) both;
-    animation-delay: calc(var(--char-index) * 26ms);
-}
-
-@keyframes char-rise {
-    from {
-        opacity: 0;
-        transform: translate3d(0, 0.55em, 0);
-        filter: blur(6px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-        filter: blur(0);
-    }
-}
-
-/* --- flicker: characters come up like a display warming, some twice ------
-
-   The offset on the second keyframe is deliberately not uniform: every character
-   dips once on its way in, and because the dip sits at a different point in each
-   character's own timeline the line reads as letters appearing and disappearing
-   rather than as one block fading up. */
-
-html.hts-js [data-text-effect="flicker"] .char {
+html.hts-js [data-text-effect]:not(.is-revealed) {
+    clip-path: inset(0 0 105% 0);
+    transform: translate3d(0, 0.3em, 0);
     opacity: 0;
 }
 
-html.hts-js [data-text-effect="flicker"].is-revealed .char,
-html.hts-js .is-revealed [data-text-effect="flicker"] .char {
-    animation: char-flicker 0.9s var(--hts-ease) both;
-    animation-delay: calc(var(--char-index) * 34ms);
+html.hts-js [data-text-effect].is-revealed,
+html.hts-js .is-revealed [data-text-effect] {
+    clip-path: inset(-0.12em -0.08em);
+    transform: none;
+    opacity: 1;
 }
 
-@keyframes char-flicker {
-    0% {
-        opacity: 0;
-        transform: translate3d(0, -0.18em, 0);
-    }
-
-    18% {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-    }
-
-    26% {
-        opacity: 0.06;
-    }
-
-    40% {
-        opacity: 1;
-    }
-
-    52% {
-        opacity: 0.35;
-    }
-
-    100% {
-        opacity: 1;
-        transform: translate3d(0, 0, 0);
-    }
-}
-
-/* --- sweep: a light passes along the line as the characters arrive ------ */
-
-html.hts-js [data-text-effect="sweep"] .char {
-    opacity: 0;
-}
-
-html.hts-js [data-text-effect="sweep"].is-revealed .char,
-html.hts-js .is-revealed [data-text-effect="sweep"] .char {
-    animation: char-sweep 0.85s var(--hts-ease-out) both;
-    animation-delay: calc(var(--char-index) * 30ms);
-}
-
-@keyframes char-sweep {
-    0% {
-        opacity: 0;
-        color: var(--hts-blue-300);
-        transform: translate3d(-0.3em, 0, 0);
-    }
-
-    45% {
-        opacity: 1;
-        color: var(--hts-blue-300);
-        text-shadow: 0 0 14px rgba(131, 168, 243, 0.75);
-    }
-
-    100% {
-        opacity: 1;
-        color: inherit;
-        text-shadow: none;
-        transform: translate3d(0, 0, 0);
-    }
-}
-
-/*
-    Motion is a preference, not a detail. With it suppressed every effect collapses
-    to "the text is there" - no animation, no residual transform, no blur.
-*/
 @media (prefers-reduced-motion: reduce) {
-    html.hts-js [data-text-effect] .char {
-        opacity: 1 !important;
+    html.hts-js [data-text-effect],
+    html.hts-js [data-motion] [data-text-effect][data-motion-step] {
+        clip-path: none !important;
         transform: none !important;
-        filter: none !important;
-        text-shadow: none !important;
-        animation: none !important;
+        opacity: 1 !important;
+        transition: none !important;
     }
 }
 

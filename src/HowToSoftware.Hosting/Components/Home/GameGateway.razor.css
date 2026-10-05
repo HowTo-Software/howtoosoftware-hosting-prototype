@@ -1,0 +1,35 @@
+/* Product rows hold their geometry: focus changes the edge and image crop, never column width. */
+.gateway { padding-block: clamp(3.5rem, 6vw, 5.5rem); border-top: 1px solid var(--ht-edge); }
+.gateway-head { display: grid; grid-template-columns: 1.2fr 1fr; align-items: end; gap: 3rem; margin-bottom: 2rem; }
+.gateway-head .storefront-title { max-width: 24ch; font-size: clamp(2rem, 1.6rem + 2vw, 3rem); }
+.gateway-head .storefront-copy { max-width: 28rem; justify-self: end; font-size: 1rem; line-height: 1.75; }
+.game-grid { display: grid; gap: 1.25rem; }
+.game-card { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); min-width: 0; overflow: hidden; border: 1px solid var(--ht-edge-strong); border-radius: 8px; background: var(--ht-surface-1); transition: opacity 260ms ease, transform 260ms ease, border-color 180ms ease; }
+.game-card--planned { grid-template-columns: minmax(0, .55fr) minmax(0, 1.45fr); background: transparent; }
+.game-art { min-height: 20rem; overflow: hidden; background: #111318; }
+.game-card--planned .game-art { min-height: 14rem; }
+.game-art ::deep .cover { height: 100%; width: 100%; aspect-ratio: auto; border: 0; border-radius: 0; }
+.game-art ::deep .cover-banner { transition: transform 450ms var(--ht-ease-out); }
+.game-art ::deep .cover-foot { min-height: 42px; }
+.game-details { display: flex; flex-direction: column; min-width: 0; padding: clamp(1.4rem, 3vw, 2.3rem); }
+.game-category { color: var(--ht-ink-muted); font-size: .875rem; line-height: 1.65; }
+.game-title-row { margin-top: .65rem; }
+.game-title-row h3 { color: var(--ht-ink); font-size: clamp(1.6rem, 1.3rem + 1.2vw, 2.2rem); font-weight: 640; letter-spacing: -.035em; line-height: 1.2; }
+.game-description { max-width: 44rem; margin-top: 1rem; color: var(--ht-ink-soft); font-size: .9375rem; line-height: 1.8; }
+.game-bottom { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1.3rem; margin-top: auto; padding-top: 1.5rem; }
+.game-from > span { color: var(--ht-ink-muted); font-size: .75rem; line-height: 1.5; }
+.game-from strong { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem; margin-top: .25rem; color: var(--ht-ink); font-size: 1.8rem; font-weight: 640; letter-spacing: -.035em; }
+.game-from small { color: var(--ht-ink-muted); font-size: .8125rem; font-weight: 400; letter-spacing: 0; }
+.game-from .unpriced { font-size: .9375rem; }
+.game-from p { margin-top: .45rem; color: var(--ht-ink-muted); font-size: .75rem; line-height: 1.6; }
+.game-bottom .hts-text-link { min-height: 44px; font-size: .9375rem; }
+.gateway-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem 2rem; padding-top: 1.3rem; }
+.gateway-foot > a { display: inline-flex; align-items: center; min-height: 44px; color: var(--ht-ink-muted); font-size: .875rem; line-height: 1.65; }
+.gateway-foot > a:hover, .gateway-foot > a:focus-visible { color: var(--ht-accent); }
+.game-card:focus-within { border-color: var(--ht-accent); }
+.game-card:focus-within .game-art ::deep .cover-banner { transform: scale(1.02); }
+@media (hover:hover) and (pointer:fine) { .game-card:hover { border-color: var(--ht-accent); } .game-card:hover .game-art ::deep .cover-banner { transform: scale(1.02); } }
+@media (max-width:800px) { .gateway-head { grid-template-columns: 1fr; gap: 1.3rem; } .gateway-head .storefront-copy { justify-self: start; } .game-card, .game-card--planned { grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); } }
+@media (max-width:650px) { .game-card, .game-card--planned { grid-template-columns: minmax(0, 1fr); } .game-art { height: 14rem; min-height: 0; } .game-card--planned .game-art { height: 11rem; min-height: 0; } .game-bottom { align-items: start; } .gateway-foot { align-items: start; flex-direction: column; gap: .3rem; } }
+@media (max-width:380px) { .game-details { padding: 1.2rem; } .game-bottom ::deep .cta { width: 100%; justify-content: space-between; } }
+@media (prefers-reduced-motion:reduce) { .game-card, .game-art ::deep .cover-banner { transition: none; } .game-card:hover .game-art ::deep .cover-banner, .game-card:focus-within .game-art ::deep .cover-banner { transform: none; } }

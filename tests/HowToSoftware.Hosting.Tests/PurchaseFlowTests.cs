@@ -6,6 +6,7 @@ using HowToSoftware.Hosting.Models.Orders;
 using HowToSoftware.Hosting.Services;
 using HowToSoftware.Hosting.Services.Orders;
 using HowToSoftware.Hosting.Services.Payments;
+using HowToSoftware.Hosting.Services.Trials;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
@@ -70,15 +71,15 @@ public sealed class PurchaseFlowTests : IDisposable
         }
     }
 
-    private StripeCheckoutService Checkout() => new(
+    private StripeCheckoutService Checkout(ITrialService? trials = null, IOrderPricingService? pricing = null) => new(
         _stripe,
-        _pricing,
+        pricing ?? _pricing,
         new NullPromotionService(),
         _orders,
         _queue,
         new StaticOptionsMonitor<StripeOptions>(_stripeOptions),
         TimeProvider.System,
-        NullLogger<StripeCheckoutService>.Instance);
+        NullLogger<StripeCheckoutService>.Instance, trials: trials);
 
     private static CheckoutRequest Request(
         string game = "project-zomboid",
@@ -518,6 +519,113 @@ public sealed class PurchaseFlowTests : IDisposable
     }
 
     // ── Doubles ────────────────────────────────────────────────────────────
+
+
+    [Fact]
+    public async Task ATrialCheckoutKeepsTheVerifiedPanelOwner_WhenBillingEmailDiffers()
+    {
+        var trials = new CheckoutTrialStub();
+        var checkout = Checkout(trials);
+        var result = await checkout.CreateCheckoutSessionAsync(Request() with { TrialAccessToken = "verified-capability" });
+        var order = (await _orders.FindAsync(result.OrderId!.Value))!;
+        Assert.Equal("owner@example.com", _stripe.LastOptions!.CustomerEmail);
+        Assert.Single(trials.Reserved);
+        Assert.NotNull(_stripe.LastOptions.ExpiresAt);
+        await checkout.HandleCompletedCheckoutAsync(Completed(order)); // another Stripe billing email
+        Assert.Equal("owner@example.com", (await _orders.FindAsync(order.Id))!.CustomerEmail);
+        Assert.Equal(OrderStatus.Paid, (await _orders.FindAsync(order.Id))!.Status);
+    }
+
+    [Theory]
+    [InlineData(false, "project-zomboid")]
+    [InlineData(true, "minecraft")]
+    public async Task AnInvalidOrDifferentGameTrialCannotStartPayment(bool exists, string game)
+    {
+        var trials = new CheckoutTrialStub();
+        trials.View = exists ? trials.View! with { GameSlug = game } : null;
+        var result = await Checkout(trials).CreateCheckoutSessionAsync(Request() with { TrialAccessToken = "invalid-capability" });
+        Assert.Equal(CheckoutOutcome.Rejected, result.Outcome);
+        Assert.Null(_stripe.LastOptions);
+        Assert.Empty(trials.Reserved);
+    }
+
+    [Fact]
+    public async Task AFailedReservationCannotChargeTheCustomer()
+    {
+        var trials = new CheckoutTrialStub { ReserveAllowed = false };
+        var result = await Checkout(trials).CreateCheckoutSessionAsync(Request() with { TrialAccessToken = "verified-capability" });
+        Assert.Equal(CheckoutOutcome.Rejected, result.Outcome);
+        Assert.Null(_stripe.LastOptions);
+        Assert.Equal(OrderStatus.Cancelled, (await _orders.FindAsync(result.OrderId!.Value))!.Status);
+    }
+
+    [Fact]
+    public async Task AReservationStoreFailureReturnsAFailedCheckoutBeforeAnyCharge()
+    {
+        var trials = new CheckoutTrialStub { ThrowOnReservation = true };
+        var result = await Checkout(trials).CreateCheckoutSessionAsync(Request() with { TrialAccessToken = "verified-capability" });
+        Assert.Equal(CheckoutOutcome.Failed, result.Outcome);
+        Assert.Null(_stripe.LastOptions);
+        Assert.Null(result.RedirectUrl);
+        Assert.Equal(OrderStatus.Failed, (await _orders.FindAsync(result.OrderId!.Value))!.Status);
+        Assert.Equal(result.OrderId, Assert.Single(trials.Released));
+    }
+
+    [Fact]
+    public async Task StripeCreationFailureReleasesTheTrialReservation()
+    {
+        var trials = new CheckoutTrialStub();
+        _stripe.Throw = new StripeException("failure");
+        var result = await Checkout(trials).CreateCheckoutSessionAsync(Request() with { TrialAccessToken = "verified-capability" });
+        Assert.Equal(CheckoutOutcome.Failed, result.Outcome);
+        Assert.Equal(result.OrderId, Assert.Single(trials.Released));
+    }
+
+    [Fact]
+    public async Task AVerifiedExpiredSessionReleasesItsTrialReservation()
+    {
+        var trials = new CheckoutTrialStub();
+        var checkout = Checkout(trials);
+        var result = await checkout.CreateCheckoutSessionAsync(Request() with { TrialAccessToken = "verified-capability" });
+        var order = (await _orders.FindAsync(result.OrderId!.Value))!;
+        await checkout.HandleExpiredCheckoutAsync(Completed(order, paymentStatus: "unpaid"));
+        Assert.Equal(order.Id, Assert.Single(trials.Released));
+    }
+
+    [Fact]
+    public async Task APostedTrialUpgradeWithoutItsOwnerCapabilityNeverCreatesANewPurchase()
+    {
+        var result = await Checkout(new CheckoutTrialStub()).CreateCheckoutSessionAsync(Request() with { IsTrialUpgrade = true });
+        Assert.Equal(CheckoutOutcome.Rejected, result.Outcome);
+        Assert.Null(_stripe.LastOptions);
+    }
+
+    [Fact]
+    public async Task MinecraftCheckoutRequiresAnExistingVerifiedTrial_AndUsesItsConfiguredTier()
+    {
+        var plans = new StaticPlanCatalogService(TestLocalizer.For<HomeText>(),
+            Options.Create(new HostingPlanPricingOptions()), Options.Create(new MinecraftPlanOptions
+            {
+                Tiers = [new MinecraftPlanTier { Slug = "minecraft-6gb", Name = "Test tier", MemoryMb = 6144,
+                    CpuPercent = 300, DiskMb = 25600, MonthlyPrice = "12.00" }]
+            }));
+        var pricing = new OrderPricingService(new StaticGameCatalogService(TestLocalizer.For<CheckoutText>(), plans), plans);
+        var request = Request("minecraft", "minecraft-6gb", BillingPeriod.Monthly);
+        var anonymous = await Checkout(pricing: pricing).CreateCheckoutSessionAsync(request);
+        Assert.Equal(CheckoutOutcome.Rejected, anonymous.Outcome);
+        Assert.Null(_stripe.LastOptions);
+
+        var trials = new CheckoutTrialStub();
+        trials.View = trials.View! with { GameSlug = "minecraft" };
+        var result = await Checkout(trials, pricing).CreateCheckoutSessionAsync(request with
+            { IsTrialUpgrade = true, TrialAccessToken = "verified-owner-capability" });
+        Assert.Equal(CheckoutOutcome.Redirect, result.Outcome);
+        var order = (await _orders.FindAsync(result.OrderId!.Value))!;
+        Assert.Equal("minecraft", order.GameId);
+        Assert.Equal(12m, order.FinalAmount);
+        Assert.Equal("owner@example.com", order.CustomerEmail);
+        Assert.Equal(order.Id, Assert.Single(trials.Reserved));
+    }
 
     private sealed class FileContextFactory(string path) : IDbContextFactory<HostingDbContext>
     {

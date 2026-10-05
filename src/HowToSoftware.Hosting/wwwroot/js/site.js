@@ -7,7 +7,7 @@
  *   1. Reveal elements the first time they scroll into view.
  *   2. Flag the header once the page has scrolled past the top.
  *   3. Report which provisioning stage is centred in the viewport.
- *   4. Split headline text into animation units so CSS can animate them.
+ *   4. Trigger CSS text masks without changing Razor's heading content.
  *
  * Note the split of responsibilities in (3): JavaScript observes, Blazor
  * decides. The observer calls [JSInvokable] SetActiveStage and every visual
@@ -21,8 +21,18 @@
 (function () {
     "use strict";
 
+    if (window.htsSiteInitialized) {
+        return;
+    }
+    window.htsSiteInitialized = true;
+
     var root = document.documentElement;
+    root.classList.add("hts-script");
     var prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    var hoverPointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+    var visualFrame = null;
+    var scrollDirty = false;
+    var sceneDirty = false;
 
     if (!prefersReducedMotion.matches && "IntersectionObserver" in window) {
         root.classList.add("hts-js");
@@ -30,8 +40,9 @@
 
     // ── 1. Scroll reveal ────────────────────────────────────────────────────
     var observer = null;
+    var observedReveals = new WeakSet();
 
-    if (root.classList.contains("hts-js")) {
+    if ("IntersectionObserver" in window) {
         observer = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
                 if (!entry.isIntersecting) {
@@ -40,6 +51,7 @@
 
                 entry.target.classList.add("is-revealed");
                 observer.unobserve(entry.target);
+                observedReveals.delete(entry.target);
             });
         }, { rootMargin: "0px 0px -10% 0px", threshold: 0.05 });
     }
@@ -51,18 +63,18 @@
             return;
         }
 
-        // Split text animates off the same class as a scroll reveal, so an element carrying
-        // only [data-text-effect] has to be watched too. The hero headline is one: it sits
-        // outside any [data-reveal] wrapper, and before this it never became visible at all.
-        if (!node.matches(REVEALS) || node.classList.contains("is-revealed")) {
+        // Text masks share the reveal class, including headings outside a reveal wrapper.
+        if (!node.matches(REVEALS) || node.classList.contains("is-revealed")
+            || observedReveals.has(node)) {
             return;
         }
 
+        observedReveals.add(node);
         observer.observe(node);
     }
 
     function scan(scope) {
-        if (!observer) {
+        if (!observer || !root.classList.contains("hts-js")) {
             return;
         }
 
@@ -85,9 +97,11 @@
     var motionVisibilityObserver = null;
     var activeScenes = new Set();
     var activeParallax = new Set();
-    var sceneQueued = false;
+    var sceneStates = new WeakMap();
+    var parallaxStates = new WeakMap();
+    var countAnimations = new Map();
 
-    if (root.classList.contains("hts-js")) {
+    if ("IntersectionObserver" in window) {
         motionObserver = new IntersectionObserver(function (entries) {
             entries.forEach(function (entry) {
                 if (!entry.isIntersecting) {
@@ -134,6 +148,11 @@
             return;
         }
 
+        var countText = node.firstChild;
+        if (!countText || countText.nodeType !== Node.TEXT_NODE) {
+            return;
+        }
+
         var target = Number(node.getAttribute("data-count"));
         if (!isFinite(target)) {
             return;
@@ -146,8 +165,22 @@
         var suffix = node.getAttribute("data-count-suffix") || "";
         var duration = 560;
         var started = null;
+        var animation = { frame: null, finish: finish };
+
+        function finish() {
+            if (node.isConnected && countText.parentNode === node) {
+                countText.nodeValue = prefix + target.toFixed(decimals) + suffix;
+            }
+            countAnimations.delete(node);
+        }
 
         function paint(timestamp) {
+            if (!node.isConnected || countText.parentNode !== node
+                || document.hidden || prefersReducedMotion.matches) {
+                finish();
+                return;
+            }
+
             if (started === null) {
                 started = timestamp;
             }
@@ -155,14 +188,31 @@
             var progress = Math.min(1, (timestamp - started) / duration);
             // Fast at the start, then settles without a bounce.
             var eased = 1 - Math.pow(1 - progress, 4);
-            node.textContent = prefix + (target * eased).toFixed(decimals) + suffix;
+            countText.nodeValue = prefix + (target * eased).toFixed(decimals) + suffix;
 
             if (progress < 1) {
-                window.requestAnimationFrame(paint);
+                animation.frame = window.requestAnimationFrame(paint);
+            } else {
+                countAnimations.delete(node);
             }
         }
 
-        window.requestAnimationFrame(paint);
+        if (document.hidden) {
+            finish();
+            return;
+        }
+
+        countAnimations.set(node, animation);
+        animation.frame = window.requestAnimationFrame(paint);
+    }
+
+    function observeParallax(node) {
+        if (!motionVisibilityObserver || node.dataset.parallaxObserved === "true") {
+            return;
+        }
+
+        node.dataset.parallaxObserved = "true";
+        motionVisibilityObserver.observe(node);
     }
 
     function observeMotion(node) {
@@ -178,32 +228,31 @@
             motionVisibilityObserver.observe(node);
         }
 
-        node.querySelectorAll("[data-parallax]").forEach(function (parallax) {
-            if (parallax.dataset.parallaxObserved !== "true") {
-                parallax.dataset.parallaxObserved = "true";
-                motionVisibilityObserver.observe(parallax);
-            }
-        });
     }
 
     function scanMotion(scope) {
-        if (!motionObserver || !scope) {
+        if (!motionObserver || !scope || !root.classList.contains("hts-js")) {
             return;
         }
 
         if (scope.matches && scope.matches("[data-motion]")) {
             observeMotion(scope);
         }
+        if (scope.matches && scope.matches("[data-parallax]")) {
+            observeParallax(scope);
+        }
 
         if (scope.querySelectorAll) {
             scope.querySelectorAll("[data-motion]").forEach(observeMotion);
+            scope.querySelectorAll("[data-parallax]").forEach(observeParallax);
         }
     }
 
     function paintScenes() {
-        sceneQueued = false;
         var viewport = window.innerHeight || 1;
+        var writes = [];
 
+        // Read every rectangle before changing styles or classes.
         activeScenes.forEach(function (scene) {
             if (!scene.isConnected) {
                 activeScenes.delete(scene);
@@ -212,9 +261,8 @@
 
             var rect = scene.getBoundingClientRect();
             var progress = Math.max(0, Math.min(1, (viewport - rect.top) / (viewport + rect.height)));
-            scene.style.setProperty("--motion-scene-progress", progress.toFixed(3));
-            // Only technical garnish marked data-scene-exit leaves. Copy remains readable.
-            scene.classList.toggle("is-scene-leaving", rect.bottom < viewport * 0.48 && rect.bottom > 0);
+            writes.push({ node: scene, progress: progress.toFixed(3),
+                leaving: rect.bottom < viewport * 0.48 && rect.bottom > 0 });
         });
 
         activeParallax.forEach(function (parallax) {
@@ -227,170 +275,79 @@
             var intensity = Number(parallax.getAttribute("data-parallax")) || 12;
             var centerDistance = (rect.top + rect.height / 2 - viewport / 2) / viewport;
             var shift = Math.max(-intensity, Math.min(intensity, -centerDistance * intensity));
-            parallax.style.setProperty("--motion-parallax-y", shift.toFixed(2) + "px");
+            writes.push({ node: parallax, shift: shift.toFixed(2) + "px" });
+        });
+
+        writes.forEach(function (write) {
+            if (write.shift !== undefined) {
+                if (parallaxStates.get(write.node) !== write.shift) {
+                    write.node.style.setProperty("--motion-parallax-y", write.shift);
+                    parallaxStates.set(write.node, write.shift);
+                }
+                return;
+            }
+
+            var previous = sceneStates.get(write.node);
+            if (!previous || previous.progress !== write.progress) {
+                write.node.style.setProperty("--motion-scene-progress", write.progress);
+            }
+            if (!previous || previous.leaving !== write.leaving) {
+                write.node.classList.toggle("is-scene-leaving", write.leaving);
+            }
+            sceneStates.set(write.node, write);
         });
     }
 
+    function paintVisualFrame() {
+        visualFrame = null;
+        if (document.hidden) {
+            return;
+        }
+
+        var scrolled = scrollDirty ? window.scrollY > 12 : null;
+        scrollDirty = false;
+        if (sceneDirty && !prefersReducedMotion.matches) {
+            paintScenes();
+        }
+        sceneDirty = false;
+        if (scrolled !== null) {
+            applyScrollState(scrolled);
+        }
+    }
+
+    function queueVisualFrame() {
+        if (visualFrame !== null || document.hidden) {
+            return;
+        }
+        visualFrame = window.requestAnimationFrame(paintVisualFrame);
+    }
+
     function scheduleScenes() {
-        if (sceneQueued || prefersReducedMotion.matches
+        if (document.hidden || prefersReducedMotion.matches
             || (activeScenes.size === 0 && activeParallax.size === 0)) {
             return;
         }
 
-        sceneQueued = true;
-        window.requestAnimationFrame(paintScenes);
+        sceneDirty = true;
+        queueVisualFrame();
     }
 
-    // ── 1b. Character split ───────────────────────────────────────────────
-    //
-    // CSS can animate an element, not the text inside it. Rise effects use one span per word;
-    // only the explicitly character-driven flicker and sweep effects pay for one span per
-    // letter. That cuts the typical headline DOM expansion substantially.
-    //
-    // Accessibility: the original string is put on the element as aria-label and the
-    // split spans are hidden from assistive technology, so a screen reader reads one
-    // sentence rather than a stream of single letters.
-    var SPLIT_LIMIT = 220;
-
-    function splitTextNode(textNode, offset, splitCharacters) {
-        var words = textNode.nodeValue.split(/\s+/).filter(Boolean);
-
-        if (!words.length) {
-            return offset;
-        }
-
-        // One wrapper, not a run of loose nodes. The parent may be a flex container -
-        // several of these kickers are - and a flex container drops whitespace-only
-        // anonymous items, which ate the spaces between the words.
-        var wrapper = document.createElement("span");
-        wrapper.className = "split";
-
-        // Whether this text node touched a sibling across a space. "keeps <span>running</span>"
-        // is two nodes, and trimming the first one's trailing space closed the gap between the
-        // words - the headline rendered as "keepsrunning".
-        var raw = textNode.nodeValue;
-
-        if (/^[\s]/.test(raw)) {
-            wrapper.appendChild(document.createTextNode(" "));
-        }
-
-        var index = offset;
-
-        for (var w = 0; w < words.length; w += 1) {
-            if (w > 0) {
-                // A real space inside normal inline layout, so the line can still break here.
-                wrapper.appendChild(document.createTextNode(" "));
-            }
-
-            // Characters are inline-block, and a browser will break a line between any two
-            // of them. Wrapping each word keeps the break points where words are.
-            var word = document.createElement("span");
-            word.className = "word";
-
-            if (!splitCharacters) {
-                word.classList.add("char");
-                word.style.setProperty("--char-index", index);
-                word.textContent = words[w];
-                index += 1;
-            } else {
-                // Character effects keep their word wrapper so wrapping never cuts a word in
-                // half, even though each letter is its own compositor animation unit.
-                for (var i = 0; i < words[w].length; i += 1) {
-                    var span = document.createElement("span");
-                    span.className = "char";
-                    span.style.setProperty("--char-index", index);
-                    span.textContent = words[w].charAt(i);
-                    word.appendChild(span);
-                    index += 1;
-                }
-            }
-
-            wrapper.appendChild(word);
-        }
-
-        if (/[\s]$/.test(raw)) {
-            wrapper.appendChild(document.createTextNode(" "));
-        }
-
-        wrapper.setAttribute("aria-hidden", "true");
-        textNode.parentNode.replaceChild(wrapper, textNode);
-        return index;
-    }
-
-    function splitText(node) {
-        if (node.dataset.textSplit === "done") {
-            return;
-        }
-
-        node.dataset.textSplit = "done";
-
-        var label = node.textContent.replace(/\s+/g, " ").trim();
-
-        // A long paragraph is not worth hundreds of spans, and an empty element has
-        // nothing to split. Both are left exactly as they are.
-        if (!label || label.length > SPLIT_LIMIT) {
-            return;
-        }
-
-        // Walk the text nodes rather than rewriting the element, so a heading keeps
-        // its <br> and its accent <span> and the stagger still runs continuously
-        // across all of them.
-        var walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT, null);
-        var pending = [];
-        var found;
-
-        while ((found = walker.nextNode())) {
-            if (found.nodeValue.trim()) {
-                pending.push(found);
-            }
-        }
-
-        var index = 0;
-        var splitCharacters = node.getAttribute("data-text-effect") !== "rise";
-
-        for (var i = 0; i < pending.length; i += 1) {
-            index = splitTextNode(pending[i], index, splitCharacters);
-        }
-
-        if (!index) {
-            return;
-        }
-
-        node.setAttribute("aria-label", label);
-        node.style.setProperty("--char-count", index);
-    }
-
-    function splitScope(scope) {
-        if (!root.classList.contains("hts-js") || !scope) {
-            return;
-        }
-
-        if (scope.matches && scope.matches("[data-text-effect]")) {
-            splitText(scope);
-        }
-
-        if (scope.querySelectorAll) {
-            scope.querySelectorAll("[data-text-effect]").forEach(splitText);
-        }
-    }
+    // Razor owns text nodes. Replacing them breaks Blazor's separately cached logical
+    // children during enhanced navigation, even when the visible DOM looks correct.
+    // CSS masks animate the existing element; this module only changes reveal classes.
+    // https://github.com/dotnet/aspnetcore/blob/v10.0.0/src/Components/Web.JS/src/Rendering/LogicalElements.ts
+    // https://learn.microsoft.com/aspnet/core/blazor/javascript-interoperability/?view=aspnetcore-10.0#interaction-with-the-dom
 
     // ── 2. Header scroll state ──────────────────────────────────────────────
-    var scrollQueued = false;
-
-    function applyScrollState() {
-        scrollQueued = false;
-        root.classList.toggle("hts-scrolled", window.scrollY > 12);
+    function applyScrollState(scrolled) {
+        root.classList.toggle("hts-scrolled",
+            typeof scrolled === "boolean" ? scrolled : window.scrollY > 12);
     }
 
     function onScroll() {
-        if (scrollQueued) {
-            scheduleScenes();
-            return;
-        }
-
-        scrollQueued = true;
-        window.requestAnimationFrame(applyScrollState);
+        scrollDirty = true;
         scheduleScenes();
+        queueVisualFrame();
     }
 
     // ── 3. Provisioning stage reporter ──────────────────────────────────────
@@ -480,9 +437,16 @@
             var delay = 4000;
 
             function tick() {
+                if (!orderWatches.has(timeline) || !timeline.isConnected) {
+                    stopWatching(timeline);
+                    return;
+                }
                 fetch(url, { headers: { "Accept": "application/json" }, cache: "no-store" })
                     .then(function (response) { return response.ok ? response.json() : null; })
                     .then(function (state) {
+                        if (!orderWatches.has(timeline) || !timeline.isConnected) {
+                            return;
+                        }
                         if (!state) {
                             return schedule();
                         }
@@ -563,22 +527,30 @@
     // light a panel up and leave it lit.
     var spotlit = null;
     var spotQueued = null;
+    var spotFrame = null;
 
     function paintSpotlight() {
+        spotFrame = null;
         var pending = spotQueued;
         spotQueued = null;
 
-        if (!pending) {
+        if (!pending || !pending.target.isConnected || document.hidden
+            || prefersReducedMotion.matches || !hoverPointer.matches) {
             return;
         }
 
         var rect = pending.target.getBoundingClientRect();
+        if (rect.width <= 0 || rect.height <= 0 || rect.bottom <= 0
+            || rect.top >= window.innerHeight || rect.right <= 0 || rect.left >= window.innerWidth) {
+            return;
+        }
         pending.target.style.setProperty("--spot-x", ((pending.x - rect.left) / rect.width * 100).toFixed(2) + "%");
         pending.target.style.setProperty("--spot-y", ((pending.y - rect.top) / rect.height * 100).toFixed(2) + "%");
     }
 
     function onPointerMove(event) {
-        if (event.pointerType === "touch") {
+        if (event.pointerType === "touch" || document.hidden
+            || prefersReducedMotion.matches || !hoverPointer.matches) {
             return;
         }
 
@@ -600,11 +572,10 @@
             return;
         }
 
-        var alreadyQueued = spotQueued !== null;
         spotQueued = { target: target, x: event.clientX, y: event.clientY };
 
-        if (!alreadyQueued) {
-            window.requestAnimationFrame(paintSpotlight);
+        if (spotFrame === null) {
+            spotFrame = window.requestAnimationFrame(paintSpotlight);
         }
     }
 
@@ -615,6 +586,10 @@
         }
 
         spotQueued = null;
+        if (spotFrame !== null) {
+            window.cancelAnimationFrame(spotFrame);
+            spotFrame = null;
+        }
     }
 
     // ── 5b. Navigation progress ─────────────────────────────────────────────
@@ -630,24 +605,47 @@
     // percentage, so it eases toward 90% and never claims to have arrived early.
     var progress = null;
     var progressTimer = null;
+    var progressFinishTimer = null;
     var progressValue = 0;
 
     function ensureProgress() {
-        if (progress) {
+        if (progress && progress.isConnected) {
             return progress;
         }
 
-        progress = document.createElement("div");
-        progress.className = "hts-progress";
-        progress.setAttribute("aria-hidden", "true");
-        document.body.appendChild(progress);
+        progress = document.querySelector("[data-navigation-progress]");
         return progress;
+    }
+
+    function stopProgressTimer() {
+        window.clearInterval(progressTimer);
+        progressTimer = null;
+    }
+
+    function startProgressTimer() {
+        if (progressTimer !== null || document.hidden || prefersReducedMotion.matches) {
+            return;
+        }
+
+        progressTimer = window.setInterval(function () {
+            if (!progress || !progress.isConnected) {
+                stopProgressTimer();
+                return;
+            }
+            progressValue += (90 - progressValue) * 0.12;
+            progress.style.setProperty("--progress", progressValue.toFixed(1) + "%");
+        }, 180);
     }
 
     function startProgress() {
         var bar = ensureProgress();
+        if (!bar) {
+            return;
+        }
 
-        window.clearInterval(progressTimer);
+        stopProgressTimer();
+        window.clearTimeout(progressFinishTimer);
+        progressFinishTimer = null;
         progressValue = 8;
         bar.classList.remove("is-done");
         bar.classList.add("is-active");
@@ -656,22 +654,21 @@
         // Decelerating creep. Each tick closes a fraction of the remaining distance, so
         // it approaches 90 and never reaches it - a bar that hit 100 and then waited
         // would be lying about being finished.
-        progressTimer = window.setInterval(function () {
-            progressValue += (90 - progressValue) * 0.12;
-            bar.style.setProperty("--progress", progressValue.toFixed(1) + "%");
-        }, 180);
+        startProgressTimer();
     }
 
     function finishProgress() {
+        stopProgressTimer();
         if (!progress) {
             return;
         }
 
-        window.clearInterval(progressTimer);
+        window.clearTimeout(progressFinishTimer);
         progress.style.setProperty("--progress", "100%");
         progress.classList.add("is-done");
 
-        window.setTimeout(function () {
+        progressFinishTimer = window.setTimeout(function () {
+            progressFinishTimer = null;
             if (progress) {
                 progress.classList.remove("is-active", "is-done");
                 progress.style.setProperty("--progress", "0%");
@@ -720,6 +717,10 @@
     // re-adding the attribute restarts it, which is the whole of the page
     // transition: the CSS owns what it looks like.
     function replayPageEnter() {
+        if (document.hidden || prefersReducedMotion.matches) {
+            return;
+        }
+
         var main = document.querySelector("[data-page-enter]");
 
         if (!main) {
@@ -750,8 +751,11 @@
         looks at it.
     */
     function restoreRootState() {
+        root.classList.add("hts-script");
         if (!prefersReducedMotion.matches && "IntersectionObserver" in window) {
             root.classList.add("hts-js");
+        } else {
+            root.classList.remove("hts-js");
         }
 
         try {
@@ -782,7 +786,9 @@
         }
 
         new MutationObserver(function () {
-            if (!root.classList.contains("hts-js")) {
+            if (!root.classList.contains("hts-script")
+                || (!prefersReducedMotion.matches && "IntersectionObserver" in window
+                    && !root.classList.contains("hts-js"))) {
                 restoreRootState();
             }
         }).observe(root, { attributes: true, attributeFilter: ["class"] });
@@ -790,6 +796,10 @@
 
     function onEnhancedLoad() {
         stopAllWatches();
+        clearMutationQueue();
+        pruneDetachedScopes();
+        sceneStates = new WeakMap();
+        parallaxStates = new WeakMap();
         restoreRootState();
         finishProgress();
         clearSpotlight();
@@ -803,7 +813,6 @@
                 activeParallax.delete(node);
             }
         });
-        splitScope(document.body);
         scan(document.body);
         scanMotion(document.body);
         scheduleScenes();
@@ -811,10 +820,47 @@
         replayPageEnter();
     }
 
+    function pauseVisualWork() {
+        if (visualFrame !== null) {
+            window.cancelAnimationFrame(visualFrame);
+            visualFrame = null;
+        }
+        clearSpotlight();
+        stopProgressTimer();
+        countAnimations.forEach(function (animation) {
+            window.cancelAnimationFrame(animation.frame);
+            animation.finish();
+        });
+        if (mutationFrame !== null) {
+            window.cancelAnimationFrame(mutationFrame);
+            mutationFrame = null;
+        }
+    }
+
+    function resumeVisualWork() {
+        onScroll();
+        queueMutationScan();
+        if (progress && progress.isConnected && progress.classList.contains("is-active")
+            && !progress.classList.contains("is-done")) {
+            startProgressTimer();
+        }
+    }
+
+    function onMotionPreferenceChange() {
+        restoreRootState();
+        if (prefersReducedMotion.matches) {
+            pauseVisualWork();
+            clearMutationQueue();
+            return;
+        }
+        scan(document.body);
+        scanMotion(document.body);
+        resumeVisualWork();
+    }
+
     // ── Wiring ──────────────────────────────────────────────────────────────
     function start() {
         watchRootState();
-        splitScope(document.body);
         scan(document.body);
         scanMotion(document.body);
         scheduleScenes();
@@ -823,17 +869,26 @@
     }
 
     window.addEventListener("scroll", onScroll, { passive: true });
-
-    if (root.classList.contains("hts-js")) {
-        document.addEventListener("pointermove", onPointerMove, { passive: true });
-        document.addEventListener("pointerleave", clearSpotlight, { passive: true });
-        document.addEventListener("click", onDocumentClick, { capture: true, passive: true });
-
-        // A navigation that ends in the browser going somewhere else, or in the back
-        // button, still has to clear the bar - otherwise it survives into the page the
-        // visitor lands on.
-        window.addEventListener("pagehide", finishProgress);
-        window.addEventListener("popstate", startProgress);
+    window.addEventListener("resize", onScroll, { passive: true });
+    document.addEventListener("pointermove", onPointerMove, { passive: true });
+    document.addEventListener("pointerleave", clearSpotlight, { passive: true });
+    document.addEventListener("click", onDocumentClick, { capture: true, passive: true });
+    window.addEventListener("pagehide", function () {
+        pauseVisualWork();
+        finishProgress();
+    });
+    window.addEventListener("pageshow", resumeVisualWork);
+    window.addEventListener("popstate", startProgress);
+    document.addEventListener("visibilitychange", function () {
+        if (document.hidden) {
+            pauseVisualWork();
+        } else {
+            resumeVisualWork();
+        }
+    });
+    if (typeof prefersReducedMotion.addEventListener === "function") {
+        prefersReducedMotion.addEventListener("change", onMotionPreferenceChange);
+        hoverPointer.addEventListener("change", clearSpotlight);
     }
 
     if (document.readyState === "loading") {
@@ -847,42 +902,133 @@
         window.Blazor.addEventListener("enhancedload", onEnhancedLoad);
     }
 
-    // Blazor renders interactive islands after the initial paint, so pick up any
-    // `[data-reveal]` nodes those components add to the DOM.
-    if ("MutationObserver" in window) {
-        var mutationRoots = new Set();
-        var mutationScanQueued = false;
+    var mutationRoots = new Set();
+    var mutationFrame = null;
+    var ENHANCEMENTS = REVEALS + ", [data-motion], [data-parallax]";
 
-        function flushMutationScan() {
-            mutationScanQueued = false;
+    function visitScope(scope, selector, visit) {
+        if (scope.matches && scope.matches(selector)) {
+            visit(scope);
+        }
+        if (scope.querySelectorAll) {
+            scope.querySelectorAll(selector).forEach(visit);
+        }
+    }
 
-            mutationRoots.forEach(function (node) {
-                if (!node.isConnected) {
-                    return;
-                }
+    function releaseScope(scope) {
+        if (scope.isConnected) {
+            return;
+        }
+        visitScope(scope, ENHANCEMENTS, function (node) {
+            if (observer) {
+                observer.unobserve(node);
+                observedReveals.delete(node);
+            }
+            if (motionObserver) {
+                motionObserver.unobserve(node);
+                motionVisibilityObserver.unobserve(node);
+            }
+            activeScenes.delete(node);
+            activeParallax.delete(node);
+            sceneStates.delete(node);
+            parallaxStates.delete(node);
+            delete node.dataset.motionObserved;
+            delete node.dataset.sceneObserved;
+            delete node.dataset.parallaxObserved;
+        });
+        countAnimations.forEach(function (animation, node) {
+            if (!node.isConnected) {
+                window.cancelAnimationFrame(animation.frame);
+                animation.finish();
+            }
+        });
+    }
 
-                splitScope(node);
+    function pruneDetachedScopes() {
+        stageScopes.forEach(function (stageObserver, scope) {
+            if (!scope.isConnected) {
+                stageObserver.disconnect();
+                stageScopes.delete(scope);
+            }
+        });
+        orderWatches.forEach(function (_, timeline) {
+            if (!timeline.isConnected) {
+                stopWatching(timeline);
+            }
+        });
+    }
+
+    function clearMutationQueue() {
+        if (mutationFrame !== null) {
+            window.cancelAnimationFrame(mutationFrame);
+            mutationFrame = null;
+        }
+        mutationRoots.clear();
+    }
+
+    function flushMutationScan() {
+        mutationFrame = null;
+        if (document.hidden) {
+            return;
+        }
+        mutationRoots.forEach(function (node) {
+            if (node.isConnected) {
                 scan(node);
                 scanMotion(node);
-            });
+            }
+        });
+        mutationRoots.clear();
+        scheduleScenes();
+    }
 
-            mutationRoots.clear();
-            scheduleScenes();
+    function queueMutationScan() {
+        if (!root.classList.contains("hts-js")) {
+            clearMutationQueue();
+            return;
         }
+        if (!document.hidden && mutationRoots.size > 0 && mutationFrame === null) {
+            mutationFrame = window.requestAnimationFrame(flushMutationScan);
+        }
+    }
 
+    function queueMutationRoot(node) {
+        if (!node.matches(ENHANCEMENTS) && !node.querySelector(ENHANCEMENTS)) {
+            return;
+        }
+        var covered = false;
+        mutationRoots.forEach(function (existing) {
+            if (existing.contains(node)) {
+                covered = true;
+            } else if (node.contains(existing)) {
+                mutationRoots.delete(existing);
+            }
+        });
+        if (!covered) {
+            mutationRoots.add(node);
+        }
+    }
+
+    // Scan only new enhancement roots and keep Razor's child-node structure intact.
+    if ("MutationObserver" in window) {
         new MutationObserver(function (mutations) {
+            var removed = false;
             mutations.forEach(function (mutation) {
+                mutation.removedNodes.forEach(function (node) {
+                    if (node.nodeType === 1 && !node.isConnected) {
+                        releaseScope(node);
+                        removed = true;
+                    }
+                });
                 mutation.addedNodes.forEach(function (node) {
                     if (node.nodeType === 1) {
-                        mutationRoots.add(node);
+                        queueMutationRoot(node);
                     }
                 });
             });
-
-            if (mutationRoots.size > 0 && !mutationScanQueued) {
-                mutationScanQueued = true;
-                window.requestAnimationFrame(flushMutationScan);
+            if (removed) {
+                pruneDetachedScopes();
             }
+            queueMutationScan();
         }).observe(document.documentElement, { childList: true, subtree: true });
     }
 })();

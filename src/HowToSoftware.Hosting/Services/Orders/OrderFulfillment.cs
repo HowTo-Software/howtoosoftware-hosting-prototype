@@ -1,9 +1,12 @@
+using System.Collections.Concurrent;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Channels;
 using HowToSoftware.Hosting.Infrastructure.Pterodactyl;
 using HowToSoftware.Hosting.Models.Orders;
 using HowToSoftware.Hosting.Services.Provisioning;
+using HowToSoftware.Hosting.Services.Payments;
+using HowToSoftware.Hosting.Services.Trials;
 using Microsoft.Extensions.Options;
 
 namespace HowToSoftware.Hosting.Services.Orders;
@@ -18,6 +21,7 @@ namespace HowToSoftware.Hosting.Services.Orders;
 /// </remarks>
 public sealed class OrderFulfillmentQueue
 {
+    private readonly ConcurrentDictionary<Guid, byte> _pending = new();
     private readonly Channel<Guid> _channel = Channel.CreateUnbounded<Guid>(new UnboundedChannelOptions
     {
         SingleReader = true,
@@ -25,7 +29,14 @@ public sealed class OrderFulfillmentQueue
     });
 
     /// <summary>Queues an order for fulfilment.</summary>
-    public void Enqueue(Guid orderId) => _channel.Writer.TryWrite(orderId);
+    public void Enqueue(Guid orderId)
+    {
+        if (_pending.TryAdd(orderId, 0) && !_channel.Writer.TryWrite(orderId))
+            _pending.TryRemove(orderId, out _);
+    }
+
+    /// <summary>Releases the queue claim after one attempt, permitting a durable retry.</summary>
+    public void Complete(Guid orderId) => _pending.TryRemove(orderId, out _);
 
     /// <summary>Order ids as they arrive.</summary>
     public IAsyncEnumerable<Guid> ReadAllAsync(CancellationToken cancellationToken) =>
@@ -80,6 +91,8 @@ public sealed class OrderFulfillmentService : IOrderFulfillmentService
     private readonly TimeProvider _clock;
     private readonly ILogger<OrderFulfillmentService> _logger;
     private readonly IProvisioningStateStore _state;
+    private readonly ITrialService? _trials;
+    private readonly IOrderPricingService? _pricing;
 
     /// <summary>Creates the service.</summary>
     public OrderFulfillmentService(
@@ -89,7 +102,9 @@ public sealed class OrderFulfillmentService : IOrderFulfillmentService
         IOptionsMonitor<PterodactylOptions> panelOptions,
         TimeProvider clock,
         ILogger<OrderFulfillmentService> logger,
-        IProvisioningStateStore? state = null)
+        IProvisioningStateStore? state = null,
+        ITrialService? trials = null,
+        IOrderPricingService? pricing = null)
     {
         _orders = orders;
         _provisioning = provisioning;
@@ -98,6 +113,8 @@ public sealed class OrderFulfillmentService : IOrderFulfillmentService
         _clock = clock;
         _logger = logger;
         _state = state ?? new NullProvisioningStateStore();
+        _trials = trials;
+        _pricing = pricing;
     }
 
     /// <inheritdoc />
@@ -141,6 +158,39 @@ public sealed class OrderFulfillmentService : IOrderFulfillmentService
         }
 
         await _state.BeginAsync(order.Id, cancellationToken).ConfigureAwait(false);
+
+        if (_trials is not null)
+        {
+            var priced = _pricing?.Price(order.GameId, order.PlanId, order.BillingPeriod);
+            if (priced is null)
+            {
+                _logger.LogWarning("Order {OrderId}: resource definition unavailable; conversion deferred.", order.Id);
+                return;
+            }
+            var plan = priced.Plan;
+            var conversion = await _trials.ConvertPaidOrderAsync(order.Id,
+                new TrialResourceLimits(plan.MemoryMib, plan.CpuPercent, plan.DiskMib,
+                    plan.BackupLimit, plan.DatabaseLimit, plan.AllocationLimit), cancellationToken).ConfigureAwait(false);
+            if (conversion.Outcome is TrialConversionOutcome.Converted && conversion.Server is { } existing)
+            {
+                order.ServerIdentifier = existing.Identifier;
+                order.ProvisioningStage = FulfilmentStage.Online;
+                order.TransitionTo(OrderStatus.Active, _clock.GetUtcNow());
+                await _orders.UpdateAsync(order, cancellationToken).ConfigureAwait(false);
+                await _state.MarkReusedAsync(order.Id, new ProvisioningResult(
+                    ProvisioningOutcome.AlreadyProvisioned, order.Id, existing.Id, existing.Uuid,
+                    existing.Identifier, null, null, null, null, true, null, order.PlanId,
+                    PterodactylFailure.None, "Existing trial converted; save preserved."), cancellationToken).ConfigureAwait(false);
+                await _state.MarkOnlineAsync(order.Id, cancellationToken).ConfigureAwait(false);
+                _logger.LogInformation("Order {OrderId}: existing trial server {ServerId} upgraded; save preserved.", order.Id, existing.Id);
+                return;
+            }
+            if (conversion.Outcome is not TrialConversionOutcome.NotLinked)
+            {
+                _logger.LogWarning("Order {OrderId}: trial conversion deferred ({Outcome}); retry will reuse its server.", order.Id, conversion.Outcome);
+                return;
+            }
+        }
 
         var request = new ProvisioningRequest
         {
@@ -290,6 +340,7 @@ public sealed class OrderFulfillmentWorker : BackgroundService
                 exception.GetType().Name);
         }
 
+        var rescan = RescanPendingAsync(stoppingToken);
         await foreach (var orderId in _queue.ReadAllAsync(stoppingToken).ConfigureAwait(false))
         {
             try
@@ -310,6 +361,28 @@ public sealed class OrderFulfillmentWorker : BackgroundService
                     "Fulfilment of order {OrderId} threw {FailureType}.",
                     orderId,
                     exception.GetType().Name);
+            }
+            finally
+            {
+                _queue.Complete(orderId);
+            }
+        }
+        await rescan.ConfigureAwait(false);
+    }
+
+    private async Task RescanPendingAsync(CancellationToken cancellationToken)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromMinutes(1));
+        while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false))
+        {
+            try
+            {
+                foreach (var id in await _orders.ListAwaitingFulfilmentAsync(cancellationToken).ConfigureAwait(false))
+                    _queue.Enqueue(id);
+            }
+            catch (Exception exception) when (exception is not OperationCanceledException)
+            {
+                _logger.LogDebug("Pending-order retry scan deferred ({FailureType}).", exception.GetType().Name);
             }
         }
     }

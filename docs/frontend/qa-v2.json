@@ -1,0 +1,654 @@
+{
+  "date": "2026-10-04",
+  "environment": "Local isolated preview / Chromium 140 headless SwiftShader",
+  "passed": 66,
+  "checks": [
+    {
+      "name": "GLSL wordmark ready",
+      "ok": true,
+      "detail": {
+        "draws": 5,
+        "programs": 1,
+        "deleted": 0,
+        "contextLosses": 0
+      }
+    },
+    {
+      "name": "wordmark stops drawing after intro",
+      "ok": true,
+      "detail": {
+        "idle": 123,
+        "idle2": 123
+      }
+    },
+    {
+      "name": "pointer restarts glyph morph",
+      "ok": true,
+      "detail": {
+        "draws": 134,
+        "programs": 1,
+        "deleted": 0,
+        "contextLosses": 0
+      }
+    },
+    {
+      "name": "offscreen pauses WebGL",
+      "ok": true,
+      "detail": {
+        "off": 135,
+        "after": 135
+      }
+    },
+    {
+      "name": "lost WebGL context shows static HTS",
+      "ok": true,
+      "detail": {
+        "draws": 147,
+        "programs": 1,
+        "deleted": 1,
+        "contextLosses": 1
+      }
+    },
+    {
+      "name": "WebGL context recovers",
+      "ok": true,
+      "detail": {
+        "draws": 150,
+        "programs": 2,
+        "deleted": 1,
+        "contextLosses": 1
+      }
+    },
+    {
+      "name": "enhanced navigation disposes GPU",
+      "ok": true,
+      "detail": {
+        "draws": 151,
+        "programs": 2,
+        "deleted": 2,
+        "contextLosses": 1
+      }
+    },
+    {
+      "name": "enhanced home navigation remounts wordmark",
+      "ok": true,
+      "detail": {
+        "draws": 166,
+        "programs": 3,
+        "deleted": 2,
+        "contextLosses": 1
+      }
+    },
+    {
+      "name": "enhanced navigation keeps desktop controls visible",
+      "ok": true,
+      "detail": "scripting fallback remains inactive"
+    },
+    {
+      "name": "native hero changes plan, price and link",
+      "ok": true,
+      "detail": {
+        "checked": true,
+        "price": "$25.99",
+        "href": "/game-hosting/project-zomboid/review?plan=zomboid-16gb&period=monthly",
+        "transform": "matrix(1, 0, 0, 1, 300, 0)"
+      }
+    },
+    {
+      "name": "native radio keyboard works",
+      "ok": true,
+      "detail": "Settlement"
+    },
+    {
+      "name": "FAQ interactive disclosure",
+      "ok": true,
+      "detail": "open"
+    },
+    {
+      "name": "panel interactive view",
+      "ok": true,
+      "detail": "mods"
+    },
+    {
+      "name": "wordmark adapts to light palette",
+      "ok": true,
+      "detail": "canvas redraw"
+    },
+    {
+      "name": "theme persists across reload",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "theme": "light",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "mobile Escape closes menu and returns focus",
+      "ok": true,
+      "detail": "button focus"
+    },
+    {
+      "name": "mobile navigation closes menu",
+      "ok": true,
+      "detail": "catalog"
+    },
+    {
+      "name": "/ @ 320",
+      "ok": true,
+      "detail": {
+        "width": 320,
+        "scrollWidth": 320,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/game-hosting @ 320",
+      "ok": true,
+      "detail": {
+        "width": 320,
+        "scrollWidth": 320,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/game-hosting/project-zomboid @ 320",
+      "ok": true,
+      "detail": {
+        "width": 320,
+        "scrollWidth": 320,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/infrastructure @ 320",
+      "ok": true,
+      "detail": {
+        "width": 320,
+        "scrollWidth": 320,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/login @ 320",
+      "ok": true,
+      "detail": {
+        "width": 320,
+        "scrollWidth": 320,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/game-hosting/project-zomboid/review?plan=zomboid-4gb&period=monthly @ 320",
+      "ok": true,
+      "detail": {
+        "width": 320,
+        "scrollWidth": 320,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/ @ 375",
+      "ok": true,
+      "detail": {
+        "width": 375,
+        "scrollWidth": 375,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/game-hosting @ 375",
+      "ok": true,
+      "detail": {
+        "width": 375,
+        "scrollWidth": 375,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/game-hosting/project-zomboid @ 375",
+      "ok": true,
+      "detail": {
+        "width": 375,
+        "scrollWidth": 375,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/infrastructure @ 375",
+      "ok": true,
+      "detail": {
+        "width": 375,
+        "scrollWidth": 375,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/login @ 375",
+      "ok": true,
+      "detail": {
+        "width": 375,
+        "scrollWidth": 375,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/game-hosting/project-zomboid/review?plan=zomboid-4gb&period=monthly @ 375",
+      "ok": true,
+      "detail": {
+        "width": 375,
+        "scrollWidth": 375,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/ @ 768",
+      "ok": true,
+      "detail": {
+        "width": 768,
+        "scrollWidth": 753,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/game-hosting @ 768",
+      "ok": true,
+      "detail": {
+        "width": 768,
+        "scrollWidth": 753,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/game-hosting/project-zomboid @ 768",
+      "ok": true,
+      "detail": {
+        "width": 768,
+        "scrollWidth": 753,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/infrastructure @ 768",
+      "ok": true,
+      "detail": {
+        "width": 768,
+        "scrollWidth": 753,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/login @ 768",
+      "ok": true,
+      "detail": {
+        "width": 768,
+        "scrollWidth": 753,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/game-hosting/project-zomboid/review?plan=zomboid-4gb&period=monthly @ 768",
+      "ok": true,
+      "detail": {
+        "width": 768,
+        "scrollWidth": 753,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/ @ 1024",
+      "ok": true,
+      "detail": {
+        "width": 1024,
+        "scrollWidth": 1009,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/game-hosting @ 1024",
+      "ok": true,
+      "detail": {
+        "width": 1024,
+        "scrollWidth": 1009,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/game-hosting/project-zomboid @ 1024",
+      "ok": true,
+      "detail": {
+        "width": 1024,
+        "scrollWidth": 1009,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/infrastructure @ 1024",
+      "ok": true,
+      "detail": {
+        "width": 1024,
+        "scrollWidth": 1009,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/login @ 1024",
+      "ok": true,
+      "detail": {
+        "width": 1024,
+        "scrollWidth": 1009,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/game-hosting/project-zomboid/review?plan=zomboid-4gb&period=monthly @ 1024",
+      "ok": true,
+      "detail": {
+        "width": 1024,
+        "scrollWidth": 1009,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/ @ 1440",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/game-hosting @ 1440",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/game-hosting/project-zomboid @ 1440",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/infrastructure @ 1440",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/login @ 1440",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "/game-hosting/project-zomboid/review?plan=zomboid-4gb&period=monthly @ 1440",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "theme": "dark",
+        "lang": "pt-BR"
+      }
+    },
+    {
+      "name": "comparison native controls",
+      "ok": true,
+      "detail": "comparison"
+    },
+    {
+      "name": "real quotes follow monthly",
+      "ok": true,
+      "detail": [
+        {
+          "period": "monthly",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-4gb&period=monthly"
+        },
+        {
+          "period": "monthly",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-5gb&period=monthly"
+        },
+        {
+          "period": "monthly",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-6gb&period=monthly"
+        },
+        {
+          "period": "monthly",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-8gb&period=monthly"
+        },
+        {
+          "period": "monthly",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-10gb&period=monthly"
+        },
+        {
+          "period": "monthly",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-12gb&period=monthly"
+        },
+        {
+          "period": "monthly",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-14gb&period=monthly"
+        },
+        {
+          "period": "monthly",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-16gb&period=monthly"
+        }
+      ]
+    },
+    {
+      "name": "real quotes follow quarterly",
+      "ok": true,
+      "detail": [
+        {
+          "period": "quarterly",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-4gb&period=quarterly"
+        },
+        {
+          "period": "quarterly",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-5gb&period=quarterly"
+        },
+        {
+          "period": "quarterly",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-6gb&period=quarterly"
+        },
+        {
+          "period": "quarterly",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-8gb&period=quarterly"
+        },
+        {
+          "period": "quarterly",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-10gb&period=quarterly"
+        },
+        {
+          "period": "quarterly",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-12gb&period=quarterly"
+        },
+        {
+          "period": "quarterly",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-14gb&period=quarterly"
+        },
+        {
+          "period": "quarterly",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-16gb&period=quarterly"
+        }
+      ]
+    },
+    {
+      "name": "real quotes follow annual",
+      "ok": true,
+      "detail": [
+        {
+          "period": "annual",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-4gb&period=annual"
+        },
+        {
+          "period": "annual",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-5gb&period=annual"
+        },
+        {
+          "period": "annual",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-6gb&period=annual"
+        },
+        {
+          "period": "annual",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-8gb&period=annual"
+        },
+        {
+          "period": "annual",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-10gb&period=annual"
+        },
+        {
+          "period": "annual",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-12gb&period=annual"
+        },
+        {
+          "period": "annual",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-14gb&period=annual"
+        },
+        {
+          "period": "annual",
+          "href": "/game-hosting/project-zomboid/review?plan=zomboid-16gb&period=annual"
+        }
+      ]
+    },
+    {
+      "name": "custom configuration quote keyboard",
+      "ok": true,
+      "detail": {
+        "value": 20,
+        "quote": "$31.99\n                            por mês"
+      }
+    },
+    {
+      "name": "custom quote contact preserves text",
+      "ok": true,
+      "detail": "draft only"
+    },
+    {
+      "name": "checkout form and annual plan preserved",
+      "ok": true,
+      "detail": "antiforgery and model"
+    },
+    {
+      "name": "promo localized PT",
+      "ok": true,
+      "detail": "PT"
+    },
+    {
+      "name": "promo localized EN",
+      "ok": true,
+      "detail": "EN"
+    },
+    {
+      "name": "English hero and metadata",
+      "ok": true,
+      "detail": "resources"
+    },
+    {
+      "name": "English culture persists",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "theme": "dark",
+        "lang": "en"
+      }
+    },
+    {
+      "name": "reduced motion uses static HTS and readable masks",
+      "ok": true,
+      "detail": {
+        "fallback": "visible",
+        "canvas": "hidden",
+        "draws": 0,
+        "clip": "none"
+      }
+    },
+    {
+      "name": "reduced motion keeps header and theme control visible",
+      "ok": true,
+      "detail": "independent motion and scripting flags"
+    },
+    {
+      "name": "reduced motion enhanced navigation preserves controls",
+      "ok": true,
+      "detail": "no fallback leakage"
+    },
+    {
+      "name": "unavailable WebGL retains HTS fallback",
+      "ok": true,
+      "detail": "no WebGL"
+    },
+    {
+      "name": "hero plans and navigation work without JS",
+      "ok": true,
+      "detail": {
+        "js": false,
+        "radio": true,
+        "price": "$25.99",
+        "shown": "block",
+        "fallback": "visible",
+        "nav": 120,
+        "faq": "visible",
+        "width": 390
+      }
+    },
+    {
+      "name": "plan comparison and billing work without JS",
+      "ok": true,
+      "detail": "native CSS"
+    },
+    {
+      "name": "no browser exceptions",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no failed asset requests",
+      "ok": true,
+      "detail": []
+    }
+  ]
+}

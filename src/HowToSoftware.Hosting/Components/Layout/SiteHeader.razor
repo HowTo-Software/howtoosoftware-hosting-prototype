@@ -16,58 +16,71 @@
 @inject IStringLocalizer<CommonText> Text
 @inject NavigationManager Navigation
 
-<header class="site-header">
+<header class="site-header @(_isOpen ? "has-open-menu" : null)" @onkeydown="OnKeyDown">
+    @if (_isOpen)
+    {
+        <div class="header-backdrop" aria-hidden="true" @onclick="Close"></div>
+    }
     <div class="hts-container hts-container--wide header-inner">
         <a class="header-brand" href="/" aria-label="@Text["Brand.HomeLabel", SiteName]" @onclick="Close">
-            <BrandMark Name="@SiteName" Tagline="@Text["Brand.Tagline"]" />
+            <BrandMark Name="@SiteName" />
         </a>
-
-        <button type="button"
-                class="header-toggle"
-                aria-expanded="@_isOpen.ToString().ToLowerInvariant()"
-                aria-controls="primary-navigation"
-                aria-label="@(_isOpen ? Text["Nav.CloseMenu"] : Text["Nav.OpenMenu"])"
-                @onclick="Toggle">
-            <Icon Name="@(_isOpen ? IconName.Close : IconName.Menu)" />
-        </button>
 
         <div id="primary-navigation" class="header-panel @(_isOpen ? "is-open" : null)">
             <nav class="header-nav" aria-label="@Text["Nav.Primary"]">
                 <ul>
-                    @foreach (var link in Content.PrimaryNavigation)
+                    @foreach (var link in HeaderLinks)
                     {
                         <li>
                             <a href="@link.Href"
                                class="@(IsCurrentPage(link.Href) ? "is-current" : null)"
                                aria-current="@(IsCurrentPage(link.Href) ? "page" : null)"
-                               @onclick="Close">@link.Label</a>
+                               @onclick="Close"><RollingNavText Text="@link.Label" /></a>
                         </li>
                     }
                 </ul>
             </nav>
 
             <div class="header-actions">
-                <div class="header-utility">
-                    <LanguageSwitcher />
-                    <ThemeToggle />
-                </div>
-
-                @*
-                    Leaves the site, so it says so: rel="noopener" because it opens a session
-                    elsewhere, and an external mark rather than the arrow the internal calls to
-                    action use.
-                *@
+                @* The customer's control panel is a separate application. Preserve its
+                   absolute destination and secure new-tab behaviour. *@
                 <CtaButton Href="@PanelUrl"
                            Variant="CtaVariant.Primary"
                            Size="CtaSize.Small"
                            Target="_blank"
                            Rel="noopener noreferrer"
+                           TrailingIcon="IconName.ArrowRight"
+                           title="@Text["Cta.SignIn"]"
                            OnClick="Close">
-                    @Text["Cta.Panel"]
+                    @Text["Product.ControlPanel"]
                 </CtaButton>
             </div>
         </div>
+
+        <div class="header-utility">
+            <LanguageSwitcher />
+            <ThemeToggle />
+        </div>
+
+        <button type="button"
+                class="header-toggle"
+                @ref="_menuToggle"
+                aria-expanded="@_isOpen.ToString().ToLowerInvariant()"
+                aria-controls="primary-navigation"
+                aria-label="@(_isOpen ? Text["Nav.CloseMenu"] : Text["Nav.OpenMenu"])"
+                @onclick="Toggle">
+            <Icon Name="@(_isOpen ? IconName.Close : IconName.Menu)" />
+        </button>
     </div>
+    <noscript>
+        <nav class="header-static hts-container hts-container--wide" aria-label="@Text["Nav.Primary"]">
+            @foreach (var link in HeaderLinks)
+            {
+                <a href="@link.Href">@link.Label</a>
+            }
+            <a href="@PanelUrl" target="_blank" rel="noopener noreferrer">@Text["Product.ControlPanel"]</a>
+        </nav>
+    </noscript>
 </header>
 
 @code {
@@ -82,6 +95,13 @@
     private const string PanelUrl = SiteRoutes.PanelLogin;
 
     private bool _isOpen;
+    private ElementReference _menuToggle;
+
+    private IReadOnlyList<NavigationLink> HeaderLinks =>
+    [
+        .. Content.PrimaryNavigation.Take(2),
+        new(Text["Company.Contact"], "/#contact")
+    ];
 
     /// <summary>Brand name shown in the header lockup.</summary>
     [Parameter]
@@ -93,11 +113,20 @@
 
     private void Close() => _isOpen = false;
 
+    private async Task OnKeyDown(KeyboardEventArgs args)
+    {
+        if (_isOpen && args.Key == "Escape")
+        {
+            Close();
+            await _menuToggle.FocusAsync();
+        }
+    }
+
     private void OnLocationChanged(object? sender, LocationChangedEventArgs args)
     {
         // A route change repaints the current-page marker and dismisses the mobile panel.
         _isOpen = false;
-        StateHasChanged();
+        _ = InvokeAsync(StateHasChanged);
     }
 
     /// <summary>

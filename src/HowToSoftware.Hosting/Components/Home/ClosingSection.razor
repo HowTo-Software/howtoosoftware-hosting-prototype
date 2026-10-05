@@ -1,51 +1,21 @@
-@*
-    Closing section.
-
-    Full-bleed statement type over the same routed field used in the hero, so the page ends
-    where it started and the infrastructure motif closes the loop.
-*@
-
 @inject IOptions<SiteOptions> Site
-@inject IStringLocalizer<HomeText> Text
+@inject IStringLocalizer<StorefrontText> Text
 
-<section class="closing" id="get-started" aria-labelledby="closing-heading" data-motion="scene" data-scene>
-    <div class="closing-field" aria-hidden="true">
-        <span class="closing-spine"></span>
-        <span class="closing-glow"></span>
-    </div>
-
-    <div class="hts-container hts-container--wide closing-inner">
-        <div class="closing-copy" data-reveal="left">
-            <p class="closing-kicker" data-text-effect="flicker" data-motion-step="label">
-                <span class="kicker-dot"></span>
-                @Text["Closing.Kicker"]
-            </p>
-
-            <h2 id="closing-heading" class="closing-title" data-text-effect="rise" data-motion-step="headline">
-                @Text["Closing.Line1"]<br />
-                <span class="closing-accent">@Text["Closing.Accent"]</span>
-            </h2>
-
-            <p class="closing-lede" data-motion-step="copy">@Text["Closing.Lede"]</p>
-
-            <div class="closing-actions">
-                <CtaButton Href="/project-zomboid" Size="CtaSize.Large" TrailingIcon="IconName.ArrowRight">
-                    @Text["Closing.Cta1"]
-                </CtaButton>
-                <CtaButton Href="#control-panel" Variant="CtaVariant.Secondary" Size="CtaSize.Large">
-                    @Text["Closing.Cta2"]
-                </CtaButton>
+<section class="closing" id="get-started" aria-labelledby="closing-heading">
+    <div class="hts-container hts-container--wide">
+        <div class="closing-inner" data-reveal>
+            <div class="closing-copy">
+                <p class="storefront-kicker"><span aria-hidden="true">↗</span>@Text["Closing.Kicker"]</p>
+                <h2 id="closing-heading"><MaskReveal>@Text["Closing.Title"]</MaskReveal></h2>
+                <p>@Text["Closing.Copy"]</p>
+                <CtaButton Href="@SiteRoutes.GameHosting" Size="CtaSize.Large" TrailingIcon="IconName.ArrowRight">@Text["Closing.Primary"]</CtaButton>
             </div>
+            <aside class="closing-contact" id="contact" aria-labelledby="contact-heading">
+                <span class="contact-symbol" aria-hidden="true"><Icon Name="IconName.ArrowRight" /></span>
+                <h3 id="contact-heading">@Text["Closing.Contact"]</h3>
+                <p>@Text["Closing.ContactCopy"]</p>
+                <a class="hts-text-link" href="mailto:@Site.Value.ContactEmail">@Site.Value.ContactEmail <Icon Name="IconName.ArrowRight" /></a>
+            </aside>
         </div>
-
-        <aside class="closing-contact" id="contact" aria-labelledby="contact-heading" data-reveal="right" data-motion-step="visual">
-            <p class="contact-key">@Text["Closing.ContactKey"]</p>
-            <h3 id="contact-heading" class="contact-title">@Text["Closing.ContactTitle"]</h3>
-            <p class="contact-copy">@Text["Closing.ContactCopy"]</p>
-            <a class="contact-link" href="mailto:@Site.Value.ContactEmail">
-                <span>@Site.Value.ContactEmail</span>
-                <span class="contact-arrow" aria-hidden="true"></span>
-            </a>
-        </aside>
     </div>
 </section>

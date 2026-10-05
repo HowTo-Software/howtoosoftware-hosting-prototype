@@ -75,7 +75,34 @@ public sealed record ServerLimitsPayload(
     [property: JsonPropertyName("swap")] int Swap,
     [property: JsonPropertyName("disk")] int Disk,
     [property: JsonPropertyName("io")] int Io,
-    [property: JsonPropertyName("cpu")] int Cpu);
+    [property: JsonPropertyName("cpu")] int Cpu)
+{
+    /// <summary>Preserved when updating a server pinned by an operator to selected threads.</summary>
+    [JsonPropertyName("threads")]
+    public string? Threads { get; init; }
+}
+
+/// <summary>PATCH /servers/{id}/build. No startup, egg, reinstall or allocation changes.</summary>
+public sealed record UpdateServerBuildRequest
+{
+    [JsonPropertyName("allocation")]
+    public required int Allocation { get; init; }
+
+    [JsonPropertyName("limits")]
+    public required ServerLimitsPayload Limits { get; init; }
+
+    [JsonPropertyName("feature_limits")]
+    public required UpdateServerFeatureLimitsPayload FeatureLimits { get; init; }
+
+    [JsonPropertyName("oom_disabled")]
+    public bool OomDisabled { get; init; }
+}
+
+/// <summary>Explicit null remains a panel feature limit rather than an omitted required key.</summary>
+public sealed record UpdateServerFeatureLimitsPayload(
+    [property: JsonPropertyName("databases"), JsonIgnore(Condition = JsonIgnoreCondition.Never)] int? Databases,
+    [property: JsonPropertyName("allocations"), JsonIgnore(Condition = JsonIgnoreCondition.Never)] int? Allocations,
+    [property: JsonPropertyName("backups"), JsonIgnore(Condition = JsonIgnoreCondition.Never)] int? Backups);
 
 /// <summary>
 /// Per-server feature caps. All three are sent as integers on every request: the panel requires

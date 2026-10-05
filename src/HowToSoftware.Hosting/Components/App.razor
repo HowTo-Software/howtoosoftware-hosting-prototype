@@ -6,14 +6,15 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#0b0c0e" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0b1016" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f4f6f8" media="(prefers-color-scheme: light)" />
     <base href="/" />
 
     @* Applies the saved theme before first paint. A Blazor component cannot run
        early enough to prevent a flash of the wrong theme, so this one stays inline. *@
     <script nonce="@CspNonce">
         (function () {
+            document.documentElement.classList.add("hts-script");
             try {
                 var t = localStorage.getItem("hts-theme");
                 if (t === "light" || t === "dark") {
@@ -37,14 +38,18 @@
     <link rel="stylesheet" href="@Assets["css/theme.css"]" />
     <link rel="stylesheet" href="@Assets["css/app.css"]" />
     <link rel="stylesheet" href="@Assets["HowToSoftware.Hosting.styles.css"]" />
+    <link rel="stylesheet" href="@Assets["css/storefront.css"]" />
+    <link rel="stylesheet" href="@Assets["css/no-script.css"]" />
     <ImportMap nonce="@CspNonce" />
     <HeadOutlet />
 </head>
 
 <body>
+    <div class="hts-progress" data-navigation-progress aria-hidden="true"></div>
     <Routes />
     <script nonce="@CspNonce" src="@Assets["_framework/blazor.web.js"]"></script>
     <script nonce="@CspNonce" src="@Assets["js/site.js"]"></script>
+    <script nonce="@CspNonce" src="@Assets["js/vector-wordmark.js"]"></script>
 </body>
 
 </html>

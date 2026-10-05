@@ -22,10 +22,10 @@
     <value>Hospedagem de jogos</value>
   </data>
   <data name="GameHosting.Title" xml:space="preserve">
-    <value>Escolha o jogo. A infraestrutura já está aqui.</value>
+    <value>Escolha o jogo. Crie o seu servidor.</value>
   </data>
   <data name="GameHosting.Lede" xml:space="preserve">
-    <value>Todo servidor roda em máquinas nossas, administradas por nós. Escolha o jogo, escolha um plano e um período, pague, e a plataforma monta o servidor.</value>
+    <value>Hardware próprio, painel HTS e configuração automática. Comece pelo jogo, compare os recursos e escolha o plano para a sua comunidade.</value>
   </data>
   <data name="GameHosting.CoverTagAvailable" xml:space="preserve">
     <value>Disponível / US Central</value>
@@ -34,7 +34,7 @@
     <value>Roadmap</value>
   </data>
   <data name="GameHosting.Primary" xml:space="preserve">
-    <value>Produto principal</value>
+    <value>Pronto para configurar</value>
   </data>
   <data name="GameHosting.Available" xml:space="preserve">
     <value>Disponível</value>
@@ -112,10 +112,10 @@
     <value>Deploy automático após o pagamento</value>
   </data>
   <data name="Game.Minecraft.Tagline" xml:space="preserve">
-    <value>Planejado: Java e Bedrock, com modpacks do CurseForge.</value>
+    <value>Java ou Bedrock. Escolha uma configuração disponível.</value>
   </data>
   <data name="Game.Minecraft.Summary" xml:space="preserve">
-    <value>O próximo jogo da plataforma. A ferramenta de mods do painel está sendo estendida para o CurseForge. Ainda sem planos ou preços - peça para ser avisado quando abrir.</value>
+    <value>Teste Minecraft na HTS por 24 horas. Escolha Java ou Bedrock, depois uma variante e versão disponíveis. Os softwares e versões dependem dos perfis aprovados para instalação.</value>
   </data>
   <data name="Zomboid.MetaTitle" xml:space="preserve">
     <value>Hospedagem de servidor Project Zomboid</value>
@@ -130,10 +130,16 @@
     <value>Hospedagem de jogos</value>
   </data>
   <data name="Zomboid.Title" xml:space="preserve">
-    <value>Seu servidor de Project Zomboid, pronto para jogar.</value>
+    <value>Seu mundo. Seu servidor de Project Zomboid.</value>
   </data>
   <data name="Zomboid.Lede" xml:space="preserve">
-    <value>Escolha a memória que a sua comunidade precisa. Todo o resto - mods do Workshop, backups, console, arquivos, o painel - é igual em todos os planos.</value>
+    <value>Escolha os recursos para a sua comunidade. Mods do Workshop, console e acesso aos arquivos em todos os planos, com controle pelo painel HTS.</value>
+  </data>
+  <data name="Zomboid.ProductCaption" xml:space="preserve">
+    <value>Build 41 + Build 42</value>
+  </data>
+  <data name="Zomboid.ProductDetail" xml:space="preserve">
+    <value>Um mundo persistente, seus mods do Workshop e um painel para gerenciar o servidor.</value>
   </data>
   <data name="Zomboid.CtaPlans" xml:space="preserve">
     <value>Ver planos</value>
@@ -213,14 +219,29 @@
   <data name="Zomboid.BackToCatalog" xml:space="preserve">
     <value>Voltar para hospedagem de jogos</value>
   </data>
+  <data name="Trial.Kicker" xml:space="preserve">
+    <value>Teste por 24 horas</value>
+  </data>
+  <data name="Trial.Title" xml:space="preserve">
+    <value>Seu mundo. Seu servidor. Teste por 24 horas.</value>
+  </data>
+  <data name="Trial.Body" xml:space="preserve">
+    <value>Crie um teste de Project Zomboid ou Minecraft na HTS. Confirme seu email, explore o painel e mantenha o mesmo mundo ao escolher um plano.</value>
+  </data>
+  <data name="Trial.Action" xml:space="preserve">
+    <value>Criar meu servidor de teste</value>
+  </data>
+  <data name="Trial.Note" xml:space="preserve">
+    <value>Um teste por conta · sem cartão</value>
+  </data>
   <data name="Picker.Kicker" xml:space="preserve">
     <value>Planos</value>
   </data>
   <data name="Picker.Title" xml:space="preserve">
-    <value>Escolha a memória. Escolha como paga.</value>
+    <value>Os recursos certos para o seu mundo.</value>
   </data>
   <data name="Picker.Lede" xml:space="preserve">
-    <value>{2} planos de {0} a {1} GB, todos calculados pela mesma tabela. Os únicos descontos são por pagar trimestral ou anual.</value>
+    <value>{2} planos, de {0} a {1} GB de RAM. Compare os recursos e escolha a cobrança mensal, trimestral ou anual.</value>
   </data>
   <data name="Picker.PeriodLegend" xml:space="preserve">
     <value>Período de cobrança</value>
@@ -275,6 +296,33 @@
   </data>
   <data name="Picker.Unpriced" xml:space="preserve">
     <value>Preço não publicado</value>
+  </data>
+  <data name="Picker.TotalNote" xml:space="preserve">
+    <value>O preço exibido é o total do período de cobrança selecionado.</value>
+  </data>
+  <data name="Picker.ViewLegend" xml:space="preserve">
+    <value>Visualização dos planos</value>
+  </data>
+  <data name="Picker.ViewCards" xml:space="preserve">
+    <value>Cartões</value>
+  </data>
+  <data name="Picker.ViewCompare" xml:space="preserve">
+    <value>Comparativo</value>
+  </data>
+  <data name="Picker.ComparePlan" xml:space="preserve">
+    <value>Plano</value>
+  </data>
+  <data name="Picker.CompareResources" xml:space="preserve">
+    <value>Recursos incluídos</value>
+  </data>
+  <data name="Picker.ComparePrice" xml:space="preserve">
+    <value>Preço e cobrança</value>
+  </data>
+  <data name="Picker.BotNotIncluded" xml:space="preserve">
+    <value>Não incluído</value>
+  </data>
+  <data name="Picker.ReviewNote" xml:space="preserve">
+    <value>No próximo passo, revise a configuração do servidor e o valor total antes de seguir para o pagamento.</value>
   </data>
   <data name="Review.MetaTitle" xml:space="preserve">
     <value>Revise seu servidor</value>
@@ -491,5 +539,274 @@
   </data>
   <data name="Cancel.NotFound" xml:space="preserve">
     <value>Não encontramos esse pedido. Escolha um plano para recomeçar.</value>
+  </data>
+  <data name="Review.PromoLabel" xml:space="preserve"><value>Código promocional</value></data>
+  <data name="Review.PromoPlaceholder" xml:space="preserve"><value>Digite seu código</value></data>
+  <data name="Trial.Unit" xml:space="preserve">
+    <value>horas</value>
+  </data>
+  <data name="Trial.Page.Title" xml:space="preserve">
+    <value>Comece com seu servidor de teste.</value>
+  </data>
+  <data name="Trial.Page.Lede" xml:space="preserve">
+    <value>Jogue por {0} horas na infraestrutura HTS. Depois do teste, seu servidor é suspenso e seu mundo fica guardado por {1} dias para você escolher um plano.</value>
+  </data>
+  <data name="Trial.Back" xml:space="preserve">
+    <value>Voltar para hospedagem</value>
+  </data>
+  <data name="Trial.Spec.Memory" xml:space="preserve">
+    <value>Memória</value>
+  </data>
+  <data name="Trial.Spec.Storage" xml:space="preserve">
+    <value>Armazenamento</value>
+  </data>
+  <data name="Trial.Spec.Duration" xml:space="preserve">
+    <value>Teste</value>
+  </data>
+  <data name="Trial.Step.Email" xml:space="preserve">
+    <value>Escolha seu jogo e confirme seu email.</value>
+  </data>
+  <data name="Trial.Step.Play" xml:space="preserve">
+    <value>Seu servidor é criado automaticamente. Avisamos por email quando estiver pronto.</value>
+  </data>
+  <data name="Trial.Step.Keep" xml:space="preserve">
+    <value>Escolha um plano para continuar com o mesmo servidor e save.</value>
+  </data>
+  <data name="Trial.Terms" xml:space="preserve">
+    <value>Um teste por conta do painel, válido para todos os jogos. O período começa ao terminar a instalação. Se não contratar um plano em até {0} dias após o fim do teste, o servidor e seus dados serão excluídos.</value>
+  </data>
+  <data name="Trial.Select.Title" xml:space="preserve">
+    <value>Escolha seu jogo.</value>
+  </data>
+  <data name="Trial.Select.Game" xml:space="preserve">
+    <value>Jogo do teste</value>
+  </data>
+  <data name="Trial.Select.Edition" xml:space="preserve">
+    <value>Edição do Minecraft</value>
+  </data>
+  <data name="Trial.Select.Software" xml:space="preserve">
+    <value>Software do servidor</value>
+  </data>
+  <data name="Trial.Select.Version" xml:space="preserve">
+    <value>Versão</value>
+  </data>
+  <data name="Trial.Select.UnavailableEdition" xml:space="preserve">
+    <value>Esta edição ainda não tem um software disponível para teste. Escolha outra edição ou fale com a HTS.</value>
+  </data>
+  <data name="Trial.Form.Name" xml:space="preserve">
+    <value>Seu nome</value>
+  </data>
+  <data name="Trial.Form.Email" xml:space="preserve">
+    <value>Endereço de email</value>
+  </data>
+  <data name="Trial.Form.EmailNote" xml:space="preserve">
+    <value>Enviamos um link de confirmação antes de criar sua conta ou servidor.</value>
+  </data>
+  <data name="Trial.Form.Submit" xml:space="preserve">
+    <value>Enviar email de confirmação</value>
+  </data>
+  <data name="Trial.Form.Recover" xml:space="preserve">
+    <value>Já testou a HTS? Use o mesmo email para recuperar o acesso. Isso não cria outro teste.</value>
+  </data>
+  <data name="Trial.Unavailable" xml:space="preserve">
+    <value>O teste automático está indisponível no momento. Fale com a HTS para consultar a disponibilidade.</value>
+  </data>
+  <data name="Trial.Contact" xml:space="preserve">
+    <value>Falar com a HTS</value>
+  </data>
+  <data name="Trial.Verify.Kicker" xml:space="preserve">
+    <value>Confirmação de email</value>
+  </data>
+  <data name="Trial.Verify.Title" xml:space="preserve">
+    <value>Confirme para continuar.</value>
+  </data>
+  <data name="Trial.Verify.Body" xml:space="preserve">
+    <value>Confirme que o email é seu para ativar o teste ou recuperar o acesso ao servidor existente. Só abrir esta página não cria um servidor.</value>
+  </data>
+  <data name="Trial.Verify.Action" xml:space="preserve">
+    <value>Confirmar meu email</value>
+  </data>
+  <data name="Trial.Notice.Sent" xml:space="preserve">
+    <value>Confira sua caixa de entrada. Se este endereço for elegível, você receberá um link de confirmação. Contas existentes recuperam o acesso pelo mesmo processo.</value>
+  </data>
+  <data name="Trial.Notice.Invalid" xml:space="preserve">
+    <value>Confira seu email, nome e a versão selecionada do servidor e tente novamente.</value>
+  </data>
+  <data name="Trial.Notice.InvalidToken" xml:space="preserve">
+    <value>Este link expirou ou já foi usado. Solicite um novo email abaixo.</value>
+  </data>
+  <data name="Trial.Notice.Claimed" xml:space="preserve">
+    <value>Esta conta do painel já utilizou um teste. Fale com a HTS se precisar recuperar o acesso.</value>
+  </data>
+  <data name="Trial.Account.Kicker" xml:space="preserve">
+    <value>Seu teste na HTS</value>
+  </data>
+  <data name="Trial.Account.Expires" xml:space="preserve">
+    <value>Fim do teste</value>
+  </data>
+  <data name="Trial.Account.DeleteAfter" xml:space="preserve">
+    <value>Dados guardados até</value>
+  </data>
+  <data name="Trial.Account.OpenPanel" xml:space="preserve">
+    <value>Abrir painel de controle</value>
+  </data>
+  <data name="Trial.Account.ChoosePlan" xml:space="preserve">
+    <value>Escolher um plano</value>
+  </data>
+  <data name="Trial.Account.SameSave" xml:space="preserve">
+    <value>Após a confirmação do pagamento, o plano é aplicado neste servidor. Seu mundo e seus arquivos são mantidos.</value>
+  </data>
+  <data name="Trial.Account.Refresh" xml:space="preserve">
+    <value>Consultar andamento</value>
+  </data>
+  <data name="Trial.Account.ReadyEmail" xml:space="preserve">
+    <value>Avisamos por email quando a instalação terminar. Você também pode atualizar esta página para consultar o andamento.</value>
+  </data>
+  <data name="Trial.State.PendingVerification" xml:space="preserve">
+    <value>Confirme seu email.</value>
+  </data>
+  <data name="Trial.State.Provisioning" xml:space="preserve">
+    <value>Criando seu servidor.</value>
+  </data>
+  <data name="Trial.State.Installing" xml:space="preserve">
+    <value>Instalando seu jogo.</value>
+  </data>
+  <data name="Trial.State.Active" xml:space="preserve">
+    <value>Seu teste está pronto.</value>
+  </data>
+  <data name="Trial.State.Expired" xml:space="preserve">
+    <value>Teste encerrado. Seu mundo está guardado.</value>
+  </data>
+  <data name="Trial.State.Deleted" xml:space="preserve">
+    <value>O prazo de retenção terminou.</value>
+  </data>
+  <data name="Trial.State.Converted" xml:space="preserve">
+    <value>Seu servidor agora tem um plano pago.</value>
+  </data>
+  <data name="Trial.State.Rejected" xml:space="preserve">
+    <value>Não foi possível ativar este teste.</value>
+  </data>
+  <data name="Trial.State.Deleting" xml:space="preserve">
+    <value>O prazo de retenção terminou.</value>
+  </data>
+  <data name="Trial.StateBody.PendingVerification" xml:space="preserve">
+    <value>Confira o link de confirmação na sua caixa de entrada.</value>
+  </data>
+  <data name="Trial.StateBody.Provisioning" xml:space="preserve">
+    <value>Seu email foi confirmado. A HTS está preparando seu servidor no painel.</value>
+  </data>
+  <data name="Trial.StateBody.Installing" xml:space="preserve">
+    <value>Seu jogo está sendo instalado. O período de teste começa quando a instalação terminar.</value>
+  </data>
+  <data name="Trial.StateBody.Active" xml:space="preserve">
+    <value>Abra o painel para configurar seu jogo, acessar os arquivos e começar a jogar.</value>
+  </data>
+  <data name="Trial.StateBody.Expired" xml:space="preserve">
+    <value>Seu servidor está suspenso. Escolha um plano antes do prazo de retenção para continuar com o mesmo save.</value>
+  </data>
+  <data name="Trial.StateBody.Deleted" xml:space="preserve">
+    <value>O servidor de teste e seus dados foram excluídos. Esta conta já utilizou seu teste.</value>
+  </data>
+  <data name="Trial.StateBody.Converted" xml:space="preserve">
+    <value>O pagamento foi confirmado e o plano selecionado foi aplicado ao mesmo servidor.</value>
+  </data>
+  <data name="Trial.StateBody.Rejected" xml:space="preserve">
+    <value>Esta conta do painel pode já ter usado um teste, ou a ativação precisa de atenção. Fale com a HTS para receber ajuda.</value>
+  </data>
+  <data name="Trial.StateBody.Deleting" xml:space="preserve">
+    <value>Seu teste não contratado está sendo removido. O prazo de retenção terminou.</value>
+  </data>
+  <data name="Trial.Mail.VerifySubject" xml:space="preserve">
+    <value>Confirme seu email na HTS Hosting</value>
+  </data>
+  <data name="Trial.Mail.VerifyBody" xml:space="preserve">
+    <value>Olá, {0}.
+
+Confirme seu email para ativar seu teste na HTS ou recuperar o acesso ao servidor existente:
+{1}
+
+Só abrir o link não cria um servidor. Use o botão de confirmação na página para continuar. Se você não pediu este email, pode ignorá-lo.
+
+Cada conta do painel tem direito a um teste de {3} horas, válido para todos os jogos. Seu email é confirmado antes de criar qualquer conta ou servidor.
+
+HTS Hosting
+Dúvidas: {2}</value>
+  </data>
+  <data name="Trial.Mail.ReadySubject" xml:space="preserve">
+    <value>Seu servidor de teste na HTS está pronto</value>
+  </data>
+  <data name="Trial.Mail.ReadyBody" xml:space="preserve">
+    <value>Seu servidor de teste está pronto. O período de {4} horas começou.
+
+Abra o painel:
+{0}
+
+Fim do teste: {1}
+
+Consulte seu teste ou escolha um plano:
+{2}
+
+Após o fim do teste, seu servidor é suspenso e os dados ficam guardados por {5:0.##} dias. A contratação de um plano nesse período mantém o mesmo servidor e save. Se não contratar, o servidor e seus dados serão excluídos.
+
+HTS Hosting
+Dúvidas: {3}</value>
+  </data>
+  <data name="Trial.Mail.ExpiredSubject" xml:space="preserve">
+    <value>Seu teste na HTS terminou — mantenha seu mundo</value>
+  </data>
+  <data name="Trial.Mail.ExpiredBody" xml:space="preserve">
+    <value>Seu teste terminou e o servidor está suspenso. Seu mundo e seus arquivos continuam guardados.
+
+Escolha um plano até {0} para continuar com o mesmo servidor e save:
+{1}
+
+Em outro dispositivo, informe o mesmo email nessa página para recuperar o acesso. Isso não cria um segundo teste.
+
+Se não contratar até esse prazo, o servidor e seus dados serão excluídos.
+
+HTS Hosting
+Dúvidas: {2}</value>
+  </data>
+  <data name="Trial.Mail.DeletedSubject" xml:space="preserve">
+    <value>O prazo de retenção do seu teste na HTS terminou</value>
+  </data>
+  <data name="Trial.Mail.DeletedBody" xml:space="preserve">
+    <value>O prazo de {2:0.##} dias após o teste terminou. O servidor não contratado e seus dados foram excluídos.
+
+Esta conta já utilizou seu teste. Você pode consultar o registro nesta página:
+{0}
+
+HTS Hosting
+Dúvidas: {1}</value>
+  </data>
+  <data name="Promotion.Label" xml:space="preserve">
+    <value>Ofertas disponíveis</value>
+  </data>
+  <data name="Promotion.Saving" xml:space="preserve">
+    <value>Economize {0} em {1}</value>
+  </data>
+  <data name="Promotion.Action" xml:space="preserve">
+    <value>Revisar oferta</value>
+  </data>
+  <data name="Promotion.Note" xml:space="preserve">
+    <value>A elegibilidade e o valor final são conferidos novamente no checkout.</value>
+  </data>
+  <data name="Trial.Recovery.Title" xml:space="preserve">
+    <value>Recuperar acesso a um teste existente</value>
+  </data>
+  <data name="Trial.Recovery.Body" xml:space="preserve">
+    <value>Informe o mesmo email utilizado no painel. Isso só recupera o acesso: não cria outro servidor nem reinicia o teste.</value>
+  </data>
+  <data name="Trial.Recovery.Action" xml:space="preserve">
+    <value>Enviar email de recuperação</value>
+  </data>
+  <data name="Trial.Account.PanelSetup" xml:space="preserve">
+    <value>Se a conta do painel é nova, use o email de configuração do painel para escolher sua senha. Contas existentes mantêm o acesso habitual.</value>
+  </data>
+  <data name="Review.TrialUpgrade" xml:space="preserve">
+    <value>Este plano continua no seu servidor de teste e mantém seu save.</value>
+  </data>
+  <data name="Review.TrialUpgradePending" xml:space="preserve">
+    <value>Já existe um checkout em andamento para este teste. Conclua o pagamento ou aguarde a expiração antes de tentar novamente.</value>
   </data>
 </root>

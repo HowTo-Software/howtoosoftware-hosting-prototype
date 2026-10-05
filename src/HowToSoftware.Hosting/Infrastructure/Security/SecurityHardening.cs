@@ -16,6 +16,8 @@ public static class SecurityRateLimitPolicies
     public const string StripeWebhook = "stripe-webhook";
     public const string Health = "health";
     public const string PublicPages = "public-pages";
+    public const string TrialsRequest = "trial-request";
+    public const string TrialsConfirm = "trial-confirm";
 }
 
 /// <summary>Registers limits that belong to the application rather than to a CDN or WAF.</summary>
@@ -67,6 +69,10 @@ public static class SecurityServiceExtensions
                 FixedWindow(context, permitLimit: 120));
             options.AddPolicy(SecurityRateLimitPolicies.Health, context =>
                 FixedWindow(context, permitLimit: 20));
+            options.AddPolicy(SecurityRateLimitPolicies.TrialsRequest, context =>
+                FixedWindow(context, permitLimit: 3, partition: "trial-request"));
+            options.AddPolicy(SecurityRateLimitPolicies.TrialsConfirm, context =>
+                FixedWindow(context, permitLimit: 10, partition: "trial-confirm"));
             options.AddPolicy(SecurityRateLimitPolicies.PublicPages, context =>
             {
                 var isCheckoutPost = HttpMethods.IsPost(context.Request.Method)

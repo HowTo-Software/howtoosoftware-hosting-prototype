@@ -1,0 +1,3 @@
+.minecraft-intro { padding-block: clamp(4rem, 8vw, 7rem) 3rem; }
+.minecraft-copy { margin-block: 1.5rem 2rem; font-size: 1.05rem; color: var(--ht-ink-soft); line-height: 1.8; }
+.minecraft-upgrade { padding-block: 2rem; color: var(--ht-ink-soft); line-height: 1.75; }

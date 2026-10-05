@@ -11,24 +11,24 @@
 @inject IMarketingContentService Content
 @inject IStringLocalizer<HomeText> Text
 
-<section class="faq-section" id="faq" aria-labelledby="faq-heading" data-motion="section">
+<section class="faq-section" id="faq" aria-labelledby="faq-heading">
     <div class="hts-container hts-container--wide faq-inner">
-        <header class="faq-aside" data-reveal="left">
-            <p class="faq-kicker" data-text-effect="flicker" data-motion-step="label">
+        <header class="faq-aside">
+            <p class="faq-kicker">
                 <span class="kicker-index">@Index</span>
                 @Text["Faq.Kicker"]
             </p>
-            <h2 id="faq-heading" class="faq-title" data-text-effect="rise" data-motion-step="headline">
+            <h2 id="faq-heading" class="faq-title">
                 @Text["Faq.Line1"]<br />
                 <span class="faq-accent">@Text["Faq.Accent"]</span>
             </h2>
-            <p class="faq-note" data-motion-step="copy">@Text["Faq.Note"]</p>
+            <p class="faq-note">@Text["Faq.Note"]</p>
             <CtaButton Href="#contact" Variant="CtaVariant.Secondary" TrailingIcon="IconName.ArrowRight">
                 @Text["Faq.Cta"]
             </CtaButton>
         </header>
 
-        <div class="faq" data-reveal="right" data-motion-step="visual">
+        <div class="faq">
             @foreach (var item in Content.Faqs)
             {
                 var isOpen = _openId == item.Id;

@@ -1,26 +1,25 @@
-# SQL Server commerce database
+# Configure SQL Server
 
-The commerce and provisioning schema is independent from the primary HTS/Hank database. The
-application talks to SQL Server only from the ASP.NET Core backend through EF Core and
-`Microsoft.Data.SqlClient`; no commercial table is reachable from browser code.
+> **Status:** Technical procedure checked against the code; external execution unverified
+>
+> **Owner:** HTS / HowToSoftware maintainers
+>
+> **Last updated:** 2026-10-05
 
-## 1. Use a dedicated database
+[Index](README.md) · [Configuration and precedence](phase-3-development/configuration.md) · [Architecture](phase-2-design/architecture.md)
 
-Give this application its **own database**, not a schema inside an existing one. Two applications
-sharing a database also share a migrations history table, and a deploy of one can then reshape or
-roll back the other. Each context here declares its own history table
-(`__EFMigrationsHistory_Commerce`, `__EFMigrationsHistory_Hosting`) as a second line of defence,
-but a separate database is the first.
+The commerce/provisioning schema is separate from the primary HTS database. The backend accesses SQL Server through EF Core and Microsoft.Data.SqlClient; these tables have no public Data API.
+
+## 1. Choose database and identities
+
+Use a dedicated storefront database. Each context has its own migration history (`__EFMigrationsHistory_Commerce` and `__EFMigrationsHistory_Hosting`), but this does not replace a dedicated target with correct permissions.
+
+The following examples create resources; execute them only on the chosen environment's server/database.
 
 ```sql
 CREATE DATABASE [HowToSoftwareHosting];
 GO
-```
-
-Create a login for the application that is **not** `sa` and owns nothing else:
-
-```sql
-CREATE LOGIN [hts_hosting_app] WITH PASSWORD = N'<generated>', CHECK_POLICY = ON;
+CREATE LOGIN [hts_hosting_app] WITH PASSWORD = N'<privately-generated-password>', CHECK_POLICY = ON;
 GO
 USE [HowToSoftwareHosting];
 GO
@@ -30,115 +29,101 @@ ALTER ROLE db_datawriter ADD MEMBER [hts_hosting_app];
 GO
 ```
 
-Migrations need DDL rights, which the runtime account should not have. Either run migrations as a
-separate deployment principal, or grant `db_ddladmin` only for the duration of the deploy.
+Production runtime must not use `sa`, be an owner, or have DDL rights. Create a separate migration identity with commerce-database permissions; do not permanently elevate the application login.
 
-Copy `.env.example` to `.env` and fill:
+In the private environment:
 
 ```dotenv
 SQLSERVER_CONNECTION_STRING=Server=HOST,1433;Database=HowToSoftwareHosting;User Id=hts_hosting_app;Password=...;Encrypt=True
 ```
 
-`.env` is git-ignored. In production prefer host environment variables or a secrets vault.
+If using `.env`, copy the example only when no file exists; keep values outside Git. Check precedence in the [configuration map](phase-3-development/configuration.md).
 
-### Transport security
+## 2. Transport
 
-The application forces `Encrypt=True` onto whatever string you supply, so credentials and order
-rows are never sent in the clear. Certificate validation stays **on** unless you add
-`TrustServerCertificate=True` yourself. Only do that for a server whose certificate your host
-cannot validate, and understand that it permits a machine-in-the-middle: anyone able to intercept
-the connection can present their own certificate and read everything. Installing a trusted
-certificate on the SQL Server is the correct fix.
+`SqlServerOptions` forces Encrypt=True, disables PersistSecurityInfo, and requires a server/database. Certificate validation stays enabled unless TrustServerCertificate=True is explicitly chosen. Prefer a trusted certificate; do not disable validation to hide production problems.
 
-## 2. Apply the schema and development seed
+A populated invalid string stops startup with a sanitized error. A recognized placeholder selects unconfigured commerce mode; do not automatically connect to another database to hide configuration errors.
 
-From the repository root, in Development:
+## 3. Apply schema
+
+At the root in Development, after checking the dedicated target:
 
 ```powershell
-dotnet run --project src/HowToSoftware.Hosting -- --migrate-commerce --seed-commerce
+dotnet run --project src/HowToSoftware.Hosting --launch-profile http -- --migrate-commerce --seed-commerce
 ```
 
-The command applies every migration and exits. The seed is idempotent and development-only. It
-adds Project Zomboid, the plans already defined by the application, monthly 0%, quarterly 5%
-and annual 10%, plus the initial deployment profile. It never invents prices.
+The command migrates and exits. Seed is explicit, idempotent, and Development-only: it adds Zomboid, catalog plans, periods/discounts, and an initial profile without inventing prices. Do not use development seed in production.
 
-For a production schema deployment, omit `--seed-commerce`:
+Production deployment runs the artifact with `--migrate-commerce` and `migrate.env`; see [DEPLOYMENT.md](DEPLOYMENT.md). For manual code execution in a production environment:
 
 ```powershell
-dotnet run --project src/HowToSoftware.Hosting -- --migrate-commerce
+dotnet run --project src/HowToSoftware.Hosting -c Release --no-launch-profile -- --migrate-commerce
 ```
 
-The smaller orders-only schema, used when `SQLSERVER_CONNECTION_STRING` is absent and only
-`ConnectionStrings__Hosting` is set, has its own flag:
+Verify the effective environment and migration identity. This command does not create/configure the SQL instance for you.
+
+For the smaller orders context, used when commerce is unconfigured and ConnectionStrings:Hosting is configured:
 
 ```powershell
 dotnet run --project src/HowToSoftware.Hosting -- --migrate-hosting
 ```
 
-**Startup never migrates anything.** A restart must not be able to reshape a shared server.
-Placeholder values are detected and do not open a connection.
+Choose only the context needed for the target's mode. **Normal startup does not apply migrations.** The worker may query tables at startup, so a missing schema generates query errors without being created automatically.
 
-To review the DDL before it touches a server:
+To review DDL before execution:
 
 ```powershell
+dotnet tool restore
 dotnet ef migrations script --idempotent --project src/HowToSoftware.Hosting --context CommerceDbContext --output commerce.sql
 ```
 
-## 3. Verify
+Review scripts privately before handing them to operators; do not version artifacts containing data/secrets.
 
-Start the site and request:
+## 4. Check health and functionality
 
-```text
-GET http://localhost:5147/health
-```
+### Trial schema required for this update
 
-The response is limited to `Healthy` or `Unhealthy`; credentials and connection details are never
-returned. An unconfigured database reports healthy, because serving the marketing pages with no
-database is a supported mode rather than a degraded dependency.
+Migration `20261005170245_AddServerTrials` adds `server_trials` and `trial_upgrade_orders`, including unique email/panel-account claims, hashed-token indexes, lifecycle scheduling and restricted relationships to existing `orders`. It does not alter existing columns, seed products or apply itself at application startup. The permanent entitlement row remains after its panel server is deleted.
 
-## Schema and access policy
+Apply the pending commerce migration before running this version against a configured commerce database, even when `Trials__Enabled=false`: that flag stops new requests, while the worker still maintains existing trials. The production deployment script already migrates before replacing the application. See [trial configuration](TRIAL-SERVERS.md) for SMTP, panel permissions and the 24-hour/72-hour policy.
 
-The migration creates customer profiles, games, plans, billing-price mappings, orders, hosting
-services, Stripe event claims, provisioning jobs, nodes, deployment profiles/events and minimal
-invoice references. Money is stored as `bigint` cents, timestamps as `datetimeoffset`, identifiers
-as `uniqueidentifier`, and relational constraints/indexes protect important mappings.
+Paid Minecraft tiers also require matching game and plan rows in commerce SQL (`Games.Slug` and `HostingPlans.Slug`). `MinecraftPlans__Tiers` configures quotes/resources; it does not create those rows. This migration does not insert Minecraft catalog data, and Development-only seed must not be used on production. Prepare the agreed catalog records before publishing paid tiers.
 
-Access control is the database user's permissions: the application login can read and write its
-own tables and nothing else. There is no browser-reachable data API in front of this database, so
-sensitive mutations have exactly one path — the trusted backend connection.
+`GET /health` returns JSON with Healthy/Unhealthy and does not reveal connection details. Configured commerce checks connection opening and `select 1`, not every table/migration.
 
-### Provider differences that survived the port from PostgreSQL
+Without commerce, Healthy represents public-pages mode. The orders worker may still log a configuration error when querying an alternative context without a connection. Real purchases require database/tables as well as Stripe.
 
-These are behavioural, not cosmetic, and are covered by tests in `SqlServerFoundationTests`:
+## Schema and provider differences
 
-| Concern | PostgreSQL | SQL Server |
-| --- | --- | --- |
-| `NULL` in a unique index | many rows allowed | treated as equal, so only one row | 
-| Consequence | — | unique indexes on optional columns are filtered `IS NOT NULL` |
-| Multiple cascade paths | permitted | rejected (error 1785); `deployment_events` cascades only from its provisioning job |
-| JSON columns | `jsonb` | `nvarchar(max)` |
-| `string[]` | native array | JSON, via EF primitive collections |
-| Row Level Security | enabled per table, Data API roles revoked | not applicable; replaced by database user permissions |
+The [data model](phase-2-design/data-model.md) explains orders, customers, services, jobs, events, invoices, and promotions. Commerce uses bigint cents, datetimeoffset, and GUIDs; indexes and constraints protect relationships.
 
-## Opt-in integration test
+Historical SQL Server port details covered by foundation tests:
 
-Ordinary tests never contact SQL Server; the hermetic unit suite uses a throwaway SQLite file, so
-anything provider-specific must be asserted here. Use a **dedicated non-production database** and
-deliberately set:
+| Concern | Current implementation |
+| --- | --- |
+| Optional-field uniqueness | Filtered IS NOT NULL indexes |
+| Multiple cascade paths | Mapping avoids conflicting paths; deployment events depend on the job |
+| JSON | nvarchar(max) |
+| Primitive collections | EF JSON conversion/mapping |
+| Table access | SQL user permissions; no public Data API or provider RLS |
+
+PostgreSQL is not the current provider. SQLite appears in specific tests, not in the production application.
+
+## 5. Opt-in SQL test
+
+Use a **dedicated test database**, not the runtime connection:
 
 ```powershell
 $env:SQLSERVER_INTEGRATION_TESTS_ENABLED = 'true'
 $env:SQLSERVER_TEST_CONNECTION_STRING = 'Server=...;Database=...dedicated-test-db...;User Id=...;Password=...;Encrypt=True'
-dotnet test --filter Category=Integration
+dotnet test HowToSoftware.Hosting.slnx -c Release --filter Category=Integration
 ```
 
-The test applies the migration, exercises customer/order mapping, duplicate Stripe-event
-protection, hosting-service/job transitions and Pterodactyl identifier persistence, then removes
-only the uniquely named records it created. It never reads `SQLSERVER_CONNECTION_STRING`, so a
-production connection cannot be selected accidentally.
+The test migrates, writes uniquely identified test records, verifies idempotency/relationships, and removes its data. It does not read SQLSERVER_CONNECTION_STRING. With opt-in disabled, it returns without exercising external integration; a pass does not then verify real SQL.
 
-## Future primary-database migration
+## Evolution
 
-Stripe and provisioning logic depend on `IOrderStore`, `IBillingStore` and
-`IProvisioningStateStore`, not on provider-specific APIs. Replacing the SQL Server-backed stores
-is the migration seam when the primary HTS database becomes available.
+Services depend on IOrderStore, IBillingStore, and IProvisioningStateStore. Future primary-database integration can replace stores without transferring financial authority to the browser. That future migration is not implemented.
+
+This documentation update did not execute these procedures in production.
