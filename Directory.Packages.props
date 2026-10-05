@@ -7,7 +7,7 @@
   <ItemGroup>
     <!-- Payments and the order store. Stripe's official SDK; EF Core over SQL Server for the
          commerce schema, reached by connection string alone. -->
-    <PackageVersion Include="Stripe.net" Version="52.4.1" />
+    <PackageVersion Include="Stripe.net" Version="53.0.0" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.12" />
     <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.12" />
   </ItemGroup>
