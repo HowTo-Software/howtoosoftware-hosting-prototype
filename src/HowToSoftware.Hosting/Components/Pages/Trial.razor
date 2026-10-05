@@ -207,14 +207,9 @@
             .ToArray();
         _profile = _profiles.FirstOrDefault(profile => profile.Id == ProfileQuery) ?? _profiles.FirstOrDefault();
 
-        if (VerificationToken is not { Length: > 0 } && TrialAccessCookie.Read(context) is { } accessToken)
-        {
-            _account = await Trials.GetByAccessTokenAsync(accessToken, context?.RequestAborted ?? default);
-        }
-        else
-        {
-            _account = null;
-        }
+        _account = VerificationToken is not { Length: > 0 } && TrialAccessCookie.Read(context) is { } accessToken
+            ? await Trials.GetByAccessTokenAsync(accessToken, context?.RequestAborted ?? default)
+            : null;
     }
 
     private static string FormatUtc(DateTimeOffset timestamp) =>
