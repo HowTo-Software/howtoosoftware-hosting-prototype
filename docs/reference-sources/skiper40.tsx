@@ -84,7 +84,6 @@ const Link001 = ({
   );
 };
 
-export { Link000, Link001, Link002, Link003, Link004, Link005, Skiper40 };
 const Link002 = ({
   children,
   href,
@@ -125,6 +124,7 @@ const Link002 = ({
     </a>
   );
 };
+export { Link000, Link001, Link002, Link003, Link004, Link005, Skiper40 };
 const Link003 = ({
   children,
   href,
