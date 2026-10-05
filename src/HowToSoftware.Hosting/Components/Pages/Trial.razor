@@ -200,7 +200,7 @@
     protected override async Task OnParametersSetAsync()
     {
         var context = HttpContextAccessor.HttpContext;
-        if (context?.Response.HasStarted == false) context.Response.Headers.CacheControl = "no-store";
+        if (context is not null && !context.Response.HasStarted) context.Response.Headers.CacheControl = "no-store";
 
         _profiles = Trials.AvailableProfiles
             .Where(profile => profile.GameSlug == SelectedGame && (SelectedGame != "minecraft" || profile.Edition == SelectedEdition))
