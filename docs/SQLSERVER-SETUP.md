@@ -37,6 +37,17 @@ GO
 
 The production runtime must use `hts_hosting_app` (or an equivalent data-only principal); it must not use `sa`, be an owner, or have DDL rights. The deployment's `migrate.env` must use the separate `hts_hosting_migrator` identity (or an equivalent principal with these permissions) so EF Core can create and alter the commerce schema. Assign `db_ddladmin` only in the commerce database, never to the runtime principal or at the server level.
 
+If a deployment migration fails with SQL Server error 262 (`CREATE TABLE permission denied`), check the database and login named by the failure, then grant the migration database user DDL rights in that database. For example, when the database is `Website_Application_HostingDb` and the migration user is `hts_hosting_migrator`:
+
+```sql
+USE [Website_Application_HostingDb];
+GO
+ALTER ROLE db_ddladmin ADD MEMBER [hts_hosting_migrator];
+GO
+```
+
+Run this as a database administrator, and ensure `migrate.env` uses that migration login. Do not grant DDL rights to the runtime login to work around a misconfigured `migrate.env`.
+
 In the private environment:
 
 ```dotenv
