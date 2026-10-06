@@ -206,7 +206,6 @@ const Link004 = ({
   );
 };
 
-export { Link000, Link001, Link002, Link003, Link004, Link005, Skiper40 };
 const Link005 = ({
   children,
   href,
@@ -247,6 +246,8 @@ const Link005 = ({
     </a>
   );
 };
+
+export { Link000, Link001, Link002, Link003, Link004, Link005, Skiper40 };
 
 /**
  * Skiper 40 Animated Link — React
