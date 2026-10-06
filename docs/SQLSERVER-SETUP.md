@@ -21,15 +21,21 @@ CREATE DATABASE [HowToSoftwareHosting];
 GO
 CREATE LOGIN [hts_hosting_app] WITH PASSWORD = N'<privately-generated-password>', CHECK_POLICY = ON;
 GO
+CREATE LOGIN [hts_hosting_migrator] WITH PASSWORD = N'<privately-generated-password>', CHECK_POLICY = ON;
+GO
 USE [HowToSoftwareHosting];
 GO
 CREATE USER [hts_hosting_app] FOR LOGIN [hts_hosting_app];
 ALTER ROLE db_datareader ADD MEMBER [hts_hosting_app];
 ALTER ROLE db_datawriter ADD MEMBER [hts_hosting_app];
+CREATE USER [hts_hosting_migrator] FOR LOGIN [hts_hosting_migrator];
+ALTER ROLE db_datareader ADD MEMBER [hts_hosting_migrator];
+ALTER ROLE db_datawriter ADD MEMBER [hts_hosting_migrator];
+ALTER ROLE db_ddladmin ADD MEMBER [hts_hosting_migrator];
 GO
 ```
 
-Production runtime must not use `sa`, be an owner, or have DDL rights. Create a separate migration identity with commerce-database permissions; do not permanently elevate the application login.
+The production runtime must use `hts_hosting_app` (or an equivalent data-only principal); it must not use `sa`, be an owner, or have DDL rights. The deployment's `migrate.env` must use the separate `hts_hosting_migrator` identity (or an equivalent principal with these permissions) so EF Core can create and alter the commerce schema. Assign `db_ddladmin` only in the commerce database, never to the runtime principal or at the server level.
 
 In the private environment:
 
