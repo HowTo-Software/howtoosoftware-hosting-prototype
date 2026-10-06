@@ -1,0 +1,28 @@
+@* Adapted from Skiper UI Skiper58 / TextRoll: two character layers with a centred
+   35ms stagger. CSS replaces Framer Motion; the first layer is visible without JavaScript. *@
+<span class="nav-roll">
+    <span class="roll-label">@Text</span>
+    <span class="roll-layer roll-layer--first" aria-hidden="true">
+        @for (var index = 0; index < Text.Length; index++)
+        {
+            <span class="roll-letter" style="@Delay(index)">@Character(index)</span>
+        }
+    </span>
+    <span class="roll-layer roll-layer--next" aria-hidden="true">
+        @for (var index = 0; index < Text.Length; index++)
+        {
+            <span class="roll-letter" style="@Delay(index)">@Character(index)</span>
+        }
+    </span>
+</span>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Text { get; set; } = string.Empty;
+
+    private string Character(int index) => Text[index] == ' ' ? "\u00a0" : Text[index].ToString();
+
+    private string Delay(int index) => "--roll-delay: " +
+        (Math.Abs(index - (Text.Length - 1) / 2d) * 35)
+            .ToString("0.###", System.Globalization.CultureInfo.InvariantCulture) + "ms";
+}

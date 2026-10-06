@@ -56,16 +56,19 @@ public sealed class StaticPlanCatalogService : IPlanCatalogService
 
     private readonly IStringLocalizer<HomeText> _text;
     private readonly HostingPlanPricingOptions _pricing;
+    private readonly MinecraftPlanOptions _minecraft;
 
     /// <summary>Creates the catalogue.</summary>
     /// <param name="text">Plan copy for the culture chosen for this request.</param>
     /// <param name="pricing">Configured prices and currency.</param>
     public StaticPlanCatalogService(
         IStringLocalizer<HomeText> text,
-        IOptions<HostingPlanPricingOptions> pricing)
+        IOptions<HostingPlanPricingOptions> pricing,
+        IOptions<MinecraftPlanOptions>? minecraft = null)
     {
         _text = text;
         _pricing = pricing.Value;
+        _minecraft = minecraft?.Value ?? new MinecraftPlanOptions();
     }
 
     /// <inheritdoc />
@@ -89,7 +92,19 @@ public sealed class StaticPlanCatalogService : IPlanCatalogService
             .ToArray();
 
     /// <inheritdoc />
-    public IReadOnlyList<HostingPlan> Plans =>
+    public IReadOnlyList<HostingPlan> Plans => ZomboidPlans.Concat(MinecraftPlans).ToArray();
+
+    private IReadOnlyList<HostingPlan> MinecraftPlans => _minecraft.Tiers
+        .Where(t => t.IsValid).DistinctBy(t => t.Slug).OrderBy(t => t.MemoryMb)
+        .Select(t => new HostingPlan
+        {
+            Slug = t.Slug, Name = t.Name, Tagline = t.Description, Audience = t.Description,
+            MemoryMib = t.MemoryMb, CpuPercent = t.CpuPercent, DiskMib = t.DiskMb,
+            BackupLimit = t.BackupLimit, DatabaseLimit = 0, AllocationLimit = t.AllocationLimit,
+            GameTemplateId = "minecraft", PriceMonthly = t.Price
+        }).ToArray();
+
+    private IReadOnlyList<HostingPlan> ZomboidPlans =>
     [
         Build("zomboid-4gb", "Outpost", "Outpost", memoryGb: 4, cpuPercent: 300, diskGb: StandardDiskGb, backups: 1),
         Build("zomboid-5gb", "Settlement", "Settlement", memoryGb: 5, cpuPercent: 400, diskGb: StandardDiskGb, backups: 2, isRecommended: true),

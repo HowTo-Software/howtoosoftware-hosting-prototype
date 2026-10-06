@@ -1,0 +1,23 @@
+@inject IInfrastructureContentService Infrastructure
+@inject IStringLocalizer<StorefrontText> Text
+
+<section class="proof" id="nodes" aria-labelledby="proof-heading">
+    <div class="hts-container hts-container--wide proof-grid">
+        <div class="proof-visual" data-reveal>
+            <RackPlate Slot="HardwarePhotoSlot.RackOpen" Ratio="4 / 5" Position="center 42%" Alt="@Text["Infrastructure.Image"]" />
+            <div class="proof-caption"><span>@Text["Infrastructure.Caption"]</span></div>
+        </div>
+        <div class="proof-copy">
+            <p class="storefront-kicker"><span>05</span>@Text["Infrastructure.Kicker"]</p>
+            <h2 id="proof-heading" class="storefront-title"><MaskReveal>@Text["Infrastructure.Title"]</MaskReveal></h2>
+            <p class="storefront-copy" data-reveal>@Text["Infrastructure.Copy"]</p>
+            <dl class="proof-specs" data-reveal style="--hts-reveal-delay: 70ms">
+                @foreach (var spec in Infrastructure.SpecSheet)
+                {
+                    <div><dt>@Text[$"Infrastructure.Spec{spec.Kind}"]</dt><dd>@spec.Value</dd></div>
+                }
+            </dl>
+            <a class="hts-text-link" href="/infrastructure">@Text["Infrastructure.Link"] <Icon Name="IconName.ArrowRight" /></a>
+        </div>
+    </div>
+</section>

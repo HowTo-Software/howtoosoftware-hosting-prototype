@@ -1,180 +1,68 @@
-# README do projeto
+# Project map and responsibilities
 
-Este guia é o mapa de navegação do repositório que serve o site local em
-`http://localhost:5147`: **`howtoosoftware-hosting-prototype`**.  Use-o como ponto de
-partida antes de alterar páginas, preços, pagamentos ou infraestrutura.
+> **Status:** Checked against the local code; team review pending
+>
+> **Owner:** HTS / HowToSoftware maintainers
+>
+> **Last updated:** 2026-10-05
 
-## Começar e validar
+Use this map to find where behavior is implemented. [Architecture](phase-2-design/architecture.md) explains the relationships; the [index](README.md) organizes the guides.
 
-Na raiz do repositório:
-
-```powershell
-Copy-Item .env.example .env
-dotnet run --project src/HowToSoftware.Hosting --launch-profile http
-```
-
-O site abre em `http://localhost:5147`. O modo local funciona sem Stripe, SQL Server e
-Pterodactyl preenchidos; nesses casos, pagamento e provisionamento continuam desativados de
-forma explícita. Para validar alterações, rode `dotnet build` e `dotnet test` na raiz.
-
-> `.env` é secreto e está ignorado pelo Git. Versione apenas o `.env.example`, com valores de
-> exemplo, nunca chaves reais.
-
-## Mapa rápido
+## Structure
 
 ```text
-.
-|- .env.example                         configuração documentada, sem segredos
-|- README.md                             visão geral e início rápido
-|- docs/                                 guias operacionais e de arquitetura
-|- src/HowToSoftware.Hosting/           aplicação web .NET/Blazor
-|  |- Components/                       páginas, layout e componentes de interface
-|  |- Data/                             SQL Server, contextos e migrations EF
-|  |- Endpoints/                        endpoints HTTP, inclusive webhook Stripe
-|  |- Infrastructure/                   integrações e configuração externa
-|  |- Localization/                     textos em inglês e português
-|  |- Models/                           contratos e regras de domínio
-|  |- Services/                         catálogo, pedidos, cobrança e provisionamento
-|  `- wwwroot/                          CSS, JavaScript, fontes e imagens públicas
-`- tests/HowToSoftware.Hosting.Tests/   testes automatizados
+src/HowToSoftware.Hosting/
+  Components/        Razor pages, composition, and controls
+  Models/            products, quotes, orders, and commerce entities
+  Services/          application rules, content, purchases, and delivery
+  Infrastructure/    configuration, SQL, security, Stripe, and Pterodactyl
+  Data/              EF contexts, migrations, factories, and seed
+  Endpoints/         payment HTTP contracts
+  Localization/      localizer types, cultures, and resources
+  wwwroot/           CSS, JS, images, fonts, and icons
+tests/HowToSoftware.Hosting.Tests/
+deploy/
+.github/workflows/
+docs/
 ```
 
-## Interface e páginas
+Table paths are relative to `src/HowToSoftware.Hosting` unless indicated otherwise.
 
-- `Components/Pages/Home.razor`: página inicial e seções de marketing.
-- `Components/Pages/GameHosting.razor`: catálogo de jogos.
-- `Components/Pages/ProjectZomboid.razor` e `.razor.css`: página comercial do Project
-  Zomboid, plano, arte e animações visuais.
-- `Components/Pages/PlanReview.razor`: revisão de jogo, plano e período antes do Checkout.
-- `Components/Pages/PaymentSuccess.razor` e `PaymentCancel.razor`: retornos visuais do Stripe.
-- `Components/Layout/`: navegação, layout principal e rodapé. O ticker contínuo do rodapé está
-  em `SiteFooter.razor`/`.css` e respeita `prefers-reduced-motion`.
-- `Components/Shop/`: cards e capas usados pelo catálogo.
-- `wwwroot/images/games/`: banners dos jogos do catálogo. A arte específica do Zomboid também
-  está documentada em `wwwroot/images/zomboid/README.md`.
+## Where to change behavior
 
-Os estilos isolados (`Arquivo.razor.css`) pertencem ao componente de mesmo nome. Prefira-os para
-ajustes de uma página; use `wwwroot` apenas para estilos/recursos realmente compartilhados.
+| Need | Main files | Guide |
+| --- | --- | --- |
+| Service registration/pipeline | `Program.cs` | [Architecture](phase-2-design/architecture.md) |
+| Routes and links | `Models/SiteRoutes.cs`, `Components/Pages` | [HTTP](phase-2-design/api-specification.md) |
+| Available games | `Services/GameCatalog.cs` | [Scope](phase-1-inception/vision-and-scope.md) |
+| Plan resources and recommendation | `Services/StaticPlanCatalogService.cs` | [Technical design](phase-2-design/technical-design.md) |
+| Rates/overrides/custom limits | `Models/HostingPlanPricingOptions.cs`, `appsettings.json` | [Configuration](phase-3-development/configuration.md) |
+| Periods and discounts | `Models/Billing.cs` (`BillingPolicy`) | [Technical design](phase-2-design/technical-design.md) |
+| Purchase selection resolution | `Services/Payments/OrderPricingService.cs` | [Commerce](COMMERCE-ARCHITECTURE.md) |
+| Checkout and promotions | `Services/Payments/StripeCheckoutService.cs`, `PromotionService.cs` | [Stripe](stripe-testing.md) |
+| Signature and event receipt | `Endpoints/PaymentEndpoints.cs`, `Services/Payments/StripeWebhookHandler.cs` | [HTTP](phase-2-design/api-specification.md) |
+| Queue, recovery, and installation | `Services/Orders/OrderFulfillment.cs` | [Runbook](phase-6-operations/runbook.md) |
+| Panel clients, DTOs, and validation | `Infrastructure/Pterodactyl` | [Pterodactyl](PTERODACTYL-SETUP.md) |
+| Creation service and lab guard | `Services/Provisioning` | [Pterodactyl](PTERODACTYL-SETUP.md) |
+| Order state and transitions | `Models/Orders/Order.cs` | [Data](phase-2-design/data-model.md) |
+| Commerce and migrations | `Data/CommerceDbContext.cs`, `Data/CommerceMigrations` | [SQL Server](SQLSERVER-SETUP.md) |
+| Public layout | `Components/Layout/SiteHeader.razor`, `SiteFooter.razor` | [Frontend](FRONTEND-REDESIGN.md) |
+| Centered homepage and large opening HTS wordmark | `Components/Pages/Home.razor`, `Components/Home/HeroExperience.razor` | [Frontend](FRONTEND-REDESIGN.md) |
+| Plan comparison | `Components/Shop/PlanPicker.razor` | [Frontend](FRONTEND-REDESIGN.md) |
+| Review and total | `Components/Pages/PlanReview.razor`, `Components/Shop/OrderSummary.razor` | [HTTP](phase-2-design/api-specification.md) |
+| HTS wordmark | `Components/Shared/VectorWordmark.razor`, `wwwroot/js/vector-wordmark.js` | [ADR-0004](phase-2-design/adr/0004-preserve-blazor-dom.md) |
+| Reveals and animated navigation | `MaskReveal.razor`, `RollingNavText.razor` in `Components/Shared`; `wwwroot/js/site.js` | [Frontend](FRONTEND-REDESIGN.md) |
+| Palette and shared styles | `wwwroot/css/theme.css`, `app.css`, `storefront.css`, `no-script.css` | [Frontend](FRONTEND-REDESIGN.md) |
+| Language | `Localization/SiteLocalization.cs`, `CultureEndpoints.cs`, `*.resx` | [Configuration](phase-3-development/configuration.md) |
+| CSP, antiforgery, and rate limits | `Infrastructure/Security/SecurityHardening.cs` | [Hardening](SECURITY-HARDENING.md) |
+| Deployment | `deploy/deploy.sh`, `deploy/docker-compose.production.yml` at repository root | [Deployment](DEPLOYMENT.md) |
 
-### Sistema de movimento
+## Text families
 
-Para manter o efeito visual sem pesar no navegador, o scroll mede apenas cenas próximas ao
-viewport, mutações de DOM são agrupadas em um único frame e o efeito `rise` cria um nó por
-palavra. Somente `flicker`/`sweep`, que dependem disso visualmente, criam um nó por letra.
+CommonText, HomeText, LoginText, HardwareText, CheckoutText, and StorefrontText have neutral EN resources and PT-BR counterparts. New visible feature copy belongs in the appropriate family and must preserve formatting placeholders in both languages.
 
-O sistema global está em `wwwroot/js/site.js` e `wwwroot/css/app.css`. Ele é declarativo e não
-depende de uma biblioteca pesada:
+## References and evidence
 
-- `data-motion="section"` monta uma seção na ordem label → título → texto → visual → detalhes.
-- `data-motion="scene" data-scene` também permite que marcadores técnicos cedam espaço quando a
-  próxima cena se aproxima.
-- `data-motion-step`, `data-motion-draw`, `data-motion-stagger` e `data-text-effect` descrevem
-  os papéis de cada elemento; o JavaScript só observa e aplica estados.
-- `data-parallax` desloca seletivamente mídia/diagramas próximos ao viewport; `data-count`
-  anima métricas não monetárias.
+`docs/reference-sources` retains the collected public Skiper originals, which are not part of runtime. Supplied OriginKit code was adapted inside the application without publishing the attachment as a UI kit. `docs/frontend` contains screenshots and QA JSON, including historical versions identified in the guide.
 
-O ticker da Home, do Project Zomboid e do rodapé usa trilhas duplicadas e `transform` linear para
-um loop contínuo sem salto. Toda essa camada é progressiva: sem JavaScript o conteúdo continua
-visível; com `prefers-reduced-motion`, revelações, scroll-linked motion e loops decorativos são
-reduzidos ou desligados.
-
-## Catálogo, planos e preços
-
-- `Services/StaticGameCatalogService.cs`: jogos disponíveis e seus caminhos de compra.
-- `Services/StaticPlanCatalogService.cs`: tiers do Project Zomboid e recursos de cada plano.
-- `Models/HostingPlanPricingOptions.cs`: regra de preço, descontos por período e validação.
-- `Services/OrderPricingService.cs`: recalcula o valor no servidor; o navegador nunca decide o
-  preço final.
-- `appsettings.json` → seção `HostingPlans`: rate card e substituições temporárias de preço.
-
-O desconto anual atual é **10%**. Enquanto o painel administrativo/Discord ainda não usa o banco
-como fonte dos preços, alterações comerciais controladas ficam no `HostingPlans` ou em variáveis
-de ambiente equivalentes. A futura migração para SQL deve manter `OrderPricingService` como o
-único lugar que autoriza o total cobrado.
-
-## Pagamento, pedido e provisionamento
-
-O fluxo é deliberadamente separado para evitar que uma página do navegador possa marcar algo
-como pago:
-
-```text
-Plano escolhido -> OrderPricingService -> pedido interno -> Stripe Checkout
-      -> webhook Stripe validado -> fila de fulfillment -> Pterodactyl -> servidor ativo
-```
-
-- `Endpoints/PaymentEndpoints.cs`: início do Checkout e recepção do webhook.
-- `Services/Payments/`: criação de sessão Stripe, validação de eventos e registros de cobrança.
-- `Services/Orders/`: criação, leitura e persistência de pedidos.
-- `Services/Provisioning/`: fila, worker e integração de criação no Pterodactyl.
-- `Infrastructure/Stripe/` e `Infrastructure/Pterodactyl/`: opções e clientes HTTP seguros.
-
-O redirecionamento de sucesso do Stripe apenas informa o resultado ao visitante. Só um webhook
-assinado, com valor conferido, pode enviar o pedido à fila de provisionamento.
-
-## Banco de dados
-
-Tudo roda em SQL Server. Com `SQLSERVER_CONNECTION_STRING`, o comércio usa o schema completo;
-sem ela, apenas o schema reduzido de pedidos em `ConnectionStrings__Hosting`; sem nenhuma das
-duas, o site serve as páginas sem banco.
-
-- `Data/CommerceDbContext.cs`: entidades de clientes, pedidos, eventos, cobranças e estado de
-  provisionamento.
-- `Data/CommerceMigrations/`: migrations exclusivas do schema de comércio.
-- `Data/Migrations/`: migrations do schema reduzido de pedidos.
-- `Services/Orders/SqlServerOrderStore.cs`: persistência de pedidos no SQL Server.
-- `Services/Payments/IBillingStore.cs` e `Services/Provisioning/IProvisioningStateStore.cs`:
-  contratos e implementações persistentes para cobrança e provisionamento.
-
-Cada contexto tem sua própria tabela de histórico de migrations, e nada é migrado na inicialização:
-um restart nunca deve poder remodelar um servidor compartilhado.
-
-Para aplicar migrations reais, após preencher o `.env`:
-
-```powershell
-dotnet run --project src/HowToSoftware.Hosting -- --migrate-commerce --seed-commerce
-```
-
-Leia [`SQLSERVER-SETUP.md`](SQLSERVER-SETUP.md) antes: ele cobre banco dedicado, login de menor
-privilégio e criptografia de transporte.
-
-## Configuração e segredos
-
-`.env.example` contém todas as variáveis atualmente lidas pelo aplicativo ou necessárias para
-operá-lo:
-
-| Grupo | Para que serve | Onde é usado |
-|---|---|---|
-| `STRIPE_*` | Checkout, webhook, URLs de retorno e moeda | `Infrastructure/Stripe/`, `Services/Payments/` |
-| `SQLSERVER_CONNECTION_STRING` | banco SQL Server do comércio | `Infrastructure/Database/`, `Data/CommerceDbContext.cs` |
-| `PTERODACTYL_*` | painel, chave Application e topologia do servidor | `Infrastructure/Pterodactyl/`, `Services/Provisioning/` |
-| `APP_*` | URL pública e ambiente ASP.NET | `Models/SiteOptions.cs`, inicialização em `Program.cs` |
-| `ConnectionStrings__Hosting` | schema reduzido de pedidos quando o comércio não está ativo | `Data/HostingDbContext.cs` |
-| `HostingPlans__*` | override opcional de rate card/preço | `Models/HostingPlanPricingOptions.cs` |
-
-`Infrastructure/Configuration/EnvironmentFile.cs` carrega o `.env` somente em
-desenvolvimento/local e traduz os nomes portáteis para a configuração padrão do ASP.NET Core.
-Em produção, prefira variáveis do host ou um cofre de segredos. Não use `SQLSERVER_CONNECTION_STRING`,
-`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET` nem `PTERODACTYL_APPLICATION_API_KEY` no browser.
-
-## Documentação por tarefa
-
-- [`COMMERCE-ARCHITECTURE.md`](COMMERCE-ARCHITECTURE.md): limites de segurança e fluxo completo.
-- [`SQLSERVER-SETUP.md`](SQLSERVER-SETUP.md): conexão do SQL Server, migrations e segurança.
-- [`stripe-testing.md`](stripe-testing.md): Checkout, Stripe CLI e teste de webhooks.
-- [`PTERODACTYL-SETUP.md`](PTERODACTYL-SETUP.md): painel, egg e laboratório de provisionamento.
-- [`SECURITY-HARDENING.md`](SECURITY-HARDENING.md): fronteiras do backend, headers, TLS, WAF,
-  DDoS, banco, segredos e checklist de produção.
-- [`DEPLOYMENT.md`](DEPLOYMENT.md): pipeline de CI/CD, deploy no servidor de produção e rollback.
-
-## Ordem segura para ligar produção
-
-1. Configure domínio/HTTPS e `APP_BASE_URL`.
-2. Conecte o SQL Server, aplique as migrations e confirme o health check.
-3. Cadastre produtos/Price IDs Stripe (ou mantenha preços recorrentes calculados) e teste em modo
-   teste com Stripe CLI.
-4. Configure Pterodactyl primeiro no laboratório de desenvolvimento, com uma chave `ptla_` de
-   Application e um egg validado.
-5. Só depois habilite credenciais de produção e implemente identidade/autorização antes de expor
-   páginas de conta, faturas ou controles de servidor ao cliente.
-
-O projeto não contém uma conta demo, senha, nem chave real. Essa ausência é intencional.
+The [test plan](phase-4-testing/test-plan.md) locates risk-based validation. Private configuration is excluded from this map; use setting names from the example, never real `.env` content.

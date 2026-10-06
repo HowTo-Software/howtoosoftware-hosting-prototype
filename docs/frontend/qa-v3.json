@@ -1,0 +1,861 @@
+{
+  "passed": 70,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "Home has one accessible headline",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "height": 6693,
+        "theme": "dark",
+        "lang": "pt-BR",
+        "title": "Hospedagem de jogos.\n            Na infraestrutura HTS.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "Hero plan configuration and demo panel removed",
+      "ok": true,
+      "detail": {
+        "configs": 0,
+        "demos": 0
+      }
+    },
+    {
+      "name": "Wordmark exists at home",
+      "ok": true,
+      "detail": {
+        "draws": 17,
+        "programs": 1,
+        "deleted": 0
+      }
+    },
+    {
+      "name": "Hero HTS has live WebGL animation and no persistent backdrop",
+      "ok": true,
+      "detail": {
+        "draws": 20,
+        "programs": 1,
+        "deleted": 0
+      }
+    },
+    {
+      "name": "Hero headline and HTS horizontally centered",
+      "ok": true,
+      "detail": {
+        "headlineCenter": 712.4921875,
+        "wordmarkCenter": 712.5,
+        "viewport": 1440
+      }
+    },
+    {
+      "name": "Background does not block hero CTA",
+      "ok": true,
+      "detail": {
+        "href": "#trial",
+        "unblocked": true
+      }
+    },
+    {
+      "name": "Hero retains real plan destination",
+      "ok": true,
+      "detail": "plan CTA"
+    },
+    {
+      "name": "Intro HTS scrolls away naturally with the hero",
+      "ok": true,
+      "detail": {
+        "scroll": 1400,
+        "wordmark": {
+          "x": 302.5,
+          "y": -1253.390625,
+          "width": 820,
+          "height": 300
+        },
+        "headlineBottom": -801.921875,
+        "position": "relative",
+        "visibility": "visible",
+        "opacity": "1",
+        "pointerEvents": "auto",
+        "parentPosition": "static",
+        "headerBottom": 77
+      }
+    },
+    {
+      "name": "Offscreen intro wordmark stops GPU draws",
+      "ok": true,
+      "detail": {
+        "frames": 71,
+        "afterFrames": 71
+      }
+    },
+    {
+      "name": "Trial explicitly offers twenty-four hours",
+      "ok": true,
+      "detail": {
+        "text": "24 horas Teste por 24 horas Seu mundo. Seu servidor. Teste por 24 horas. Crie um teste de Project Zomboid ou Minecraft na HTS. Confirme seu email, explore o painel e mantenha o mesmo mundo ao escolher um plano. Criar meu servidor de teste Um teste por conta · sem cartão",
+        "links": [
+          {
+            "text": "Criar meu servidor de teste",
+            "href": "/trial"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Trial starts from an account signup route instead of fabricated activation",
+      "ok": true,
+      "detail": {
+        "text": "24 horas Teste por 24 horas Seu mundo. Seu servidor. Teste por 24 horas. Crie um teste de Project Zomboid ou Minecraft na HTS. Confirme seu email, explore o painel e mantenha o mesmo mundo ao escolher um plano. Criar meu servidor de teste Um teste por conta · sem cartão",
+        "links": [
+          {
+            "text": "Criar meu servidor de teste",
+            "href": "/trial"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Public promotion links use real checkout selection or hide unavailable offers",
+      "ok": true,
+      "detail": "No available configured public offers"
+    },
+    {
+      "name": "Enhanced infrastructure navigation removes home background and releases GPU",
+      "ok": true,
+      "detail": {
+        "wordmarks": 0,
+        "heading": "Infraestrutura própria.\n                    Feita para o seu mundo.",
+        "oldGrids": 0,
+        "sourcePhotos": [
+          "/images/infrastructure/rack-open.jpg",
+          "/images/infrastructure/rack-elevation.jpg",
+          "/images/infrastructure/rack-interior.jpg",
+          "/images/infrastructure/rack-detail-top.jpg"
+        ],
+        "height": 2668,
+        "page": 1791220737188.5427,
+        "deleted": 1
+      }
+    },
+    {
+      "name": "Infrastructure content replaces unrelated tile diagrams",
+      "ok": true,
+      "detail": {
+        "wordmarks": 0,
+        "heading": "Infraestrutura própria.\n                    Feita para o seu mundo.",
+        "oldGrids": 0,
+        "sourcePhotos": [
+          "/images/infrastructure/rack-open.jpg",
+          "/images/infrastructure/rack-elevation.jpg",
+          "/images/infrastructure/rack-interior.jpg",
+          "/images/infrastructure/rack-detail-top.jpg"
+        ],
+        "height": 2668,
+        "page": 1791220737188.5427,
+        "deleted": 1
+      }
+    },
+    {
+      "name": "Enhanced return restores home wordmark and correct headline",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "height": 6693,
+        "theme": "dark",
+        "lang": "pt-BR",
+        "title": "Hospedagem de jogos.\n            Na infraestrutura HTS.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "Enhanced navigation preserves theme/header controls",
+      "ok": true,
+      "detail": "desktop navigation"
+    },
+    {
+      "name": "pt-BR dark / @320 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 10846,
+        "theme": "dark",
+        "lang": "pt-BR",
+        "title": "Hospedagem de jogos.\n            Na infraestrutura HTS.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR dark /infrastructure @320 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 4656,
+        "theme": "dark",
+        "lang": "pt-BR",
+        "title": "Infraestrutura própria.\n                    Feita para o seu mundo.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR dark / @390 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 10112,
+        "theme": "dark",
+        "lang": "pt-BR",
+        "title": "Hospedagem de jogos.\n            Na infraestrutura HTS.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR dark /infrastructure @390 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 4520,
+        "theme": "dark",
+        "lang": "pt-BR",
+        "title": "Infraestrutura própria.\n                    Feita para o seu mundo.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR dark trial @390 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 2693,
+        "theme": "dark",
+        "lang": "pt-BR",
+        "title": "Comece com seu servidor de teste.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR dark / @768 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 768,
+        "scrollWidth": 753,
+        "height": 8060,
+        "theme": "dark",
+        "lang": "pt-BR",
+        "title": "Hospedagem de jogos.\n            Na infraestrutura HTS.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR dark /infrastructure @768 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 768,
+        "scrollWidth": 753,
+        "height": 3264,
+        "theme": "dark",
+        "lang": "pt-BR",
+        "title": "Infraestrutura própria.\n                    Feita para o seu mundo.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR dark / @1024 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1024,
+        "scrollWidth": 1009,
+        "height": 6572,
+        "theme": "dark",
+        "lang": "pt-BR",
+        "title": "Hospedagem de jogos.\n            Na infraestrutura HTS.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR dark /infrastructure @1024 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1024,
+        "scrollWidth": 1009,
+        "height": 2517,
+        "theme": "dark",
+        "lang": "pt-BR",
+        "title": "Infraestrutura própria.\n                    Feita para o seu mundo.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR dark / @1440 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "height": 6693,
+        "theme": "dark",
+        "lang": "pt-BR",
+        "title": "Hospedagem de jogos.\n            Na infraestrutura HTS.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR dark /infrastructure @1440 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "height": 2668,
+        "theme": "dark",
+        "lang": "pt-BR",
+        "title": "Infraestrutura própria.\n                    Feita para o seu mundo.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR dark trial @1440 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "height": 1683,
+        "theme": "dark",
+        "lang": "pt-BR",
+        "title": "Comece com seu servidor de teste.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR light / @320 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 10846,
+        "theme": "light",
+        "lang": "pt-BR",
+        "title": "Hospedagem de jogos.\n            Na infraestrutura HTS.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR light /infrastructure @320 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 4656,
+        "theme": "light",
+        "lang": "pt-BR",
+        "title": "Infraestrutura própria.\n                    Feita para o seu mundo.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR light / @390 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 10112,
+        "theme": "light",
+        "lang": "pt-BR",
+        "title": "Hospedagem de jogos.\n            Na infraestrutura HTS.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR light /infrastructure @390 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 4520,
+        "theme": "light",
+        "lang": "pt-BR",
+        "title": "Infraestrutura própria.\n                    Feita para o seu mundo.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR light trial @390 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 2693,
+        "theme": "light",
+        "lang": "pt-BR",
+        "title": "Comece com seu servidor de teste.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR light / @768 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 768,
+        "scrollWidth": 753,
+        "height": 8060,
+        "theme": "light",
+        "lang": "pt-BR",
+        "title": "Hospedagem de jogos.\n            Na infraestrutura HTS.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR light /infrastructure @768 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 768,
+        "scrollWidth": 753,
+        "height": 3264,
+        "theme": "light",
+        "lang": "pt-BR",
+        "title": "Infraestrutura própria.\n                    Feita para o seu mundo.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR light / @1024 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1024,
+        "scrollWidth": 1009,
+        "height": 6572,
+        "theme": "light",
+        "lang": "pt-BR",
+        "title": "Hospedagem de jogos.\n            Na infraestrutura HTS.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR light /infrastructure @1024 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1024,
+        "scrollWidth": 1009,
+        "height": 2517,
+        "theme": "light",
+        "lang": "pt-BR",
+        "title": "Infraestrutura própria.\n                    Feita para o seu mundo.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR light / @1440 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "height": 6693,
+        "theme": "light",
+        "lang": "pt-BR",
+        "title": "Hospedagem de jogos.\n            Na infraestrutura HTS.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR light /infrastructure @1440 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "height": 2668,
+        "theme": "light",
+        "lang": "pt-BR",
+        "title": "Infraestrutura própria.\n                    Feita para o seu mundo.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "pt-BR light trial @1440 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "height": 1683,
+        "theme": "light",
+        "lang": "pt-BR",
+        "title": "Comece com seu servidor de teste.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en dark / @320 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 10528,
+        "theme": "dark",
+        "lang": "en",
+        "title": "Game server hosting.\n            Built on HTS infrastructure.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en dark /infrastructure @320 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 4493,
+        "theme": "dark",
+        "lang": "en",
+        "title": "Our infrastructure.\n                    Built for your world.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en dark / @390 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 9832,
+        "theme": "dark",
+        "lang": "en",
+        "title": "Game server hosting.\n            Built on HTS infrastructure.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en dark /infrastructure @390 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 4405,
+        "theme": "dark",
+        "lang": "en",
+        "title": "Our infrastructure.\n                    Built for your world.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en dark trial @390 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 2642,
+        "theme": "dark",
+        "lang": "en",
+        "title": "Start with your own trial server.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en dark / @768 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 768,
+        "scrollWidth": 753,
+        "height": 7796,
+        "theme": "dark",
+        "lang": "en",
+        "title": "Game server hosting.\n            Built on HTS infrastructure.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en dark /infrastructure @768 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 768,
+        "scrollWidth": 753,
+        "height": 3220,
+        "theme": "dark",
+        "lang": "en",
+        "title": "Our infrastructure.\n                    Built for your world.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en dark / @1024 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1024,
+        "scrollWidth": 1009,
+        "height": 6465,
+        "theme": "dark",
+        "lang": "en",
+        "title": "Game server hosting.\n            Built on HTS infrastructure.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en dark /infrastructure @1024 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1024,
+        "scrollWidth": 1009,
+        "height": 2453,
+        "theme": "dark",
+        "lang": "en",
+        "title": "Our infrastructure.\n                    Built for your world.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en dark / @1440 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "height": 6665,
+        "theme": "dark",
+        "lang": "en",
+        "title": "Game server hosting.\n            Built on HTS infrastructure.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en dark /infrastructure @1440 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "height": 2470,
+        "theme": "dark",
+        "lang": "en",
+        "title": "Our infrastructure.\n                    Built for your world.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en dark trial @1440 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "height": 1617,
+        "theme": "dark",
+        "lang": "en",
+        "title": "Start with your own trial server.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en light / @320 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 10528,
+        "theme": "light",
+        "lang": "en",
+        "title": "Game server hosting.\n            Built on HTS infrastructure.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en light /infrastructure @320 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 320,
+        "scrollWidth": 320,
+        "height": 4493,
+        "theme": "light",
+        "lang": "en",
+        "title": "Our infrastructure.\n                    Built for your world.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en light / @390 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 9832,
+        "theme": "light",
+        "lang": "en",
+        "title": "Game server hosting.\n            Built on HTS infrastructure.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en light /infrastructure @390 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 4405,
+        "theme": "light",
+        "lang": "en",
+        "title": "Our infrastructure.\n                    Built for your world.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en light trial @390 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 2642,
+        "theme": "light",
+        "lang": "en",
+        "title": "Start with your own trial server.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en light / @768 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 768,
+        "scrollWidth": 753,
+        "height": 7796,
+        "theme": "light",
+        "lang": "en",
+        "title": "Game server hosting.\n            Built on HTS infrastructure.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en light /infrastructure @768 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 768,
+        "scrollWidth": 753,
+        "height": 3220,
+        "theme": "light",
+        "lang": "en",
+        "title": "Our infrastructure.\n                    Built for your world.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en light / @1024 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1024,
+        "scrollWidth": 1009,
+        "height": 6465,
+        "theme": "light",
+        "lang": "en",
+        "title": "Game server hosting.\n            Built on HTS infrastructure.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en light /infrastructure @1024 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1024,
+        "scrollWidth": 1009,
+        "height": 2453,
+        "theme": "light",
+        "lang": "en",
+        "title": "Our infrastructure.\n                    Built for your world.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en light / @1440 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "height": 6665,
+        "theme": "light",
+        "lang": "en",
+        "title": "Game server hosting.\n            Built on HTS infrastructure.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en light /infrastructure @1440 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "height": 2470,
+        "theme": "light",
+        "lang": "en",
+        "title": "Our infrastructure.\n                    Built for your world.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "en light trial @1440 readable without overflow",
+      "ok": true,
+      "detail": {
+        "width": 1440,
+        "scrollWidth": 1425,
+        "height": 1617,
+        "theme": "light",
+        "lang": "en",
+        "title": "Start with your own trial server.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "Mobile Escape closes menu and restores focus",
+      "ok": true,
+      "detail": "keyboard"
+    },
+    {
+      "name": "Reduced motion retains static HTS and fully readable content",
+      "ok": true,
+      "detail": {
+        "draws": 0,
+        "fallback": "visible",
+        "canvas": "hidden",
+        "headline": "Hospedagem de jogos.\n            Na infraestrutura HTS.",
+        "overflow": 390
+      }
+    },
+    {
+      "name": "Reduced motion enhanced navigation retains controls",
+      "ok": true,
+      "detail": "reduced motion"
+    },
+    {
+      "name": "No JavaScript home remains readable with working navigation",
+      "ok": true,
+      "detail": {
+        "script": false,
+        "nav": 120,
+        "fallback": "visible",
+        "links": [
+          "#trial",
+          "/game-hosting/project-zomboid#plans"
+        ],
+        "width": 390,
+        "h1": "Hospedagem de jogos.\n            Na infraestrutura HTS."
+      }
+    },
+    {
+      "name": "No JavaScript infrastructure remains readable",
+      "ok": true,
+      "detail": {
+        "width": 390,
+        "scrollWidth": 390,
+        "height": 4640,
+        "theme": "dark",
+        "lang": "pt-BR",
+        "title": "Infraestrutura própria.\n                    Feita para o seu mundo.",
+        "h1": 1
+      }
+    },
+    {
+      "name": "No runtime exceptions or missing assets",
+      "ok": true,
+      "detail": {
+        "errors": [],
+        "failed": []
+      }
+    }
+  ]
+}

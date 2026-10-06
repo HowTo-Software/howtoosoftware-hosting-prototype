@@ -72,7 +72,9 @@ public sealed class StaticGameCatalogService : IGameCatalogService
             Name = "Minecraft",
             Tagline = _text["Game.Minecraft.Tagline"],
             Summary = _text["Game.Minecraft.Summary"],
-            Availability = GameAvailability.Planned
+            Availability = _plans.Plans.Any(p => p.GameTemplateId == MinecraftSlug) ? GameAvailability.Available : GameAvailability.Planned,
+            TemplateId = _plans.Plans.Any(p => p.GameTemplateId == MinecraftSlug) ? MinecraftSlug : null,
+            PageHref = _plans.Plans.Any(p => p.GameTemplateId == MinecraftSlug) ? "/game-hosting/minecraft" : null
         }
     ];
 

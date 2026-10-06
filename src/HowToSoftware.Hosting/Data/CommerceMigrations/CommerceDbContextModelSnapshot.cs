@@ -17,7 +17,7 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "10.0.11")
+                .HasAnnotation("ProductVersion", "10.0.12")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -1005,6 +1005,185 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                         });
                 });
 
+            modelBuilder.Entity("HowToSoftware.Hosting.Models.Commerce.ServerTrialRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("id");
+
+                    b.Property<string>("AccessTokenHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)")
+                        .HasColumnName("access_token_hash");
+
+                    b.Property<DateTimeOffset?>("ConvertedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("converted_at");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("created_at");
+
+                    b.Property<DateTimeOffset?>("DeleteAfter")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("delete_after");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("deleted_at");
+
+                    b.Property<DateTimeOffset?>("DeletedEmailSentAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("deleted_email_sent_at");
+
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("display_name");
+
+                    b.Property<DateTimeOffset?>("ExpiredEmailSentAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("expired_email_sent_at");
+
+                    b.Property<DateTimeOffset?>("ExpiresAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("expires_at");
+
+                    b.Property<string>("GameSlug")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)")
+                        .HasColumnName("game_slug");
+
+                    b.Property<string>("LastFailureClass")
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)")
+                        .HasColumnName("last_failure_class");
+
+                    b.Property<DateTimeOffset?>("LeaseExpiresAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("lease_expires_at");
+
+                    b.Property<Guid?>("LeaseToken")
+                        .IsConcurrencyToken()
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("lease_token");
+
+                    b.Property<string>("Locale")
+                        .IsRequired()
+                        .HasMaxLength(16)
+                        .HasColumnType("nvarchar(16)")
+                        .HasColumnName("locale");
+
+                    b.Property<DateTimeOffset?>("NextAttemptAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("next_attempt_at");
+
+                    b.Property<string>("NormalizedEmail")
+                        .IsRequired()
+                        .HasMaxLength(320)
+                        .HasColumnType("nvarchar(320)")
+                        .HasColumnName("normalized_email");
+
+                    b.Property<string>("ProfileId")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)")
+                        .HasColumnName("profile_id");
+
+                    b.Property<int?>("PterodactylServerId")
+                        .HasColumnType("int")
+                        .HasColumnName("pterodactyl_server_id");
+
+                    b.Property<int?>("PterodactylUserId")
+                        .HasColumnType("int")
+                        .HasColumnName("pterodactyl_user_id");
+
+                    b.Property<DateTimeOffset?>("ReadyEmailSentAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("ready_email_sent_at");
+
+                    b.Property<DateTimeOffset?>("ReservationExpiresAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("reservation_expires_at");
+
+                    b.Property<string>("ServerIdentifier")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)")
+                        .HasColumnName("server_identifier");
+
+                    b.Property<string>("ServerUuid")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)")
+                        .HasColumnName("server_uuid");
+
+                    b.Property<DateTimeOffset?>("StartedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("started_at");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasMaxLength(32)
+                        .HasColumnType("nvarchar(32)")
+                        .HasColumnName("state");
+
+                    b.Property<DateTimeOffset?>("SuspendedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("suspended_at");
+
+                    b.Property<DateTimeOffset>("UpdatedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("updated_at");
+
+                    b.Property<Guid?>("UpgradeOrderId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("upgrade_order_id");
+
+                    b.Property<DateTimeOffset?>("VerificationExpiresAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("verification_expires_at");
+
+                    b.Property<string>("VerificationTokenHash")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)")
+                        .HasColumnName("verification_token_hash");
+
+                    b.Property<DateTimeOffset?>("VerifiedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("verified_at");
+
+                    b.Property<string>("Version")
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)")
+                        .HasColumnName("version");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccessTokenHash")
+                        .IsUnique()
+                        .HasFilter("[access_token_hash] IS NOT NULL");
+
+                    b.HasIndex("NormalizedEmail")
+                        .IsUnique();
+
+                    b.HasIndex("PterodactylUserId")
+                        .IsUnique()
+                        .HasFilter("[pterodactyl_user_id] IS NOT NULL");
+
+                    b.HasIndex("UpgradeOrderId")
+                        .IsUnique()
+                        .HasFilter("[upgrade_order_id] IS NOT NULL");
+
+                    b.HasIndex("VerificationTokenHash")
+                        .IsUnique()
+                        .HasFilter("[verification_token_hash] IS NOT NULL");
+
+                    b.HasIndex("State", "NextAttemptAt");
+
+                    b.ToTable("server_trials");
+                });
+
             modelBuilder.Entity("HowToSoftware.Hosting.Models.Commerce.StripeEventRecord", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1050,6 +1229,27 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                     b.HasIndex("Processed", "ReceivedAt");
 
                     b.ToTable("stripe_events");
+                });
+
+            modelBuilder.Entity("HowToSoftware.Hosting.Models.Commerce.TrialUpgradeOrderRecord", b =>
+                {
+                    b.Property<Guid>("OrderId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("order_id");
+
+                    b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("datetimeoffset")
+                        .HasColumnName("created_at");
+
+                    b.Property<Guid>("TrialId")
+                        .HasColumnType("uniqueidentifier")
+                        .HasColumnName("trial_id");
+
+                    b.HasKey("OrderId");
+
+                    b.HasIndex("TrialId");
+
+                    b.ToTable("trial_upgrade_orders");
                 });
 
             modelBuilder.Entity("HowToSoftware.Hosting.Models.Commerce.BillingInvoiceReference", b =>
@@ -1179,6 +1379,29 @@ namespace HowToSoftware.Hosting.Data.CommerceMigrations
                     b.HasOne("HowToSoftware.Hosting.Models.Commerce.CommerceOrder", null)
                         .WithMany()
                         .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("HowToSoftware.Hosting.Models.Commerce.ServerTrialRecord", b =>
+                {
+                    b.HasOne("HowToSoftware.Hosting.Models.Commerce.CommerceOrder", null)
+                        .WithMany()
+                        .HasForeignKey("UpgradeOrderId")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("HowToSoftware.Hosting.Models.Commerce.TrialUpgradeOrderRecord", b =>
+                {
+                    b.HasOne("HowToSoftware.Hosting.Models.Commerce.CommerceOrder", null)
+                        .WithMany()
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("HowToSoftware.Hosting.Models.Commerce.ServerTrialRecord", null)
+                        .WithMany()
+                        .HasForeignKey("TrialId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
                 });

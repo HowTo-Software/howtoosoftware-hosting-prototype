@@ -1,26 +1,24 @@
-# Política de segurança
+# Security policy
 
-## Como reportar
+> **Status:** Existing policy; technical context updated
+>
+> **Owner:** HTS / HowToSoftware maintainers
+>
+> **Last updated:** 2026-10-05
 
-Não abra uma issue pública com chaves, dados pessoais, URLs internas ou passos de exploração.
-Envie o relato para `henry.cahill@howtoosoftware.com` com o assunto começando por `[SECURITY]` e
-inclua apenas o necessário para reproduzir o problema. Credenciais encontradas devem ser
-revogadas; não as use para validar o impacto.
+## Reporting
 
-## Escopo atual
+Do not open a public issue containing keys, personal data, internal URLs, or exploitation steps. Send a report to `henry.cahill@howtoosoftware.com`, starting the subject with `[SECURITY]`, and include only what is necessary to reproduce the issue. Revoke exposed credentials; do not use them to validate impact.
 
-A versão mantida é a versão mais recente da branch principal. A tela de login ainda é apenas uma
-interface fechada: ela não autentica ninguém e não persiste senhas. Contas, painel do cliente e
-qualquer rota administrativa só podem ser publicados depois de existir identidade real,
-autorização por recurso e auditoria.
+## Current scope
 
-## Regras do repositório
+The maintained version is the latest version of the main branch. The login screen remains a closed demonstration interface: it authenticates nobody and does not persist passwords. Accounts, a customer portal, and administrative routes may only be published after real identity, resource-level authorization, and auditing are in place.
 
-- `.env`, bancos locais, certificados, dumps e arquivos de publicação são ignorados pelo Git.
-- Chaves Stripe, SQL Server e Pterodactyl são exclusivas do servidor e devem vir do cofre de
-  segredos/ambiente da hospedagem.
-- Nunca publique logs, capturas ou exports que contenham dados de clientes.
-- Ao suspeitar de vazamento, revogue e substitua a credencial antes de investigar a causa.
+## Repository rules
 
-O checklist completo de implantação está em [`docs/SECURITY-HARDENING.md`](docs/SECURITY-HARDENING.md).
+- `.env`, local databases, certificates, dumps, and publishing output are ignored by Git.
+- Stripe, SQL Server, and Pterodactyl credentials are server-only and must come from the hosting environment or a secrets vault.
+- Never publish logs, screenshots, or exports containing customer data.
+- If a leak is suspected, revoke and replace the credential before investigating the cause.
 
+The deployment checklist is in [`docs/SECURITY-HARDENING.md`](docs/SECURITY-HARDENING.md). Also see the [threat model](docs/security/threat-model.md) and [data inventory](docs/security/compliance.md).

@@ -28,13 +28,13 @@
     <value>HARDWARE</value>
   </data>
   <data name="Hero.Line1" xml:space="preserve">
-    <value>Infrastructure</value>
+    <value>Our infrastructure.</value>
   </data>
   <data name="Hero.Line2" xml:space="preserve">
-    <value>built for</value>
+    <value>Built for</value>
   </data>
   <data name="Hero.Line3" xml:space="preserve">
-    <value>persistent worlds.</value>
+    <value>your world.</value>
   </data>
   <data name="Hero.Rail.Platform" xml:space="preserve">
     <value>PLATFORM</value>
@@ -217,7 +217,7 @@
     <value>Specifications are read from the running hosts rather than copied from a datasheet. Where a figure has not been confirmed it is left out rather than estimated.</value>
   </data>
   <data name="Photo.Pending" xml:space="preserve">
-    <value>PHOTO PENDING</value>
+    <value>Photography coming soon</value>
   </data>
   <data name="Photo.Slot.RackFront" xml:space="preserve">
     <value>Rack, in the room</value>
@@ -409,7 +409,7 @@
     <value>Website, database and game workloads are separate infrastructure roles. Maintenance or an update on one is far less able to take the others with it, and a fault has a smaller place to hide.</value>
   </data>
   <data name="Hero.Lede" xml:space="preserve">
-    <value>Two machines in a rack we own, in a room we can walk into. Everything below is what is in it and how it is arranged.</value>
+    <value>Our own hardware, two compute nodes and a separate management layer. See what runs your server, from the processor to the control panel.</value>
   </data>
   <data name="Physical.Lede" xml:space="preserve">
     <value>The specifications below are read from the running hosts rather than copied from a datasheet. Where a figure has not been confirmed it is left out rather than estimated.</value>
@@ -443,5 +443,89 @@
   </data>
   <data name="Physical.PhotoLabel" xml:space="preserve">
     <value>THE RACK</value>
+  </data>
+  <data name="Overview.DetailsLink" xml:space="preserve">
+    <value>How the platform works</value>
+  </data>
+  <data name="Overview.RackCaption" xml:space="preserve">
+    <value>The compute rack behind {0} hosting.</value>
+  </data>
+  <data name="Overview.SpecHeading" xml:space="preserve">
+    <value>Hardware per compute node</value>
+  </data>
+  <data name="Overview.SpecNote" xml:space="preserve">
+    <value>These are the host specifications. Your server's memory, CPU allocation and storage are defined by the plan you choose.</value>
+  </data>
+  <data name="Overview.GalleryTitle" xml:space="preserve">
+    <value>A closer look at our hardware.</value>
+  </data>
+  <data name="Overview.GalleryLede" xml:space="preserve">
+    <value>Photographs of our own rack: its front, its interior and the equipment mounted inside.</value>
+  </data>
+  <data name="Overview.OperationsKicker" xml:space="preserve">
+    <value>Behind your server</value>
+  </data>
+  <data name="Overview.OperationsTitle" xml:space="preserve">
+    <value>One platform. Separate responsibilities.</value>
+  </data>
+  <data name="Overview.OperationsLede" xml:space="preserve">
+    <value>The website, control panel and game workloads have distinct roles. Open a topic to see how they fit together.</value>
+  </data>
+  <data name="Overview.ClosingTitle" xml:space="preserve">
+    <value>Choose a home for your next world.</value>
+  </data>
+  <data name="Overview.ClosingNote" xml:space="preserve">
+    <value>Compare the plans or request a test server before choosing your configuration.</value>
+  </data>
+  <data name="Overview.TrialCta" xml:space="preserve">
+    <value>Request a test server</value>
+  </data>
+  <data name="Overview.Compute.Hint" xml:space="preserve">
+    <value>Game workloads on compute nodes</value>
+  </data>
+  <data name="Overview.Compute.Body" xml:space="preserve">
+    <value>Game servers run on compute nodes, separately from the public website. The Pterodactyl-based control panel manages the workload; the game itself runs on the node.</value>
+  </data>
+  <data name="Overview.Memory.Hint" xml:space="preserve">
+    <value>Memory limits set by your plan</value>
+  </data>
+  <data name="Overview.Memory.Body" xml:space="preserve">
+    <value>The memory selected in your plan is applied to your server instance. A node's total RAM and the memory allocated to your server are different figures.</value>
+  </data>
+  <data name="Overview.Storage.Hint" xml:space="preserve">
+    <value>World data on local NVMe storage</value>
+  </data>
+  <data name="Overview.Storage.Body" xml:space="preserve">
+    <value>World files are stored locally on the node running the game. Infrastructure backups are kept separately from the servers they came from.</value>
+  </data>
+  <data name="Overview.Network.Hint" xml:space="preserve">
+    <value>Public access, separate internal services</value>
+  </data>
+  <data name="Overview.Network.Body" xml:space="preserve">
+    <value>The website, game nodes and supporting services are separated. Internal components communicate over private paths; players connect to the public game endpoints.</value>
+  </data>
+  <data name="Overview.Database.Hint" xml:space="preserve">
+    <value>A separate state store for the panel</value>
+  </data>
+  <data name="Overview.Database.Body" xml:space="preserve">
+    <value>The control panel stores its state in a central MariaDB service, separate from the web application and game nodes. Schema migrations are part of the panel deployment process.</value>
+  </data>
+  <data name="Overview.Deployment.Hint" xml:space="preserve">
+    <value>Repeatable container deployments</value>
+  </data>
+  <data name="Overview.Deployment.Body" xml:space="preserve">
+    <value>The control panel is delivered as a container image. Releases recreate the container and apply the required migrations through the deployment process.</value>
+  </data>
+  <data name="Overview.Allocation.Hint" xml:space="preserve">
+    <value>A game instance on a compute node</value>
+  </data>
+  <data name="Overview.Allocation.Body" xml:space="preserve">
+    <value>When a server is created, the management layer selects a game node and applies the resources from the chosen plan. The game runs there, separately from the website.</value>
+  </data>
+  <data name="Overview.Reliability.Hint" xml:space="preserve">
+    <value>Maintenance by service and role</value>
+  </data>
+  <data name="Overview.Reliability.Body" xml:space="preserve">
+    <value>The website, database and game workloads have separate infrastructure roles. This separation lets maintenance target an individual service without treating the entire platform as one application.</value>
   </data>
 </root>

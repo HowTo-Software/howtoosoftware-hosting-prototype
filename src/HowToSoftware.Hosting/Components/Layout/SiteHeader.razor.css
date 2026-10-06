@@ -2,106 +2,94 @@
     position: sticky;
     top: 0;
     z-index: var(--ht-z-header);
-    background: transparent;
-    transition:
-        background-color var(--ht-dur-3) var(--ht-ease-lock),
-        backdrop-filter var(--ht-dur-3) var(--ht-ease-lock);
+    border-bottom: 1px solid var(--ht-edge);
+    background: var(--ht-ground);
+    transition: background-color 220ms ease, box-shadow 220ms ease;
 }
 
-/*
-    `hts-scrolled` is toggled on <html> by wwwroot/js/site.js. The header stays clear until the
-    page has moved, so the hero reads edge to edge on load.
-
-    A blur, but not a glassy one: the old rule pushed saturation to 160%, which turns whatever
-    is behind it into colour and is most of what people mean by glassmorphism. Graphite at high
-    opacity with a light blur keeps the type legible without the header becoming an effect.
-*/
 html.hts-scrolled .site-header {
-    background: color-mix(in srgb, var(--ht-ground) 88%, transparent);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-}
-
-.site-header::after {
-    content: "";
-    position: absolute;
-    right: 0;
-    bottom: 0;
-    left: 0;
-    height: 1px;
-    background: var(--ht-edge-strong);
-    opacity: 0;
-    transition: opacity var(--ht-dur-3) var(--ht-ease-lock);
-    pointer-events: none;
-}
-
-html.hts-scrolled .site-header::after {
-    opacity: 1;
+    background: var(--ht-ground);
+    box-shadow: 0 4px 14px rgb(0 0 0 / 6%);
 }
 
 .header-inner {
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--ht-space-5);
-    min-height: var(--ht-header-h);
+    gap: clamp(1rem, 2.5vw, 2.5rem);
+    min-height: 76px;
 }
 
 .header-brand {
-    text-decoration: none;
-    border-radius: var(--ht-radius-sm);
     flex: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    border-radius: 8px;
+    text-decoration: none;
+}
+
+.header-brand ::deep .brand-mark {
+    border-radius: 8px;
+    background: var(--ht-surface-1);
+    box-shadow: none;
+}
+
+.header-brand ::deep .brand-mark svg {
+    filter: none;
+}
+
+.header-brand ::deep .brand-name {
+    font-weight: 650;
+    letter-spacing: -.035em;
 }
 
 .header-panel {
     display: flex;
+    flex: 1;
     align-items: center;
-    gap: var(--ht-space-5);
+    justify-content: space-between;
+    gap: 1.5rem;
+    min-width: 0;
 }
 
 .header-nav ul {
     display: flex;
     align-items: center;
-    gap: 2px;
+    gap: .3rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 .header-nav a {
     position: relative;
-    display: block;
-    padding: 0.5rem 0.65rem;
-    border-radius: var(--ht-radius-xs);
-    color: var(--ht-ink-muted);
-    font-size: var(--ht-text-sm);
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: .5rem .85rem;
+    border-radius: 8px;
+    color: var(--ht-ink-soft);
+    font-size: .875rem;
     font-weight: 540;
     text-decoration: none;
     white-space: nowrap;
-    transition: color var(--ht-dur-2) var(--ht-ease-lock);
+    transition: color 200ms ease, background-color 200ms ease;
 }
 
-/*
-    A rule under the label rather than a glowing gradient bar. Two states, and the difference
-    between them is the whole colour rule in miniature: hovering is neutral, because hovering
-    is not a state the system is in - being on this page is, and that one gets live purple.
-*/
 .header-nav a::after {
     content: "";
     position: absolute;
-    right: 0.65rem;
-    bottom: 0.22rem;
-    left: 0.65rem;
-    height: 1px;
-    background: var(--ht-edge-strong);
+    right: .85rem;
+    bottom: .45rem;
+    left: .85rem;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--ht-accent, var(--ht-live-400));
     transform: scaleX(0);
-    transform-origin: left center;
-    transition: transform var(--ht-dur-2) var(--ht-ease-lock);
-}
-
-.header-nav a:hover {
-    color: var(--ht-ink);
-}
-
-.header-nav a:hover::after {
-    transform: scaleX(1);
+    transform-origin: left;
+    transition: transform 220ms ease;
 }
 
 .header-nav a.is-current {
@@ -109,81 +97,131 @@ html.hts-scrolled .site-header::after {
 }
 
 .header-nav a.is-current::after {
-    height: 2px;
-    background: var(--ht-live-500);
     transform: scaleX(1);
 }
 
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: var(--ht-space-3);
+.header-nav a:focus-visible {
+    --nav-roll-shift: -100%;
 }
 
-/* Language and theme are settings, not navigation. Grouping them behind a rule keeps the
-   right-hand side from reading as three equal buttons. */
+.header-nav a:focus-visible::after {
+    transform: scaleX(1);
+}
+
+.header-utility ::deep .lang,
+.header-utility ::deep .theme-toggle {
+    border-radius: 8px;
+}
+
+.header-actions,
 .header-utility {
     display: flex;
     align-items: center;
-    gap: var(--ht-space-2);
-    padding-right: var(--ht-space-3);
-    border-right: 1px solid var(--ht-edge);
+    gap: .5rem;
+    flex: none;
+}
+
+.header-utility {
+    gap: .65rem;
 }
 
 .header-toggle {
     display: none;
     place-items: center;
-    width: 2.5rem;
-    height: 2.5rem;
+    flex: none;
+    width: 44px;
+    height: 44px;
     border: 1px solid var(--ht-edge-strong);
-    border-radius: var(--ht-radius-sm);
-    background: var(--ht-surface-2);
-    box-shadow: var(--ht-rim);
+    border-radius: 8px;
+    background: var(--ht-surface-1);
     color: var(--ht-ink);
-    transition:
-        border-color var(--ht-dur-2) var(--ht-ease-lock),
-        color var(--ht-dur-2) var(--ht-ease-lock);
+    transition: background-color 200ms ease, border-color 200ms ease;
 }
 
-.header-toggle:hover {
-    border-color: var(--ht-ink-faint);
+.header-backdrop {
+    display: none;
 }
 
-/*
-    Below this width the bar collapses into a panel.
+.header-static {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem 1.5rem;
+    padding-block: .5rem 1rem;
+}
 
-    It used to be 1240px, sized for seven section links plus a sign-in link plus a call to
-    action. The navigation is three items now and the sign-in link is gone, so the bar fits
-    narrower than that - but not as narrow as 900, which is where it was first set: at 1024 the
-    language and theme controls were being squeezed 95px under their own content. Measured, not
-    guessed.
-*/
+.header-static a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--ht-ink-soft);
+    font-size: .875rem;
+}
+
+.header-brand:focus-visible,
+.header-nav a:focus-visible,
+.header-toggle:focus-visible {
+    outline: 2px solid var(--ht-accent, var(--ht-live-400));
+    outline-offset: 4px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+    .header-nav a:hover {
+        --nav-roll-shift: -100%;
+        color: var(--ht-ink);
+    }
+
+    .header-nav a:hover::after {
+        transform: scaleX(1);
+    }
+
+    .header-toggle:hover {
+        background: var(--ht-surface-3);
+        border-color: var(--ht-ink-faint);
+    }
+}
+
 @media (max-width: 1100px) {
+    .header-inner {
+        justify-content: space-between;
+        gap: .75rem;
+        min-height: 76px;
+    }
+
+    .header-utility {
+        margin-left: auto;
+    }
+
     .header-toggle {
         display: grid;
     }
 
+    .header-backdrop {
+        position: fixed;
+        inset: 0;
+        top: 76px;
+        display: block;
+        background: rgb(0 0 0 / 32%);
+    }
+
     .header-panel {
         position: absolute;
-        top: 100%;
-        right: 0;
-        left: 0;
+        z-index: 2;
+        top: calc(100% + .6rem);
+        right: var(--ht-container-pad);
+        left: var(--ht-container-pad);
         display: grid;
-        gap: var(--ht-space-5);
-        padding: var(--ht-space-5) var(--ht-container-pad) var(--ht-space-8);
-        border-top: 1px solid var(--ht-edge);
-        border-bottom: 1px solid var(--ht-edge);
-        background: color-mix(in srgb, var(--ht-ground) 94%, transparent);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
+        gap: 1.25rem;
+        max-height: calc(100dvh - 100px);
+        overflow-y: auto;
+        padding: 1.25rem;
+        border: 1px solid var(--ht-edge-strong);
+        border-radius: 8px;
+        background: var(--ht-surface-1);
         box-shadow: var(--ht-shadow-4);
         opacity: 0;
         visibility: hidden;
         transform: translateY(-8px);
-        transition:
-            opacity var(--ht-dur-3) var(--ht-ease-lock),
-            transform var(--ht-dur-3) var(--ht-ease-lock),
-            visibility var(--ht-dur-3) linear;
+        transition: opacity 220ms ease, transform 220ms ease, visibility 220ms;
     }
 
     .header-panel.is-open {
@@ -193,99 +231,101 @@ html.hts-scrolled .site-header::after {
     }
 
     .header-nav ul {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 2px;
+        display: grid;
+        gap: .2rem;
     }
 
     .header-nav a {
-        padding: 0.8rem 0.9rem;
-        border-radius: var(--ht-radius-sm);
+        display: flex;
+        width: 100%;
+        min-height: 52px;
+        padding: .7rem 1rem;
+        font-size: 1.125rem;
         color: var(--ht-ink);
-        font-size: var(--ht-text-md);
-        font-weight: 560;
     }
 
-    .header-nav a:hover {
-        background: var(--hts-tint-hover);
-    }
-
-    /* No room for an underline in a stacked list, so the current page is marked on its leading
-       edge instead - same colour, same meaning. */
     .header-nav a::after {
-        top: 0.55rem;
+        top: .8rem;
         right: auto;
-        bottom: 0.55rem;
+        bottom: .8rem;
         left: 0;
         width: 2px;
         height: auto;
         transform: scaleY(0);
-        transform-origin: center top;
-        transition: transform var(--ht-dur-2) var(--ht-ease-lock);
     }
 
-    .header-nav a:hover::after {
-        transform: scaleY(1);
+    .header-nav a.is-current {
+        background: var(--ht-accent-soft, var(--ht-surface-2));
     }
 
     .header-nav a.is-current::after {
-        width: 2px;
-        height: auto;
+        transform: scaleY(1);
+    }
+
+    .header-nav a:focus-visible::after {
         transform: scaleY(1);
     }
 
     .header-actions {
-        display: grid;
-        gap: var(--ht-space-3);
-        padding-top: var(--ht-space-4);
+        padding-top: 1rem;
         border-top: 1px solid var(--ht-edge);
-    }
-
-    .header-utility {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: var(--ht-space-3);
-        padding-right: 0;
-        border-right: 0;
-    }
-
-    /*
-        The language and theme controls stretch to fill their halves of the panel.
-
-        These rules live here, not in the two components, because the only reason either of
-        them changes shape is that THIS element collapsed. When each owned its own copy of the
-        breakpoint they drifted: the switcher was still keyed to 1240 and the toggle to 960
-        while the bar collapsed at 1100, so between 1100 and 1240 the switcher went full width
-        inside a bar that had not collapsed yet.
-    */
-    .header-utility ::deep .lang,
-    .header-utility ::deep .theme-toggle {
-        justify-content: center;
-        width: 100%;
-    }
-
-    .header-utility ::deep .lang {
-        padding-block: 0.3rem;
-        font-size: var(--ht-text-xs);
-    }
-
-    .header-utility ::deep .lang-option {
-        flex: 1;
-        padding-block: 0.5rem;
-        text-align: center;
-    }
-
-    .header-utility ::deep .theme-toggle {
-        padding-block: 0.6rem;
     }
 
     .header-actions ::deep .cta {
         width: 100%;
+        min-height: 48px;
+    }
+}
+
+@media (max-width: 640px) {
+    .header-backdrop {
+        top: 72px;
+    }
+
+    .header-inner {
+        gap: .5rem;
+        min-height: 72px;
+    }
+
+    .header-utility {
+        gap: .45rem;
+    }
+
+    .header-brand ::deep .brand-word {
+        display: none;
+    }
+
+    .header-brand ::deep .brand-mark {
+        width: 40px;
+        height: 40px;
+    }
+
+    .header-brand ::deep .brand {
+        gap: 0;
+    }
+}
+
+@media (max-width: 360px) {
+    .header-inner {
+        gap: .35rem;
+        padding-inline: 1rem;
+    }
+
+    .header-utility {
+        gap: .35rem;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
-    .header-nav a::after {
+    .site-header,
+    .header-panel,
+    .header-nav a,
+    .header-nav a::after,
+    .header-toggle {
         transition: none;
+    }
+
+    .header-nav a {
+        --nav-roll-shift: 0% !important;
     }
 }

@@ -10,12 +10,16 @@
 
 @page "/game-hosting/{GameSlug}/review"
 @using System.Globalization
+@using HowToSoftware.Hosting.Endpoints
+@using HowToSoftware.Hosting.Services.Trials
 @inject IPlanCatalogService Catalog
 @inject IOrderPricingService Pricing
 @inject IStripeCheckoutService Checkout
 @inject NavigationManager Navigation
 @inject IOptions<SiteOptions> Site
 @inject IStringLocalizer<CheckoutText> Text
+@inject IHttpContextAccessor HttpContextAccessor
+@inject ITrialService Trials
 
 <PageTitle>@Text["Review.MetaTitle"] | @Site.Value.Name</PageTitle>
 
@@ -40,10 +44,10 @@ else
 {
     var option = Catalog.GetOption(priced.Quote.Period);
 
-    <section class="review" aria-labelledby="review-heading" data-motion="scene" data-scene>
+    <section class="review" aria-labelledby="review-heading">
         <div class="hts-container hts-container--wide review-inner">
-            <div class="review-copy" data-reveal>
-                <nav class="review-crumbs" data-motion-step="label" aria-label="@Text["Zomboid.CrumbLabel"]">
+            <div class="review-copy">
+                <nav class="review-crumbs" aria-label="@Text["Zomboid.CrumbLabel"]">
                     <a href="@SiteRoutes.GameHosting">@Text["Zomboid.Crumb"]</a>
                     <span class="crumb-sep" aria-hidden="true">/</span>
                     <a href="@(priced.Game.PageHref ?? SiteRoutes.GameHosting)">@priced.Game.Name</a>
@@ -51,10 +55,10 @@ else
                     <span class="crumb-here">@Text["Review.Kicker"]</span>
                 </nav>
 
-                <h1 id="review-heading" class="review-title" data-text-effect="rise" data-motion-step="headline">@Text["Review.Title"]</h1>
-                <p class="review-lede" data-motion-step="copy">@Text["Review.Lede"]</p>
+                <h1 id="review-heading" class="review-title">@Text["Review.Title"]</h1>
+                <p class="review-lede">@Text["Review.Lede"]</p>
 
-                <div class="review-periods" data-motion-step="details">
+                <div class="review-periods">
                     <p class="hts-label periods-label">@Text["Review.ChangePeriod"]</p>
                     <ul class="period-links">
                         @foreach (var other in Catalog.BillingOptions)
@@ -82,9 +86,14 @@ else
                     <input type="hidden" name="PlanSlug" value="@priced.Plan.Slug" />
                     <input type="hidden" name="Period" value="@BillingPolicy.Slug(priced.Quote.Period)" />
                     <input type="hidden" name="PromoCode" value="@PromoCode" />
+                    <input type="hidden" name="TrialUpgrade" value="@(_trialUpgrade ? "true" : "false")" />
+                    @if (_trialUpgrade)
+                    {
+                        <p class="review-note">@Text["Review.TrialUpgrade"]</p>
+                    }
 
                     <div class="review-promo">
-                        <label class="hts-label" for="promo-code">PROMO CODE</label>
+                        <label class="hts-label" for="promo-code">@Text["Review.PromoLabel"]</label>
                         <div class="review-promo-row">
                             <input id="promo-code"
                                    name="PromoCode"
@@ -92,7 +101,7 @@ else
                                    value="@PromoCode"
                                    maxlength="64"
                                    autocomplete="off"
-                                   placeholder="Enter your code" />
+                                   placeholder="@Text["Review.PromoPlaceholder"]" />
                         </div>
                     </div>
 
@@ -131,7 +140,7 @@ else
                 </form>
             </div>
 
-            <div class="review-panel" data-reveal="right" data-motion-step="visual">
+            <div class="review-panel">
                 <OrderSummary Game="priced.Game"
                               Plan="priced.Plan"
                               Quote="priced.Quote"
@@ -146,6 +155,7 @@ else
     private PricedPlan? _priced;
     private string? _error;
     private bool _submitting;
+    private bool _trialUpgrade;
 
     /// <summary>The game, from the route.</summary>
     [Parameter]
@@ -175,11 +185,14 @@ else
     [SupplyParameterFromForm(FormName = "checkout", Name = "PromoCode")]
     public string? PromoForm { get; set; }
 
+    [SupplyParameterFromForm(FormName = "checkout", Name = "TrialUpgrade")]
+    public string? TrialUpgradeForm { get; set; }
+
     private string? PromoCode => string.IsNullOrWhiteSpace(PromoForm)
         ? PromoQuery
         : PromoForm;
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         var planSlug = PlanForm ?? PlanQuery;
         var periodSlug = PeriodForm ?? PeriodQuery;
@@ -190,6 +203,18 @@ else
         var period = BillingPolicy.TryParse(periodSlug, out var parsed) ? parsed : BillingPeriod.Monthly;
 
         _priced = Pricing.Price(GameSlug, planSlug, period);
+        if (HttpMethods.IsPost(HttpContextAccessor.HttpContext?.Request.Method ?? "GET"))
+        {
+            // A trial selected before its deadline remains an upgrade attempt on POST.
+            // A changed entitlement is rejected by the service, never converted to a new server.
+            _trialUpgrade = TrialUpgradeForm == "true";
+        }
+        else if (TrialAccessCookie.Read(HttpContextAccessor.HttpContext) is { } token)
+        {
+            var account = await Trials.GetByAccessTokenAsync(token);
+            _trialUpgrade = account is { State: TrialState.Active or TrialState.Expired }
+                && account.GameSlug == GameSlug && (account.CanUpgrade || account.UpgradeOrderId is not null);
+        }
     }
 
     private async Task StartCheckoutAsync()
@@ -209,7 +234,9 @@ else
             ReturnOrigin: Site.Value.BaseUrl.TrimEnd('/'),
             UserId: null,
             Locale: CultureInfo.CurrentUICulture.Name,
-            PromoCode: PromoCode);
+            PromoCode: PromoCode,
+            TrialAccessToken: _trialUpgrade ? TrialAccessCookie.Read(HttpContextAccessor.HttpContext) : null,
+            IsTrialUpgrade: _trialUpgrade);
 
         var result = await Checkout.CreateCheckoutSessionAsync(request);
 

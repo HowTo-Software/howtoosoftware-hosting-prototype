@@ -38,7 +38,8 @@ public sealed class CommerceSeedService(
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
         var now = DateTimeOffset.UtcNow;
 
-        var sourceGame = games.Primary;
+        foreach (var sourceGame in games.Games.Where(g => g.IsAvailable))
+        {
         var game = await db.Games.SingleOrDefaultAsync(x => x.Slug == sourceGame.Slug, cancellationToken)
             .ConfigureAwait(false);
 
@@ -51,7 +52,7 @@ public sealed class CommerceSeedService(
                 Name = sourceGame.Name,
                 Description = sourceGame.Summary,
                 Active = true,
-                PrimaryGame = true,
+                PrimaryGame = sourceGame.Slug == games.Primary.Slug,
                 CreatedAt = now,
                 UpdatedAt = now
             };
@@ -153,7 +154,7 @@ public sealed class CommerceSeedService(
             .AnyAsync(x => x.GameId == game.Id && x.Active, cancellationToken)
             .ConfigureAwait(false);
 
-        if (!hasDeploymentProfile)
+        if (!hasDeploymentProfile && sourceGame.Slug == games.Primary.Slug)
         {
             var panel = pterodactyl.CurrentValue;
             db.GameDeploymentProfiles.Add(new GameDeploymentProfileRecord
@@ -176,6 +177,7 @@ public sealed class CommerceSeedService(
             });
         }
 
+        }
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
     }

@@ -1,0 +1,153 @@
+[
+  {
+    "name": "custom memory keyboard updates quote",
+    "ok": true,
+    "detail": {
+      "value": 20,
+      "quote": "$31.99\n                            por mês",
+      "mail": "mailto:henry.cahill@howtoosoftware.com?subject=Pedido%20de%20configura%C3%A7%C3%A3o%20sob%20medida&body=Gostaria%20de%20um%20or%C3%A7amento%20para%20um%20servidor%20de%20Project%20Zomboid%20com%20o%20seguinte%3A%0D%0A%0D%0AMem%C3%B3ria%3A%2020%20GB%0D%0AAloca%C3%A7%C3%A3o%20de%20CPU%3A%20800%25%0D%0AArmazenamento%20NVMe%3A%2040%20GB%0D%0AESTIMATIVA%3A%20%2431.99%20por%20m%C3%AAs%0D%0ATrimestral%3A%20%2491.17%20%28-5%25%29%0D%0AAnual%3A%20%24345.49%20%28-10%25%29"
+    }
+  },
+  {
+    "name": "mail draft preserves custom values",
+    "ok": true,
+    "detail": "escaped subject and body, no send"
+  },
+  {
+    "name": "updated /game-hosting/project-zomboid @ 320",
+    "ok": true,
+    "detail": {
+      "width": 320,
+      "scrollWidth": 320
+    }
+  },
+  {
+    "name": "updated /game-hosting/project-zomboid/review?plan=zomboid-4gb&period=annual @ 320",
+    "ok": true,
+    "detail": {
+      "width": 320,
+      "scrollWidth": 320
+    }
+  },
+  {
+    "name": "updated /game-hosting/project-zomboid @ 375",
+    "ok": true,
+    "detail": {
+      "width": 375,
+      "scrollWidth": 375
+    }
+  },
+  {
+    "name": "updated /game-hosting/project-zomboid/review?plan=zomboid-4gb&period=annual @ 375",
+    "ok": true,
+    "detail": {
+      "width": 375,
+      "scrollWidth": 375
+    }
+  },
+  {
+    "name": "updated /game-hosting/project-zomboid @ 768",
+    "ok": true,
+    "detail": {
+      "width": 768,
+      "scrollWidth": 753
+    }
+  },
+  {
+    "name": "updated /game-hosting/project-zomboid/review?plan=zomboid-4gb&period=annual @ 768",
+    "ok": true,
+    "detail": {
+      "width": 768,
+      "scrollWidth": 753
+    }
+  },
+  {
+    "name": "updated /game-hosting/project-zomboid @ 1024",
+    "ok": true,
+    "detail": {
+      "width": 1024,
+      "scrollWidth": 1009
+    }
+  },
+  {
+    "name": "updated /game-hosting/project-zomboid/review?plan=zomboid-4gb&period=annual @ 1024",
+    "ok": true,
+    "detail": {
+      "width": 1024,
+      "scrollWidth": 1009
+    }
+  },
+  {
+    "name": "updated /game-hosting/project-zomboid @ 1440",
+    "ok": true,
+    "detail": {
+      "width": 1440,
+      "scrollWidth": 1425
+    }
+  },
+  {
+    "name": "updated /game-hosting/project-zomboid/review?plan=zomboid-4gb&period=annual @ 1440",
+    "ok": true,
+    "detail": {
+      "width": 1440,
+      "scrollWidth": 1425
+    }
+  },
+  {
+    "name": "promo field localized PT",
+    "ok": true,
+    "detail": "PT"
+  },
+  {
+    "name": "POST form preserved",
+    "ok": true,
+    "detail": "native antiforgery form"
+  },
+  {
+    "name": "promo field localized EN",
+    "ok": true,
+    "detail": "EN"
+  },
+  {
+    "name": "review light complete",
+    "ok": true,
+    "detail": "new summary surface"
+  },
+  {
+    "name": "updated product light mobile no overflow",
+    "ok": true,
+    "detail": {
+      "width": 390,
+      "scrollWidth": 390
+    }
+  },
+  {
+    "name": "plan changes announce",
+    "ok": true,
+    "detail": "polite live region outside replaced details"
+  },
+  {
+    "name": "no script mobile navigation & FAQ",
+    "ok": true,
+    "detail": {
+      "nav": 68,
+      "faq": "visible",
+      "width": 390
+    }
+  },
+  {
+    "name": "Skiper nav roll hover",
+    "ok": true,
+    "detail": "CSS acknowledged hover"
+  },
+  {
+    "name": "browser no exceptions",
+    "ok": true,
+    "detail": []
+  },
+  {
+    "name": "no failed asset requests",
+    "ok": true,
+    "detail": []
+  }
+]

@@ -6,6 +6,11 @@ using HowToSoftware.Hosting.Models;
 using HowToSoftware.Hosting.Models.Orders;
 using HowToSoftware.Hosting.Services.Orders;
 using HowToSoftware.Hosting.Services.Provisioning;
+using HowToSoftware.Hosting.Services.Payments;
+using HowToSoftware.Hosting.Services.Trials;
+using HowToSoftware.Hosting.Services;
+using HowToSoftware.Hosting.Localization;
+using Microsoft.Extensions.Options;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Time.Testing;
@@ -51,13 +56,13 @@ public sealed class OrderFulfillmentTests : IDisposable
         }
     }
 
-    private OrderFulfillmentService Service() => new(
+    private OrderFulfillmentService Service(ITrialService? trials = null, IOrderPricingService? pricing = null) => new(
         _orders,
         _provisioner,
         _panel,
         new StaticOptionsMonitor<PterodactylOptions>(_panelOptions),
         _clock,
-        NullLogger<OrderFulfillmentService>.Instance);
+        NullLogger<OrderFulfillmentService>.Instance, trials: trials, pricing: pricing);
 
     private async Task<Order> PaidOrderAsync(string? email = "survivor@example.com")
     {
@@ -231,6 +236,40 @@ public sealed class OrderFulfillmentTests : IDisposable
         public HostingDbContext CreateDbContext() => new(options);
     }
 
+
+    private static IOrderPricingService TrialPricing()
+    {
+        var plans = new StaticPlanCatalogService(TestLocalizer.For<HomeText>(), Options.Create(new HostingPlanPricingOptions
+        { Rates = new PlanRateCard { CpuPer100Percent = "0.90", MemoryPerGb = "1.20", DiskPerBlock = "0.30", DiskBlockGb = 20 } }));
+        return new OrderPricingService(new StaticGameCatalogService(TestLocalizer.For<CheckoutText>(), plans), plans);
+    }
+
+    [Fact]
+    public async Task APaidTrialUsesTheSameServer_WithoutCallingFreshProvisioning()
+    {
+        var order = await PaidOrderAsync();
+        var trials = new CheckoutTrialStub();
+        await Service(trials, TrialPricing()).FulfilAsync(order.Id);
+        var done = (await _orders.FindAsync(order.Id))!;
+        Assert.Equal(OrderStatus.Active, done.Status);
+        Assert.Equal("trial77", done.ServerIdentifier);
+        Assert.Empty(_provisioner.Requests);
+        Assert.Equal(8192, trials.PaidLimits!.MemoryMb);
+        Assert.Equal(5, trials.PaidLimits.Backups);
+    }
+
+    [Theory]
+    [InlineData(TrialConversionOutcome.Retry)]
+    [InlineData(TrialConversionOutcome.Unavailable)]
+    public async Task ADeferredTrialUpgradeNeverFallsBackToCreatingAnotherServer(TrialConversionOutcome outcome)
+    {
+        var order = await PaidOrderAsync();
+        var trials = new CheckoutTrialStub { Conversion = new(outcome) };
+        await Service(trials, TrialPricing()).FulfilAsync(order.Id);
+        Assert.Equal(OrderStatus.Provisioning, (await _orders.FindAsync(order.Id))!.Status);
+        Assert.Empty(_provisioner.Requests);
+    }
+
     private sealed class FakeProvisioner : IProvisioningService
     {
         public List<ProvisioningRequest> Requests { get; } = [];
@@ -291,6 +330,16 @@ public sealed class OrderFulfillmentTests : IDisposable
         public Task<PterodactylUser?> FindUserByExternalIdAsync(string externalId, CancellationToken cancellationToken = default) => throw new NotSupportedException();
 
         public Task<PterodactylUser> CreateUserAsync(CreateUserRequest request, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+
+        public Task<PterodactylUser?> FindUserByEmailAsync(string email, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+
+        public Task<PterodactylServer?> GetServerAsync(int serverId, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+
+        public Task SuspendServerAsync(int serverId, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+
+        public Task UnsuspendServerAsync(int serverId, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+
+        public Task<PterodactylServer> UpdateServerBuildAsync(int serverId, UpdateServerBuildRequest request, CancellationToken cancellationToken = default) => throw new NotSupportedException();
 
         public Task<PterodactylServer> CreateServerAsync(CreateServerRequest request, CancellationToken cancellationToken = default) => throw new NotSupportedException();
 

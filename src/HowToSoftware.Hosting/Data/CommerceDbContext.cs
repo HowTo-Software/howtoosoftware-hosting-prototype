@@ -25,9 +25,44 @@ public sealed class CommerceDbContext(DbContextOptions<CommerceDbContext> option
     public DbSet<BillingInvoiceReference> BillingInvoiceRefs => Set<BillingInvoiceReference>();
     public DbSet<PromotionCode> PromotionCodes => Set<PromotionCode>();
     public DbSet<PromotionRedemption> PromotionRedemptions => Set<PromotionRedemption>();
+    public DbSet<ServerTrialRecord> ServerTrials => Set<ServerTrialRecord>();
+    public DbSet<TrialUpgradeOrderRecord> TrialUpgradeOrders => Set<TrialUpgradeOrderRecord>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ServerTrialRecord>(entity =>
+        {
+            entity.HasKey(x => x.Id);
+            entity.Property(x => x.NormalizedEmail).HasMaxLength(320).IsRequired();
+            entity.Property(x => x.DisplayName).HasMaxLength(128).IsRequired();
+            entity.Property(x => x.GameSlug).HasMaxLength(64).IsRequired();
+            entity.Property(x => x.Locale).HasMaxLength(16).IsRequired();
+            entity.Property(x => x.ProfileId).HasMaxLength(64);
+            entity.Property(x => x.Version).HasMaxLength(64);
+            entity.Property(x => x.State).HasConversion<string>().HasMaxLength(32);
+            entity.Property(x => x.VerificationTokenHash).HasMaxLength(64);
+            entity.Property(x => x.AccessTokenHash).HasMaxLength(64);
+            entity.Property(x => x.ServerIdentifier).HasMaxLength(64);
+            entity.Property(x => x.ServerUuid).HasMaxLength(64);
+            entity.Property(x => x.LastFailureClass).HasMaxLength(128);
+            entity.Property(x => x.LeaseToken).IsConcurrencyToken();
+            entity.HasIndex(x => x.NormalizedEmail).IsUnique();
+            entity.HasIndex(x => x.PterodactylUserId).IsUnique().HasFilter("[pterodactyl_user_id] IS NOT NULL");
+            entity.HasIndex(x => x.VerificationTokenHash).IsUnique().HasFilter("[verification_token_hash] IS NOT NULL");
+            entity.HasIndex(x => x.AccessTokenHash).IsUnique().HasFilter("[access_token_hash] IS NOT NULL");
+            entity.HasIndex(x => x.UpgradeOrderId).IsUnique().HasFilter("[upgrade_order_id] IS NOT NULL");
+            entity.HasIndex(x => new { x.State, x.NextAttemptAt });
+            entity.HasOne<CommerceOrder>().WithMany().HasForeignKey(x => x.UpgradeOrderId).OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<TrialUpgradeOrderRecord>(entity =>
+        {
+            entity.HasKey(x => x.OrderId);
+            entity.HasIndex(x => x.TrialId);
+            entity.HasOne<ServerTrialRecord>().WithMany().HasForeignKey(x => x.TrialId).OnDelete(DeleteBehavior.Restrict);
+            entity.HasOne<CommerceOrder>().WithMany().HasForeignKey(x => x.OrderId).OnDelete(DeleteBehavior.Restrict);
+        });
+
         modelBuilder.Entity<CustomerProfile>(entity =>
         {
             entity.HasKey(x => x.Id);

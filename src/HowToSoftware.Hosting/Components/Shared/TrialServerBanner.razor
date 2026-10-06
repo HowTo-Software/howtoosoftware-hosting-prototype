@@ -1,0 +1,33 @@
+@inject IStringLocalizer<CheckoutText> Text
+
+<section id="trial" class="trial-banner" aria-labelledby="trial-banner-title">
+    <div class="hts-container hts-container--wide">
+        <div class="trial-shell" data-reveal>
+            <div class="trial-duration" aria-hidden="true">
+                <span class="trial-duration__number">24</span>
+                <span class="trial-duration__unit hts-label">@Text["Trial.Unit"]</span>
+            </div>
+
+            <div class="trial-copy">
+                <p class="trial-kicker hts-label">@Text["Trial.Kicker"]</p>
+                <h2 id="trial-banner-title" class="trial-title">@Text["Trial.Title"]</h2>
+                <p class="trial-body">@Text["Trial.Body"]</p>
+            </div>
+
+            <div class="trial-action">
+                <CtaButton Href="/trial"
+                           Variant="CtaVariant.Primary"
+                           TrailingIcon="IconName.ArrowRight"
+                           CssClass="trial-cta">
+                    @Text["Trial.Action"]
+                </CtaButton>
+                <span class="trial-note">@Text["Trial.Note"]</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+@*
+    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
+    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
+*@

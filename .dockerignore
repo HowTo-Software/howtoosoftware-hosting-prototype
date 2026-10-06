@@ -28,3 +28,7 @@ README.md
 **/*.pfx
 **/appsettings.Development.json
 **/secrets.json
+.env
+.env.*
+**/.env
+**/.env.*

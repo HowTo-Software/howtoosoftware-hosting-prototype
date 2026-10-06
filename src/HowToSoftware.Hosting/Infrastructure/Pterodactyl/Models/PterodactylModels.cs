@@ -345,6 +345,18 @@ public sealed record PterodactylServer
     /// <summary>Container limits the panel recorded.</summary>
     [JsonPropertyName("limits")]
     public PterodactylServerLimits? Limits { get; init; }
+
+    [JsonPropertyName("feature_limits")]
+    public PterodactylServerFeatureLimits? FeatureLimits { get; init; }
+
+    [JsonPropertyName("container")]
+    public PterodactylServerContainer? Container { get; init; }
+
+    [JsonPropertyName("suspended")]
+    public bool Suspended { get; init; }
+
+    [JsonPropertyName("relationships")]
+    public PterodactylServerRelationships? Relationships { get; init; }
 }
 
 /// <summary>Limits as reported back on a server.</summary>
@@ -361,6 +373,49 @@ public sealed record PterodactylServerLimits
     /// <summary>CPU ceiling, as a percentage.</summary>
     [JsonPropertyName("cpu")]
     public int Cpu { get; init; }
+
+    [JsonPropertyName("swap")]
+    public int Swap { get; init; }
+
+    [JsonPropertyName("io")]
+    public int Io { get; init; } = 500;
+
+    [JsonPropertyName("threads")]
+    public string? Threads { get; init; }
+
+    [JsonPropertyName("oom_disabled")]
+    public bool OomDisabled { get; init; }
+}
+
+/// <summary>Nullable caps preserve panel accounts whose feature limit is unlimited.</summary>
+public sealed record PterodactylServerFeatureLimits
+{
+    [JsonPropertyName("databases")]
+    public int? Databases { get; init; }
+
+    [JsonPropertyName("allocations")]
+    public int? Allocations { get; init; }
+
+    [JsonPropertyName("backups")]
+    public int? Backups { get; init; }
+}
+
+public sealed record PterodactylServerContainer
+{
+    [JsonPropertyName("installed")]
+    public int Installed { get; init; }
+}
+
+public sealed record PterodactylServerRelationships
+{
+    [JsonPropertyName("allocations")]
+    public PterodactylList<PterodactylAllocation>? Allocations { get; init; }
+}
+
+public sealed record PterodactylAllocation
+{
+    [JsonPropertyName("id")]
+    public int Id { get; init; }
 }
 
 // =============================================================

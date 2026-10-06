@@ -1,188 +1,33 @@
-.teaser {
-    position: relative;
-    padding-block: clamp(4.5rem, 8vw, 8rem);
-    border-top: 1px solid var(--hts-border);
-    background: var(--hts-navy-900);
-    overflow: hidden;
-}
-
-.teaser::before {
-    content: "";
-    position: absolute;
-    top: 8%;
-    right: -6%;
-    width: var(--hts-glow-w);
-    height: var(--hts-glow-h);
-    background: radial-gradient(ellipse at center, var(--hts-glow-brand) 0%, transparent 68%);
-    filter: blur(var(--hts-glow-blur));
-    pointer-events: none;
-}
-
-.teaser-inner {
-    position: relative;
-    display: grid;
-    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
-    align-items: center;
-    gap: clamp(2.5rem, 6vw, 5rem);
-}
-
-.teaser-kicker {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: var(--hts-space-5);
-    color: var(--ht-ink-muted);
-    font-family: var(--hts-font-mono);
-    font-size: 0.6875rem;
-    font-weight: 600;
-    letter-spacing: 0.2em;
-}
-
-.teaser-title {
-    font-size: clamp(2rem, 1.3rem + 2.5vw, 3.1rem);
-    font-weight: 460;
-    line-height: 1.05;
-    letter-spacing: -0.03em;
-}
-
-.teaser-lede {
-    max-width: 34rem;
-    margin-top: var(--hts-space-5);
-    color: var(--hts-ink-soft);
-    font-size: var(--hts-text-md);
-    line-height: var(--hts-leading-relaxed);
-}
-
-.teaser-points {
-    display: grid;
-    gap: 0.55rem;
-    margin-top: var(--hts-space-6);
-}
-
-.teaser-points li {
-    position: relative;
-    padding-left: 1.15rem;
-    color: var(--hts-ink-muted);
-    font-family: var(--hts-font-mono);
-    font-size: 0.6875rem;
-    letter-spacing: 0.08em;
-}
-
-/* A square tick rather than a bullet, matching the plan cards. */
-.teaser-points li::before {
-    content: "";
-    position: absolute;
-    top: 0.42em;
-    left: 0;
-    width: 0.35rem;
-    height: 0.35rem;
-    border-radius: 1px;
-    background: var(--hts-blue-400);
-}
-
-/*
-    ::deep, because this class lands on CtaButton's own root element and that element carries
-    CtaButton's scope attribute rather than this component's. Without it the rule compiles,
-    ships, matches nothing, and the button sits flush against the list above it.
-*/
-.teaser-copy ::deep .teaser-cta {
-    margin-top: var(--hts-space-8);
-}
-
-/* ── Price ─────────────────────────────────────────────────────────────── */
-
-.teaser-price {
-    display: grid;
-    justify-items: start;
-    gap: 0.2rem;
-    padding: clamp(1.5rem, 3vw, 2.25rem);
-    border: 1px solid var(--hts-border-blue);
-    border-radius: var(--hts-radius-lg);
-    background:
-        radial-gradient(130% 90% at 50% 0%, rgba(61, 92, 224, 0.16) 0%, transparent 66%),
-        var(--hts-surface);
-    box-shadow: var(--hts-rim), var(--hts-shadow-md);
-    min-width: 0;
-}
-
-.price-label {
-    color: var(--hts-blue-300);
-    font-family: var(--hts-font-mono);
-    font-size: 0.5625rem;
-    font-weight: 700;
-    letter-spacing: 0.24em;
-}
-
-.price-figure {
-    display: flex;
-    align-items: baseline;
-    gap: 0.25rem;
-    margin-top: 0.35rem;
-    color: var(--hts-ink);
-    font-size: clamp(2.4rem, 1.6rem + 2.4vw, 3.4rem);
-    font-weight: 680;
-    line-height: 1;
-    letter-spacing: -0.04em;
-    font-variant-numeric: tabular-nums;
-}
-
-.price-symbol {
-    color: var(--hts-ink-muted);
-    font-size: 0.42em;
-    font-weight: 560;
-}
-
-.price-unit {
-    color: var(--hts-ink-muted);
-    font-family: var(--hts-font-mono);
-    font-size: 0.5625rem;
-    letter-spacing: 0.16em;
-}
-
-.price-pending {
-    margin-top: 0.35rem;
-    color: var(--hts-ink-soft);
-    font-size: var(--hts-text-sm);
-    line-height: var(--hts-leading-normal);
-}
-
-.price-spec {
-    display: grid;
-    width: 100%;
-    margin-top: var(--hts-space-5);
-    padding-top: var(--hts-space-4);
-    border-top: 1px solid var(--hts-border);
-}
-
-.price-spec > div {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: var(--hts-space-4);
-    padding-block: 0.4rem;
-}
-
-.price-spec dt {
-    color: var(--hts-ink-muted);
-    font-family: var(--hts-font-mono);
-    font-size: 0.5rem;
-    letter-spacing: 0.2em;
-}
-
-.price-spec dd {
-    color: var(--hts-ink-soft);
-    font-family: var(--hts-font-mono);
-    font-size: 0.6875rem;
-    white-space: nowrap;
-}
-
-@media (max-width: 1024px) {
-    .teaser-inner {
-        grid-template-columns: minmax(0, 1fr);
-    }
-
-    .teaser-price {
-        justify-self: stretch;
-        max-width: 26rem;
-    }
-}
+/* Prices are a decision, not a decorative display. The three real catalogue tiers stay aligned. */
+.teaser { padding-block: clamp(3.5rem, 6vw, 5.5rem); border-block: 1px solid var(--ht-edge); }
+.teaser-head { display: grid; grid-template-columns: 1.1fr 1fr; gap: 3rem; align-items: end; margin-bottom: 2rem; }
+.teaser-head .storefront-title { max-width: 23ch; font-size: clamp(2rem, 1.6rem + 2vw, 3rem); }
+.teaser-head .storefront-copy { max-width: 30rem; font-size: 1rem; line-height: 1.75; }
+.preview-plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.preview-plan { position: relative; display: flex; flex-direction: column; min-width: 0; padding: 1.65rem; border: 1px solid var(--ht-edge-strong); border-radius: 8px; background: var(--ht-surface-1); transition: opacity 260ms ease, transform 260ms ease, border-color 180ms ease; }
+.preview-plan.is-recommended { border-color: var(--ht-accent); }
+.preview-plan.is-recommended::before { content: ""; position: absolute; top: 0; right: 0; left: 0; height: 3px; border-radius: 8px 8px 0 0; background: var(--ht-accent); }
+.plan-top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .6rem; min-height: 32px; }
+.plan-top h3 { margin: 0; color: var(--ht-ink); font-size: 1.125rem; font-weight: 640; letter-spacing: -.025em; }
+.plan-badge { padding: .25rem .4rem; border: 1px solid var(--ht-edge-strong); border-radius: 4px; color: var(--ht-accent); font-size: .75rem; line-height: 1.4; }
+.plan-memory { display: flex; align-items: baseline; gap: .6rem; margin: 1.4rem 0; }
+.plan-memory strong { color: var(--ht-ink); font-size: 2.8rem; font-weight: 650; line-height: 1; letter-spacing: -.05em; }
+.plan-memory > span { color: var(--ht-ink-soft); font-family: var(--ht-font-mono); font-size: .8125rem; }
+.plan-specs { display: grid; gap: .8rem; margin: 0; padding-bottom: 1.5rem; border-bottom: 1px solid var(--ht-edge-strong); }
+.plan-specs div { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; min-width: 0; font-size: .875rem; line-height: 1.6; }
+.plan-specs dt { color: var(--ht-ink-soft); }
+.plan-specs dd { flex: none; margin: 0; color: var(--ht-ink); font-family: var(--ht-font-mono); font-size: .875rem; }
+.plan-price { margin-top: auto; padding-top: 1.4rem; }
+.plan-price > span { color: var(--ht-ink-muted); font-size: .75rem; line-height: 1.6; }
+.plan-price p { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem; margin: .4rem 0 1.3rem; }
+.plan-price strong { color: var(--ht-ink); font-size: 1.8rem; font-weight: 640; letter-spacing: -.035em; }
+.plan-price p > span { color: var(--ht-ink-muted); font-size: .8125rem; }
+.plan-price ::deep .cta { width: 100%; min-height: 44px; }
+.plan-price .pending { min-height: 2rem; color: var(--ht-ink-soft); font-size: .9375rem; }
+.teaser-foot { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 1.3rem; color: var(--ht-ink-soft); font-size: .875rem; }
+.teaser-foot .hts-text-link { min-height: 44px; font-size: .9375rem; }
+.preview-plan:focus-within { border-color: var(--ht-accent); }
+@media (hover:hover) and (pointer:fine) { .preview-plan:hover { border-color: var(--ht-accent); } }
+@media (max-width:900px) { .teaser-head { grid-template-columns: 1fr; gap: 1.3rem; } .preview-plan { padding: 1.2rem; } }
+@media (max-width:700px) { .preview-plans { grid-template-columns: 1fr; gap: 1rem; } .preview-plan { padding: 1.5rem; } .plan-memory { margin-block: 1.1rem; } }
+@media (prefers-reduced-motion:reduce) { .preview-plan { transition: none; } }

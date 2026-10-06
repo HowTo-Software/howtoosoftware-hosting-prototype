@@ -1,59 +1,49 @@
 @page "/"
 @inject IOptions<SiteOptions> Site
 @inject IHttpContextAccessor HttpContextAccessor
+@inject IStringLocalizer<StorefrontText> Text
 
-<PageTitle>Project Zomboid Server Hosting | @Site.Value.Name</PageTitle>
+<PageTitle>@Text["Meta.Title"] | @Site.Value.Name</PageTitle>
 
 <HeadContent>
-    <meta name="description" content="Project Zomboid server hosting from HowToSoftware. Persistent Knox County worlds, Workshop mod sync, automated provisioning and a control panel built by a software team." />
+    <meta name="description" content="@Text["Meta.Description"]" />
     <link rel="canonical" href="@Site.Value.BaseUrl" />
-
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Project Zomboid Server Infrastructure" />
-    <meta property="og:description" content="Persistent worlds, Workshop mod sync and automated provisioning for Project Zomboid communities." />
+    <meta property="og:title" content="@Text["Meta.Title"]" />
+    <meta property="og:description" content="@Text["Meta.Description"]" />
     <meta property="og:url" content="@Site.Value.BaseUrl" />
     <meta property="og:site_name" content="@Site.Value.Name" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Project Zomboid Server Infrastructure" />
-    <meta name="twitter:description" content="Persistent worlds, Workshop mod sync and automated provisioning for Project Zomboid communities." />
-
-    <script type="application/ld+json" nonce="@CspNonce">
-        {
-            "@@context": "https://schema.org",
-            "@@type": "Service",
-            "name": "Project Zomboid Server Hosting",
-            "serviceType": "Game server hosting",
-            "url": "@Site.Value.BaseUrl",
-            "provider": {
-                "@@type": "Organization",
-                "name": "@Site.Value.Name",
-                "url": "@Site.Value.BaseUrl"
-            },
-            "description": "Managed Project Zomboid server hosting with persistent worlds, Steam Workshop mod synchronisation, automated provisioning and a web control panel."
-        }
-    </script>
+    <meta name="twitter:title" content="@Text["Meta.Title"]" />
+    <meta name="twitter:description" content="@Text["Meta.Description"]" />
+    <script type="application/ld+json" nonce="@CspNonce">@((MarkupString)ServiceSchema)</script>
 </HeadContent>
 
-@* Composition order is deliberate: immersive hero, telemetry transition, then an
-   alternating rhythm of editorial, interface and diagram sections. *@
 <HeroExperience />
-<TelemetryStrip />
-<WorldSection />
-<WorkshopSection />
-<ProvisioningSection />
-<ControlPanelSection />
-<NodesSection />
-<BotSection />
-<CapabilitiesSection />
+<PromotionAnnouncements />
+<TrialServerBanner />
+<GameGateway />
 <PlansTeaser />
-<FaqSection />
+<HostingBenefits />
+<InfrastructureProof />
+<FaqSection Index="06" />
 <ClosingSection />
 
 @code {
     private string? CspNonce => SecurityHeadersMiddleware.GetNonce(HttpContextAccessor.HttpContext);
+    private string ServiceSchema => System.Text.Json.JsonSerializer.Serialize(new Dictionary<string, object>
+    {
+        ["@context"] = "https://schema.org",
+        ["@type"] = "Service",
+        ["name"] = Text["Meta.Title"].Value,
+        ["serviceType"] = "Game server hosting",
+        ["url"] = Site.Value.BaseUrl,
+        ["provider"] = new Dictionary<string, object>
+        {
+            ["@type"] = "Organization",
+            ["name"] = Site.Value.Name,
+            ["url"] = Site.Value.BaseUrl
+        },
+        ["description"] = Text["Meta.Description"].Value
+    });
 }
-
-@*
-    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
-    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
-*@

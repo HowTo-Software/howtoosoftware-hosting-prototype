@@ -1,64 +1,69 @@
-@*
-    Infrastructure page hero.
-
-    Deliberately the same construction as the homepage hero - kicker, stacked display lines
-    with the brand purple on one of them, a foot rail of technical readouts - so arriving here
-    reads as the next room of the same building.
-
-    Every line of descriptive copy is a placeholder until the real wording is supplied; see
-    Components/Shared/CopySlot.razor.
-*@
-
 @inject IStringLocalizer<HardwareText> Text
 @inject IInfrastructureContentService Content
 
-<section class="hw-hero" id="top" data-motion="scene" data-scene>
+<section class="hw-hero" id="top" aria-labelledby="hw-heading" data-motion="scene" data-scene>
+    <div class="hts-container hts-container--wide">
+        <div class="hw-hero-inner">
+            <div class="hw-hero-type" data-reveal>
+                <p class="hw-kicker" data-motion-step="label">@Text["Hero.Eyebrow"]</p>
+                <h1 class="hw-title" id="hw-heading" data-motion-step="headline">
+                    @Text["Hero.Line1"]
+                    <span>@Text["Hero.Line2"] @Text["Hero.Line3"]</span>
+                </h1>
+                <p class="hw-lede" data-motion-step="copy">@Text["Hero.Lede"]</p>
 
-    <div class="hts-container hts-container--wide hw-hero-inner">
-        <div class="hw-hero-type">
-            <p class="hw-kicker" data-text-effect="flicker" data-motion-step="label">
-                <span class="kicker-rule" data-motion-draw aria-hidden="true"></span>
-                @Text["Hero.Eyebrow"]
-            </p>
+                <dl class="hw-context">
+                    <div>
+                        <dt>@Text["Hero.Rail.Nodes"]</dt>
+                        <dd>@Content.Nodes.Count.ToString("00")</dd>
+                    </div>
+                    <div>
+                        <dt>@Text["Hero.Rail.Region"]</dt>
+                        <dd>@Text["Node.RegionValue"]</dd>
+                    </div>
+                    <div>
+                        <dt>@Text["Hero.Rail.Platform"]</dt>
+                        <dd>@Text["Node.PlatformValue"]</dd>
+                    </div>
+                </dl>
 
-            <h1 class="hw-title" data-text-effect="rise" data-motion-step="headline">
-                <span class="title-line">@Text["Hero.Line1"]</span>
-                <span class="title-line title-line--accent">@Text["Hero.Line2"]</span>
-                <span class="title-line">@Text["Hero.Line3"]</span>
-            </h1>
+                <div class="hw-hero-actions" data-motion-step="details">
+                    <CtaButton Href="@SiteRoutes.ProjectZomboidPlans" TrailingIcon="IconName.ArrowRight">
+                        @Text["Closing.Cta"]
+                    </CtaButton>
+                    <a class="hw-text-link" href="#topology">@Text["Overview.DetailsLink"] <span aria-hidden="true">↓</span></a>
+                </div>
+            </div>
 
-            <p class="hw-lede" data-motion-step="copy">
-                @Text["Hero.Lede"]
-            </p>
+            <div class="hw-hero-image" data-reveal>
+                <HardwarePhoto Slot="HardwarePhotoSlot.RackOpen"
+                               Alt="@Text["Photo.Alt.RackOpen"]"
+                               Caption="@Text["Overview.RackCaption", SiteName]"
+                               IsAboveTheFold="true" />
+            </div>
         </div>
 
-        @* The establishing shot. Above the fold, so it is fetched eagerly rather than lazily. *@
-        <div class="hw-hero-plate" data-motion-step="visual">
-            <HardwarePhoto Slot="HardwarePhotoSlot.RackFront"
-                           Alt="@Text["Photo.Alt.Rack"]"
-                           Caption="@Text["Photo.Caption.Rack"]"
-                           IsAboveTheFold="true" />
+        <div class="hw-spec-sheet" id="physical" aria-labelledby="hw-spec-heading" data-reveal>
+            <p id="hw-spec-heading" class="hw-spec-heading">@Text["Overview.SpecHeading"]</p>
+            <dl class="hw-specs">
+                @foreach (var spec in Content.SpecSheet)
+                {
+                    <div class="hw-spec">
+                        <dt>@Text[$"Spec.{spec.Kind}"]</dt>
+                        <dd><CopySlot Value="@spec.Value" /></dd>
+                        @if (spec.Kind is HardwareSpecKind.Cpu && !spec.IsPending)
+                        {
+                            <dd class="hw-spec-detail">@Text["Node.CpuDetail"]</dd>
+                        }
+                    </div>
+                }
+            </dl>
+            <p class="hw-spec-note">@Text["Overview.SpecNote"]</p>
         </div>
-    </div>
-
-    <div class="hts-container hts-container--wide hw-hero-foot" data-scene-exit>
-        <span class="foot-item">
-            <span class="foot-label">@Text["Hero.Rail.Platform"]</span>
-            <span class="foot-value">@SiteName</span>
-        </span>
-        <span class="foot-item">
-            <span class="foot-label">@Text["Hero.Rail.Nodes"]</span>
-            <span class="foot-value">@Content.Nodes.Count.ToString("00")</span>
-        </span>
-        <span class="foot-item">
-            <span class="foot-label">@Text["Hero.Rail.Region"]</span>
-            <span class="foot-value">@Text["Node.RegionValue"]</span>
-        </span>
     </div>
 </section>
 
 @code {
-    /// <summary>Platform name shown on the hero foot rail.</summary>
     [Parameter]
     public string SiteName { get; set; } = "HowToSoftware";
 }

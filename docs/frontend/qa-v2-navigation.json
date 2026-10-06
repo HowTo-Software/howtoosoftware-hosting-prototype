@@ -1,0 +1,77 @@
+{
+  "passed": 8,
+  "checks": [
+    {
+      "name": "plan CTA anchor clears sticky header",
+      "ok": true,
+      "detail": {
+        "headerBottom": 77,
+        "titleTop": 321.0869140625,
+        "sectionTop": 170.40625,
+        "scrollPadding": "108px"
+      }
+    },
+    {
+      "name": "enhanced desktop header uses interactive controls",
+      "ok": true,
+      "detail": {
+        "scripting": true,
+        "nav": "flex",
+        "theme": 44,
+        "fallbackNav": 0
+      }
+    },
+    {
+      "name": "return from product restores home content",
+      "ok": true,
+      "detail": "one home headline and correct actions"
+    },
+    {
+      "name": "second enhanced navigation preserves header",
+      "ok": true,
+      "detail": {
+        "scripting": true,
+        "nav": "flex",
+        "theme": 44,
+        "fallbackNav": 0
+      }
+    },
+    {
+      "name": "active wordmark canvas draws at hero size",
+      "ok": true,
+      "detail": "pointer morph"
+    },
+    {
+      "name": "static fallback matches responsive glyph scale",
+      "ok": true,
+      "detail": {
+        "width": 350,
+        "font": 145.833,
+        "visible": "visible",
+        "menu": 44,
+        "theme": 44,
+        "scripting": true
+      }
+    },
+    {
+      "name": "reduced motion retains mobile controls",
+      "ok": true,
+      "detail": {
+        "width": 350,
+        "font": 145.833,
+        "visible": "visible",
+        "menu": 44,
+        "theme": 44,
+        "scripting": true
+      }
+    },
+    {
+      "name": "supplemental browser has no exceptions or missing assets",
+      "ok": true,
+      "detail": {
+        "errors": [],
+        "failed": []
+      }
+    }
+  ]
+}

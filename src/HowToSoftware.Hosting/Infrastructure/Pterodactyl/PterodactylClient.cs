@@ -120,6 +120,38 @@ public sealed class PterodactylClient : IPterodactylClient
     }
 
     /// <inheritdoc />
+    public async Task<PterodactylUser?> FindUserByEmailAsync(
+        string email,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(email);
+        var canonicalEmail = email.Trim();
+        for (var page = 1; page <= 100; page++)
+        {
+            var list = await SendAsync<PterodactylList<PterodactylUser>>(
+                HttpMethod.Get,
+                $"/users?filter%5Bemail%5D={Uri.EscapeDataString(canonicalEmail)}&per_page=100&page={page}",
+                payload: null,
+                cancellationToken).ConfigureAwait(false);
+
+            var exact = list.Items.FirstOrDefault(user =>
+                string.Equals(user.Email.Trim(), canonicalEmail, StringComparison.OrdinalIgnoreCase));
+            if (exact is not null)
+            {
+                return exact;
+            }
+
+            if (list.Meta?.Pagination is not { } pagination || page >= pagination.TotalPages)
+            {
+                return null;
+            }
+        }
+
+        throw new PterodactylApiException(PterodactylFailure.PanelError,
+            "The panel's user lookup exceeded the supported pagination limit.");
+    }
+
+    /// <inheritdoc />
     public async Task<PterodactylUser> CreateUserAsync(
         CreateUserRequest request,
         CancellationToken cancellationToken = default)
@@ -174,11 +206,56 @@ public sealed class PterodactylClient : IPterodactylClient
     }
 
     /// <inheritdoc />
+    public async Task<PterodactylServer?> GetServerAsync(
+        int serverId, CancellationToken cancellationToken = default)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(serverId);
+        var item = await SendOrNullAsync<PterodactylItem<PterodactylServer>>(
+            HttpMethod.Get, $"/servers/{serverId}?include=allocations", payload: null, cancellationToken).ConfigureAwait(false);
+        return item?.Attributes;
+    }
+
+    /// <inheritdoc />
+    public Task SuspendServerAsync(int serverId, CancellationToken cancellationToken = default) =>
+        SendServerActionAsync(serverId, "suspend", cancellationToken);
+
+    /// <inheritdoc />
+    public Task UnsuspendServerAsync(int serverId, CancellationToken cancellationToken = default) =>
+        SendServerActionAsync(serverId, "unsuspend", cancellationToken);
+
+    /// <inheritdoc />
+    public async Task<PterodactylServer> UpdateServerBuildAsync(
+        int serverId,
+        UpdateServerBuildRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(serverId);
+        ArgumentNullException.ThrowIfNull(request);
+        var item = await SendAsync<PterodactylItem<PterodactylServer>>(
+            HttpMethod.Patch, $"/servers/{serverId}/build", request, cancellationToken).ConfigureAwait(false);
+        return item.Attributes ?? throw new PterodactylApiException(
+            PterodactylFailure.PanelError, "The panel returned no server after the resource update.");
+    }
+
+    private async Task SendServerActionAsync(
+        int serverId, string action, CancellationToken cancellationToken)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(serverId);
+        using var response = await ExecuteAsync(
+            HttpMethod.Post, $"/servers/{serverId}/{action}", payload: null, cancellationToken).ConfigureAwait(false);
+        if (response.StatusCode is not HttpStatusCode.NoContent)
+        {
+            throw await BuildFailureAsync(response, cancellationToken).ConfigureAwait(false);
+        }
+    }
+
+    /// <inheritdoc />
     public async Task DeleteServerAsync(
         int serverId,
         bool force = false,
         CancellationToken cancellationToken = default)
     {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(serverId);
         // 204 with an empty body, so there is nothing to deserialise.
         using var response = await ExecuteAsync(
             HttpMethod.Delete,
@@ -276,7 +353,7 @@ public sealed class PterodactylClient : IPterodactylClient
             _logger.LogDebug(
                 "Pterodactyl request {Method} {Path}",
                 method.Method,
-                path);
+                path.Split('?', 2)[0]);
 
             return await _http.SendAsync(request, cancellationToken).ConfigureAwait(false);
         }

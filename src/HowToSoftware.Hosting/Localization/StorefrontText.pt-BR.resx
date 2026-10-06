@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <resheader name="reader"><value>System.Resources.ResXResourceReader, System.Windows.Forms</value></resheader>
+  <resheader name="writer"><value>System.Resources.ResXResourceWriter, System.Windows.Forms</value></resheader>
+  <data name="Meta.Title" xml:space="preserve"><value>Hospedagem de jogos na infraestrutura HTS</value></data>
+  <data name="Meta.Description" xml:space="preserve"><value>Compare memória, alocação de CPU, armazenamento e backups para seu servidor de jogo. Conheça a infraestrutura HTS e escolha sua configuração.</value></data>
+  <data name="Hero.Kicker" xml:space="preserve"><value>HTS / Hospedagem de jogos</value></data>
+  <data name="Hero.Line1" xml:space="preserve"><value>Hospedagem de jogos.</value></data>
+  <data name="Hero.Line2" xml:space="preserve"><value>Na infraestrutura HTS.</value></data>
+  <data name="Hero.Line3" xml:space="preserve"><value>A gente hospeda.</value></data>
+  <data name="Hero.Copy" xml:space="preserve"><value>Seu mundo, seus mods e sua comunidade. Teste a infraestrutura por 24 horas e escolha o plano que combina com seu servidor.</value></data>
+  <data name="Hero.Primary" xml:space="preserve"><value>Ver planos e preços</value></data>
+  <data name="Hero.Secondary" xml:space="preserve"><value>Conheça a infraestrutura</value></data>
+  <data name="Hero.Note" xml:space="preserve"><value>Um teste por conta. Continue com um plano e mantenha seu save.</value></data>
+  <data name="Hero.Product" xml:space="preserve"><value>Seu servidor começa aqui</value></data>
+  <data name="Hero.Configuration" xml:space="preserve"><value>Configure seu servidor</value></data>
+  <data name="Hero.MemoryOptions" xml:space="preserve"><value>Memória do plano</value></data>
+  <data name="Hero.Plan" xml:space="preserve"><value>Plano selecionado</value></data>
+  <data name="Hero.Memory" xml:space="preserve"><value>Memória RAM</value></data>
+  <data name="Hero.Cpu" xml:space="preserve"><value>Alocação de CPU</value></data>
+  <data name="Hero.Storage" xml:space="preserve"><value>Armazenamento NVMe</value></data>
+  <data name="Hero.Backups" xml:space="preserve"><value>Backups disponíveis</value></data>
+  <data name="Hero.PerMonth" xml:space="preserve"><value>/ mês</value></data>
+  <data name="Hero.Pending" xml:space="preserve"><value>Conheça os planos</value></data>
+  <data name="Hero.ViewPlan" xml:space="preserve"><value>Revisar configuração</value></data>
+  <data name="Hero.PanelLink" xml:space="preserve"><value>Todos os planos e períodos</value></data>
+  <data name="Hero.Included1" xml:space="preserve"><value>Steam Workshop</value></data>
+  <data name="Hero.Included2" xml:space="preserve"><value>Console e arquivos</value></data>
+  <data name="Hero.Included3" xml:space="preserve"><value>Recursos para seu mundo</value></data>
+  <data name="Games.Kicker" xml:space="preserve"><value>Escolha seu próximo mundo</value></data>
+  <data name="Games.Title" xml:space="preserve"><value>Onde vamos jogar?</value></data>
+  <data name="Games.Copy" xml:space="preserve"><value>Um lugar para seu jogo e sua comunidade. Comece com um jogo disponível ou acompanhe o que vem a seguir.</value></data>
+  <data name="Games.Available" xml:space="preserve"><value>Disponível agora</value></data>
+  <data name="Games.Planned" xml:space="preserve"><value>Em breve</value></data>
+  <data name="Games.Plans" xml:space="preserve"><value>Conhecer os planos</value></data>
+  <data name="Games.Notify" xml:space="preserve"><value>Quero saber quando chegar</value></data>
+  <data name="Games.From" xml:space="preserve"><value>A partir de</value></data>
+  <data name="Games.Pending" xml:space="preserve"><value>Conheça as configurações</value></data>
+  <data name="Games.Range" xml:space="preserve"><value>{0} configurações · {1}–{2} GB de RAM</value></data>
+  <data name="Games.All" xml:space="preserve"><value>Todos os jogos</value></data>
+  <data name="Games.Request" xml:space="preserve"><value>Quer hospedar outro jogo? Fale com a gente.</value></data>
+  <data name="Games.NotifySubject" xml:space="preserve"><value>Avise quando a hospedagem de {0} estiver disponível</value></data>
+  <data name="Games.RequestSubject" xml:space="preserve"><value>Hospedagem para minha comunidade</value></data>
+  <data name="Plans.Kicker" xml:space="preserve"><value>O espaço certo para seu grupo</value></data>
+  <data name="Plans.Title" xml:space="preserve"><value>Espaço para começar. E para crescer.</value></data>
+  <data name="Plans.Copy" xml:space="preserve"><value>Compare memória, alocação de CPU, armazenamento e backups. Escolha os recursos que fazem sentido para o mundo que você quer construir.</value></data>
+  <data name="Plans.All" xml:space="preserve"><value>Comparar todos os planos</value></data>
+  <data name="Plans.Recommended" xml:space="preserve"><value>Recomendado</value></data>
+  <data name="Plans.From" xml:space="preserve"><value>Plano mensal</value></data>
+  <data name="Plans.View" xml:space="preserve"><value>Conhecer este plano</value></data>
+  <data name="Plans.PerMonth" xml:space="preserve"><value>/ mês</value></data>
+  <data name="Plans.Pending" xml:space="preserve"><value>Ver configurações</value></data>
+  <data name="Plans.Memory" xml:space="preserve"><value>RAM</value></data>
+  <data name="Plans.Cpu" xml:space="preserve"><value>Alocação de CPU</value></data>
+  <data name="Plans.Storage" xml:space="preserve"><value>NVMe</value></data>
+  <data name="Plans.Backups" xml:space="preserve"><value>Backups</value></data>
+  <data name="Features.Kicker" xml:space="preserve"><value>Menos trabalho. Mais tempo no jogo.</value></data>
+  <data name="Features.Title" xml:space="preserve"><value>As ferramentas do seu mundo.</value></data>
+  <data name="Features.Copy" xml:space="preserve"><value>Arquivos e restauração, mods do Workshop e gestão de recursos. As ferramentas para operar seu servidor, organizadas em um só lugar.</value></data>
+  <data name="Features.WorldTitle" xml:space="preserve"><value>Um mundo que continua seu.</value></data>
+  <data name="Features.WorldCopy" xml:space="preserve"><value>Gerencie os arquivos do mundo e os pontos de restauração pelo painel. A capacidade de backups acompanha o plano escolhido.</value></data>
+  <data name="Features.WorkshopTitle" xml:space="preserve"><value>Seus mods, sem complicação.</value></data>
+  <data name="Features.WorkshopCopy" xml:space="preserve"><value>Encontre mods do Workshop e organize a ordem de carregamento pelas ferramentas de gestão, com mudanças aplicadas no reinício.</value></data>
+  <data name="Features.ProvisioningTitle" xml:space="preserve"><value>Do plano ao seu servidor.</value></data>
+  <data name="Features.ProvisioningCopy" xml:space="preserve"><value>Escolha a configuração, revise o pedido e acompanhe o provisionamento após o pagamento. Cada etapa no seu lugar.</value></data>
+  <data name="Features.PanelTitle" xml:space="preserve"><value>Controle, sem perder a visão do todo.</value></data>
+  <data name="Features.PanelCopy" xml:space="preserve"><value>Console, arquivos e controles de recursos juntos. Conheça o painel antes de escolher seu servidor.</value></data>
+  <data name="Features.Explore" xml:space="preserve"><value>Conhecer o painel</value></data>
+  <data name="Features.WorldLabel" xml:space="preserve"><value>Seu mundo</value></data>
+  <data name="Features.BackupLabel" xml:space="preserve"><value>Pontos de restauração</value></data>
+  <data name="Features.ControlLabel" xml:space="preserve"><value>Seu painel</value></data>
+  <data name="Infrastructure.Kicker" xml:space="preserve"><value>Por trás de cada mundo</value></data>
+  <data name="Infrastructure.Title" xml:space="preserve"><value>Infraestrutura real. De perto.</value></data>
+  <data name="Infrastructure.Copy" xml:space="preserve"><value>Conheça o rack da HTS e as especificações das nossas máquinas. Os recursos de cada plano são apresentados separadamente para você escolher com clareza.</value></data>
+  <data name="Infrastructure.Link" xml:space="preserve"><value>Conhecer a infraestrutura</value></data>
+  <data name="Infrastructure.Image" xml:space="preserve"><value>O rack da HTS e seus servidores instalados</value></data>
+  <data name="Infrastructure.Caption" xml:space="preserve"><value>A infraestrutura da HTS</value></data>
+  <data name="Infrastructure.SpecCpu" xml:space="preserve"><value>Processador</value></data>
+  <data name="Infrastructure.SpecMemory" xml:space="preserve"><value>Memória</value></data>
+  <data name="Infrastructure.SpecStorage" xml:space="preserve"><value>Armazenamento</value></data>
+  <data name="Infrastructure.SpecNetwork" xml:space="preserve"><value>Rede</value></data>
+  <data name="Closing.Kicker" xml:space="preserve"><value>Seu próximo capítulo começa aqui</value></data>
+  <data name="Closing.Title" xml:space="preserve"><value>Encontre a configuração certa.</value></data>
+  <data name="Closing.Copy" xml:space="preserve"><value>Compare os planos ou fale com a HTS sobre os recursos que sua comunidade precisa.</value></data>
+  <data name="Closing.Primary" xml:space="preserve"><value>Escolher meu servidor</value></data>
+  <data name="Closing.Contact" xml:space="preserve"><value>Falar com a HTS</value></data>
+  <data name="Closing.ContactCopy" xml:space="preserve"><value>Mods, configuração ou outro jogo. Conte o que você tem em mente.</value></data>
+  <data name="Hero.PhotoAlt" xml:space="preserve"><value>Servidores e equipamentos de rede instalados no rack da HTS.</value></data>
+  <data name="Hero.PhotoCaption" xml:space="preserve"><value>Hardware da HTS</value></data>
+  <data name="Hero.CpuHelp" xml:space="preserve"><value>Alocação de uso da CPU em percentual. O recurso é compartilhado; não representa núcleos dedicados.</value></data>
+  <data name="Hero.HardwareLabel" xml:space="preserve"><value>A infraestrutura da plataforma</value></data>
+  <data name="Hero.TrialAction" xml:space="preserve"><value>Começar teste de 24 horas</value></data>
+  <data name="Minecraft.Copy" xml:space="preserve"><value>Escolha Java ou Bedrock, a versão e uma variante de servidor disponível. Comece com um teste de 24 horas: 6 GB de RAM e 25 GB de armazenamento.</value></data>
+  <data name="Minecraft.Upgrade" xml:space="preserve"><value>Escolha um plano para continuar no seu servidor de teste de Minecraft. Sua versão, seus mods e seu mundo continuam no mesmo lugar.</value></data>
+  <data name="Minecraft.PendingPlans" xml:space="preserve"><value>Os planos de Minecraft aparecem aqui quando os preços estiverem disponíveis. Você pode configurar o teste na página de testes.</value></data>
+  <data name="Games.TrialAvailable" xml:space="preserve"><value>Teste de 24 horas</value></data>
+</root>

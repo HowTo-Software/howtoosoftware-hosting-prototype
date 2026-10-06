@@ -95,6 +95,7 @@
     background: rgba(8, 9, 11, 0.82);
     backdrop-filter: blur(6px);
 }
+.has-banner .cover-tag { color: #d9d9e2; }
 
 .cover-lamp {
     width: 7px;

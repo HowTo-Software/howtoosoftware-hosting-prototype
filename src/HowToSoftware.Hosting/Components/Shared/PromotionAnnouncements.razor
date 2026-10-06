@@ -1,0 +1,43 @@
+@using System.Globalization
+@inject IPublicPromotionService Promotions
+@inject IPlanCatalogService Catalog
+@inject IStringLocalizer<CheckoutText> Text
+
+@if (_offers.Count > 0)
+{
+    <aside class="promotion-announcements" aria-label="@Text["Promotion.Label"]">
+        <div class="hts-container hts-container--wide">
+            <div class="promotion-rail">
+                <p class="promotion-kicker hts-label">@Text["Promotion.Label"]</p>
+
+                <ul class="promotion-list">
+                    @foreach (var offer in _offers)
+                    {
+                        <li class="promotion-offer">
+                            <div class="promotion-copy">
+                                <p class="promotion-title">@Text["Promotion.Saving", FormatAmount(offer.DiscountAmount), offer.Priced.Game.Name]</p>
+                                <p class="promotion-detail">@offer.Priced.Plan.Name <span aria-hidden="true">·</span> @Catalog.GetOption(offer.Priced.Quote.Period).Label</p>
+                            </div>
+                            <span class="promotion-code hts-mono">@offer.Code</span>
+                            <a class="promotion-link" href="@offer.ReviewHref">
+                                <span>@Text["Promotion.Action"]</span>
+                                <Icon Name="IconName.ArrowRight" />
+                            </a>
+                        </li>
+                    }
+                </ul>
+
+                <p class="promotion-note">@Text["Promotion.Note"]</p>
+            </div>
+        </div>
+    </aside>
+}
+
+@code {
+    private IReadOnlyList<PublicPromotionOffer> _offers = [];
+
+    protected override async Task OnInitializedAsync() => _offers = await Promotions.GetOffersAsync();
+
+    private string FormatAmount(decimal amount) =>
+        $"{Catalog.CurrencyCode.ToUpperInvariant()} {amount.ToString("N2", CultureInfo.CurrentCulture)}";
+}

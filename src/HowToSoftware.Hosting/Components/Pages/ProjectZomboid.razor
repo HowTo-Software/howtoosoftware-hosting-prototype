@@ -1,14 +1,7 @@
 @*
-    The Project Zomboid hosting page: a headline, a short statement of what every server gets,
-    then the plan picker, then the build-to-order panel for anyone the ladder does not reach.
-
-    Deliberately short above the plans. A visitor who arrived from the catalogue has already
-    chosen the game; what they need now is what the server does and what it costs, in that
-    order and without a marketing article in between.
-
-    Every plan figure is read from the catalogue - the same records the provisioner sends to
-    Pterodactyl - and the picker links to the review step with the plan and the period only.
-    The price is worked out again on the server at every step after this one.
+    The product page presents the game and catalogue facts, followed by trial and plan selection.
+    Shared features, custom builds, and FAQ support the decision below the plans. Resources and
+    prices remain projections of the catalogue; the server validates the order at review.
 *@
 
 @page "/game-hosting/project-zomboid"
@@ -26,7 +19,7 @@
 </HeadContent>
 
 <section class="zomboid-hero" aria-labelledby="zomboid-heading" data-motion="scene" data-scene>
-    <div class="hts-container hts-container--wide">
+    <div class="hts-container hts-container--wide hero-layout">
         <div class="hero-copy" data-reveal>
             <nav class="hero-crumbs" data-motion-step="label" aria-label="@Text["Zomboid.CrumbLabel"]">
                 <a href="@SiteRoutes.GameHosting">@Text["Zomboid.Crumb"]</a>
@@ -46,7 +39,7 @@
                 </CtaButton>
             </div>
 
-            <dl class="hero-facts" data-motion-step="details" data-scene-exit>
+            <dl class="hero-facts" data-motion-step="details">
                 @if (From is { } from)
                 {
                     <div>
@@ -58,7 +51,7 @@
                 {
                     <div>
                         <dt class="hts-label">@Text["Zomboid.FactPlans"]</dt>
-                        <dd class="hts-mono" data-count="@Plans.Count">@Plans.Count</dd>
+                        <dd class="hts-mono">@Plans.Count</dd>
                     </div>
                     <div>
                         <dt class="hts-label">@Text["Zomboid.FactMemory"]</dt>
@@ -68,17 +61,24 @@
             </dl>
         </div>
 
+        <div class="hero-art" data-reveal>
+            <GameCover Game="Game" Tag="@Text["GameHosting.CoverTagAvailable"]" CssClass="product-cover" />
+            <div class="hero-art-caption">
+                <span class="hts-label">@Text["Zomboid.ProductCaption"]</span>
+                <p>@Text["Zomboid.ProductDetail"]</p>
+            </div>
+        </div>
     </div>
 </section>
 
-@* The live rail is deliberately part of the product path, not only the home page. *@
-<TelemetryStrip />
+<TrialServerBanner />
 
-<section class="features" aria-labelledby="features-heading" data-motion="section">
+<PlanPicker Game="Game" Plans="Plans" Index="02" />
+
+<section class="features" id="features" aria-labelledby="features-heading" data-motion="section">
     <div class="hts-container hts-container--wide">
         <header class="features-head" data-reveal>
             <p class="features-kicker" data-motion-step="label">
-                <span class="kicker-index">01</span>
                 <span class="hts-label">@Text["Zomboid.FeatureKicker"]</span>
             </p>
             <h2 id="features-heading" class="features-title" data-motion-step="headline">@Text["Zomboid.FeatureTitle"]</h2>
@@ -96,8 +96,6 @@
         </ul>
     </div>
 </section>
-
-<PlanPicker Game="Game" Plans="Plans" Index="02" />
 
 <CustomBuildSection />
 

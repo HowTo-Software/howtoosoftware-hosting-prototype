@@ -1,0 +1,11 @@
+/* Always load this sheet: Blazor can parse <noscript> contents during enhanced navigation.
+   The independent scripting flag keeps fallback rules out of active and reduced-motion UI. */
+html:not(.hts-script) .header-toggle,
+html:not(.hts-script) .theme-toggle,
+html:not(.hts-script) .header-panel,
+html:not(.hts-script) .memory-options { display: none !important; }
+html:not(.hts-script) .faq-answer { grid-template-rows: 1fr !important; }
+html:not(.hts-script) .faq-answer-inner { visibility: visible !important; transition: none !important; }
+html:not(.hts-script) .faq-sign { display: none; }
+html:not(.hts-script) .faq-question { pointer-events: none; }
+html.hts-script .header-static { display: none; }

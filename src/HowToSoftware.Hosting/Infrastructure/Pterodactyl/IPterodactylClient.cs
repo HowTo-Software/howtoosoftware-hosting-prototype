@@ -4,14 +4,14 @@ using HowToSoftware.Hosting.Infrastructure.Pterodactyl.Requests;
 namespace HowToSoftware.Hosting.Infrastructure.Pterodactyl;
 
 /// <summary>
-/// The Pterodactyl Application API, narrowed to what provisioning actually needs.
+/// The Pterodactyl Application API, narrowed to provisioning and trial lifecycle operations.
 /// </summary>
 /// <remarks>
 /// <para>
-/// Deliberately not a general-purpose panel SDK. Every method here exists because a step of
-/// provisioning needs it, and there is no method that could delete or modify something the
-/// provisioning workflow did not create. A thin client is also a small attack surface: nothing
-/// on this site can be talked into an arbitrary panel call.
+/// Each method supports the provisioner or a durable trial transition. Customer ownership,
+/// verified identity and trial external-id guards belong to those services; this transport
+/// cannot authorize a server mutation on its own. No arbitrary URL or panel operation is
+/// accepted from a public form.
 /// </para>
 /// <para>
 /// Failures surface as <see cref="PterodactylApiException"/> carrying a
@@ -59,6 +59,11 @@ public interface IPterodactylClient
         string externalId,
         CancellationToken cancellationToken = default);
 
+    /// <summary>Finds an exact email match; the panel's partial filter is never trusted as identity.</summary>
+    Task<PterodactylUser?> FindUserByEmailAsync(
+        string email,
+        CancellationToken cancellationToken = default);
+
     /// <summary>Creates a panel user.</summary>
     /// <param name="request">User to create.</param>
     /// <param name="cancellationToken">Token used to cancel the call.</param>
@@ -83,6 +88,21 @@ public interface IPterodactylClient
         CreateServerRequest request,
         CancellationToken cancellationToken = default);
 
+    /// <summary>Reads one server; returns null when it no longer exists.</summary>
+    Task<PterodactylServer?> GetServerAsync(int serverId, CancellationToken cancellationToken = default);
+
+    /// <summary>Suspends a server without removing its files or allocation.</summary>
+    Task SuspendServerAsync(int serverId, CancellationToken cancellationToken = default);
+
+    /// <summary>Restores panel access after suspension without reinstalling the server.</summary>
+    Task UnsuspendServerAsync(int serverId, CancellationToken cancellationToken = default);
+
+    /// <summary>Changes resource ceilings on the same server; never reinstalls or recreates it.</summary>
+    Task<PterodactylServer> UpdateServerBuildAsync(
+        int serverId,
+        UpdateServerBuildRequest request,
+        CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Deletes a server by its numeric panel id.
     /// </summary>
@@ -93,8 +113,9 @@ public interface IPterodactylClient
     /// </param>
     /// <param name="cancellationToken">Token used to cancel the call.</param>
     /// <remarks>
-    /// This method does not decide <em>whether</em> a server may be deleted. That guard lives in
-    /// the provisioning service, which refuses anything whose external id is not a lab server.
+    /// This method does not decide whether a server may be deleted. The provisioning lab
+    /// accepts its own test prefix; the trial gateway accepts a validated trial prefix, with
+    /// retention and paid-conversion state checked by the durable trial service.
     /// </remarks>
     Task DeleteServerAsync(int serverId, bool force = false, CancellationToken cancellationToken = default);
 }

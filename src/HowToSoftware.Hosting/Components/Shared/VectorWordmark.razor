@@ -1,0 +1,18 @@
+@* Vector Wordmark — Originkit. Adapted for the HTS application without React. *@
+<div class="vector-wordmark @CssClass"
+     data-vector-wordmark
+     data-wordmark-text="@Text"
+     data-wordmark-font-size="500"
+     role="img"
+     aria-label="@Text">
+    <span class="wordmark-fallback" aria-hidden="true">@Text</span>
+    <canvas class="wordmark-canvas" aria-hidden="true"></canvas>
+    <span class="wordmark-coordinate" aria-hidden="true">0, 0</span>
+    <span class="wordmark-coordinate" aria-hidden="true">0, 0</span>
+    <span class="wordmark-coordinate" aria-hidden="true">0, 0</span>
+</div>
+
+@code {
+    [Parameter] public string Text { get; set; } = "HTS";
+    [Parameter] public string? CssClass { get; set; }
+}

@@ -1,143 +1,133 @@
-# Deployment and CI/CD
+# Production deployment and CI/CD
 
-Every change to `main` is built, tested, packaged as a container image and, after a reviewer
-approves it, deployed to the production host. Pull requests get the same build, tests and image
-build, but never reach production.
+> **Status:** Procedure checked against scripts; external infrastructure unverified
+>
+> **Owner:** HTS / HowToSoftware maintainers
+>
+> **Last updated:** 2026-10-05
 
-```
-pull request ──► Build and test ──► Container image (built, not pushed)
+[Index](README.md) · [Pipeline](phase-5-deployment/ci-cd.md) · [Runbook](phase-6-operations/runbook.md) · [Configuration](phase-3-development/configuration.md)
 
-push to main ──► Build and test ──► Container image ──► [approval] ──► Deploy to production
-                  ubuntu-latest      ghcr.io, sha-<commit>   "production"   self-hosted runner
-                                                             environment    on 192.168.1.206
-```
+The code defines Docker image deployment through GitHub Actions. PRs run build/tests/image build; a push to main publishes an image and enters the production Environment. Reviewer approval depends on GitHub Settings, not just YAML.
 
-| Piece | Where |
+The previous guide recorded host `192.168.1.206`, user `htsadmin`, and URL `https://host.howto.software`. These are deployment references; the documentation review **did not verify host state, DNS, credentials, runner, or approval rules**.
+
+## Files and artifacts
+
+| Piece | Source |
 | --- | --- |
-| Workflow | [`.github/workflows/ci-cd.yml`](../.github/workflows/ci-cd.yml) |
-| Deploy script (runs on the server) | [`deploy/deploy.sh`](../deploy/deploy.sh) |
-| Production compose file | [`deploy/docker-compose.production.yml`](../deploy/docker-compose.production.yml) |
-| One-time server setup | [`deploy/bootstrap-server.sh`](../deploy/bootstrap-server.sh) |
-| Image | `ghcr.io/howto-software/howtoosoftware-hosting-prototype:sha-<commit>` |
-| Live site | <https://host.howto.software> (reverse proxy → `192.168.1.206:5147`) |
+| Pipeline | [.github/workflows/ci-cd.yml](../.github/workflows/ci-cd.yml) |
+| Deployment script | [deploy/deploy.sh](../deploy/deploy.sh) |
+| Production Compose | [deploy/docker-compose.production.yml](../deploy/docker-compose.production.yml) |
+| Bootstrap | [deploy/bootstrap-server.sh](../deploy/bootstrap-server.sh) |
+| Image | ghcr.io/howto-software/howtoosoftware-hosting-prototype:sha-commit |
+| Container | hts-hosting-site |
+| Host → container port | 5147 → 8080 |
+| Key volume | hts-hosting-prototype_dataprotection-keys |
 
-## What a deploy does
+## Preconditions
 
-[`deploy/deploy.sh`](../deploy/deploy.sh) runs on the production host, from
-`/opt/howtoosoftware-hosting-prototype`:
+- Runner account with Docker access, deployment directory access, and bootstrap dependencies.
+- Runtime configured with correct domain, hosts/proxy, Stripe, SQL, and Pterodactyl.
+- Existing `.env` and `migrate.env`, mode 600, outside Git.
+- Available commerce SQL and migration compatibility with the previous image.
+- Recoverable backups and separate migration/runtime credentials where applicable.
+- GitHub `production` Environment with suitable reviewers/branches; the runner must not execute PRs.
+- Compose supporting `env_file.format: raw`.
 
-1. **Refuses anything unexpected:** an image from another repository, or a secrets file that is
-   missing or not mode `600`.
-2. **Pulls** the commit's image from GHCR. The job logs in with its own short-lived token in an
-   isolated Docker config, so it never touches the registry logins of the other stacks on the
-   host.
-3. **Migrates** the commerce schema with `--migrate-commerce` in a throwaway container, using the
-   login in `migrate.env`. If migration fails, the running release is left untouched.
-4. **Replaces the container** (`docker compose up -d`) and records the image in `image.env`.
-5. **Health-checks** `http://127.0.0.1:5147/health` for up to about 90 seconds.
-6. **Rolls back automatically** to the image that was running before if the new one never becomes
-   healthy, and fails the job either way so the failure is visible.
+Versioned BaseUrl/AllowedHosts also use `howtoosoftware.com`; the workflow points to `host.howto.software`. Verify effective settings and proxy Host before publishing.
 
-Migrations run before the switch and are **not** rolled back, so a migration must keep working
-with the previous release (add columns and tables first, remove them in a later release).
+## Expected layout
 
-## Server layout
-
-Production sites on the host live in `/opt/<repository name>`, never in a user's home directory.
-The deployment directory is created once by root; after that everything belongs to `htsadmin`
-and nothing needs root.
-
-```
-/opt/howtoosoftware-hosting-prototype/ mode 750, owner htsadmin
-├── .env                               runtime configuration and secrets   (mode 600, never committed)
-├── migrate.env                        SQLSERVER_CONNECTION_STRING used for migrations (mode 600)
-├── docker-compose.yml                 copied from deploy/ on every deploy
-└── image.env                          HTS_IMAGE=<the image currently deployed>
-~htsadmin/actions-runner-hts-hosting/  GitHub Actions runner, label hts-production
-~htsadmin/.config/systemd/user/actions-runner-hts-hosting.service
+```text
+/opt/howtoosoftware-hosting-prototype/    operational owner; mode 750
+  .env                                 runtime configuration; mode 600
+  migrate.env                          migration SQL connection; mode 600
+  docker-compose.yml                   copy of deploy/
+  image.env                            deployed HTS_IMAGE
 ```
 
-Both env files are literal `KEY=value` lines: no quotes, and no `${}` interpolation, so a
-password containing `$` or quotes is passed through exactly as written.
+The default directory is `/opt/howtoosoftware-hosting-prototype`; `HTS_DEPLOY_DIR` can choose another target. Do not use a personal directory for this stack without adapting the procedure.
 
-The runner is a systemd **user** service. Lingering is enabled for `htsadmin`, so it starts at
-boot and survives logouts:
+Production env files contain literal KEY=value lines, without outer quotes or expansion. Raw format prevents Compose from interpreting password characters. Do not print their contents to verify deployment.
 
-```bash
-systemctl --user status actions-runner-hts-hosting.service
-journalctl --user -u actions-runner-hts-hosting.service -f
-```
+## What deploy.sh does
 
-Data-protection keys live in the `hts-hosting-prototype_dataprotection-keys` Docker volume, so
-antiforgery tokens and cookies stay valid across deploys.
+1. Validates image repository/tag or digest and private-file permissions.
+2. Pulls the GHCR image; the job uses isolated Docker configuration and a temporary token.
+3. Runs a temporary container with `migrate.env` and `--migrate-commerce`.
+4. If migration fails, leaves the running container unchanged.
+5. Records `image.env` and runs Compose to replace the application.
+6. Queries health at `127.0.0.1:5147`, up to 15 attempts with 6-second waits, plus individual request durations.
+7. If health fails, attempts to restore the previous image and fails the job even if recovery succeeds.
+8. After success, cleans old images within repository/label constraints, not global volumes or databases.
 
-## One-time setup
+Rollback does not reverse migrations. Use compatible evolution: add first, migrate consumers, remove only in a later version.
 
-This has been done for `192.168.1.206`. Use these steps to rebuild the host or set up a new one.
+The runtime image uses .NET 10, a nonroot user, read-only filesystem, temporary /tmp, and a Data Protection volume. These do not replace firewall, TLS, or restricted host access.
 
-### 1. Bootstrap the server
+## Prepare or rebuild the host
 
-[`deploy/bootstrap-server.sh`](../deploy/bootstrap-server.sh) runs as `htsadmin` without `sudo`,
-once an administrator has created the deployment directory:
+An administrator must create the directory with appropriate ownership/group:
 
 ```bash
 sudo install -d -o htsadmin -g htsadmin -m 750 /opt/howtoosoftware-hosting-prototype
 ```
 
-The script then:
+Run `deploy/bootstrap-server.sh` interactively as the operational account, providing a runner registration token privately. It checks the directory, can capture existing container configuration without displaying values, prepares files, and installs the runner user service. Existing env files are not overwritten.
 
-- checks `/opt/howtoosoftware-hosting-prototype` exists and is writable;
-- captures `.env` from the running `hts-hosting-site` container, so it matches the live
-  configuration exactly, without printing any value;
-- writes `migrate.env`;
-- installs and registers the runner;
-- enables lingering and starts the runner as a user service.
+`MIGRATE_WITH_RUNTIME_LOGIN=1` permits runtime-login reuse but does not prove production uses it. Prefer a separate DDL principal, as described in [SQLSERVER-SETUP.md](SQLSERVER-SETUP.md).
 
-It never overwrites an existing `.env` or `migrate.env`.
+Verify runner labels, service, lingering, package repository association, reviewers, and branch restrictions. An earlier setup record does not mean everything remains configured.
 
-```bash
-# On a machine with admin rights on the repository: a registration token, valid for one hour.
-gh api -X POST repos/HowTo-Software/howtoosoftware-hosting-prototype/actions/runners/registration-token --jq .token
+## Deploy, redeploy, and restore an image
 
-# On the server, as htsadmin:
-scp deploy/bootstrap-server.sh htsadmin@192.168.1.206:~/
-ssh -t htsadmin@192.168.1.206 'RUNNER_TOKEN=<token> bash ~/bootstrap-server.sh'
-```
+- Deploy: complete PR, merge into main, and meet Environment approval requirements when configured.
+- Redeploy main: manual workflow with an empty tag.
+- Restore image: manual workflow on main, `image_tag` set to an existing tag from the same repository.
+- Inspect results: effective image, private logs, and health, then appropriate route/integration tests.
 
-Run interactively, it prompts for the migration connection string. With
-`MIGRATE_WITH_RUNTIME_LOGIN=1` it copies the runtime `SQLSERVER_CONNECTION_STRING` instead.
+An existing tag skips current-tree build/tests. Choose an image compatible with the database; do not use mutable `main` as a rollback identifier.
 
-> **Current state:** `migrate.env` reuses the runtime login. To tighten this, create a separate
-> principal with DDL rights on the commerce database only (see
-> [`SQLSERVER-SETUP.md`](SQLSERVER-SETUP.md)), put its connection string in
-> `/opt/howtoosoftware-hosting-prototype/migrate.env`, and then remove the DDL rights from the
-> runtime login.
+## Roll out automatic trials and public announcements
 
-### 2. Configure GitHub
+Keep `Trials.Enabled=false` during the first rollout. Apply the commerce `AddServerTrials`
+migration through the existing explicit deployment/migration path, then verify the runtime
+SQL principal can use `server_trials` without granting it DDL permissions. A legacy Hosting
+database alone does not implement trial entitlement or expiration.
 
-These settings carry the security of the pipeline. **The repository is public**, and a
-self-hosted runner must never run code from a fork. All are already set:
+Configure the private runtime SMTP relay and sender, the intended public `Site.BaseUrl`, and
+Pterodactyl Application permissions for user lookup/create and server read/create/build,
+suspend/unsuspend/delete. Configure approved Minecraft edition/software/version profiles
+before enabling their selection. Empty paid Minecraft tiers must remain unpriced. Before
+publishing paid Minecraft tiers, create matching game/plan catalog rows in commerce SQL;
+environment configuration and `AddServerTrials` do not seed those records. Production must
+not run the Development-only seed command. See [SQLSERVER-SETUP.md](SQLSERVER-SETUP.md).
 
-- **Environment `production`:** required reviewer, *Deployment branches* restricted to `main`.
-- **Fork pull requests:** approval required for all external contributors.
-- **Runner:** Settings → Actions → Runners shows `hts-production-website-applications`.
-- **Package:** after the first push to `main`, the `howtoosoftware-hosting-prototype` package
-  appears under the organisation's packages. Leave it linked to this repository so the deploy
-  job's `GITHUB_TOKEN` can pull it.
+Verify the email confirmation GET/POST boundary, SMTP delivery, installation and trial clock,
+owner recovery, same-server paid conversion, expiry suspension and retention deletion against
+controlled test accounts/resources. The normal unit suite uses isolated seams and does not
+validate a real relay or production egg. See [TRIAL-SERVERS.md](TRIAL-SERVERS.md).
 
-Only the `deploy` job uses the self-hosted runner, and only on a push to `main` or a manual run
-from `main`. Pull requests run entirely on GitHub-hosted runners.
+The lifecycle worker retries due SQL records and continues existing obligations even when
+new trials are disabled. `Trials.Enabled=false` is not a pause for already-created trials.
+Plan maintenance/rollback with the durable schema, retention deadlines and paid reservations
+in mind; reconcile SQL with Stripe/panel state after restoring a backup.
 
-## Day-to-day
+Public promotion announcements default to an empty allowlist. Opt in only existing codes
+approved for public display; announcement configuration creates no promotion or discount and
+does not list private coupons. See [PUBLIC-PROMOTIONS.md](PUBLIC-PROMOTIONS.md).
 
-- **Deploy:** merge to `main`, then approve the *Deploy to production* job in the Actions run.
-- **Redeploy `main`:** Actions → CI/CD → *Run workflow* with the tag left empty.
-- **Roll back:** Actions → CI/CD → *Run workflow*, set `image_tag` to an earlier
-  `sha-<commit>`. This skips the build and deploys that image, still behind the approval.
-- **Change configuration:** edit `/opt/howtoosoftware-hosting-prototype/.env` on the server,
-  then `cd /opt/howtoosoftware-hosting-prototype && docker compose --env-file image.env up -d`.
-- **Logs:** `docker logs -f hts-hosting-site`.
-## Local compose files
+## Root Compose files
 
-`docker-compose.yml` at the repository root builds the image locally and is for running the site
-on your own machine. Production uses only `deploy/docker-compose.production.yml`.
+Two local files have different defaults:
+
+| File | Service / port | Purpose |
+| --- | --- | --- |
+| docker-compose.yml | site / 5147 | Local build with .env; not the raw deployment Compose |
+| compose.yaml | web / 5003 | Older container alternative; incomplete commerce configuration |
+| deploy/docker-compose.production.yml | site / 5147 | Official deployment source |
+
+Specify `-f` explicitly to avoid starting the wrong composition. The root stack does not include SQL Server or Pterodactyl services.
+
+See [deployment acceptance](phase-5-deployment/deployment-guide.md), [monitoring](phase-6-operations/monitoring.md), and [recovery](phase-6-operations/disaster-recovery.md).

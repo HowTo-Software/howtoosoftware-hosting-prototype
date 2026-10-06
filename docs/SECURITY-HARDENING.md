@@ -1,92 +1,68 @@
-# Segurança e checklist de produção
+# Security and production checklist
 
-Este documento separa o que o aplicativo já garante do que precisa ser configurado na
-infraestrutura. Nenhuma aplicação isolada consegue prometer “segurança máxima” ou absorver um
-DDoS volumétrico; a defesa é feita em camadas e precisa ser monitorada continuamente.
+> **Status:** Controls checked against the code; external infrastructure unverified
+>
+> **Owner:** HTS / HowToSoftware maintainers
+>
+> **Last updated:** 2026-10-05
 
-## Controles dentro do aplicativo
+[Index](README.md) · [Threat model](security/threat-model.md) · [Runbook](phase-6-operations/runbook.md)
 
-- **Frontend não é autoridade:** plano, período e preço são resolvidos novamente no servidor. O
-  webhook assinado do Stripe confere moeda e valor antes do provisionamento.
-- **SQL injection:** acesso ao banco é feito por EF Core/LINQ com parâmetros. Não há SQL montado a
-  partir de campos do navegador; o SQL bruto existente é uma migration estática versionada.
-- **XSS e clickjacking:** Razor codifica conteúdo por padrão; não há `MarkupString`, `Html.Raw`,
-  `eval` ou `innerHTML`. A CSP usa nonce aleatório por resposta e bloqueia scripts remotos,
-  objetos, `base` externo e enquadramento por outro site.
-- **CSRF:** formulários mutáveis usam antiforgery. O webhook é a única exceção e usa a assinatura
-  Stripe sobre o corpo original.
-- **Abuso automatizado:** status de pedido, webhook e health check têm limites por IP e não
-  enfileiram excesso. O corpo do webhook e os limites gerais do Kestrel também são limitados.
-- **Dados e logs:** EF Core não registra valores sensíveis; respostas públicas de status não
-  incluem preço, email, ID interno do pedido nem identificador do servidor.
-- **Superfície de laboratório:** criação/remoção manual no Pterodactyl exige simultaneamente
-  `Development` e a flag explícita. A flag não consegue abrir o laboratório em staging/produção.
-- **Saídas externas:** redirects automáticos do cliente Pterodactyl estão desligados, a URL exige
-  HTTPS e a chave é colocada somente no header `Authorization` do backend.
-- **Transporte do banco:** a conexão SQL Server força `Encrypt=True` mesmo que a string informada
-  desative, e a validação do certificado continua ativa a menos que o operador escreva
-  `TrustServerCertificate=True` deliberadamente - o que permite man-in-the-middle.
+This document distinguishes application controls from infrastructure configuration. An application alone cannot promise maximum security or absorb volumetric DDoS attacks; defense requires monitored layers.
 
-O middleware em `Infrastructure/Security/SecurityHardening.cs` centraliza CSP, headers,
-antiforgery e rate limits. Os testes em `SecurityBoundaryTests.cs` impedem que esses limites sejam
-removidos silenciosamente por uma refatoração.
+## Application controls
 
-## HTTPS, TLS e HSTS
+- **Backend authority:** plan, period, and price are resolved again on the server. Signed Stripe webhooks verify currency and amount before provisioning.
+- **SQL injection:** database access uses parameterized EF Core/LINQ. Browser fields do not generate SQL; existing raw SQL is a static, versioned migration.
+- **XSS and clickjacking:** Razor encodes content by default. The homepage uses `MarkupString` only for `JsonSerializer`-produced JSON-LD inserted with a nonce, without arbitrary user HTML. Do not render untrusted content raw. CSP uses a random per-response nonce and blocks remote scripts, objects, external `base`, and framing by another site.
+- **CSRF:** mutable forms use antiforgery. The webhook is the exception, using a Stripe signature over the original body.
+- **Automated abuse:** order status, webhook, and health checks have per-IP limits without overflow queuing. Webhook bodies and general Kestrel request limits are bounded.
+- **Data and logs:** EF Core does not log sensitive values; public status responses exclude price, email, internal order ID, and server identifiers.
+- **Lab surface:** manual Pterodactyl creation/deletion requires both `Development` and an explicit flag. The flag cannot open the lab in staging/production.
+- **Outbound requests:** Pterodactyl automatic redirects are disabled, the URL requires HTTPS, and the key is placed only in the backend `Authorization` header.
+- **Database transport:** SQL Server connections force `Encrypt=True` even if supplied configuration disables it. Certificate validation remains enabled unless the operator explicitly chooses `TrustServerCertificate=True`, which permits interception.
 
-Em produção, o aplicativo redireciona HTTP com 308 e envia HSTS por 365 dias. Desenvolvimento
-local continua em `http://localhost:5147` para não depender de certificado local. Configure a
-borda pública assim:
+Middleware in [`SecurityHardening.cs`](../src/HowToSoftware.Hosting/Infrastructure/Security/SecurityHardening.cs) centralizes CSP, headers, antiforgery, and rate limits. `SecurityBoundaryTests.cs` protects these boundaries against accidental removal during refactoring.
 
-1. TLS mínimo 1.2, preferencialmente TLS 1.3, com certificado válido e renovação automática.
-2. Se houver Cloudflare/proxy, use validação estrita do certificado também entre proxy e origem;
-   nunca use um modo que aceite HTTP até a origem.
-3. Bloqueie acesso público direto à porta da origem; permita apenas o proxy/load balancer.
-4. Só habilite HSTS `includeSubDomains` e preload depois de provar que **todos** os subdomínios
-   atuais e futuros são HTTPS-only. O código mantém ambos desligados por segurança operacional.
-5. Configure proxies conhecidos no ASP.NET antes de consumir forwarded headers. Nunca confie em
-   `X-Forwarded-For` vindo diretamente da internet.
+## HTTPS, TLS, and HSTS
 
-## E2E: o que pode e o que não pode ser prometido
+Production redirects HTTP with 308 and sends 365-day HSTS. Local development uses `http://localhost:5147` without requiring a local certificate. Configure the public edge as follows:
 
-O checkout de cartão fica hospedado no Stripe; o site não recebe nem armazena número completo do
-cartão. Entre navegador, aplicação, Stripe, SQL Server e Pterodactyl existe TLS em trânsito.
+1. Minimum TLS 1.2, preferably TLS 1.3, with a valid certificate and automatic renewal.
+2. If using Cloudflare/a proxy, enforce strict certificate validation between proxy and origin as well; do not accept plaintext origin transport.
+3. Block direct public access to the origin port; allow only the proxy/load balancer.
+4. Enable HSTS `includeSubDomains` and preload only after verifying that **all** current and future subdomains are HTTPS-only. Code leaves both disabled for operational safety.
+5. Configure known proxies before consuming forwarded headers. Do not trust internet-supplied `X-Forwarded-For` directly.
 
-Isso **não é criptografia end-to-end** no sentido de mensagens privadas: o backend precisa ler o
-pedido para cobrar e provisionar. Chamar esse fluxo de E2E seria incorreto. Dados pessoais devem
-ser minimizados, criptografados pelo provedor em repouso e acessíveis apenas a serviços/operadores
-que realmente precisam deles. Campos excepcionalmente sensíveis podem ganhar criptografia de
-aplicação com chaves em KMS, nunca no mesmo banco.
+## End-to-end encryption claims
 
-## WAF, DDoS e brute force
+Card checkout is hosted by Stripe; the site does not receive or store complete card numbers. TLS protects transport between browser, application, Stripe, SQL Server, and Pterodactyl.
 
-Antes de abrir produção, coloque o domínio atrás de CDN/WAF e configure:
+This is **not end-to-end encryption** in the private-messaging sense: the backend must read orders to charge and provision. Calling this flow E2E encryption would be inaccurate. Minimize personal data, use provider encryption at rest, and restrict access to services/operators needing it. Exceptionally sensitive fields can use application encryption with KMS-managed keys outside the database.
 
-- regras gerenciadas do OWASP Core Rule Set, inicialmente em modo de observação;
-- rate limit na borda para login futuro, criação de checkout, status e rotas administrativas;
-- desafio/bloqueio progressivo para bots e tentativas repetidas;
-- mitigação DDoS do provedor e alertas de pico de tráfego/erros;
-- webhook Stripe acessível, mas sempre sujeito à assinatura e ao limite conservador da aplicação;
-- origem sem portas de banco, painel ou SSH expostas ao público.
+## WAF, DDoS, and brute force
 
-Ainda não existe autenticação real, portanto não existe senha de cliente para sofrer brute force.
-Quando contas forem implementadas, use um provedor de identidade revisado, hash de senha moderno
-fornecido por ele, MFA obrigatório para administradores, respostas indistinguíveis para usuário
-inexistente/senha errada, bloqueio progressivo e autorização por proprietário em **cada** leitura
-ou ação de pedido/servidor. Não transforme o formulário visual atual em autenticação caseira.
+Before opening production, configure CDN/WAF protections:
 
-## Banco e segredos
+- Managed OWASP Core Rule Set rules, initially in observation mode.
+- Edge limits for future login, checkout creation, status, and administrative routes.
+- Progressive challenges/blocks for bots and repeated attempts.
+- Provider DDoS mitigation and traffic/error alerts.
+- Reachable Stripe webhook with mandatory signature and conservative application limits.
+- Origin database, panel, and SSH ports restricted from public exposure.
 
-- Use um login SQL Server dedicado à aplicação, nunca `sa`, sem owner nem permissões de DDL no
-  runtime. Aplique migrations com uma identidade separada.
-- Dê à aplicação um banco próprio. Dois aplicativos no mesmo banco compartilham a tabela de
-  histórico de migrations, e um deploy de um pode remodelar o outro.
-- Guarde chaves em secret manager, habilite rotação e separe teste/staging/produção.
-- Persista chaves do ASP.NET Data Protection em armazenamento privado e criptografado quando
-  houver múltiplas instâncias; sem isso, reinícios invalidam tokens/cookies.
-- Não envie `.env` ao Git, Discord, tickets ou capturas. O `.env.example` só contém formato.
-- Configure retenção curta, acesso restrito e redaction no agregador de logs.
+Real authentication is not implemented yet, so there are no customer passwords to brute force on this site. When adding accounts, use a reviewed identity provider and its modern password hashing, mandatory administrator MFA, indistinguishable nonexistent-user/wrong-password responses, progressive blocking, and ownership authorization on **every** order/server read or action. Do not turn the current visual form into homemade authentication.
 
-## Verificação antes de publicar
+## Database and secrets
+
+- Use a dedicated SQL Server application login, never `sa`, without ownership or runtime DDL permissions. Migrate with a separate identity.
+- Give the application its own database. Shared application databases can cause migration-history collisions and schema interference.
+- Keep keys in a secret manager, rotate them, and separate test/staging/production.
+- Persist ASP.NET Data Protection keys in private, encrypted storage when using multiple instances; losing keys invalidates tokens/cookies across restarts.
+- Do not send `.env` through Git, Discord, tickets, or screenshots. `.env.example` contains formats only.
+- Configure limited retention, restricted access, and redaction in aggregated logs.
+
+## Pre-deployment verification
 
 ```powershell
 dotnet build --configuration Release
@@ -94,7 +70,4 @@ dotnet test --configuration Release --no-build
 dotnet package list --project src/HowToSoftware.Hosting --vulnerable --include-transitive
 ```
 
-Além disso, teste headers/TLS no domínio final, execute DAST autorizado em staging, restaure um
-backup em ambiente isolado e confirme alertas para falhas de webhook, provisionamento e login.
-Repita revisão de dependências e threat modeling a cada nova rota com dados de cliente.
-
+Also test headers/TLS on the final domain, run authorized DAST in staging, restore a backup in isolation, and verify alerts for webhook, provisioning, and login failures. Repeat dependency review and threat modeling for each new route handling customer data.

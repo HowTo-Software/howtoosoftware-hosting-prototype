@@ -1,73 +1,19 @@
-@*
-    The hero.
+@inject IStringLocalizer<StorefrontText> Text
 
-    Restructured rather than restyled. It used to be a text column beside a product column,
-    which is the arrangement every hosting company on the internet has, and which forced the
-    headline into roughly half the page - at display sizes that meant the type ran into the
-    panel next to it.
-
-    Here the headline takes the full measure and everything else sits underneath it: the lede
-    and the actions on the left, one rack unit on the right. The headline gets to be as large
-    as it deserves, the two columns below it are short enough that neither crowds the other,
-    and the page reads top to bottom the way an editorial spread does rather than left to
-    right the way a template does.
-
-    No ambient field behind it any more. Light comes from one source, declared once on the
-    page ground - see the body::before note in app.css.
-*@
-
-@inject IStringLocalizer<HomeText> Text
-
-<section class="hero" id="top" data-stage data-motion="scene" data-scene>
+<section class="hero" id="top" data-home-hero aria-labelledby="hero-heading">
     <div class="hts-container hts-container--wide hero-inner">
-        <p class="hero-kicker" data-text-effect="flicker" data-motion-step="label">
-            <span class="kicker-rule" data-motion-draw></span>
-            @Text["Hero.Kicker"]
-        </p>
-
-        @*
-            All three lines are white. The emphasis is weight, not colour: 460 against 800 in
-            the same family is a strong enough contrast to carry a headline on its own, and it
-            leaves purple free to mean what it means everywhere else on the site - running, or
-            the one thing this page wants you to press.
-        *@
-        <h1 class="hero-title" data-text-effect="rise" data-motion-step="headline">
-            <span class="title-line">@Text["Hero.Line1"]</span>
-            <span class="title-line title-line--accent">@Text["Hero.Line2"]</span>
-            <span class="title-line">@Text["Hero.Line3"]</span>
+        <p class="hero-kicker"><span class="kicker-line" aria-hidden="true"></span>@Text["Hero.Kicker"]</p>
+        <div class="hero-wordmark-shell" aria-hidden="true"><VectorWordmark Text="HTS" CssClass="hero-wordmark" /></div>
+        <h1 id="hero-heading" class="hero-title">
+            <MaskReveal>@Text["Hero.Line1"]</MaskReveal>
+            <MaskReveal Delay="90"><span class="hero-accent">@Text["Hero.Line2"]</span></MaskReveal>
         </h1>
-
-        <div class="hero-body">
-            <div class="hero-copy-col" data-motion-step="copy">
-                <p class="hero-copy">@Text["Hero.Copy"]</p>
-
-                <div class="hero-actions">
-                    <CtaButton Href="/project-zomboid" Size="CtaSize.Large" TrailingIcon="IconName.ArrowRight">
-                        @Text["Hero.CtaPrimary"]
-                    </CtaButton>
-                    <CtaButton Href="#control-panel" Variant="CtaVariant.Secondary" Size="CtaSize.Large">
-                        @Text["Hero.CtaSecondary"]
-                    </CtaButton>
-                </div>
-            </div>
-
-            <div class="hero-panel-col" data-motion-step="visual">
-                <HeroPanel />
-            </div>
+        <p class="hero-lede" data-reveal>@Text["Hero.Copy"]</p>
+        <div class="hero-actions" data-reveal>
+            <CtaButton Href="#trial" Size="CtaSize.Large" TrailingIcon="IconName.ArrowRight">@Text["Hero.TrialAction"]</CtaButton>
+            <CtaButton Href="@SiteRoutes.ProjectZomboidPlans" Variant="CtaVariant.Secondary" Size="CtaSize.Large">@Text["Hero.Primary"]</CtaButton>
         </div>
-    </div>
-
-    <div class="hts-container hts-container--wide hero-foot" data-scene-exit>
-        <span class="foot-coord">@Text["Hero.FootCell"]</span>
-        <span class="foot-scroll">
-            <span class="foot-scroll-track"><span class="foot-scroll-dot"></span></span>
-            @Text["Hero.FootScroll"]
-        </span>
-        <span class="foot-alloc">@Text["Hero.FootAllocation"]</span>
+        <p class="hero-note">@Text["Hero.Note"]</p>
+        <a href="/infrastructure" class="hero-infrastructure hts-text-link">@Text["Hero.Secondary"] <Icon Name="IconName.ArrowRight" /></a>
     </div>
 </section>
-
-@*
-    © 2026 Henry Lawrence Cahill (HowToSoftware). All rights reserved.
-    Contact: henry.cahill@howtoosoftware.com | https://howtoosoftware.com
-*@

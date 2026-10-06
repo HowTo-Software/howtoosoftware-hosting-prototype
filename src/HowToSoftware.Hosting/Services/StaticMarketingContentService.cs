@@ -62,7 +62,7 @@ public sealed class StaticMarketingContentService : IMarketingContentService
         new(_text["Product.PersistentWorlds"], "/#world"),
         new(_text["Product.WorkshopSync"], "/#workshop"),
         new(_text["Product.ProvisioningPipeline"], "/#provisioning"),
-        new(_text["Product.ControlPanel"], "/#control-panel"),
+        new(_text["Product.ControlPanel"], SiteRoutes.PanelLogin),
         new(_text["Product.Infrastructure"], "/infrastructure"),
         new(_text["Product.Plans"], SiteRoutes.ProjectZomboid)
     ];

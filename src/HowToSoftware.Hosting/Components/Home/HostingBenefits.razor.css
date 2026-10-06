@@ -1,0 +1,20 @@
+/* Concise capabilities, separated by rules rather than decorative diagrams. */
+.benefits { padding-block: clamp(3.5rem, 6vw, 5.5rem); }
+.benefits-head { display: grid; grid-template-columns: 1.2fr 1fr; align-items: end; gap: 3rem; margin-bottom: 2rem; }
+.benefits-head .storefront-title { max-width: 23ch; font-size: clamp(2rem, 1.6rem + 2vw, 3rem); }
+.benefits-head .storefront-copy { max-width: 29rem; justify-self: end; font-size: 1rem; line-height: 1.75; }
+.benefits-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; }
+.benefit { display: flex; flex-direction: column; min-width: 0; padding-block: 1.5rem; border-top: 1px solid var(--ht-edge-strong); transition: opacity 260ms ease, transform 260ms ease, border-color 180ms ease; }
+.benefit-top { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-bottom: 1.5rem; color: var(--ht-accent); }
+.benefit-top ::deep .hts-icon { width: 22px; height: 22px; flex: none; }
+.benefit-top > span { color: var(--ht-ink-muted); font-family: var(--ht-font-mono); font-size: .75rem; line-height: 1.6; letter-spacing: .02em; }
+.benefit h3 { max-width: 24ch; color: var(--ht-ink); font-size: clamp(1.4rem, 1.2rem + .65vw, 1.8rem); font-weight: 640; line-height: 1.3; letter-spacing: -.025em; }
+.benefit > p { margin-top: 1rem; color: var(--ht-ink-soft); font-size: .9375rem; line-height: 1.8; }
+.benefit > .hts-text-link { min-height: 44px; margin-top: auto; padding-top: 1.1rem; font-size: .9375rem; }
+.benefit-detail { display: flex; align-items: center; gap: .6rem; margin-top: auto; padding-top: 1.5rem; color: var(--ht-ink-muted); font-family: var(--ht-font-mono); font-size: .75rem; line-height: 1.6; }
+.detail-rule { width: 18px; height: 1px; flex: none; background: var(--ht-accent); }
+.benefit:focus-within { border-color: var(--ht-accent); }
+
+@media (hover:hover) and (pointer:fine) { .benefit:hover { border-color: var(--ht-accent); }  }
+@media (max-width:900px) { .benefits-head { grid-template-columns: 1fr; gap: 1.3rem; } .benefits-head .storefront-copy { justify-self: start; } .benefits-grid { grid-template-columns: 1fr; gap: .5rem; } .benefit > p { max-width: 50rem; } }
+@media (prefers-reduced-motion:reduce) { .benefit { transition: none; } }

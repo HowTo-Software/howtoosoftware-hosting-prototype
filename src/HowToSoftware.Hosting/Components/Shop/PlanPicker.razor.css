@@ -1,75 +1,80 @@
-/*
-    Eight tiers on one grid. Cards, because a plan is genuinely a thing you pick up - but hairline
-    cards on graphite, all the same size, with one recommended tier marked by its edge rather
-    than by being bigger. Colour appears in exactly three places: the checked period, the
-    recommended tier's edge and primary button, and the bot lamp on the tiers that carry it.
-*/
-
+/* Native radios drive both views and billing prices. One catalogue, one set of review links. */
 .picker {
     position: relative;
     padding-block: var(--ht-unit-pad);
     border-top: 1px solid var(--ht-edge);
 }
 
-/* -- Head -------------------------------------------------------------------------------- */
-
 .picker-head {
     max-width: 52rem;
-    margin-bottom: clamp(2rem, 4vw, 3rem);
+    margin-bottom: 2.5rem;
 }
 
 .picker-kicker {
     display: flex;
     align-items: center;
     gap: var(--ht-space-3);
-    margin-bottom: var(--ht-space-5);
-    color: var(--ht-ink-muted);
+    margin-bottom: 1.3rem;
+    color: var(--ht-accent, var(--ht-live-400));
 }
 
 .picker-title {
+    max-width: 24ch;
     font-size: var(--ht-text-4xl);
+    line-height: 1.12;
+    letter-spacing: -0.045em;
+    text-wrap: balance;
 }
 
 .picker-lede {
-    max-width: 40rem;
-    margin-top: var(--ht-space-4);
+    max-width: 44rem;
+    margin-top: 1.3rem;
     color: var(--ht-ink-soft);
     font-size: var(--ht-text-lg);
-    line-height: var(--ht-leading-normal);
+    line-height: 1.75;
 }
 
-/* -- Periods ----------------------------------------------------------------------------- */
+.picker-tools {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1.5rem 2rem;
+    margin-bottom: 2rem;
+}
 
-/*
-    Three radios drawn as one segmented control. The inputs are visually hidden but stay in the
-    tab order: arrow keys move between them, the label's ring follows focus, and the checked one
-    is the one with the live fill.
-*/
-.periods {
-    margin: 0 0 var(--ht-space-7);
+.periods,
+.view-switch {
+    min-width: 0;
+    margin: 0;
     padding: 0;
     border: 0;
-    min-width: 0;
 }
 
-.periods-legend {
-    margin-bottom: var(--ht-space-3);
+.periods legend,
+.view-switch legend {
+    margin-bottom: 0.75rem;
     padding: 0;
     color: var(--ht-ink-muted);
 }
 
-.periods-track {
+.periods-track,
+.view-track {
     display: inline-grid;
     grid-template-columns: repeat(3, auto);
-    gap: 2px;
-    padding: 3px;
+    gap: 4px;
+    padding: 4px;
     border: 1px solid var(--ht-edge-strong);
-    border-radius: var(--ht-radius-md);
+    border-radius: 0.75rem;
     background: var(--ht-surface-1);
-    box-shadow: var(--ht-rim);
 }
 
-.period-input {
+.view-track {
+    grid-template-columns: repeat(2, auto);
+}
+
+.period-input,
+.view-input {
     position: absolute;
     width: 1px;
     height: 1px;
@@ -81,144 +86,179 @@
     border: 0;
 }
 
-.period {
+.period,
+.view-option {
     display: inline-flex;
+    justify-content: center;
     align-items: center;
-    gap: var(--ht-space-3);
-    padding: 0.6rem 1.1rem;
-    border-radius: var(--ht-radius-sm);
+    gap: 0.7rem;
+    min-height: 44px;
+    padding: 0.6rem 1rem;
+    border-radius: 0.5rem;
     color: var(--ht-ink-muted);
-    font-size: var(--ht-text-base);
+    font-size: 0.875rem;
     font-weight: 600;
-    letter-spacing: -0.005em;
+    line-height: 1.5;
     cursor: pointer;
-    transition:
-        background-color var(--ht-dur-2) var(--ht-ease-lock),
-        color var(--ht-dur-2) var(--ht-ease-lock),
-        box-shadow var(--ht-dur-2) var(--ht-ease-lock);
+    transition: color 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
 }
 
-.period:hover {
+.period:hover,
+.view-option:hover {
     color: var(--ht-ink);
 }
 
 .period-input:checked + .period {
-    background: var(--ht-live-600);
-    color: #ffffff;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    color: var(--ht-accent-ink, #fff);
+    background: var(--ht-accent, var(--ht-live-600));
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
-.period-input:focus-visible + .period {
-    box-shadow: var(--ht-ring);
+.view-input:checked + .view-option {
+    color: var(--ht-ink);
+    background: var(--ht-surface-3);
+    box-shadow: var(--ht-shadow-1);
 }
 
-/* The saving, in the data voice: it is a measured percentage, not a promotion badge. */
+.period-input:focus-visible + .period,
+.view-input:focus-visible + .view-option {
+    outline: 2px solid var(--ht-accent, var(--ht-live-400));
+    outline-offset: 3px;
+}
+
+.view-option svg {
+    width: 18px;
+    height: 18px;
+    flex: none;
+    stroke: currentColor;
+    stroke-width: 1.35;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
 .period-save {
-    padding: 0.1rem 0.45rem;
-    border: 1px solid var(--ht-edge-data);
-    border-radius: var(--ht-radius-xs);
-    color: var(--ht-data-400);
-    font-size: var(--ht-text-2xs);
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+    padding: 0.1rem 0.4rem;
+    border: 1px solid var(--ht-edge-live);
+    border-radius: 0.3rem;
+    color: var(--ht-accent, var(--ht-live-400));
+    font-size: 0.625rem;
+    font-weight: 650;
+    line-height: 1.6;
 }
 
 .period-input:checked + .period .period-save {
     border-color: rgba(255, 255, 255, 0.35);
-    color: #ffffff;
+    color: var(--ht-accent-ink, #fff);
 }
 
-/* -- Plans ------------------------------------------------------------------------------- */
+.periods-help {
+    max-width: 40rem;
+    margin-top: 0.8rem;
+    color: var(--ht-ink-muted);
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
 
 .plans {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: var(--ht-space-4);
+    gap: 1.2rem;
 }
 
 .plan {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: var(--ht-space-4);
-    padding: var(--ht-space-5);
+    min-width: 0;
+    gap: 1.4rem;
+    overflow: hidden;
+    padding: 1.5rem;
     border: 1px solid var(--ht-edge);
-    border-radius: var(--ht-radius-md);
-    background: var(--ht-surface-2);
-    box-shadow: var(--ht-rim);
-    transition: border-color var(--ht-dur-2) var(--ht-ease-lock);
+    border-radius: 1rem;
+    background: var(--ht-surface-1);
+    transition: border-color 180ms ease, box-shadow 180ms ease;
 }
 
 .plan:hover {
     border-color: var(--ht-edge-strong);
+    box-shadow: var(--ht-shadow-2);
 }
 
 .plan.is-recommended {
     border-color: var(--ht-edge-live);
+    background: var(--ht-surface-2);
+}
+
+.plan.is-recommended::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: var(--ht-accent, var(--ht-live-500));
 }
 
 .plan-title {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: var(--ht-space-3);
+    gap: 0.5rem;
+    min-height: 1.6rem;
 }
 
 .plan-name {
-    font-size: var(--ht-text-xl);
-    font-weight: 660;
-    letter-spacing: -0.02em;
+    font-size: 1.25rem;
+    font-weight: 650;
+    line-height: 1.4;
+    letter-spacing: -0.035em;
 }
 
 .plan-flag {
+    display: inline-flex;
+    align-items: center;
     padding: 0.15rem 0.45rem;
-    border: 1px solid var(--ht-edge-live);
-    border-radius: var(--ht-radius-xs);
-    color: var(--ht-live-400);
-    white-space: nowrap;
+    border-radius: 0.35rem;
+    background: var(--ht-accent-soft, color-mix(in srgb, var(--ht-live-500) 12%, transparent));
+    color: var(--ht-accent, var(--ht-live-400));
+    font-size: 0.6rem;
+    line-height: 1.5;
+    letter-spacing: 0.03em;
 }
 
-/* One line, clamped. The cards are read across, so every figure below has to sit at the same
-   height on every card. */
 .plan-tagline {
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 2;
-    min-height: calc(var(--ht-leading-snug) * var(--ht-text-sm) * 2);
-    margin-top: var(--ht-space-1);
-    overflow: hidden;
+    min-height: 2.8em;
+    margin-top: 0.6rem;
     color: var(--ht-ink-muted);
-    font-size: var(--ht-text-sm);
-    line-height: var(--ht-leading-snug);
+    font-size: 0.8rem;
+    line-height: 1.5;
 }
 
-/* The headline figure. RAM is what differs between tiers and what a community shops on. */
 .plan-memory {
     display: flex;
     align-items: baseline;
-    gap: var(--ht-space-2);
-    padding: var(--ht-space-3) var(--ht-space-4);
-    border: 1px solid var(--ht-edge);
-    border-radius: var(--ht-radius-sm);
-    background: var(--ht-surface-inset);
+    gap: 0.6rem;
+    padding-block: 0.5rem 0.8rem;
 }
 
 .memory-value {
     color: var(--ht-ink);
-    font-size: 1.9rem;
+    font-size: 3.2rem;
     font-weight: 620;
     line-height: 1;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.055em;
 }
 
 .memory-unit {
-    color: var(--ht-data-400);
+    color: var(--ht-ink-muted);
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
 }
 
 .plan-specs {
     display: grid;
-    gap: 0.45rem;
+    gap: 0.4rem;
     margin: 0;
 }
 
@@ -226,56 +266,56 @@
     display: flex;
     align-items: baseline;
     justify-content: space-between;
-    gap: var(--ht-space-3);
-    padding-bottom: 0.45rem;
+    gap: 0.8rem;
+    min-width: 0;
+    padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--ht-edge);
 }
 
 .plan-specs dt {
+    min-width: 0;
     color: var(--ht-ink-muted);
-    font-size: var(--ht-text-sm);
+    font-size: 0.8rem;
+    line-height: 1.5;
 }
 
 .plan-specs dd {
+    flex: none;
     margin: 0;
     color: var(--ht-ink);
-    font-size: var(--ht-text-sm);
-    font-weight: 600;
-    white-space: nowrap;
+    font-size: 0.8rem;
+    font-weight: 550;
+    line-height: 1.5;
 }
 
 .spec-bot dd {
     display: inline-flex;
     align-items: center;
-    gap: 0.45rem;
-    color: var(--ht-live-400);
-    font-family: var(--ht-font-mono);
-    font-size: var(--ht-text-2xs);
-    font-weight: 600;
-    letter-spacing: var(--ht-track-label);
-    text-transform: uppercase;
+    gap: 0.4rem;
+    color: var(--ht-ink-muted);
+    font-family: var(--ht-font-sans);
+    font-size: 0.75rem;
+}
+
+.spec-bot.is-included dd {
+    color: var(--ht-accent, var(--ht-live-400));
 }
 
 .bot-lamp {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
+    flex: none;
     border-radius: 50%;
-    background: var(--ht-live-500);
-    box-shadow: var(--ht-lamp-live);
+    background: currentColor;
 }
 
-/* -- Prices ------------------------------------------------------------------------------ */
-
-/*
-    Three price blocks per card; one shown. The picker's own radio state decides which, through
-    :has() on the section, so the eight cards switch together and nothing crosses to the server.
-*/
+/* Prices never count up. The selected period enters as an immediately readable amount. */
 .plan-price {
     display: none;
     flex-direction: column;
-    gap: var(--ht-space-3);
+    gap: 0.85rem;
     margin-top: auto;
-    padding-top: var(--ht-space-4);
+    padding-top: 1.4rem;
     border-top: 1px solid var(--ht-edge);
 }
 
@@ -286,106 +326,154 @@
     display: flex;
 }
 
-/* A billing switch is a new commercial state, not a number teleported into place. The incoming
-   price lifts through a short mask while the old block leaves with the normal display swap.
-   Amounts themselves never count upward: money must remain immediately legible. */
 .picker:has(#period-monthly:checked) .plan-price[data-period="monthly"],
 .picker:has(#period-quarterly:checked) .plan-price[data-period="quarterly"],
 .picker:has(#period-annual:checked) .plan-price[data-period="annual"] {
-    animation: price-period-enter 360ms var(--hts-ease-out) both;
+    animation: price-period-enter 220ms var(--ht-ease-out) both;
 }
 
 @keyframes price-period-enter {
-    from {
-        opacity: 0;
-        clip-path: inset(0 0 34% 0);
-        transform: translate3d(0, 10px, 0);
-    }
-
-    to {
-        opacity: 1;
-        clip-path: inset(0 0 0 0);
-        transform: none;
-    }
-}
-
-/* A browser without :has() shows the monthly price and never switches. Nothing is hidden that
-   matters; the review step re-states the period anyway. */
-@supports not selector(:has(a)) {
-    .plan-price[data-period="monthly"] {
-        display: flex;
-    }
+    from { opacity: 0.45; transform: translateY(5px); }
+    to { opacity: 1; transform: none; }
 }
 
 .price-figure {
     display: flex;
-    align-items: baseline;
     flex-wrap: wrap;
-    gap: 0.1rem 0.4rem;
+    align-items: baseline;
+    gap: 0.15rem 0.4rem;
     color: var(--ht-ink);
 }
 
 .price-symbol {
-    color: var(--ht-ink-muted);
+    color: var(--ht-ink-soft);
     font-family: var(--ht-font-mono);
-    font-size: var(--ht-text-md);
+    font-size: 0.95rem;
     font-weight: 600;
 }
 
 .price-amount {
-    font-size: clamp(1.7rem, 1.3rem + 1vw, 2.1rem);
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: -0.03em;
+    font-size: clamp(1.8rem, 1.2rem + 0.9vw, 2.2rem);
+    font-weight: 650;
+    line-height: 1.15;
+    letter-spacing: -0.045em;
 }
 
 .price-unit {
     color: var(--ht-ink-muted);
-    font-size: var(--ht-text-sm);
+    font-size: 0.75rem;
 }
 
 .price-line {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.2rem 0.6rem;
+    gap: 0.3rem 0.6rem;
+    min-height: 2.7em;
     color: var(--ht-ink-muted);
-    font-size: var(--ht-text-2xs);
-    letter-spacing: 0.04em;
+    font-size: 0.72rem;
+    line-height: 1.6;
+    letter-spacing: 0;
 }
 
 .price-was {
     text-decoration: line-through;
-    text-decoration-color: var(--ht-ink-faint);
 }
 
 .price-equivalent {
-    color: var(--ht-data-400);
+    color: var(--ht-accent, var(--ht-data-400));
 }
 
 .price-pending {
     color: var(--ht-ink-muted);
-    font-size: var(--ht-text-sm);
-    letter-spacing: 0.06em;
+    font-size: 0.85rem;
+    line-height: 1.6;
 }
 
 .plan ::deep .plan-cta {
     width: 100%;
-    margin-top: var(--ht-space-1);
+    margin-top: 0.3rem;
+    font-size: 0.85rem;
 }
-
-/* -- Note -------------------------------------------------------------------------------- */
 
 .picker-note {
-    max-width: 46rem;
-    margin-top: clamp(2rem, 3.5vw, 3rem);
-    padding-top: var(--ht-space-5);
-    border-top: 1px solid var(--ht-edge);
+    max-width: 48rem;
+    margin-top: 1.8rem;
     color: var(--ht-ink-muted);
-    font-size: var(--ht-text-sm);
-    line-height: var(--ht-leading-normal);
+    font-size: 0.85rem;
+    line-height: 1.7;
 }
 
-/* -- Responsive -------------------------------------------------------------------------- */
+/* The comparison reflows the same list into aligned rows; no duplicate prices or hidden links. */
+.comparison-head {
+    display: none;
+}
+
+.picker:has(#view-comparison:checked) .comparison-head,
+.picker:has(#view-comparison:checked) .plan {
+    display: grid;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.55fr) minmax(0, 1.4fr) minmax(0, 1fr);
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.picker:has(#view-comparison:checked) .comparison-head {
+    padding: 0 1.5rem 1rem;
+    color: var(--ht-ink-muted);
+    font-size: 0.7rem;
+    letter-spacing: 0.04em;
+}
+
+.picker:has(#view-comparison:checked) .plans {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.8rem;
+}
+
+.picker:has(#view-comparison:checked) .plan {
+    padding: 1.5rem;
+}
+
+.picker:has(#view-comparison:checked) .plan.is-recommended::before {
+    width: 3px;
+    height: 100%;
+}
+
+.picker:has(#view-comparison:checked) .plan-title {
+    justify-content: flex-start;
+}
+
+.picker:has(#view-comparison:checked) .plan-tagline {
+    min-height: 0;
+}
+
+.picker:has(#view-comparison:checked) .plan-memory {
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.picker:has(#view-comparison:checked) .memory-value {
+    font-size: 2.6rem;
+}
+
+.picker:has(#view-comparison:checked) .plan-specs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.8rem 1.2rem;
+}
+
+.picker:has(#view-comparison:checked) .plan-specs > div {
+    display: grid;
+    align-content: start;
+    gap: 0.25rem;
+}
+
+.picker:has(#view-comparison:checked) .plan-price {
+    margin-top: 0;
+    padding-top: 0;
+    border: 0;
+}
+
+.picker:has(#view-comparison:checked) .price-line {
+    min-height: 0;
+}
 
 @media (max-width: 1180px) {
     .plans {
@@ -393,28 +481,95 @@
     }
 }
 
-@media (max-width: 620px) {
+@media (max-width: 960px) {
+    .picker:has(#view-comparison:checked) .comparison-head {
+        display: none;
+    }
+
+    .picker:has(#view-comparison:checked) .plan {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 0.4fr);
+        align-items: start;
+    }
+
+    .picker:has(#view-comparison:checked) .plan-memory {
+        justify-self: end;
+        align-items: flex-end;
+        padding-block: 0;
+    }
+
+    .picker:has(#view-comparison:checked) .plan-specs,
+    .picker:has(#view-comparison:checked) .plan-price {
+        grid-column: 1 / -1;
+    }
+
+    .picker:has(#view-comparison:checked) .plan-specs > div {
+        display: flex;
+        align-items: baseline;
+    }
+
+    .picker:has(#view-comparison:checked) .plan-price {
+        padding-top: 1rem;
+        border-top: 1px solid var(--ht-edge);
+    }
+}
+
+@media (max-width: 680px) {
     .plans {
         grid-template-columns: minmax(0, 1fr);
+    }
+
+    .picker-tools {
+        display: grid;
+        gap: 1.5rem;
     }
 
     .periods-track {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        width: 100%;
     }
 
     .period {
         flex-direction: column;
-        gap: 0.2rem;
-        justify-content: center;
+        gap: 0.3rem;
+        min-height: 56px;
         padding: 0.55rem 0.4rem;
-        text-align: center;
-        font-size: var(--ht-text-sm);
+        font-size: 0.8rem;
+    }
+
+    .period-save {
+        font-size: 0.6rem;
+    }
+
+    .plan,
+    .picker:has(#view-comparison:checked) .plan {
+        padding: 1.3rem;
+    }
+}
+
+@media (max-width: 400px) {
+    .picker:has(#view-comparison:checked) .plan-specs {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+@supports not selector(:has(a)) {
+    .periods,
+    .view-switch {
+        display: none;
+    }
+
+    .plan-price[data-period="monthly"] {
+        display: flex;
     }
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .period,
+    .view-option,
+    .plan {
+        transition: none;
+    }
+
     .picker:has(#period-monthly:checked) .plan-price[data-period="monthly"],
     .picker:has(#period-quarterly:checked) .plan-price[data-period="quarterly"],
     .picker:has(#period-annual:checked) .plan-price[data-period="annual"] {

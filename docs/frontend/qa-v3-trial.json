@@ -1,0 +1,100 @@
+{
+  "passed": 7,
+  "failed": 0,
+  "checks": [
+    {
+      "name": "Minecraft java @390 uses correct selector and safe unconfigured form",
+      "ok": true,
+      "detail": {
+        "h1": "Comece com seu servidor de teste.",
+        "edition": [
+          "Java"
+        ],
+        "game": "minecraft",
+        "version": false,
+        "width": 390,
+        "form": "/trials/request",
+        "token": true,
+        "buttonDisabled": true,
+        "hasServer": false
+      }
+    },
+    {
+      "name": "Minecraft bedrock @390 uses correct selector and safe unconfigured form",
+      "ok": true,
+      "detail": {
+        "h1": "Comece com seu servidor de teste.",
+        "edition": [
+          "Bedrock"
+        ],
+        "game": "minecraft",
+        "version": false,
+        "width": 390,
+        "form": "/trials/request",
+        "token": true,
+        "buttonDisabled": true,
+        "hasServer": false
+      }
+    },
+    {
+      "name": "Minecraft java @1440 uses correct selector and safe unconfigured form",
+      "ok": true,
+      "detail": {
+        "h1": "Comece com seu servidor de teste.",
+        "edition": [
+          "Java"
+        ],
+        "game": "minecraft",
+        "version": false,
+        "width": 1425,
+        "form": "/trials/request",
+        "token": true,
+        "buttonDisabled": true,
+        "hasServer": false
+      }
+    },
+    {
+      "name": "Minecraft bedrock @1440 uses correct selector and safe unconfigured form",
+      "ok": true,
+      "detail": {
+        "h1": "Comece com seu servidor de teste.",
+        "edition": [
+          "Bedrock"
+        ],
+        "game": "minecraft",
+        "version": false,
+        "width": 1425,
+        "form": "/trials/request",
+        "token": true,
+        "buttonDisabled": true,
+        "hasServer": false
+      }
+    },
+    {
+      "name": "Verification GET requires explicit protected POST before any trial activation",
+      "ok": true,
+      "detail": {
+        "form": "/trials/confirm",
+        "method": "post",
+        "anti": true,
+        "value": "fake-preview-token",
+        "hasServer": false,
+        "referrer": "no-referrer",
+        "robots": "noindex, nofollow"
+      }
+    },
+    {
+      "name": "Minecraft selector remains usable without JavaScript",
+      "ok": true,
+      "detail": "SSR selectors and native forms"
+    },
+    {
+      "name": "Supplemental trial QA has no runtime exceptions or missing assets",
+      "ok": true,
+      "detail": {
+        "errors": [],
+        "failed": []
+      }
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+.trial-banner {
+    position: relative;
+    scroll-margin-top: 7rem;
+    padding-block: clamp(1.5rem, 3vw, 3rem);
+}
+
+.trial-shell {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: clamp(1.5rem, 3.5vw, 3rem);
+    padding-block: clamp(1.5rem, 3vw, 2.25rem);
+    border-block: 1px solid var(--ht-edge-strong);
+}
+
+.trial-duration {
+    display: flex;
+    align-items: baseline;
+    gap: .45rem;
+    color: var(--ht-accent);
+}
+
+.trial-duration__number {
+    font-size: clamp(3.25rem, 7vw, 5.5rem);
+    font-weight: 550;
+    line-height: .95;
+    letter-spacing: -.065em;
+    font-variant-numeric: tabular-nums;
+}
+
+.trial-duration__unit {
+    color: var(--ht-ink-soft);
+    font-size: .65rem;
+    letter-spacing: .08em;
+}
+
+.trial-copy {
+    min-width: 0;
+}
+
+.trial-kicker {
+    margin-bottom: .65rem;
+    color: var(--ht-accent);
+    font-size: .65rem;
+    letter-spacing: .12em;
+}
+
+.trial-title {
+    max-width: 30ch;
+    color: var(--ht-ink);
+    font-size: clamp(1.35rem, 2.6vw, 2rem);
+    font-weight: 550;
+    line-height: 1.2;
+    letter-spacing: -.035em;
+}
+
+.trial-body {
+    max-width: 51ch;
+    margin-top: .65rem;
+    color: var(--ht-ink-soft);
+    font-size: .875rem;
+    line-height: 1.7;
+}
+
+.trial-action {
+    display: grid;
+    justify-items: stretch;
+    gap: .65rem;
+    max-width: 16rem;
+}
+
+.trial-action ::deep .trial-cta {
+    justify-content: center;
+    min-height: 48px;
+    white-space: nowrap;
+}
+
+.trial-note {
+    color: var(--ht-ink-muted);
+    font-size: .7rem;
+    line-height: 1.55;
+    text-align: center;
+}
+
+@media (max-width: 1000px) {
+    .trial-shell {
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 1.25rem 2rem;
+    }
+
+    .trial-duration {
+        align-self: start;
+        grid-row: 1 / span 2;
+    }
+
+    .trial-action {
+        grid-column: 2;
+        justify-items: start;
+        max-width: 24rem;
+    }
+
+    .trial-note {
+        text-align: left;
+    }
+}
+
+@media (max-width: 620px) {
+    .trial-shell {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 1.15rem;
+    }
+
+    .trial-duration {
+        grid-row: auto;
+        gap: .6rem;
+    }
+
+    .trial-duration__number {
+        font-size: 3rem;
+    }
+
+    .trial-action {
+        grid-column: auto;
+        justify-items: stretch;
+        max-width: none;
+    }
+
+    .trial-action ::deep .trial-cta {
+        width: 100%;
+    }
+
+    .trial-note {
+        text-align: center;
+    }
+}

@@ -22,10 +22,10 @@
     <value>Game hosting</value>
   </data>
   <data name="GameHosting.Title" xml:space="preserve">
-    <value>Choose the game. The infrastructure is already here.</value>
+    <value>Choose your game. Build your server.</value>
   </data>
   <data name="GameHosting.Lede" xml:space="preserve">
-    <value>Every server runs on machines we own and manage. Pick the game, choose a plan and a billing period, pay, and the platform builds the server.</value>
+    <value>Our own hardware, your HTS control panel, and automated setup. Start with the game, compare the resources, and choose the plan for your community.</value>
   </data>
   <data name="GameHosting.CoverTagAvailable" xml:space="preserve">
     <value>Available / US Central</value>
@@ -34,7 +34,7 @@
     <value>Roadmap</value>
   </data>
   <data name="GameHosting.Primary" xml:space="preserve">
-    <value>Primary product</value>
+    <value>Ready to configure</value>
   </data>
   <data name="GameHosting.Available" xml:space="preserve">
     <value>Available</value>
@@ -112,10 +112,10 @@
     <value>Automated deploy after payment</value>
   </data>
   <data name="Game.Minecraft.Tagline" xml:space="preserve">
-    <value>Planned: Java and Bedrock, with CurseForge modpacks.</value>
+    <value>Java or Bedrock. Choose an available server setup.</value>
   </data>
   <data name="Game.Minecraft.Summary" xml:space="preserve">
-    <value>The next game on the platform. The panel's mod tooling is being extended to CurseForge for it. No plans or prices yet - ask to be told when it opens.</value>
+    <value>Try Minecraft on HTS for 24 hours. Choose Java or Bedrock, then an available server variant and version. Software and versions depend on the approved profiles available for deployment.</value>
   </data>
   <data name="Zomboid.MetaTitle" xml:space="preserve">
     <value>Project Zomboid server hosting</value>
@@ -130,10 +130,16 @@
     <value>Game hosting</value>
   </data>
   <data name="Zomboid.Title" xml:space="preserve">
-    <value>A Project Zomboid server, built the moment you pay.</value>
+    <value>Your world. Your Project Zomboid server.</value>
   </data>
   <data name="Zomboid.Lede" xml:space="preserve">
-    <value>Pick the memory your community needs. Everything else - Workshop mods, backups, console, files, the panel - is the same on every plan.</value>
+    <value>Choose the resources your community needs. Workshop mods, console, and file access come with every plan, managed through the HTS control panel.</value>
+  </data>
+  <data name="Zomboid.ProductCaption" xml:space="preserve">
+    <value>Build 41 + Build 42</value>
+  </data>
+  <data name="Zomboid.ProductDetail" xml:space="preserve">
+    <value>A persistent world, your Workshop mods, and one panel to manage the server.</value>
   </data>
   <data name="Zomboid.CtaPlans" xml:space="preserve">
     <value>See plans</value>
@@ -213,14 +219,29 @@
   <data name="Zomboid.BackToCatalog" xml:space="preserve">
     <value>Back to game hosting</value>
   </data>
+  <data name="Trial.Kicker" xml:space="preserve">
+    <value>24-hour trial</value>
+  </data>
+  <data name="Trial.Title" xml:space="preserve">
+    <value>Your world. Your server. Try it for 24 hours.</value>
+  </data>
+  <data name="Trial.Body" xml:space="preserve">
+    <value>Create a Project Zomboid or Minecraft trial on HTS. Verify your email, explore the panel and keep the same world when you choose a plan.</value>
+  </data>
+  <data name="Trial.Action" xml:space="preserve">
+    <value>Create my trial server</value>
+  </data>
+  <data name="Trial.Note" xml:space="preserve">
+    <value>One trial per account · no card required</value>
+  </data>
   <data name="Picker.Kicker" xml:space="preserve">
     <value>Plans</value>
   </data>
   <data name="Picker.Title" xml:space="preserve">
-    <value>Choose the memory. Choose how you pay.</value>
+    <value>The right resources for your world.</value>
   </data>
   <data name="Picker.Lede" xml:space="preserve">
-    <value>{2} tiers from {0} to {1} GB, all priced from one rate card. The only discounts are for paying quarterly or annually.</value>
+    <value>{2} plans, from {0} to {1} GB RAM. Compare the resources and choose monthly, quarterly, or annual billing.</value>
   </data>
   <data name="Picker.PeriodLegend" xml:space="preserve">
     <value>Billing period</value>
@@ -275,6 +296,33 @@
   </data>
   <data name="Picker.Unpriced" xml:space="preserve">
     <value>Price not published</value>
+  </data>
+  <data name="Picker.TotalNote" xml:space="preserve">
+    <value>The displayed price is the total for the selected billing period.</value>
+  </data>
+  <data name="Picker.ViewLegend" xml:space="preserve">
+    <value>View plans</value>
+  </data>
+  <data name="Picker.ViewCards" xml:space="preserve">
+    <value>Cards</value>
+  </data>
+  <data name="Picker.ViewCompare" xml:space="preserve">
+    <value>Compare</value>
+  </data>
+  <data name="Picker.ComparePlan" xml:space="preserve">
+    <value>Plan</value>
+  </data>
+  <data name="Picker.CompareResources" xml:space="preserve">
+    <value>Included resources</value>
+  </data>
+  <data name="Picker.ComparePrice" xml:space="preserve">
+    <value>Price and billing</value>
+  </data>
+  <data name="Picker.BotNotIncluded" xml:space="preserve">
+    <value>Not included</value>
+  </data>
+  <data name="Picker.ReviewNote" xml:space="preserve">
+    <value>Next, review your server configuration and the total amount before proceeding to payment.</value>
   </data>
   <data name="Review.MetaTitle" xml:space="preserve">
     <value>Review your server</value>
@@ -491,5 +539,274 @@
   </data>
   <data name="Cancel.NotFound" xml:space="preserve">
     <value>We could not find that order. Choose a plan to start again.</value>
+  </data>
+  <data name="Review.PromoLabel" xml:space="preserve"><value>Promo code</value></data>
+  <data name="Review.PromoPlaceholder" xml:space="preserve"><value>Enter your code</value></data>
+  <data name="Trial.Unit" xml:space="preserve">
+    <value>hours</value>
+  </data>
+  <data name="Trial.Page.Title" xml:space="preserve">
+    <value>Start with your own trial server.</value>
+  </data>
+  <data name="Trial.Page.Lede" xml:space="preserve">
+    <value>Play for {0} hours on HTS infrastructure. After the trial, your server is suspended and your world is kept for {1} days so you can choose a plan.</value>
+  </data>
+  <data name="Trial.Back" xml:space="preserve">
+    <value>Back to hosting</value>
+  </data>
+  <data name="Trial.Spec.Memory" xml:space="preserve">
+    <value>Memory</value>
+  </data>
+  <data name="Trial.Spec.Storage" xml:space="preserve">
+    <value>Storage</value>
+  </data>
+  <data name="Trial.Spec.Duration" xml:space="preserve">
+    <value>Trial</value>
+  </data>
+  <data name="Trial.Step.Email" xml:space="preserve">
+    <value>Choose your game and verify your email.</value>
+  </data>
+  <data name="Trial.Step.Play" xml:space="preserve">
+    <value>Your server is created automatically. We email you when it is ready.</value>
+  </data>
+  <data name="Trial.Step.Keep" xml:space="preserve">
+    <value>Choose a plan to continue with the same server and save.</value>
+  </data>
+  <data name="Trial.Terms" xml:space="preserve">
+    <value>One trial per panel account across all games. The trial starts when installation finishes. If you do not upgrade within {0} days of expiry, the trial server and its data are deleted.</value>
+  </data>
+  <data name="Trial.Select.Title" xml:space="preserve">
+    <value>Choose your game.</value>
+  </data>
+  <data name="Trial.Select.Game" xml:space="preserve">
+    <value>Trial game</value>
+  </data>
+  <data name="Trial.Select.Edition" xml:space="preserve">
+    <value>Minecraft edition</value>
+  </data>
+  <data name="Trial.Select.Software" xml:space="preserve">
+    <value>Server software</value>
+  </data>
+  <data name="Trial.Select.Version" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="Trial.Select.UnavailableEdition" xml:space="preserve">
+    <value>This edition has no trial software available yet. Choose another edition or contact HTS.</value>
+  </data>
+  <data name="Trial.Form.Name" xml:space="preserve">
+    <value>Your name</value>
+  </data>
+  <data name="Trial.Form.Email" xml:space="preserve">
+    <value>Email address</value>
+  </data>
+  <data name="Trial.Form.EmailNote" xml:space="preserve">
+    <value>We send a confirmation link before creating your account or server.</value>
+  </data>
+  <data name="Trial.Form.Submit" xml:space="preserve">
+    <value>Send confirmation email</value>
+  </data>
+  <data name="Trial.Form.Recover" xml:space="preserve">
+    <value>Already tried HTS? Use the same email to recover access. This will not create a second trial.</value>
+  </data>
+  <data name="Trial.Unavailable" xml:space="preserve">
+    <value>Automatic trials are currently unavailable. Contact HTS to check availability.</value>
+  </data>
+  <data name="Trial.Contact" xml:space="preserve">
+    <value>Contact HTS</value>
+  </data>
+  <data name="Trial.Verify.Kicker" xml:space="preserve">
+    <value>Email confirmation</value>
+  </data>
+  <data name="Trial.Verify.Title" xml:space="preserve">
+    <value>Confirm and continue.</value>
+  </data>
+  <data name="Trial.Verify.Body" xml:space="preserve">
+    <value>Confirm ownership of your email to activate your trial or recover access to your existing server. Opening this page alone does not create a server.</value>
+  </data>
+  <data name="Trial.Verify.Action" xml:space="preserve">
+    <value>Confirm my email</value>
+  </data>
+  <data name="Trial.Notice.Sent" xml:space="preserve">
+    <value>Check your inbox. If this address is eligible, you will receive a confirmation link. Existing accounts recover access through the same step.</value>
+  </data>
+  <data name="Trial.Notice.Invalid" xml:space="preserve">
+    <value>Check your email, name and selected server version, then try again.</value>
+  </data>
+  <data name="Trial.Notice.InvalidToken" xml:space="preserve">
+    <value>This confirmation link has expired or has already been used. Request a new email below.</value>
+  </data>
+  <data name="Trial.Notice.Claimed" xml:space="preserve">
+    <value>A trial has already been claimed for this panel account. Contact HTS if you need help recovering access.</value>
+  </data>
+  <data name="Trial.Account.Kicker" xml:space="preserve">
+    <value>Your HTS trial</value>
+  </data>
+  <data name="Trial.Account.Expires" xml:space="preserve">
+    <value>Trial ends</value>
+  </data>
+  <data name="Trial.Account.DeleteAfter" xml:space="preserve">
+    <value>Data retained until</value>
+  </data>
+  <data name="Trial.Account.OpenPanel" xml:space="preserve">
+    <value>Open control panel</value>
+  </data>
+  <data name="Trial.Account.ChoosePlan" xml:space="preserve">
+    <value>Choose a plan</value>
+  </data>
+  <data name="Trial.Account.SameSave" xml:space="preserve">
+    <value>Checkout upgrades this server after payment is confirmed. Your world and files stay in place.</value>
+  </data>
+  <data name="Trial.Account.Refresh" xml:space="preserve">
+    <value>Check progress</value>
+  </data>
+  <data name="Trial.Account.ReadyEmail" xml:space="preserve">
+    <value>We email you when installation finishes. You can refresh this page to check progress.</value>
+  </data>
+  <data name="Trial.State.PendingVerification" xml:space="preserve">
+    <value>Confirm your email.</value>
+  </data>
+  <data name="Trial.State.Provisioning" xml:space="preserve">
+    <value>Creating your server.</value>
+  </data>
+  <data name="Trial.State.Installing" xml:space="preserve">
+    <value>Installing your game.</value>
+  </data>
+  <data name="Trial.State.Active" xml:space="preserve">
+    <value>Your trial is ready.</value>
+  </data>
+  <data name="Trial.State.Expired" xml:space="preserve">
+    <value>Trial finished. Your world is retained.</value>
+  </data>
+  <data name="Trial.State.Deleted" xml:space="preserve">
+    <value>The retention window has ended.</value>
+  </data>
+  <data name="Trial.State.Converted" xml:space="preserve">
+    <value>Your server is now on a paid plan.</value>
+  </data>
+  <data name="Trial.State.Rejected" xml:space="preserve">
+    <value>We could not activate this trial.</value>
+  </data>
+  <data name="Trial.State.Deleting" xml:space="preserve">
+    <value>The retention window has ended.</value>
+  </data>
+  <data name="Trial.StateBody.PendingVerification" xml:space="preserve">
+    <value>Check your inbox for the confirmation link.</value>
+  </data>
+  <data name="Trial.StateBody.Provisioning" xml:space="preserve">
+    <value>Your email is confirmed. HTS is assigning your server on the panel.</value>
+  </data>
+  <data name="Trial.StateBody.Installing" xml:space="preserve">
+    <value>Your game is installing. The trial timer starts when installation finishes.</value>
+  </data>
+  <data name="Trial.StateBody.Active" xml:space="preserve">
+    <value>Open the panel to configure your game, access files and start playing.</value>
+  </data>
+  <data name="Trial.StateBody.Expired" xml:space="preserve">
+    <value>Your server is suspended. Choose a paid plan before the retention deadline to continue with the same save.</value>
+  </data>
+  <data name="Trial.StateBody.Deleted" xml:space="preserve">
+    <value>The trial server and its data have been deleted. This account has already used its trial.</value>
+  </data>
+  <data name="Trial.StateBody.Converted" xml:space="preserve">
+    <value>Payment is confirmed and the selected plan is applied to the same server.</value>
+  </data>
+  <data name="Trial.StateBody.Rejected" xml:space="preserve">
+    <value>This panel account may have already used a trial, or activation needs attention. Contact HTS for help.</value>
+  </data>
+  <data name="Trial.StateBody.Deleting" xml:space="preserve">
+    <value>Your unpaid trial is being removed. The retention deadline has passed.</value>
+  </data>
+  <data name="Trial.Mail.VerifySubject" xml:space="preserve">
+    <value>Confirm your HTS Hosting email</value>
+  </data>
+  <data name="Trial.Mail.VerifyBody" xml:space="preserve">
+    <value>Hi {0},
+
+Confirm your email to activate your HTS trial or recover access to your existing server:
+{1}
+
+Opening the link does not create a server. Use the confirmation button on the page to continue. If you did not request this email, you can ignore it.
+
+One {3}-hour trial is available per panel account across all games. Your email is verified before any account or server is created.
+
+HTS Hosting
+Questions: {2}</value>
+  </data>
+  <data name="Trial.Mail.ReadySubject" xml:space="preserve">
+    <value>Your HTS trial server is ready</value>
+  </data>
+  <data name="Trial.Mail.ReadyBody" xml:space="preserve">
+    <value>Your trial server is ready. Your {4}-hour trial has started.
+
+Open the panel:
+{0}
+
+Trial ends: {1}
+
+Manage your trial or choose a plan:
+{2}
+
+After expiry, your server is suspended and its data is retained for {5:0.##} days. Upgrading during that period keeps the same server and save. If you do not upgrade, the trial server and its data are deleted.
+
+HTS Hosting
+Questions: {3}</value>
+  </data>
+  <data name="Trial.Mail.ExpiredSubject" xml:space="preserve">
+    <value>Your HTS trial has ended — keep your world</value>
+  </data>
+  <data name="Trial.Mail.ExpiredBody" xml:space="preserve">
+    <value>Your trial has ended and the server is suspended. Your world and files are still retained.
+
+Choose a paid plan before {0} to continue with the same server and save:
+{1}
+
+If you are on another device, enter the same email on that page to recover access. This does not create a second trial.
+
+If you do not upgrade by the deadline, the trial server and its data are deleted.
+
+HTS Hosting
+Questions: {2}</value>
+  </data>
+  <data name="Trial.Mail.DeletedSubject" xml:space="preserve">
+    <value>Your HTS trial retention period has ended</value>
+  </data>
+  <data name="Trial.Mail.DeletedBody" xml:space="preserve">
+    <value>The {2:0.##}-day retention period after your trial has ended. The unpaid trial server and its data have been deleted.
+
+This account has already used its trial. You can check your trial record here:
+{0}
+
+HTS Hosting
+Questions: {1}</value>
+  </data>
+  <data name="Promotion.Label" xml:space="preserve">
+    <value>Available offers</value>
+  </data>
+  <data name="Promotion.Saving" xml:space="preserve">
+    <value>Save {0} on {1}</value>
+  </data>
+  <data name="Promotion.Action" xml:space="preserve">
+    <value>Review offer</value>
+  </data>
+  <data name="Promotion.Note" xml:space="preserve">
+    <value>Eligibility and the final amount are checked again at checkout.</value>
+  </data>
+  <data name="Trial.Recovery.Title" xml:space="preserve">
+    <value>Recover access to an existing trial</value>
+  </data>
+  <data name="Trial.Recovery.Body" xml:space="preserve">
+    <value>Enter the same email used on the panel. This only recovers access; it never creates another server or restarts the trial.</value>
+  </data>
+  <data name="Trial.Recovery.Action" xml:space="preserve">
+    <value>Send recovery email</value>
+  </data>
+  <data name="Trial.Account.PanelSetup" xml:space="preserve">
+    <value>For a new panel account, use the panel's setup email to choose your password. Existing accounts keep their usual login.</value>
+  </data>
+  <data name="Review.TrialUpgrade" xml:space="preserve">
+    <value>This plan continues on your trial server and keeps your save.</value>
+  </data>
+  <data name="Review.TrialUpgradePending" xml:space="preserve">
+    <value>A checkout is already in progress for this trial. Finish it or wait for it to expire before trying again.</value>
   </data>
 </root>

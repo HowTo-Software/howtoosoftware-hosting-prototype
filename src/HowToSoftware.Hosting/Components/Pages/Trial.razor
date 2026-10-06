@@ -1,0 +1,225 @@
+@page "/trial"
+@using System.Globalization
+@using HowToSoftware.Hosting.Services.Trials
+@inject ITrialService Trials
+@inject IHttpContextAccessor HttpContextAccessor
+@inject IOptions<TrialOptions> TrialSettings
+@inject IOptions<PterodactylOptions> Panel
+@inject IOptions<SiteOptions> Site
+@inject IStringLocalizer<CheckoutText> Text
+
+<PageTitle>@Text["Trial.Page.Title"] | @Site.Value.Name</PageTitle>
+<HeadContent>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta name="referrer" content="no-referrer" />
+</HeadContent>
+
+<section class="trial-page" aria-labelledby="trial-page-title">
+    <div class="hts-container hts-container--wide trial-page__layout">
+        <div class="trial-page__intro">
+            <a class="trial-page__back" href="/">@Text["Trial.Back"]</a>
+            <p class="hts-label trial-page__kicker">@Text["Trial.Kicker"]</p>
+            <h1 id="trial-page-title">@Text["Trial.Page.Title"]</h1>
+            <p class="trial-page__lede">@Text["Trial.Page.Lede", TrialSettings.Value.DurationHours, TrialSettings.Value.RetentionHours / 24]</p>
+            <dl class="trial-page__specs">
+                <div><dt>@Text["Trial.Spec.Memory"]</dt><dd>@(TrialSettings.Value.MemoryMb / 1024) GB</dd></div>
+                <div><dt>@Text["Trial.Spec.Storage"]</dt><dd>@(TrialSettings.Value.DiskMb / 1024) GB</dd></div>
+                <div><dt>@Text["Trial.Spec.Duration"]</dt><dd>@TrialSettings.Value.DurationHours @Text["Trial.Unit"]</dd></div>
+            </dl>
+            <ol class="trial-page__steps">
+                <li>@Text["Trial.Step.Email"]</li>
+                <li>@Text["Trial.Step.Play"]</li>
+                <li>@Text["Trial.Step.Keep"]</li>
+            </ol>
+            <p class="trial-page__terms">@Text["Trial.Terms", TrialSettings.Value.RetentionHours / 24]</p>
+        </div>
+
+        <div class="trial-page__content">
+            @if (VerificationToken is { Length: > 0 and <= 4096 } verificationToken)
+            {
+                <div class="trial-page__confirmation">
+                    <p class="hts-label">@Text["Trial.Verify.Kicker"]</p>
+                    <h2>@Text["Trial.Verify.Title"]</h2>
+                    <p>@Text["Trial.Verify.Body"]</p>
+                    <form method="post" action="/trials/confirm" data-enhance="false">
+                        <AntiforgeryToken />
+                        <input type="hidden" name="VerificationToken" value="@verificationToken" />
+                        <CtaButton ButtonType="submit" Variant="CtaVariant.Primary" TrailingIcon="IconName.ArrowRight">
+                            @Text["Trial.Verify.Action"]
+                        </CtaButton>
+                    </form>
+                </div>
+            }
+            else if (_account is { } account)
+            {
+                <div class="trial-page__status">
+                    <p class="hts-label">@Text["Trial.Account.Kicker"]</p>
+                    <h2>@Text[$"Trial.State.{account.State}"]</h2>
+                    <p class="trial-page__owner">@account.Email</p>
+                    <p>@Text[$"Trial.StateBody.{account.State}"]</p>
+                    @if (account.ExpiresAt is { } expiresAt)
+                    {
+                        <dl class="trial-page__dates">
+                            <div><dt>@Text["Trial.Account.Expires"]</dt><dd><time datetime="@expiresAt.ToString("O", CultureInfo.InvariantCulture)">@FormatUtc(expiresAt)</time></dd></div>
+                            @if (account.DeleteAfter is { } deleteAfter && account.State is TrialState.Expired or TrialState.Deleting)
+                            {
+                                <div><dt>@Text["Trial.Account.DeleteAfter"]</dt><dd><time datetime="@deleteAfter.ToString("O", CultureInfo.InvariantCulture)">@FormatUtc(deleteAfter)</time></dd></div>
+                            }
+                        </dl>
+                    }
+                    <div class="trial-page__actions">
+                        @if (account.UpgradeOrderId is not null && account.State is TrialState.Active or TrialState.Expired)
+                        {
+                            <p class="trial-page__notice">@Text["Review.TrialUpgradePending"]</p>
+                        }
+                        @if (account.State is TrialState.Active or TrialState.Converted)
+                        {
+                            <CtaButton Href="@PanelLoginUrl" Variant="CtaVariant.Primary" TrailingIcon="IconName.ArrowRight">@Text["Trial.Account.OpenPanel"]</CtaButton>
+                            <p class="trial-page__hint">@Text["Trial.Account.PanelSetup"]</p>
+                        }
+                        @if (account.CanUpgrade)
+                        {
+                            <CtaButton Href="@UpgradePlansHref(account.GameSlug)" Variant="CtaVariant.Secondary" TrailingIcon="IconName.ArrowRight">@Text["Trial.Account.ChoosePlan"]</CtaButton>
+                            <p class="trial-page__hint">@Text["Trial.Account.SameSave"]</p>
+                        }
+                        @if (account.State is TrialState.Provisioning or TrialState.Installing)
+                        {
+                            <a class="trial-page__refresh" href="/trial">@Text["Trial.Account.Refresh"]</a>
+                            <p class="trial-page__hint">@Text["Trial.Account.ReadyEmail"]</p>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                @if (NoticeKey is { } noticeKey)
+                {
+                    <p class="trial-page__notice" role="status">@Text[noticeKey]</p>
+                }
+
+                <div class="trial-page__selection">
+                    <h2>@Text["Trial.Select.Title"]</h2>
+                    <nav class="trial-page__choices" aria-label="@Text["Trial.Select.Game"]">
+                        <a class="@(SelectedGame == "project-zomboid" ? "is-selected" : null)" href="/trial?game=project-zomboid" aria-current="@(SelectedGame == "project-zomboid" ? "true" : null)">Project Zomboid</a>
+                        <a class="@(SelectedGame == "minecraft" ? "is-selected" : null)" href="/trial?game=minecraft" aria-current="@(SelectedGame == "minecraft" ? "true" : null)">Minecraft</a>
+                    </nav>
+
+                    @if (SelectedGame == "minecraft")
+                    {
+                        <p class="trial-page__field-label">@Text["Trial.Select.Edition"]</p>
+                        <nav class="trial-page__choices trial-page__choices--small" aria-label="@Text["Trial.Select.Edition"]">
+                            <a class="@(SelectedEdition == "java" ? "is-selected" : null)" href="/trial?game=minecraft&amp;edition=java" aria-current="@(SelectedEdition == "java" ? "true" : null)">Java</a>
+                            <a class="@(SelectedEdition == "bedrock" ? "is-selected" : null)" href="/trial?game=minecraft&amp;edition=bedrock" aria-current="@(SelectedEdition == "bedrock" ? "true" : null)">Bedrock</a>
+                        </nav>
+
+                        @if (_profiles.Count > 0)
+                        {
+                            <p class="trial-page__field-label">@Text["Trial.Select.Software"]</p>
+                            <nav class="trial-page__choices trial-page__choices--small" aria-label="@Text["Trial.Select.Software"]">
+                                @foreach (var profile in _profiles)
+                                {
+                                    <a class="@(_profile?.Id == profile.Id ? "is-selected" : null)" href="@ProfileHref(profile)" aria-current="@(_profile?.Id == profile.Id ? "true" : null)">@profile.Variant</a>
+                                }
+                            </nav>
+                        }
+                        else
+                        {
+                            <p class="trial-page__notice">@Text["Trial.Select.UnavailableEdition"]</p>
+                        }
+                    }
+                </div>
+
+                @if (!Trials.IsAvailable)
+                {
+                    <p class="trial-page__notice">@Text["Trial.Unavailable"]</p>
+                    <a class="trial-page__refresh" href="mailto:@Site.Value.ContactEmail">@Text["Trial.Contact"]</a>
+                }
+
+                <form method="post" action="/trials/request" class="trial-page__form" data-enhance="false">
+                    <AntiforgeryToken />
+                    <input type="hidden" name="GameSlug" value="@SelectedGame" />
+                    @if (_profile is { } chosen)
+                    {
+                        <input type="hidden" name="ProfileId" value="@chosen.Id" />
+                        @if (chosen.AllowedVersions.Count > 0)
+                        {
+                        <label for="trial-version">@Text["Trial.Select.Version"]</label>
+                        <select id="trial-version" name="Version" required disabled="@(!CanRequest)">
+                            @foreach (var version in chosen.AllowedVersions)
+                            {
+                                <option value="@version">@version</option>
+                            }
+                        </select>
+                        }
+                    }
+                    <label for="trial-name">@Text["Trial.Form.Name"]</label>
+                    <input id="trial-name" name="DisplayName" type="text" autocomplete="name" maxlength="80" required disabled="@(!CanRequest)" />
+                    <label for="trial-email">@Text["Trial.Form.Email"]</label>
+                    <input id="trial-email" name="Email" type="email" autocomplete="email" maxlength="254" required disabled="@(!CanRequest)" />
+                    <p class="trial-page__hint">@Text["Trial.Form.EmailNote"]</p>
+                    <CtaButton ButtonType="submit" Disabled="@(!CanRequest)" Variant="CtaVariant.Primary" TrailingIcon="IconName.ArrowRight">@Text["Trial.Form.Submit"]</CtaButton>
+                    <p class="trial-page__hint">@Text["Trial.Form.Recover"]</p>
+                </form>
+
+                <details class="trial-page__recovery">
+                    <summary>@Text["Trial.Recovery.Title"]</summary>
+                    <p class="trial-page__hint">@Text["Trial.Recovery.Body"]</p>
+                    <form method="post" action="/trials/recover" class="trial-page__form" data-enhance="false">
+                        <AntiforgeryToken />
+                        <label for="trial-recovery-email">@Text["Trial.Form.Email"]</label>
+                        <input id="trial-recovery-email" name="Email" type="email" autocomplete="email" maxlength="254" required />
+                        <CtaButton ButtonType="submit" Variant="CtaVariant.Secondary" TrailingIcon="IconName.ArrowRight">@Text["Trial.Recovery.Action"]</CtaButton>
+                    </form>
+                </details>
+            }
+        </div>
+    </div>
+</section>
+
+@code {
+    [SupplyParameterFromQuery(Name = "verify")] public string? VerificationToken { get; set; }
+    [SupplyParameterFromQuery(Name = "notice")] public string? Notice { get; set; }
+    [SupplyParameterFromQuery(Name = "game")] public string? GameQuery { get; set; }
+    [SupplyParameterFromQuery(Name = "edition")] public string? EditionQuery { get; set; }
+    [SupplyParameterFromQuery(Name = "profile")] public string? ProfileQuery { get; set; }
+
+    private TrialAccountView? _account;
+    private IReadOnlyList<TrialGameProfile> _profiles = [];
+    private TrialGameProfile? _profile;
+    private string SelectedGame => GameQuery == "minecraft" ? "minecraft" : "project-zomboid";
+    private string SelectedEdition => EditionQuery == "bedrock" ? "bedrock" : "java";
+    private bool CanRequest => Trials.IsAvailable && (SelectedGame != "minecraft" || _profile is { AllowedVersions.Count: > 0 });
+
+    private string? NoticeKey => Notice switch
+    {
+        "sent" => "Trial.Notice.Sent", "invalid" => "Trial.Notice.Invalid",
+        "unavailable" => "Trial.Unavailable", "invalid-token" => "Trial.Notice.InvalidToken",
+        "claimed" => "Trial.Notice.Claimed", _ => null
+    };
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var context = HttpContextAccessor.HttpContext;
+        if (context is not null && !context.Response.HasStarted) context.Response.Headers.CacheControl = "no-store";
+
+        _profiles = Trials.AvailableProfiles
+            .Where(profile => profile.GameSlug == SelectedGame && (SelectedGame != "minecraft" || profile.Edition == SelectedEdition))
+            .ToArray();
+        _profile = _profiles.FirstOrDefault(profile => profile.Id == ProfileQuery) ?? _profiles.FirstOrDefault();
+
+        _account = VerificationToken is not { Length: > 0 } && TrialAccessCookie.Read(context) is { } accessToken
+            ? await Trials.GetByAccessTokenAsync(accessToken, context?.RequestAborted ?? default)
+            : null;
+    }
+
+    private static string FormatUtc(DateTimeOffset timestamp) =>
+        timestamp.UtcDateTime.ToString("yyyy-MM-dd HH:mm 'UTC'", CultureInfo.InvariantCulture);
+
+    private static string ProfileHref(TrialGameProfile profile) =>
+        $"/trial?game={Uri.EscapeDataString(profile.GameSlug)}&edition={Uri.EscapeDataString(profile.Edition)}&profile={Uri.EscapeDataString(profile.Id)}";
+
+    private string PanelLoginUrl => Uri.TryCreate(Panel.Value.BaseUrl, UriKind.Absolute, out var panel)
+        && panel.Scheme == "https" ? $"{panel.GetLeftPart(UriPartial.Authority)}/auth/login" : SiteRoutes.PanelLogin;
+
+    private static string UpgradePlansHref(string gameSlug) => $"{SiteRoutes.Game(gameSlug)}#plans";
+}

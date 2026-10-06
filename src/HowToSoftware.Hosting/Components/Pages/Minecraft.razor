@@ -1,0 +1,32 @@
+@page "/game-hosting/minecraft"
+@inject IGameCatalogService Games
+@inject IStringLocalizer<StorefrontText> Text
+@inject IOptions<SiteOptions> Site
+
+<PageTitle>Minecraft | @Site.Value.Name</PageTitle>
+<HeadContent>
+    <meta name="description" content="@Text["Minecraft.Copy"]" />
+    <link rel="canonical" href="@($"{Site.Value.BaseUrl.TrimEnd('/')}/game-hosting/minecraft")" />
+</HeadContent>
+
+<section class="minecraft-intro" aria-labelledby="minecraft-heading">
+    <div class="hts-container hts-container--narrow">
+        <p class="storefront-kicker">HTS / MINECRAFT</p>
+        <h1 id="minecraft-heading" class="storefront-title">Minecraft.</h1>
+        <p class="minecraft-copy">@Text["Minecraft.Copy"]</p>
+        <CtaButton Href="/trial?game=minecraft" Size="CtaSize.Large" TrailingIcon="IconName.ArrowRight">@Text["Hero.TrialAction"]</CtaButton>
+    </div>
+</section>
+@if (Games.Find("minecraft") is { } game)
+{
+    var plans = Games.PlansFor(game);
+    @if (plans.Count > 0)
+    {
+        <p class="minecraft-upgrade hts-container hts-container--wide">@Text["Minecraft.Upgrade"]</p>
+        <PlanPicker Game="game" Plans="plans" Index="01" />
+    }
+    else
+    {
+        <p id="plans" class="minecraft-upgrade hts-container hts-container--narrow">@Text["Minecraft.PendingPlans"]</p>
+    }
+}

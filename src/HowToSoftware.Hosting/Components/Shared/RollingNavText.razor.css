@@ -1,0 +1,51 @@
+.nav-roll {
+    position: relative;
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: middle;
+    line-height: 1.5;
+}
+
+.roll-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.roll-layer {
+    display: flex;
+    white-space: nowrap;
+}
+
+.roll-layer--next {
+    position: absolute;
+    inset: 0;
+}
+
+.roll-letter {
+    display: inline-block;
+    transition: transform 250ms cubic-bezier(.4, 0, .2, 1);
+    transition-delay: var(--roll-delay);
+}
+
+.roll-layer--first .roll-letter {
+    transform: translateY(var(--nav-roll-shift, 0%));
+}
+
+.roll-layer--next .roll-letter {
+    transform: translateY(calc(100% + var(--nav-roll-shift, 0%)));
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .roll-letter {
+        transform: none !important;
+        transition: none;
+    }
+
+    .roll-layer--next {
+        display: none;
+    }
+}

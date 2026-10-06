@@ -12,6 +12,7 @@ using HowToSoftware.Hosting.Services;
 using HowToSoftware.Hosting.Services.Orders;
 using HowToSoftware.Hosting.Services.Payments;
 using HowToSoftware.Hosting.Services.Provisioning;
+using HowToSoftware.Hosting.Services.Trials;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
@@ -72,6 +73,11 @@ builder.Services.AddSingleton<
 // defaulting to a number nobody agreed to.
 builder.Services.AddOptions<HostingPlanPricingOptions>()
     .Bind(builder.Configuration.GetSection(HostingPlanPricingOptions.SectionName));
+builder.Services.AddOptions<MinecraftPlanOptions>()
+    .Bind(builder.Configuration.GetSection(MinecraftPlanOptions.SectionName));
+builder.Services.AddPublicPromotions(builder.Configuration);
+builder.Services.AddTrialEmail(builder.Configuration);
+builder.Services.AddServerTrials(builder.Configuration, database.IsDatabaseConfigured);
 
 // ── Pterodactyl ───────────────────────────────────────────────────────────
 //
@@ -269,6 +275,7 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapCultureSelection();
 app.MapPaymentEndpoints();
+app.MapTrialEndpoints();
 app.MapHealthChecks("/health", new HealthCheckOptions
 {
     AllowCachingResponses = false,
