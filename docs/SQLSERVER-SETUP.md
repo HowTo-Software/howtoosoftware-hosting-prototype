@@ -48,6 +48,22 @@ GO
 
 Run this as a database administrator, and ensure `migrate.env` uses that migration login. Do not grant DDL rights to the runtime login to work around a misconfigured `migrate.env`.
 
+If deployment fails with SQL Server error 229 (`SELECT permission was denied` on
+`dbo.__EFMigrationsHistory_Commerce`), verify the database and migration login named in the error,
+then grant the migration principal read access to that history table:
+
+```sql
+USE [Website_Application_HostingDb];
+GO
+GRANT SELECT ON OBJECT::dbo.__EFMigrationsHistory_Commerce TO [hts_hosting_migrator];
+GO
+```
+
+Run this as a database administrator, substituting the actual migration database user if needed.
+This is separate from DDL permissions and does not grant additional access to the runtime login.
+If the grant does not resolve the error, check for an explicit `DENY SELECT` and verify that
+`migrate.env` uses the intended login.
+
 In the private environment:
 
 ```dotenv
