@@ -351,9 +351,8 @@ public sealed class PterodactylClient : IPterodactylClient
         try
         {
             _logger.LogDebug(
-                "Pterodactyl request {Method} {Path}",
-                method.Method,
-                path.Split('?', 2)[0]);
+                "Pterodactyl request {Method}",
+                method.Method);
 
             return await _http.SendAsync(request, cancellationToken).ConfigureAwait(false);
         }
