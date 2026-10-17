@@ -13,7 +13,7 @@ public sealed class PterodactylClientTests
     [Fact]
     public async Task NodeAndLocationListsFollowPaginationMetadata()
     {
-        var handler = new PagedResponseHandler();
+        using var handler = new PagedResponseHandler();
         var client = CreateClient(handler);
 
         var nodes = await client.GetNodesAsync();
