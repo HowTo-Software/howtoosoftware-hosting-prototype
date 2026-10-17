@@ -63,26 +63,56 @@ public sealed class PterodactylClient : IPterodactylClient
     public async Task<IReadOnlyList<PterodactylNode>> GetNodesAsync(
         CancellationToken cancellationToken = default)
     {
-        var list = await SendAsync<PterodactylList<PterodactylNode>>(
-            HttpMethod.Get,
-            "/nodes?per_page=100",
-            payload: null,
-            cancellationToken).ConfigureAwait(false);
+        var items = new List<PterodactylNode>();
+        var page = 1;
 
-        return list.Items;
+        while (true)
+        {
+            var list = await SendAsync<PterodactylList<PterodactylNode>>(
+                HttpMethod.Get,
+                $"/nodes?per_page=100&page={page}",
+                payload: null,
+                cancellationToken).ConfigureAwait(false);
+
+            items.AddRange(list.Items);
+
+            if (list.Meta?.Pagination is not { } pagination || page >= pagination.TotalPages)
+            {
+                break;
+            }
+
+            page++;
+        }
+
+        return items;
     }
 
     /// <inheritdoc />
     public async Task<IReadOnlyList<PterodactylLocation>> GetLocationsAsync(
         CancellationToken cancellationToken = default)
     {
-        var list = await SendAsync<PterodactylList<PterodactylLocation>>(
-            HttpMethod.Get,
-            "/locations?per_page=100",
-            payload: null,
-            cancellationToken).ConfigureAwait(false);
+        var items = new List<PterodactylLocation>();
+        var page = 1;
 
-        return list.Items;
+        while (true)
+        {
+            var list = await SendAsync<PterodactylList<PterodactylLocation>>(
+                HttpMethod.Get,
+                $"/locations?per_page=100&page={page}",
+                payload: null,
+                cancellationToken).ConfigureAwait(false);
+
+            items.AddRange(list.Items);
+
+            if (list.Meta?.Pagination is not { } pagination || page >= pagination.TotalPages)
+            {
+                break;
+            }
+
+            page++;
+        }
+
+        return items;
     }
 
     /// <inheritdoc />
@@ -532,8 +562,10 @@ public sealed class PterodactylClient : IPterodactylClient
     private static string DescribeRateLimit(HttpResponseMessage response)
     {
         var retryAfter = response.Headers.RetryAfter?.Delta?.TotalSeconds
-            ?? (response.Headers.TryGetValues("Retry-After", out var values)
-                && int.TryParse(values.FirstOrDefault(), out var seconds) ? seconds : (double?)null);
+            ?? (response.Headers.RetryAfter?.Date is { } retryDate
+                ? Math.Max(0, (retryDate - DateTimeOffset.UtcNow).TotalSeconds)
+                : (response.Headers.TryGetValues("Retry-After", out var values)
+                    && int.TryParse(values.FirstOrDefault(), out var seconds) ? seconds : (double?)null));
 
         var limit = response.Headers.TryGetValues("X-RateLimit-Limit", out var limits)
             ? limits.FirstOrDefault()

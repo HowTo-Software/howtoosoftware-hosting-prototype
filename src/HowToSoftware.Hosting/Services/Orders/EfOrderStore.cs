@@ -21,6 +21,9 @@ public sealed class EfOrderStore : IOrderStore
     public EfOrderStore(IDbContextFactory<HostingDbContext> factory) => _factory = factory;
 
     /// <inheritdoc />
+    public bool IsConfigured => true;
+
+    /// <inheritdoc />
     public async Task AddAsync(Order order, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(order);
@@ -78,6 +81,38 @@ public sealed class EfOrderStore : IOrderStore
         await using var db = await _factory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
         db.Orders.Update(order);
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    /// <inheritdoc />
+    public async Task<bool> TryMarkPaidAsync(
+        Guid orderId,
+        DateTimeOffset now,
+        string? customerEmail,
+        string? stripeCustomerId,
+        string? stripePaymentIntentId,
+        string? stripeSubscriptionId,
+        string? stripeCheckoutSessionId,
+        CancellationToken cancellationToken = default)
+    {
+        await using var db = await _factory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+
+        var updated = await db.Orders
+            .Where(order => order.Id == orderId
+                && (order.Status == OrderStatus.Pending || order.Status == OrderStatus.Cancelled))
+            .ExecuteUpdateAsync(
+                setters => setters
+                    .SetProperty(order => order.Status, OrderStatus.Paid)
+                    .SetProperty(order => order.UpdatedAt, now)
+                    .SetProperty(order => order.PaidAt, now)
+                    .SetProperty(order => order.CustomerEmail, order => order.CustomerEmail ?? customerEmail)
+                    .SetProperty(order => order.StripeCustomerId, order => order.StripeCustomerId ?? stripeCustomerId)
+                    .SetProperty(order => order.StripePaymentIntentId, order => order.StripePaymentIntentId ?? stripePaymentIntentId)
+                    .SetProperty(order => order.StripeSubscriptionId, order => order.StripeSubscriptionId ?? stripeSubscriptionId)
+                    .SetProperty(order => order.StripeCheckoutSessionId, order => order.StripeCheckoutSessionId ?? stripeCheckoutSessionId),
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        return updated == 1;
     }
 
     /// <inheritdoc />

@@ -12,6 +12,9 @@ namespace HowToSoftware.Hosting.Services.Orders;
 /// </remarks>
 public interface IOrderStore
 {
+    /// <summary>Whether this store can persist orders.</summary>
+    bool IsConfigured { get; }
+
     /// <summary>Saves a new order.</summary>
     Task AddAsync(Order order, CancellationToken cancellationToken = default);
 
@@ -26,6 +29,22 @@ public interface IOrderStore
 
     /// <summary>Writes an order's current state back.</summary>
     Task UpdateAsync(Order order, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Atomically marks a pending or cancelled order as paid.
+    /// </summary>
+    /// <returns>
+    /// <see langword="true"/> only for the call that changed the order to paid.
+    /// </returns>
+    Task<bool> TryMarkPaidAsync(
+        Guid orderId,
+        DateTimeOffset now,
+        string? customerEmail,
+        string? stripeCustomerId,
+        string? stripePaymentIntentId,
+        string? stripeSubscriptionId,
+        string? stripeCheckoutSessionId,
+        CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Ids of paid or in-progress orders a restart could have dropped from the in-memory queue.
