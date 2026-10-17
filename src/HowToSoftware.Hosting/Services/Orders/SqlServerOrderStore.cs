@@ -101,6 +101,24 @@ public sealed class SqlServerOrderStore(IDbContextFactory<CommerceDbContext> fac
         string? stripeCheckoutSessionId,
         CancellationToken cancellationToken = default)
     {
+        await using var strategyContext = await factory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        return await strategyContext.Database.CreateExecutionStrategy()
+            .ExecuteAsync(() => TryMarkPaidCoreAsync(
+                orderId, now, customerEmail, stripeCustomerId, stripePaymentIntentId,
+                stripeSubscriptionId, stripeCheckoutSessionId, cancellationToken))
+            .ConfigureAwait(false);
+    }
+
+    private async Task<bool> TryMarkPaidCoreAsync(
+        Guid orderId,
+        DateTimeOffset now,
+        string? customerEmail,
+        string? stripeCustomerId,
+        string? stripePaymentIntentId,
+        string? stripeSubscriptionId,
+        string? stripeCheckoutSessionId,
+        CancellationToken cancellationToken)
+    {
         await using var db = await factory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
         await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
