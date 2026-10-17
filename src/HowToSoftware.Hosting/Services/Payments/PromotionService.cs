@@ -199,6 +199,20 @@ public sealed class PromotionService(
             RedeemedAt = redeemedAt
         });
 
-        await db.SaveChangesAsync(cancellationToken);
+        try
+        {
+            await db.SaveChangesAsync(cancellationToken);
+        }
+        catch (DbUpdateException)
+        {
+            if (await db.PromotionRedemptions.AnyAsync(
+                    x => x.PromotionCodeId == promotionId && x.OrderId == orderId,
+                    cancellationToken))
+            {
+                return;
+            }
+
+            throw;
+        }
     }
 }

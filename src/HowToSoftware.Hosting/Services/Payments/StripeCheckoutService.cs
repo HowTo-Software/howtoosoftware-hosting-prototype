@@ -1,3 +1,4 @@
+using System.Globalization;
 using global::Stripe;
 using global::Stripe.Checkout;
 using HowToSoftware.Hosting.Infrastructure.Stripe;
@@ -119,6 +120,8 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
         public const string GameId = "game_id";
         public const string PlanId = "plan_id";
         public const string BillingPeriod = "billing_period";
+        public const string PromotionCodeId = "promotion_code_id";
+        public const string PromotionDiscountCents = "promotion_discount_cents";
     }
 
     private readonly IStripeGateway _stripe;
@@ -158,7 +161,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
     }
 
     /// <inheritdoc />
-    public bool IsConfigured => _stripe.IsConfigured;
+    public bool IsConfigured => _stripe.IsConfigured && _orders.IsConfigured;
 
     /// <inheritdoc />
     public async Task<CheckoutStart> CreateCheckoutSessionAsync(CheckoutRequest request, CancellationToken cancellationToken = default)
@@ -167,7 +170,7 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
         if (request.IsTrialUpgrade && string.IsNullOrWhiteSpace(request.TrialAccessToken))
             return new CheckoutStart(CheckoutOutcome.Rejected, null, null);
 
-        if (!_stripe.IsConfigured)
+        if (!IsConfigured)
         {
             return new CheckoutStart(CheckoutOutcome.NotConfigured, null, null);
         }
@@ -387,27 +390,32 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
             return;
         }
 
-        // Redeliveries of a paid session, or a session completing after the order already moved
-        // on, must not throw and must not re-queue fulfilment.
-        if (!order.CanTransitionTo(OrderStatus.Paid))
+        var paid = await _orders.TryMarkPaidAsync(
+            orderId: order.Id,
+            now: now,
+            customerEmail: session.CustomerDetails?.Email ?? session.CustomerEmail,
+            stripeCustomerId: session.CustomerId,
+            stripePaymentIntentId: session.PaymentIntentId,
+            stripeSubscriptionId: session.SubscriptionId,
+            stripeCheckoutSessionId: session.Id,
+            cancellationToken: cancellationToken).ConfigureAwait(false);
+
+        if (!paid)
         {
-            _logger.LogInformation("Order {OrderId} is already {Status}; completed session ignored.", order.Id, order.Status);
+            var currentOrder = await _orders.FindAsync(order.Id, cancellationToken).ConfigureAwait(false);
+            if (currentOrder?.PaidAt is not null)
+            {
+                await RedeemPromotionForPaidOrderAsync(currentOrder, session, now, cancellationToken).ConfigureAwait(false);
+            }
+
+            _logger.LogInformation("Order {OrderId} is already {Status}; completed session ignored.", order.Id, currentOrder?.Status ?? order.Status);
             return;
         }
 
-        // A trial keeps the verified panel owner even if the billing contact differs.
-        order.CustomerEmail ??= session.CustomerDetails?.Email ?? session.CustomerEmail;
-        order.StripeCustomerId = session.CustomerId ?? order.StripeCustomerId;
-        order.StripePaymentIntentId = session.PaymentIntentId ?? order.StripePaymentIntentId;
-        order.StripeSubscriptionId = session.SubscriptionId ?? order.StripeSubscriptionId;
-        order.StripeCheckoutSessionId ??= session.Id;
-        order.TransitionTo(OrderStatus.Paid, now);
-
-        await _orders.UpdateAsync(order, cancellationToken).ConfigureAwait(false);
+        _fulfilment.Enqueue(order.Id);
+        await RedeemPromotionForPaidOrderAsync(order, session, now, cancellationToken).ConfigureAwait(false);
 
         _logger.LogInformation("Order {OrderId}: paid. Queued for provisioning.", order.Id);
-
-        _fulfilment.Enqueue(order.Id);
     }
 
     /// <inheritdoc />
@@ -546,7 +554,8 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
 
         if (promotion is not null)
         {
-            metadata["promotion_code_id"] = promotion.Promotion.Id.ToString("D");
+            metadata[MetadataKeys.PromotionCodeId] = promotion.Promotion.Id.ToString("D");
+            metadata[MetadataKeys.PromotionDiscountCents] = ToMinorUnits(promotion.DiscountAmount).ToString(CultureInfo.InvariantCulture);
             metadata["promotion_code"] = promotion.Promotion.Code;
         }
 
@@ -616,6 +625,34 @@ public sealed class StripeCheckoutService : IStripeCheckoutService
             Locale = ToStripeLocale(request.Locale)
         };
     }
+
+    private async Task RedeemPromotionForPaidOrderAsync(
+        Order order,
+        Session session,
+        DateTimeOffset now,
+        CancellationToken cancellationToken)
+    {
+        var metadata = session.Metadata;
+        if (metadata is null
+            || !metadata.TryGetValue(MetadataKeys.PromotionCodeId, out var rawPromotionId)
+            || !metadata.TryGetValue(MetadataKeys.PromotionDiscountCents, out var rawDiscount)
+            || !Guid.TryParse(rawPromotionId, out var promotionId)
+            || !long.TryParse(rawDiscount, NumberStyles.None, CultureInfo.InvariantCulture, out var discountCents)
+            || discountCents <= 0)
+        {
+            return;
+        }
+
+        await _promotions.RedeemAsync(
+            promotionId,
+            order.Id,
+            discountCents,
+            now,
+            cancellationToken).ConfigureAwait(false);
+    }
+
+    private static long ToMinorUnits(decimal amount) =>
+        checked((long)Math.Round(amount * 100m, MidpointRounding.AwayFromZero));
 
     private static bool TryNormaliseReturnOrigin(string value, out string origin)
     {

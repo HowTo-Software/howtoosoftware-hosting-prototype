@@ -133,14 +133,24 @@ if (database.IsDatabaseConfigured)
 }
 else
 {
-    builder.Services.AddDbContextFactory<HostingDbContext>(options =>
-        options.UseSqlServer(
-            builder.Configuration.GetConnectionString(HostingDbContext.ConnectionName) ?? string.Empty,
-            sqlServer => sqlServer
-                .MigrationsHistoryTable(HostingDbContext.MigrationsHistoryTable)
-                .EnableRetryOnFailure())
-            .EnableSensitiveDataLogging(false));
-    builder.Services.AddSingleton<IOrderStore, EfOrderStore>();
+    if (SqlServerOptions.TryBuildConnectionString(
+            builder.Configuration.GetConnectionString(HostingDbContext.ConnectionName),
+            out var hostingConnectionString))
+    {
+        builder.Services.AddDbContextFactory<HostingDbContext>(options =>
+            options.UseSqlServer(
+                hostingConnectionString,
+                sqlServer => sqlServer
+                    .MigrationsHistoryTable(HostingDbContext.MigrationsHistoryTable)
+                    .EnableRetryOnFailure())
+                .EnableSensitiveDataLogging(false));
+        builder.Services.AddSingleton<IOrderStore, EfOrderStore>();
+    }
+    else
+    {
+        builder.Services.AddSingleton<IOrderStore, NullOrderStore>();
+    }
+
     builder.Services.AddSingleton<IProvisioningStateStore, NullProvisioningStateStore>();
     builder.Services.AddSingleton<IBillingStore, NullBillingStore>();
     builder.Services.AddSingleton<IPromotionService, NullPromotionService>();

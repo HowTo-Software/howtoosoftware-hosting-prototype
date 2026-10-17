@@ -15,6 +15,8 @@ namespace HowToSoftware.Hosting.Services.Orders;
 /// </summary>
 public sealed class SqlServerOrderStore(IDbContextFactory<CommerceDbContext> factory) : IOrderStore
 {
+    public bool IsConfigured => true;
+
     public async Task AddAsync(Order order, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(order);
@@ -87,6 +89,50 @@ public sealed class SqlServerOrderStore(IDbContextFactory<CommerceDbContext> fac
         Copy(order, record);
         record.CustomerProfileId = await ResolveCustomerProfileAsync(db, order, cancellationToken).ConfigureAwait(false);
         await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    public async Task<bool> TryMarkPaidAsync(
+        Guid orderId,
+        DateTimeOffset now,
+        string? customerEmail,
+        string? stripeCustomerId,
+        string? stripePaymentIntentId,
+        string? stripeSubscriptionId,
+        string? stripeCheckoutSessionId,
+        CancellationToken cancellationToken = default)
+    {
+        await using var db = await factory.CreateDbContextAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = await db.Database.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+
+        var updated = await db.Orders
+            .Where(order => order.Id == orderId
+                && (order.Status == nameof(OrderStatus.Pending) || order.Status == nameof(OrderStatus.Cancelled)))
+            .ExecuteUpdateAsync(
+                setters => setters
+                    .SetProperty(order => order.Status, nameof(OrderStatus.Paid))
+                    .SetProperty(order => order.UpdatedAt, now)
+                    .SetProperty(order => order.PaidAt, now)
+                    .SetProperty(order => order.CustomerEmail, order => order.CustomerEmail ?? customerEmail)
+                    .SetProperty(order => order.StripeCustomerId, order => order.StripeCustomerId ?? stripeCustomerId)
+                    .SetProperty(order => order.StripePaymentIntentId, order => order.StripePaymentIntentId ?? stripePaymentIntentId)
+                    .SetProperty(order => order.StripeSubscriptionId, order => order.StripeSubscriptionId ?? stripeSubscriptionId)
+                    .SetProperty(order => order.StripeCheckoutSessionId, order => order.StripeCheckoutSessionId ?? stripeCheckoutSessionId),
+                cancellationToken)
+            .ConfigureAwait(false);
+
+        if (updated != 1)
+        {
+            return false;
+        }
+
+        var record = await db.Orders.SingleAsync(x => x.Id == orderId, cancellationToken).ConfigureAwait(false);
+        record.CustomerProfileId = await ResolveCustomerProfileAsync(
+            db,
+            ToDomain(record),
+            cancellationToken).ConfigureAwait(false);
+        await db.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        return true;
     }
 
     public async Task<IReadOnlyList<Guid>> ListAwaitingFulfilmentAsync(

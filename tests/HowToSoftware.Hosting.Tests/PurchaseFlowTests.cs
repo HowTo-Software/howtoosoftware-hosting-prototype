@@ -71,11 +71,15 @@ public sealed class PurchaseFlowTests : IDisposable
         }
     }
 
-    private StripeCheckoutService Checkout(ITrialService? trials = null, IOrderPricingService? pricing = null) => new(
+    private StripeCheckoutService Checkout(
+        ITrialService? trials = null,
+        IOrderPricingService? pricing = null,
+        IPromotionService? promotions = null,
+        IOrderStore? orders = null) => new(
         _stripe,
         pricing ?? _pricing,
-        new NullPromotionService(),
-        _orders,
+        promotions ?? new NullPromotionService(),
+        orders ?? _orders,
         _queue,
         new StaticOptionsMonitor<StripeOptions>(_stripeOptions),
         TimeProvider.System,
@@ -230,6 +234,50 @@ public sealed class PurchaseFlowTests : IDisposable
         Assert.Null(_stripe.LastOptions);
     }
 
+    [Fact]
+    public async Task WithoutAnOrderStore_CheckoutIsNotConfigured()
+    {
+        var checkout = Checkout(orders: new NullOrderStore());
+
+        var result = await checkout.CreateCheckoutSessionAsync(Request());
+
+        Assert.False(checkout.IsConfigured);
+        Assert.Equal(CheckoutOutcome.NotConfigured, result.Outcome);
+        Assert.Null(_stripe.LastOptions);
+    }
+
+    [Fact]
+    public async Task AnApplicablePromotionChangesThePersistedAndStripeAmounts()
+    {
+        var promotion = new RecordingPromotionService();
+        var result = await Checkout(promotions: promotion).CreateCheckoutSessionAsync(
+            Request() with { PromoCode = "SAVE" });
+
+        var order = await _orders.FindAsync(result.OrderId!.Value);
+        Assert.NotNull(order);
+        Assert.Equal(20.77m, order.FinalAmount);
+        Assert.Equal(3.20m, order.DiscountAmount);
+        Assert.Equal(2077, Assert.Single(_stripe.LastOptions!.LineItems).PriceData!.UnitAmount);
+        Assert.Equal(promotion.PromotionId.ToString("D"),
+            _stripe.LastOptions.Metadata[StripeCheckoutService.MetadataKeys.PromotionCodeId]);
+        Assert.Equal("200",
+            _stripe.LastOptions.Metadata[StripeCheckoutService.MetadataKeys.PromotionDiscountCents]);
+    }
+
+    [Fact]
+    public async Task AnInvalidPromotionCodeIsRejectedBeforeCreatingAnOrder()
+    {
+        var promotion = new RecordingPromotionService { IsValid = false };
+
+        var result = await Checkout(promotions: promotion).CreateCheckoutSessionAsync(
+            Request() with { PromoCode = "INVALID" });
+
+        Assert.Equal(CheckoutOutcome.Rejected, result.Outcome);
+        Assert.Null(result.OrderId);
+        Assert.Null(_stripe.LastOptions);
+        Assert.Empty(promotion.Redemptions);
+    }
+
     [Theory]
     [InlineData("minecraft", "zomboid-4gb")]
     [InlineData("project-zomboid", "zomboid-99gb")]
@@ -264,7 +312,12 @@ public sealed class PurchaseFlowTests : IDisposable
         return (await _orders.FindAsync(result.OrderId!.Value))!;
     }
 
-    private static Session Completed(Order order, long amount = 2277, string currency = "usd", string paymentStatus = "paid") => new()
+    private static Session Completed(
+        Order order,
+        long amount = 2277,
+        string currency = "usd",
+        string paymentStatus = "paid",
+        Dictionary<string, string>? metadata = null) => new()
     {
         Id = order.StripeCheckoutSessionId,
         ClientReferenceId = order.Id.ToString("D"),
@@ -273,7 +326,8 @@ public sealed class PurchaseFlowTests : IDisposable
         Currency = currency,
         CustomerId = "cus_test",
         SubscriptionId = "sub_test",
-        CustomerDetails = new SessionCustomerDetails { Email = "survivor@example.com" }
+        CustomerDetails = new SessionCustomerDetails { Email = "survivor@example.com" },
+        Metadata = metadata
     };
 
     [Fact]
@@ -334,6 +388,40 @@ public sealed class PurchaseFlowTests : IDisposable
 
         await service.HandleCompletedCheckoutAsync(Completed(order));
         await service.HandleCompletedCheckoutAsync(Completed(order));
+
+        Assert.Equal(OrderStatus.Paid, (await _orders.FindAsync(order.Id))!.Status);
+        Assert.Single(await DrainAsync(_queue));
+    }
+
+    [Fact]
+    public async Task AVerifiedPaidPromotionIsRedeemedExactlyOnce()
+    {
+        var promotions = new RecordingPromotionService();
+        var checkout = Checkout(promotions: promotions);
+        var start = await checkout.CreateCheckoutSessionAsync(Request() with { PromoCode = "SAVE" });
+        var order = (await _orders.FindAsync(start.OrderId!.Value))!;
+        var metadata = new Dictionary<string, string>(_stripe.LastOptions!.Metadata);
+        var completed = Completed(order, amount: 2077, metadata: metadata);
+
+        await checkout.HandleCompletedCheckoutAsync(completed);
+        await checkout.HandleCompletedCheckoutAsync(completed);
+
+        var redemption = Assert.Single(promotions.Redemptions);
+        Assert.Equal(promotions.PromotionId, redemption.PromotionId);
+        Assert.Equal(order.Id, redemption.OrderId);
+        Assert.Equal(200, redemption.DiscountAmountCents);
+        Assert.Single(await DrainAsync(_queue));
+    }
+
+    [Fact]
+    public async Task ConcurrentPaidDeliveriesOnlyOneMarksTheOrderAndQueuesFulfilment()
+    {
+        var order = await PendingOrderAsync();
+        var checkout = Checkout();
+        var completed = Completed(order);
+
+        await Task.WhenAll(Enumerable.Range(0, 4)
+            .Select(_ => checkout.HandleCompletedCheckoutAsync(completed)));
 
         Assert.Equal(OrderStatus.Paid, (await _orders.FindAsync(order.Id))!.Status);
         Assert.Single(await DrainAsync(_queue));
@@ -667,6 +755,49 @@ public sealed class PurchaseFlowTests : IDisposable
             Task.FromResult(new Session { Id = sessionId });
 
         public Event ConstructEvent(string json, string signatureHeader) => throw new NotSupportedException();
+    }
+
+    private sealed class RecordingPromotionService : IPromotionService
+    {
+        private readonly HashSet<(Guid PromotionId, Guid OrderId)> _redeemedOrders = [];
+
+        public Guid PromotionId { get; } = Guid.NewGuid();
+        public bool IsValid { get; init; } = true;
+        public List<(Guid PromotionId, Guid OrderId, long DiscountAmountCents)> Redemptions { get; } = [];
+
+        public Task<PromotionResult?> ValidateAsync(
+            string? code,
+            string gameSlug,
+            string planSlug,
+            BillingQuote quote,
+            CancellationToken cancellationToken = default) =>
+            Task.FromResult<PromotionResult?>(IsValid && string.Equals(code, "SAVE", StringComparison.Ordinal)
+                ? new PromotionResult(
+                    new HowToSoftware.Hosting.Models.Commerce.PromotionCode
+                    {
+                        Id = PromotionId,
+                        Code = "SAVE",
+                        DiscountType = "fixed",
+                        FixedAmountCents = 200
+                    },
+                    2m,
+                    quote.FinalAmount - 2m)
+                : null);
+
+        public Task RedeemAsync(
+            Guid promotionId,
+            Guid orderId,
+            long discountAmountCents,
+            DateTimeOffset redeemedAt,
+            CancellationToken cancellationToken = default)
+        {
+            if (_redeemedOrders.Add((promotionId, orderId)))
+            {
+                Redemptions.Add((promotionId, orderId, discountAmountCents));
+            }
+
+            return Task.CompletedTask;
+        }
     }
 }
 
