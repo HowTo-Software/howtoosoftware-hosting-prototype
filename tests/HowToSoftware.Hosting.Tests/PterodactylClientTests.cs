@@ -14,7 +14,8 @@ public sealed class PterodactylClientTests
     public async Task NodeAndLocationListsFollowPaginationMetadata()
     {
         using var handler = new PagedResponseHandler();
-        var client = CreateClient(handler);
+        var (client, httpClient) = CreateClient(handler);
+        using var _ = httpClient;
 
         var nodes = await client.GetNodesAsync();
         var locations = await client.GetLocationsAsync();
@@ -33,7 +34,8 @@ public sealed class PterodactylClientTests
     public async Task RateLimitDescriptionIncludesDateBasedRetryAfter()
     {
         using var handler = new RateLimitedResponseHandler();
-        var client = CreateClient(handler);
+        var (client, httpClient) = CreateClient(handler);
+        using var _ = httpClient;
 
         var error = await Assert.ThrowsAsync<PterodactylApiException>(() => client.GetNodesAsync());
 
@@ -41,15 +43,19 @@ public sealed class PterodactylClientTests
         Assert.Contains("Retry in", error.Message, StringComparison.Ordinal);
     }
 
-    private static PterodactylClient CreateClient(HttpMessageHandler handler) =>
-        new(
-            new HttpClient(handler),
+    private static (PterodactylClient Client, HttpClient HttpClient) CreateClient(HttpMessageHandler handler)
+    {
+        var httpClient = new HttpClient(handler);
+        var client = new PterodactylClient(
+            httpClient,
             new StaticOptionsMonitor<PterodactylOptions>(new PterodactylOptions
             {
                 BaseUrl = "https://panel.example.com",
                 ApiKey = "ptla_" + new string('a', 43)
             }),
             NullLogger<PterodactylClient>.Instance);
+        return (client, httpClient);
+    }
 
     private sealed class PagedResponseHandler : HttpMessageHandler
     {
